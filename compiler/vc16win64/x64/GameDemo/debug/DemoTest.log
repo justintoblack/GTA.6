@@ -1,0 +1,12 @@
+﻿  ClassicMain.cpp
+  DemoTest.cpp
+  DemoTestRender.cpp
+  ActionMap.cpp
+  InputSystem.cpp
+  Camera.cpp
+E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\Render\Camera.cpp(105,25): warning C4305: “初始化”: 从“double”到“float”截断
+  Render.cpp
+  正在生成代码...
+  DemoTest.vcxproj -> E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\compiler\vc16win64\./../../../bin/vc16win64\DemoTestDEBUG.exe
+  复制了 0 个文件
+  复制了 0 个文件

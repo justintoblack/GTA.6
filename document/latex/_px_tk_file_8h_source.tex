@@ -1,0 +1,92 @@
+\hypertarget{_px_tk_file_8h_source}{}\doxysection{Px\+Tk\+File.\+h}
+\label{_px_tk_file_8h_source}\index{src/Common/PxTkFile.h@{src/Common/PxTkFile.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{1 \textcolor{comment}{//}}
+\DoxyCodeLine{2 \textcolor{comment}{// Redistribution and use in source and binary forms, with or without}}
+\DoxyCodeLine{3 \textcolor{comment}{// modification, are permitted provided that the following conditions}}
+\DoxyCodeLine{4 \textcolor{comment}{// are met:}}
+\DoxyCodeLine{5 \textcolor{comment}{//  * Redistributions of source code must retain the above copyright}}
+\DoxyCodeLine{6 \textcolor{comment}{//    notice, this list of conditions and the following disclaimer.}}
+\DoxyCodeLine{7 \textcolor{comment}{//  * Redistributions in binary form must reproduce the above copyright}}
+\DoxyCodeLine{8 \textcolor{comment}{//    notice, this list of conditions and the following disclaimer in the}}
+\DoxyCodeLine{9 \textcolor{comment}{//    documentation and/or other materials provided with the distribution.}}
+\DoxyCodeLine{10 \textcolor{comment}{//  * Neither the name of NVIDIA CORPORATION nor the names of its}}
+\DoxyCodeLine{11 \textcolor{comment}{//    contributors may be used to endorse or promote products derived}}
+\DoxyCodeLine{12 \textcolor{comment}{//    from this software without specific prior written permission.}}
+\DoxyCodeLine{13 \textcolor{comment}{//}}
+\DoxyCodeLine{14 \textcolor{comment}{// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS ``AS IS'' AND ANY}}
+\DoxyCodeLine{15 \textcolor{comment}{// EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE}}
+\DoxyCodeLine{16 \textcolor{comment}{// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR}}
+\DoxyCodeLine{17 \textcolor{comment}{// PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT OWNER OR}}
+\DoxyCodeLine{18 \textcolor{comment}{// CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,}}
+\DoxyCodeLine{19 \textcolor{comment}{// EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,}}
+\DoxyCodeLine{20 \textcolor{comment}{// PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR}}
+\DoxyCodeLine{21 \textcolor{comment}{// PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY}}
+\DoxyCodeLine{22 \textcolor{comment}{// OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT}}
+\DoxyCodeLine{23 \textcolor{comment}{// (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE}}
+\DoxyCodeLine{24 \textcolor{comment}{// OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.}}
+\DoxyCodeLine{25 \textcolor{comment}{//}}
+\DoxyCodeLine{26 \textcolor{comment}{// Copyright (c) 2008-\/2019 NVIDIA Corporation. All rights reserved.}}
+\DoxyCodeLine{27 \textcolor{comment}{// Copyright (c) 2004-\/2008 AGEIA Technologies, Inc. All rights reserved.}}
+\DoxyCodeLine{28 \textcolor{comment}{// Copyright (c) 2001-\/2004 NovodeX AG. All rights reserved.  }}
+\DoxyCodeLine{29 }
+\DoxyCodeLine{30 }
+\DoxyCodeLine{31 \textcolor{preprocessor}{\#ifndef PX\_TOOLKIT\_FILE\_H}}
+\DoxyCodeLine{32 \textcolor{preprocessor}{\#define PX\_TOOLKIT\_FILE\_H}}
+\DoxyCodeLine{33 }
+\DoxyCodeLine{34 \textcolor{preprocessor}{\#include "{}foundation/PxSimpleTypes.h"{}}}
+\DoxyCodeLine{35 \textcolor{comment}{// fopen\_s -\/ returns 0 on success, non-\/zero on failure}}
+\DoxyCodeLine{36 }
+\DoxyCodeLine{37 \textcolor{preprocessor}{\#if PX\_MICROSOFT\_FAMILY}}
+\DoxyCodeLine{38 }
+\DoxyCodeLine{39 \textcolor{preprocessor}{\#include <stdio.h>}}
+\DoxyCodeLine{40 }
+\DoxyCodeLine{41 \textcolor{keyword}{namespace }PxToolkit}
+\DoxyCodeLine{42 \{}
+\DoxyCodeLine{43 }
+\DoxyCodeLine{44 PX\_INLINE physx::PxI32 fopen\_s(FILE** file, \textcolor{keyword}{const} \textcolor{keywordtype}{char}* name, \textcolor{keyword}{const} \textcolor{keywordtype}{char}* mode)}
+\DoxyCodeLine{45 \{}
+\DoxyCodeLine{46     \textcolor{keyword}{static} \textcolor{keyword}{const} physx::PxU32 MAX\_LEN = 300;}
+\DoxyCodeLine{47     \textcolor{keywordtype}{char} buf[MAX\_LEN+1];}
+\DoxyCodeLine{48 }
+\DoxyCodeLine{49     physx::PxU32 i;}
+\DoxyCodeLine{50     \textcolor{keywordflow}{for}(i = 0; i<MAX\_LEN \&\& name[i]; i++)}
+\DoxyCodeLine{51         buf[i] = name[i] == \textcolor{charliteral}{'/'} ? \textcolor{charliteral}{'\(\backslash\)\(\backslash\)'} : name[i];}
+\DoxyCodeLine{52     buf[i] = 0;}
+\DoxyCodeLine{53 }
+\DoxyCodeLine{54     \textcolor{keywordflow}{return} i == MAX\_LEN ? -\/1 : ::fopen\_s(file, buf, mode);}
+\DoxyCodeLine{55 \};}
+\DoxyCodeLine{56 }
+\DoxyCodeLine{57 \} \textcolor{comment}{// namespace PxToolkit}}
+\DoxyCodeLine{58 }
+\DoxyCodeLine{59 \textcolor{preprocessor}{\#elif PX\_UNIX\_FAMILY || PX\_PS4 || PX\_SWITCH}}
+\DoxyCodeLine{60 }
+\DoxyCodeLine{61 \textcolor{preprocessor}{\#include <stdio.h>}}
+\DoxyCodeLine{62 }
+\DoxyCodeLine{63 \textcolor{keyword}{namespace }PxToolkit}
+\DoxyCodeLine{64 \{}
+\DoxyCodeLine{65 }
+\DoxyCodeLine{66 PX\_INLINE physx::PxI32 fopen\_s(FILE** file, \textcolor{keyword}{const} \textcolor{keywordtype}{char}* name, \textcolor{keyword}{const} \textcolor{keywordtype}{char}* mode)}
+\DoxyCodeLine{67 \{}
+\DoxyCodeLine{68     FILE* fp = ::fopen(name, mode);}
+\DoxyCodeLine{69     \textcolor{keywordflow}{if} (fp)}
+\DoxyCodeLine{70     \{}
+\DoxyCodeLine{71         *file = fp;}
+\DoxyCodeLine{72         \textcolor{keywordflow}{return} 0;}
+\DoxyCodeLine{73     \}}
+\DoxyCodeLine{74     \textcolor{keywordflow}{return} -\/1;}
+\DoxyCodeLine{75 \}}
+\DoxyCodeLine{76 }
+\DoxyCodeLine{77 \} \textcolor{comment}{// PxToolkit }}
+\DoxyCodeLine{78 }
+\DoxyCodeLine{79 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{80 }
+\DoxyCodeLine{81 \textcolor{preprocessor}{\#error "{}Platform not supported!"{}}}
+\DoxyCodeLine{82 }
+\DoxyCodeLine{83 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{84 }
+\DoxyCodeLine{85 \textcolor{preprocessor}{\#endif }\textcolor{comment}{//PX\_TOOLKIT\_FILE\_H}}
+\DoxyCodeLine{86 }
+
+\end{DoxyCode}

@@ -1,0 +1,133 @@
+\hypertarget{_utils_8h_source}{}\doxysection{Utils.\+h}
+\label{_utils_8h_source}\index{src/Utils/Utils.h@{src/Utils/Utils.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{1 \textcolor{comment}{//}}
+\DoxyCodeLine{2 \textcolor{comment}{// Redistribution and use in source and binary forms, with or without}}
+\DoxyCodeLine{3 \textcolor{comment}{// modification, are permitted provided that the following conditions}}
+\DoxyCodeLine{4 \textcolor{comment}{// are met:}}
+\DoxyCodeLine{5 \textcolor{comment}{//  * Redistributions of source code must retain the above copyright}}
+\DoxyCodeLine{6 \textcolor{comment}{//    notice, this list of conditions and the following disclaimer.}}
+\DoxyCodeLine{7 \textcolor{comment}{//  * Redistributions in binary form must reproduce the above copyright}}
+\DoxyCodeLine{8 \textcolor{comment}{//    notice, this list of conditions and the following disclaimer in the}}
+\DoxyCodeLine{9 \textcolor{comment}{//    documentation and/or other materials provided with the distribution.}}
+\DoxyCodeLine{10 \textcolor{comment}{//  * Neither the name of NVIDIA CORPORATION nor the names of its}}
+\DoxyCodeLine{11 \textcolor{comment}{//    contributors may be used to endorse or promote products derived}}
+\DoxyCodeLine{12 \textcolor{comment}{//    from this software without specific prior written permission.}}
+\DoxyCodeLine{13 \textcolor{comment}{//}}
+\DoxyCodeLine{14 \textcolor{comment}{// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS ``AS IS'' AND ANY}}
+\DoxyCodeLine{15 \textcolor{comment}{// EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE}}
+\DoxyCodeLine{16 \textcolor{comment}{// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR}}
+\DoxyCodeLine{17 \textcolor{comment}{// PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT OWNER OR}}
+\DoxyCodeLine{18 \textcolor{comment}{// CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,}}
+\DoxyCodeLine{19 \textcolor{comment}{// EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,}}
+\DoxyCodeLine{20 \textcolor{comment}{// PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR}}
+\DoxyCodeLine{21 \textcolor{comment}{// PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY}}
+\DoxyCodeLine{22 \textcolor{comment}{// OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT}}
+\DoxyCodeLine{23 \textcolor{comment}{// (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE}}
+\DoxyCodeLine{24 \textcolor{comment}{// OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.}}
+\DoxyCodeLine{25 \textcolor{comment}{//}}
+\DoxyCodeLine{26 \textcolor{comment}{// Copyright (c) 2008-\/2018 NVIDIA Corporation. All rights reserved.}}
+\DoxyCodeLine{27 }
+\DoxyCodeLine{28 \textcolor{preprocessor}{\#include "{}foundation/PxSimpleTypes.h"{}}}
+\DoxyCodeLine{29 }
+\DoxyCodeLine{30 \textcolor{keyword}{namespace }physx}
+\DoxyCodeLine{31 \{}
+\DoxyCodeLine{32     \textcolor{keyword}{namespace }SnippetUtils}
+\DoxyCodeLine{33     \{}
+\DoxyCodeLine{34 }
+\DoxyCodeLine{35         \textcolor{comment}{/* Increment the specified location. Return the incremented value. */}}
+\DoxyCodeLine{36         PxI32 atomicIncrement(\textcolor{keyword}{volatile} PxI32* val);}
+\DoxyCodeLine{37 }
+\DoxyCodeLine{38         \textcolor{comment}{/* Decrement the specified location. Return the decremented value. */}}
+\DoxyCodeLine{39         PxI32 atomicDecrement(\textcolor{keyword}{volatile} PxI32* val);}
+\DoxyCodeLine{40 }
+\DoxyCodeLine{41         \textcolor{comment}{//******************************************************************************//}}
+\DoxyCodeLine{42         }
+\DoxyCodeLine{43         \textcolor{comment}{/* Return the number of physical cores (does not include hyper-\/threaded cores), returns 0 on failure. */}}
+\DoxyCodeLine{44         PxU32 getNbPhysicalCores();}
+\DoxyCodeLine{45 }
+\DoxyCodeLine{46         \textcolor{comment}{//******************************************************************************//}}
+\DoxyCodeLine{47 }
+\DoxyCodeLine{48         \textcolor{comment}{/* Return the id of a thread. */}}
+\DoxyCodeLine{49         PxU32 getThreadId();}
+\DoxyCodeLine{50 }
+\DoxyCodeLine{51         \textcolor{comment}{//******************************************************************************//}}
+\DoxyCodeLine{52 }
+\DoxyCodeLine{53         \textcolor{comment}{/* Return the current time */}}
+\DoxyCodeLine{54         PxU64 getCurrentTimeCounterValue();}
+\DoxyCodeLine{55 }
+\DoxyCodeLine{56         \textcolor{comment}{/* Convert to milliseconds an elapsed time computed from the difference of the times returned from two calls to getCurrentTimeCounterValue. */}}
+\DoxyCodeLine{57         PxReal getElapsedTimeInMilliseconds(\textcolor{keyword}{const} PxU64 elapsedTime);}
+\DoxyCodeLine{58 }
+\DoxyCodeLine{59         \textcolor{comment}{/* Convert to microseconds an elapsed time computed from the difference of the times returned from two calls to getCurrentTimeCounterValue. */}}
+\DoxyCodeLine{60         PxReal getElapsedTimeInMicroSeconds(\textcolor{keyword}{const} PxU64 elapsedTime);}
+\DoxyCodeLine{61 }
+\DoxyCodeLine{62         \textcolor{comment}{//******************************************************************************//}}
+\DoxyCodeLine{63 }
+\DoxyCodeLine{64         \textcolor{keyword}{struct }Sync;}
+\DoxyCodeLine{65 }
+\DoxyCodeLine{66         \textcolor{comment}{/* Create a sync object. Returns a unique handle to the sync object so that it may be addressed through syncWait etc. */}}
+\DoxyCodeLine{67         Sync* syncCreate();}
+\DoxyCodeLine{68 }
+\DoxyCodeLine{69         \textcolor{comment}{/* Wait indefinitely until the specified sync object is signaled. */}}
+\DoxyCodeLine{70         \textcolor{keywordtype}{void} syncWait(Sync* sync);}
+\DoxyCodeLine{71 }
+\DoxyCodeLine{72         \textcolor{comment}{/* Signal the specified synchronization object, waking all threads waiting on it. */}}
+\DoxyCodeLine{73         \textcolor{keywordtype}{void} syncSet(Sync* sync);}
+\DoxyCodeLine{74 }
+\DoxyCodeLine{76         \textcolor{keywordtype}{void} syncReset(Sync* sync);}
+\DoxyCodeLine{77 }
+\DoxyCodeLine{78         \textcolor{comment}{/* Release the specified sync object so that it may be reused with syncCreate. */}}
+\DoxyCodeLine{79         \textcolor{keywordtype}{void} syncRelease(Sync* sync);}
+\DoxyCodeLine{80 }
+\DoxyCodeLine{81 }
+\DoxyCodeLine{82         \textcolor{comment}{//******************************************************************************//}}
+\DoxyCodeLine{83 }
+\DoxyCodeLine{84         \textcolor{keyword}{struct }Thread;}
+\DoxyCodeLine{85 }
+\DoxyCodeLine{86         \textcolor{comment}{/* Prototype of callback passed to threadCreate. */}}
+\DoxyCodeLine{87         \textcolor{keyword}{typedef} void (*ThreadEntryPoint)(\textcolor{keywordtype}{void}*);}
+\DoxyCodeLine{88 }
+\DoxyCodeLine{89         \textcolor{comment}{/* Create a thread object and return a unique handle to the thread object so that it may be addressed through threadStart etc. }}
+\DoxyCodeLine{90 \textcolor{comment}{        entryPoint implements ThreadEntryPoint and data will be passed as a function argument, POSIX-\/style. */}}
+\DoxyCodeLine{91         Thread* threadCreate(ThreadEntryPoint entryPoint, \textcolor{keywordtype}{void}* data);}
+\DoxyCodeLine{92 }
+\DoxyCodeLine{93         \textcolor{comment}{/* Cleanly shut down the specified thread. Called in the context of the spawned thread. */}}
+\DoxyCodeLine{94         \textcolor{keywordtype}{void} threadQuit(Thread* thread);}
+\DoxyCodeLine{95 }
+\DoxyCodeLine{96         \textcolor{comment}{/* Stop the specified thread. Signals the spawned thread that it should stop, so the }}
+\DoxyCodeLine{97 \textcolor{comment}{        thread should check regularly. */}}
+\DoxyCodeLine{98         \textcolor{keywordtype}{void} threadSignalQuit(Thread* thread);}
+\DoxyCodeLine{99 }
+\DoxyCodeLine{100         \textcolor{comment}{/* Wait for the specified thread to stop. Should be called in the context of the spawning}}
+\DoxyCodeLine{101 \textcolor{comment}{        thread. Returns false if the thread has not been started.*/}}
+\DoxyCodeLine{102         \textcolor{keywordtype}{bool} threadWaitForQuit(Thread* thread);}
+\DoxyCodeLine{103 }
+\DoxyCodeLine{104         \textcolor{comment}{/* Check whether the thread is signalled to quit. Called in the context of the}}
+\DoxyCodeLine{105 \textcolor{comment}{        spawned thread. */}}
+\DoxyCodeLine{106         \textcolor{keywordtype}{bool} threadQuitIsSignalled(Thread* thread);}
+\DoxyCodeLine{107 }
+\DoxyCodeLine{108         \textcolor{comment}{/* Release the specified thread object so that it may be reused with threadCreate. */}}
+\DoxyCodeLine{109         \textcolor{keywordtype}{void} threadRelease(Thread* thread);}
+\DoxyCodeLine{110 }
+\DoxyCodeLine{111         \textcolor{comment}{//******************************************************************************//}}
+\DoxyCodeLine{112 }
+\DoxyCodeLine{113         \textcolor{keyword}{struct }Mutex;}
+\DoxyCodeLine{114 }
+\DoxyCodeLine{115         \textcolor{comment}{/* Create a mutex object and return a unique handle to the mutex object so that it may be addressed through mutexLock etc. */}}
+\DoxyCodeLine{116         Mutex* mutexCreate();}
+\DoxyCodeLine{117 }
+\DoxyCodeLine{118         \textcolor{comment}{/* Acquire (lock) the specified mutex. If the mutex is already locked by another thread, this method blocks until the mutex is unlocked.*/}}
+\DoxyCodeLine{119         \textcolor{keywordtype}{void} mutexLock(Mutex* mutex);}
+\DoxyCodeLine{120 }
+\DoxyCodeLine{121         \textcolor{comment}{/* Release (unlock) the specified mutex, the calling thread must have previously called lock() or method will error. */}}
+\DoxyCodeLine{122         \textcolor{keywordtype}{void} mutexUnlock(Mutex* mutex);}
+\DoxyCodeLine{123 }
+\DoxyCodeLine{124         \textcolor{comment}{/* Release the specified mutex so that it may be reused with mutexCreate. */}}
+\DoxyCodeLine{125         \textcolor{keywordtype}{void} mutexRelease(Mutex* mutex);}
+\DoxyCodeLine{126 }
+\DoxyCodeLine{127     \}}
+\DoxyCodeLine{128 \}}
+
+\end{DoxyCode}

@@ -1,0 +1,58 @@
+\hypertarget{wavefront_8h_source}{}\doxysection{wavefront.\+h}
+\label{wavefront_8h_source}\index{src/Common/wavefront.h@{src/Common/wavefront.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{1 \textcolor{comment}{//}}
+\DoxyCodeLine{2 \textcolor{comment}{// Redistribution and use in source and binary forms, with or without}}
+\DoxyCodeLine{3 \textcolor{comment}{// modification, are permitted provided that the following conditions}}
+\DoxyCodeLine{4 \textcolor{comment}{// are met:}}
+\DoxyCodeLine{5 \textcolor{comment}{//  * Redistributions of source code must retain the above copyright}}
+\DoxyCodeLine{6 \textcolor{comment}{//    notice, this list of conditions and the following disclaimer.}}
+\DoxyCodeLine{7 \textcolor{comment}{//  * Redistributions in binary form must reproduce the above copyright}}
+\DoxyCodeLine{8 \textcolor{comment}{//    notice, this list of conditions and the following disclaimer in the}}
+\DoxyCodeLine{9 \textcolor{comment}{//    documentation and/or other materials provided with the distribution.}}
+\DoxyCodeLine{10 \textcolor{comment}{//  * Neither the name of NVIDIA CORPORATION nor the names of its}}
+\DoxyCodeLine{11 \textcolor{comment}{//    contributors may be used to endorse or promote products derived}}
+\DoxyCodeLine{12 \textcolor{comment}{//    from this software without specific prior written permission.}}
+\DoxyCodeLine{13 \textcolor{comment}{//}}
+\DoxyCodeLine{14 \textcolor{comment}{// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS ``AS IS'' AND ANY}}
+\DoxyCodeLine{15 \textcolor{comment}{// EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE}}
+\DoxyCodeLine{16 \textcolor{comment}{// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR}}
+\DoxyCodeLine{17 \textcolor{comment}{// PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT OWNER OR}}
+\DoxyCodeLine{18 \textcolor{comment}{// CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,}}
+\DoxyCodeLine{19 \textcolor{comment}{// EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,}}
+\DoxyCodeLine{20 \textcolor{comment}{// PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR}}
+\DoxyCodeLine{21 \textcolor{comment}{// PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY}}
+\DoxyCodeLine{22 \textcolor{comment}{// OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT}}
+\DoxyCodeLine{23 \textcolor{comment}{// (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE}}
+\DoxyCodeLine{24 \textcolor{comment}{// OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.}}
+\DoxyCodeLine{25 \textcolor{comment}{//}}
+\DoxyCodeLine{26 \textcolor{comment}{// Copyright (c) 2008-\/2019 NVIDIA Corporation. All rights reserved.}}
+\DoxyCodeLine{27 \textcolor{comment}{// Copyright (c) 2004-\/2008 AGEIA Technologies, Inc. All rights reserved.}}
+\DoxyCodeLine{28 \textcolor{comment}{// Copyright (c) 2001-\/2004 NovodeX AG. All rights reserved.  }}
+\DoxyCodeLine{29 }
+\DoxyCodeLine{30 \textcolor{preprocessor}{\#ifndef WAVEFRONT\_OBJ\_H}}
+\DoxyCodeLine{31 \textcolor{preprocessor}{\#define WAVEFRONT\_OBJ\_H}}
+\DoxyCodeLine{32 }
+\DoxyCodeLine{33 \textcolor{keyword}{class }\mbox{\hyperlink{class_wavefront_obj}{WavefrontObj}}}
+\DoxyCodeLine{34 \{}
+\DoxyCodeLine{35 \textcolor{keyword}{public}:}
+\DoxyCodeLine{36 }
+\DoxyCodeLine{37     \mbox{\hyperlink{class_wavefront_obj}{WavefrontObj}}(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{38     \mbox{\hyperlink{class_wavefront_obj}{\string~WavefrontObj}}(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{39 }
+\DoxyCodeLine{40     \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} loadObj(\textcolor{keyword}{const} \textcolor{keywordtype}{char} *fname, \textcolor{keywordtype}{bool} textured); \textcolor{comment}{// load a wavefront obj returns number of triangles that were loaded.  Data is persists until the class is destructed.}}
+\DoxyCodeLine{41 }
+\DoxyCodeLine{42     \textcolor{keywordtype}{int} mVertexCount;}
+\DoxyCodeLine{43     \textcolor{keywordtype}{int} mTriCount;}
+\DoxyCodeLine{44     \textcolor{keywordtype}{int}* mIndices;}
+\DoxyCodeLine{45     \textcolor{keywordtype}{float}* mVertices;}
+\DoxyCodeLine{46     \textcolor{keywordtype}{float}* mTexCoords;}
+\DoxyCodeLine{47 \};}
+\DoxyCodeLine{48 }
+\DoxyCodeLine{49     \textcolor{keywordtype}{bool} LoadWavefrontBinary(\textcolor{keyword}{const} \textcolor{keywordtype}{char}* filename, \mbox{\hyperlink{class_wavefront_obj}{WavefrontObj}}\& wfo);}
+\DoxyCodeLine{50     \textcolor{keywordtype}{bool} SaveWavefrontBinary(\textcolor{keyword}{const} \textcolor{keywordtype}{char}* filename, \textcolor{keyword}{const} \mbox{\hyperlink{class_wavefront_obj}{WavefrontObj}}\& wfo);}
+\DoxyCodeLine{51 }
+\DoxyCodeLine{52 \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

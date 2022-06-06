@@ -31,9 +31,12 @@
 
 #include "Camera.h"
 #include <ctype.h>
+#include<iostream>
 #include "foundation/PxMat33.h"
+#include <PxPhysicsAPI.h>
 
 using namespace physx;
+using namespace std;
 
 namespace Snippets
 {
@@ -44,6 +47,17 @@ Camera::Camera(const PxVec3& eye, const PxVec3& dir)/*定义眼睛位置、视线方向*/
 	mDir = dir.getNormalized();
 	mMouseX = 0;
 	mMouseY = 0;
+}
+
+void Camera::Update(physx::PxVec3 targetPos)
+{
+	mEye = targetPos+m_offset -mDir*mDistanceToTarget;
+}
+
+void Camera::SetConfig(float dis,physx::PxVec3 offset)
+{
+	mDistanceToTarget = dis;
+	m_offset = offset;
 }
 
 void Camera::handleMouse(int button, int state, int x, int y)
@@ -59,6 +73,7 @@ void Camera::handleMouse(int button, int state, int x, int y)
 		mEye.z -= speed;
 	}
 
+	//控制前进后退
 	bool Camera::handleKey(unsigned char key, int x, int y, float speed)
 	{
 		PX_UNUSED(x);
@@ -83,10 +98,10 @@ void Camera::handleAnalogMove(float x, float y)
 	mEye += viewY*x;
 }
 
-void Camera::handleMotion(int x, int y)
+void Camera::handleMotion(int dx, int dy)
 {
-	int dx = mMouseX - x;/*鼠标每次移动带来的视角变换*/
-	int dy = mMouseY - y;
+	//int dx = mMouseX - x;/*鼠标每次移动带来的视角变换*/
+	//int dy = mMouseY - y;
 	float sensitivity = 0.3;/*鼠标灵敏度[0,1]即可*/
 
 	PxVec3 viewY = mDir.cross(PxVec3(0,1,0)).getNormalized();
@@ -98,8 +113,9 @@ void Camera::handleMotion(int x, int y)
 
 	mDir.normalize();
 
-	mMouseX = x;
-	mMouseY = y;
+	//mMouseX = x;
+	//mMouseY = y;
+
 }
 
 PxTransform Camera::getTransform() const

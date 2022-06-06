@@ -45,14 +45,18 @@ public:
 	void				handleMotion(int x, int y);
 	void				handleAnalogMove(float x, float y);
 	void				goFront(float speed);
+	void				Update(physx::PxVec3 pos);
+	void				SetConfig(float dis,physx::PxVec3 offset);
 	physx::PxVec3		getEye()	const;
 	physx::PxVec3		getDir()	const;
 	physx::PxTransform	getTransform() const;
 private:
 	physx::PxVec3	mEye;
 	physx::PxVec3	mDir;
+	physx::PxVec3 m_offset;
 	int				mMouseX;
 	int				mMouseY;
+	float				mDistanceToTarget;
 };
 
 

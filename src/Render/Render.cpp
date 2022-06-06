@@ -26,7 +26,7 @@
 // Copyright (c) 2008-2018 NVIDIA Corporation. All rights reserved.
 // Copyright (c) 2004-2008 AGEIA Technologies, Inc. All rights reserved.
 // Copyright (c) 2001-2004 NovodeX AG. All rights reserved.  
-
+#define _CRT_SECURE_NO_WARNINGS
 #include "Render.h"
 
 using namespace physx;
@@ -221,10 +221,10 @@ void renderGeometry(const PxGeometryHolder& h)
 	case PxGeometryType::eGEOMETRY_COUNT:	
 	case PxGeometryType::ePLANE:/*这里设置了平面，给了几个点让glut画了个正方形，颜色设置为120的绿色（满值是255）*/
 		glBegin(GL_QUADS);
-		glColor4ub(0, 159, 149, 200); glVertex3f(-1.0f, -300.0f, -300.0f);/*这个坐标有点奇怪 后面应该是变换过，不用太在意，反正就当第一个是y轴就可以了*/
-		glColor4ub(0, 159, 149, 200); glVertex3f(-1.0f, -300.0f, 300.0f);
-		glColor4ub(0, 159, 149, 200); glVertex3f(-1.0f, 300.0f, 300.0f);
-		glColor4ub(0, 159, 149, 200); glVertex3f(-1.0f, 300.0f, -300.0f);
+		glColor4ub(170, 255, 0, 200); glVertex3f(-1.0f, -300.0f, -300.0f);/*这个坐标有点奇怪 后面应该是变换过，不用太在意，反正就当第一个是y轴就可以了*/
+		glColor4ub(170, 255, 0, 200); glVertex3f(-1.0f, -300.0f, 300.0f);
+		glColor4ub(170, 255, 0, 200); glVertex3f(-1.0f, 300.0f, 300.0f);
+		glColor4ub(170, 255, 0, 200); glVertex3f(-1.0f, 300.0f, -300.0f);
 		glEnd();
 		break;
 	}
@@ -248,12 +248,19 @@ void setupDefaultWindow(const char *name)
 	int argc = 1;
 	char* argv[1] = { namestr };
 
+	//初始化glut
 	glutInit(&argc, argv);
-	
-	glutInitWindowSize(1024, 768);
+	//显示模式
 	glutInitDisplayMode(GLUT_RGB|GLUT_DOUBLE|GLUT_DEPTH);
+
+	//glutGameModeString("1920x1080");
+	//glutEnterGameMode();
+
+	glutInitWindowSize(512, 512);
 	int mainHandle = glutCreateWindow(name);
 	glutSetWindow(mainHandle);
+	glutFullScreen();
+
 	glutReshapeFunc(reshapeCallback);
 	
 	delete[] namestr;
@@ -262,7 +269,7 @@ void setupDefaultWindow(const char *name)
 void setupDefaultRenderState()
 {
 	// Setup default render states 初始化设置
-	glClearColor(0.7f, 0.9f, 0.86f, 1.0);
+	glClearColor(1.0f, 1.0f, 0.86f, 1.0);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_COLOR_MATERIAL);
 
@@ -301,6 +308,8 @@ void renderGameOver(const char text[], int len)
 		renderText(190,250,text,len);
 	}
 
+
+//渲染Actors
 void renderActors(PxRigidActor** actors, const PxU32 numActors, bool shadows, const PxVec3 & color)/*渲染actor*/
 {
 	PxShape* shapes[MAX_NUM_ACTOR_SHAPES];
@@ -318,14 +327,14 @@ void renderActors(PxRigidActor** actors, const PxU32 numActors, bool shadows, co
 			PxGeometryHolder h = shapes[j]->getGeometry();
 
 			if (shapes[j]->getFlags() & PxShapeFlag::eTRIGGER_SHAPE)
-				glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
+			glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
 			
 			// render object
 			glPushMatrix();						
 			glMultMatrixf(reinterpret_cast<const float*>(&shapePose));
 			if(sleeping)/*是否处于sleeping状态*/
 			{
-				PxVec3 darkColor = color * 0.8f;/*sleeping的情况下颜色*0.8*/
+				PxVec3 darkColor = color * 0.5f;/*sleeping的情况下颜色*0.8*/
 				glColor4f(darkColor.x, darkColor.y, darkColor.z, 1.0f);
 			}
 			else

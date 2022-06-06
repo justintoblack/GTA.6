@@ -1,0 +1,69 @@
+\hypertarget{_render_8h_source}{}\doxysection{Render.\+h}
+\label{_render_8h_source}\index{src/Render/Render.h@{src/Render/Render.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{1 \textcolor{comment}{//}}
+\DoxyCodeLine{2 \textcolor{comment}{// Redistribution and use in source and binary forms, with or without}}
+\DoxyCodeLine{3 \textcolor{comment}{// modification, are permitted provided that the following conditions}}
+\DoxyCodeLine{4 \textcolor{comment}{// are met:}}
+\DoxyCodeLine{5 \textcolor{comment}{//  * Redistributions of source code must retain the above copyright}}
+\DoxyCodeLine{6 \textcolor{comment}{//    notice, this list of conditions and the following disclaimer.}}
+\DoxyCodeLine{7 \textcolor{comment}{//  * Redistributions in binary form must reproduce the above copyright}}
+\DoxyCodeLine{8 \textcolor{comment}{//    notice, this list of conditions and the following disclaimer in the}}
+\DoxyCodeLine{9 \textcolor{comment}{//    documentation and/or other materials provided with the distribution.}}
+\DoxyCodeLine{10 \textcolor{comment}{//  * Neither the name of NVIDIA CORPORATION nor the names of its}}
+\DoxyCodeLine{11 \textcolor{comment}{//    contributors may be used to endorse or promote products derived}}
+\DoxyCodeLine{12 \textcolor{comment}{//    from this software without specific prior written permission.}}
+\DoxyCodeLine{13 \textcolor{comment}{//}}
+\DoxyCodeLine{14 \textcolor{comment}{// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS ``AS IS'' AND ANY}}
+\DoxyCodeLine{15 \textcolor{comment}{// EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE}}
+\DoxyCodeLine{16 \textcolor{comment}{// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR}}
+\DoxyCodeLine{17 \textcolor{comment}{// PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT OWNER OR}}
+\DoxyCodeLine{18 \textcolor{comment}{// CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,}}
+\DoxyCodeLine{19 \textcolor{comment}{// EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,}}
+\DoxyCodeLine{20 \textcolor{comment}{// PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR}}
+\DoxyCodeLine{21 \textcolor{comment}{// PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY}}
+\DoxyCodeLine{22 \textcolor{comment}{// OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT}}
+\DoxyCodeLine{23 \textcolor{comment}{// (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE}}
+\DoxyCodeLine{24 \textcolor{comment}{// OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.}}
+\DoxyCodeLine{25 \textcolor{comment}{//}}
+\DoxyCodeLine{26 \textcolor{comment}{// Copyright (c) 2008-\/2018 NVIDIA Corporation. All rights reserved.}}
+\DoxyCodeLine{27 \textcolor{comment}{// Copyright (c) 2004-\/2008 AGEIA Technologies, Inc. All rights reserved.}}
+\DoxyCodeLine{28 \textcolor{comment}{// Copyright (c) 2001-\/2004 NovodeX AG. All rights reserved.  }}
+\DoxyCodeLine{29 }
+\DoxyCodeLine{30 }
+\DoxyCodeLine{31 \textcolor{preprocessor}{\#ifndef PHYSX\_SNIPPET\_RENDER\_H}}
+\DoxyCodeLine{32 \textcolor{preprocessor}{\#define PHYSX\_SNIPPET\_RENDER\_H}}
+\DoxyCodeLine{33 }
+\DoxyCodeLine{34 \textcolor{preprocessor}{\#include "{}PxPhysicsAPI.h"{}}}
+\DoxyCodeLine{35 \textcolor{preprocessor}{\#include "{}foundation/PxPreprocessor.h"{}}}
+\DoxyCodeLine{36 }
+\DoxyCodeLine{37 \textcolor{preprocessor}{\#if PX\_WINDOWS}}
+\DoxyCodeLine{38 \textcolor{preprocessor}{\#include <windows.h>}}
+\DoxyCodeLine{39 \textcolor{preprocessor}{\#pragma warning(disable: 4505)}}
+\DoxyCodeLine{40 \textcolor{preprocessor}{\#include <glut.h>}}
+\DoxyCodeLine{41 \textcolor{preprocessor}{\#elif PX\_LINUX\_FAMILY}}
+\DoxyCodeLine{42 \textcolor{preprocessor}{\#include <GL/glut.h>}}
+\DoxyCodeLine{43 \textcolor{preprocessor}{\#elif PX\_OSX}}
+\DoxyCodeLine{44 \textcolor{preprocessor}{\#include <GLUT/glut.h>}}
+\DoxyCodeLine{45 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{46 \textcolor{preprocessor}{\#error platform not supported.}}
+\DoxyCodeLine{47 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{48 }
+\DoxyCodeLine{49 \textcolor{keyword}{namespace }Snippets}
+\DoxyCodeLine{50 \{}
+\DoxyCodeLine{51 \textcolor{keywordtype}{void} setupDefaultWindow(\textcolor{keyword}{const} \textcolor{keywordtype}{char}* name);}
+\DoxyCodeLine{52 \textcolor{keywordtype}{void} setupDefaultRenderState();}
+\DoxyCodeLine{53 }
+\DoxyCodeLine{54 \textcolor{keywordtype}{void} startRender(\textcolor{keyword}{const} physx::PxVec3\& cameraEye, \textcolor{keyword}{const} physx::PxVec3\& cameraDir, physx::PxReal nearClip = 1.f, physx::PxReal farClip = 10000.f);}
+\DoxyCodeLine{55 \textcolor{keywordtype}{void} renderActors(physx::PxRigidActor** actors, \textcolor{keyword}{const} physx::PxU32 numActors, \textcolor{keywordtype}{bool} shadows = \textcolor{keyword}{false}, \textcolor{keyword}{const} physx::PxVec3 \& color = physx::PxVec3(0.0f, 0.75f, 0.0f));}
+\DoxyCodeLine{56 \textcolor{keywordtype}{void} finishRender();}
+\DoxyCodeLine{57 \textcolor{keywordtype}{void} renderText(\textcolor{keywordtype}{int} x, \textcolor{keywordtype}{int} y, \textcolor{keyword}{const} \textcolor{keywordtype}{char} text[], \textcolor{keywordtype}{int} len);}
+\DoxyCodeLine{58 \textcolor{keywordtype}{void} renderGameOver(\textcolor{keyword}{const} \textcolor{keywordtype}{char} text[], \textcolor{keywordtype}{int} len);}
+\DoxyCodeLine{59 \}}
+\DoxyCodeLine{60 }
+\DoxyCodeLine{61 \textcolor{preprocessor}{\#define MAX\_NUM\_ACTOR\_SHAPES 128}}
+\DoxyCodeLine{62 }
+\DoxyCodeLine{63 \textcolor{preprocessor}{\#endif }\textcolor{comment}{//PHYSX\_SNIPPET\_RENDER\_H}}
+
+\end{DoxyCode}

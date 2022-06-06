@@ -35,6 +35,7 @@
 
 #include "../Render/Render.h"
 #include "../Render/Camera.h"
+#include<iostream>
 
 using namespace physx;
 
@@ -43,14 +44,47 @@ extern void stepPhysics(bool interactive);
 extern void cleanupPhysics(bool interactive);
 extern void keyPress(unsigned char key, const PxTransform& camera);
 
+static __int64 gTime, gLastTime;
+__int64 freq;
+PxReal deltaTime;
+extern PxController* m_player;
+
+Snippets::Camera*	sCamera;
+
+//鼠标
+POINT p;
+int lastX; int lastY;
+
+bool needToPass=false;
 
 namespace
 {
-Snippets::Camera*	sCamera;
 
 void motionCallback(int x, int y)
 {
-	sCamera->handleMotion(x, y);
+
+	int dx=lastX - x;
+	int dy= lastY - y;
+
+	if (needToPass)
+	{
+		needToPass = false;
+	}
+	else
+	{
+		sCamera->handleMotion(dx, dy);
+	}
+
+	lastX = x;
+	lastY = y;
+	//std::cout << x << " " << GetSystemMetrics(SM_CXSCREEN) << std::endl;
+
+	//到达窗口边界
+	if (x <= 0 || x >= GetSystemMetrics(SM_CXSCREEN)-1 || y <= 0 || y >= GetSystemMetrics(SM_CYSCREEN)-1)
+	{
+		SetCursorPos(GetSystemMetrics(SM_CXSCREEN)/2, GetSystemMetrics(SM_CYSCREEN)/2);
+		needToPass = true;
+	}
 }
 
 void keyboardCallback(unsigned char key, int x, int y)
@@ -72,14 +106,47 @@ void idleCallback()
 	glutPostRedisplay();
 }
 
+//鼠标移动
+void OnMouseMove(int x,int y)
+{
+	motionCallback(x, y);
+}
+
+//鼠标事件监听
+void MouseEventCallBack()
+{
+	//获取当前鼠标位置
+	GetCursorPos(&p);
+	//未移动
+	if (lastX == p.x && lastY == p.y)
+	{
+
+	}
+	//移动
+	else
+	{
+		std::cout << "移动" << std::endl;
+		OnMouseMove(p.x,p.y);
+		lastX = p.x;
+		lastY = p.y;
+	}
+}
+
 void renderCallback()
 {
 	stepPhysics(true);
+
+
+	//输入事件
+	PxVec3 pos = m_player->getPosition() - PxExtendedVec3(0, 0, 0);
+	sCamera->Update(pos);
 
 	Snippets::startRender(sCamera->getEye(), sCamera->getDir());
 
 	PxScene* scene;
 	PxGetPhysics().getScenes(&scene,1);
+
+	//获取
 	PxU32 nbActors = scene->getNbActors(PxActorTypeFlag::eRIGID_DYNAMIC | PxActorTypeFlag::eRIGID_STATIC);
 	if(nbActors)
 	{
@@ -89,6 +156,15 @@ void renderCallback()
 	}
 
 	Snippets::finishRender();
+
+	QueryPerformanceCounter((LARGE_INTEGER*)&gTime); //get current count
+	QueryPerformanceFrequency((LARGE_INTEGER*)&freq); //get processor freq
+	deltaTime = (double)(gTime - gLastTime) / (double)freq;
+	gLastTime = gTime;
+
+	//std::cout << deltaTime;
+
+	
 }
 
 void exitCallback(void)
@@ -99,23 +175,41 @@ void exitCallback(void)
 }
 
 
+//渲染循环
 void renderLoop()
 {
 	sCamera = new Snippets::Camera(PxVec3(50.0f, 50.0f, 50.0f), PxVec3(-0.6f,-0.2f,-0.7f));
+	sCamera->SetConfig(10,PxVec3(0,3,0));
+
+	//初始化鼠标位置;
+	GetCursorPos(&p);
+	lastX = p.x;
+	lastY = p.y;
+
 
 	Snippets::setupDefaultWindow("PhysX Demo");
 	Snippets::setupDefaultRenderState();
 
 	glutIdleFunc(idleCallback);
 	glutDisplayFunc(renderCallback);
-	glutKeyboardFunc(keyboardCallback);
-	glutMouseFunc(mouseCallback);
+
+	//键盘事件回调函数
+	//glutKeyboardFunc(keyboardCallback);
+
+	glutSetCursor(GLUT_CURSOR_NONE);
+
+	//glutMouseFunc(mouseCallback);
+
 	glutMotionFunc(motionCallback);
-	motionCallback(0,0);
+	glutPassiveMotionFunc(motionCallback);
+	
+
+	//motionCallback(0,0);
 
 	atexit(exitCallback);
 
 	initPhysics(true);
 	glutMainLoop();
+
 }
 #endif

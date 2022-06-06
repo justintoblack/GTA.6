@@ -1,9 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|ARM">
+      <Configuration>Debug</Configuration>
+      <Platform>ARM</Platform>
+    </ProjectConfiguration>
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
       <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|ARM">
+      <Configuration>Release</Configuration>
+      <Platform>ARM</Platform>
     </ProjectConfiguration>
     <ProjectConfiguration Include="Release|Win32">
       <Configuration>Release</Configuration>
@@ -22,10 +30,14 @@
     <ClCompile Include="..\..\src\Common\ClassicMain.cpp" />
     <ClCompile Include="..\..\src\DemoTest\DemoTest.cpp" />
     <ClCompile Include="..\..\src\DemoTest\DemoTestRender.cpp" />
+    <ClCompile Include="..\..\src\InputSystem\ActionMap.cpp" />
+    <ClCompile Include="..\..\src\InputSystem\InputSystem.cpp" />
     <ClCompile Include="..\..\src\Render\Camera.cpp" />
     <ClCompile Include="..\..\src\Render\Render.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\src\InputSystem\ActionMap.h" />
+    <ClInclude Include="..\..\src\InputSystem\InputSystem.h" />
     <ClInclude Include="..\..\src\Render\Camera.h" />
     <ClInclude Include="..\..\src\Render\Render.h" />
   </ItemGroup>
@@ -42,7 +54,20 @@
     <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
@@ -73,7 +98,13 @@
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -87,10 +118,24 @@
     <OutDir>./../../../bin/vc16win64\</OutDir>
     <IntDir>./x64/GameDemo/debug\</IntDir>
     <TargetName>$(ProjectName)DEBUG</TargetName>
+    <LibraryPath>E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\compiler\vc16win64\Dependencies\GLFW\lib-vc2019;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\compiler\vc16win64\Dependencies\GLFW\include;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>./../../../bin/vc16win64\</OutDir>
     <IntDir>./x64/GameDemo/debug\</IntDir>
+    <LibraryPath>E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\compiler\vc16win64\Dependencies\GLFW\lib-vc2019;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\compiler\vc16win64\Dependencies\GLFW\include;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LibraryPath>E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\compiler\vc16win64\Dependencies\GLFW\lib-vc2019;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\compiler\vc16win64\Dependencies\GLFW\include;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
+    <LibraryPath>E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\compiler\vc16win64\Dependencies\GLFW\lib-vc2019;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\compiler\vc16win64\Dependencies\GLFW\include;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LibraryPath>E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\compiler\vc16win64\Dependencies\GLFW\lib-vc2019;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\compiler\vc16win64\Dependencies\GLFW\include;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
+    <LibraryPath>E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\compiler\vc16win64\Dependencies\GLFW\lib-vc2019;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\compiler\vc16win64\Dependencies\GLFW\include;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -98,8 +143,25 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>E:\PhysX Visual Debugger\PhysX-3.4-master\PhysX-3.4-master\PxShared\include;E:\PhysX Visual Debugger\PhysX-3.4-master\PhysX-3.4-master\PxShared\src\foundation\include;E:\PhysX Visual Debugger\PhysX-3.4-master\PhysX-3.4-master\PhysX_3.4\Include;E:\PhysX Visual Debugger\PhysX-3.4-master\PhysX-3.4-master\PhysX_3.4\Snippets\Graphics\include\win32\GL;E:\PhysX Visual Debugger\PhysX-3.4-master\PhysX-3.4-master\PxShared\src\fastxml\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\Graphics\include\win32\GL;E:\GameClass\PhysX-Tutorial-master\PxShared\include;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\Include;$(SolutionDir)Dependencies\GLFW\include</AdditionalIncludeDirectories>
     </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\lib\vc16win64;E:\GameClass\PhysX-Tutorial-master\PxShared\lib\vc16win64;$(SolutionDIr)Dependencies\GLFW\lib-vc2019;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\Snippets\Graphics\lib\win64\glut</AdditionalLibraryDirectories>
+      <AdditionalDependencies>glfw3_mt.lib;openGL32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\Graphics\include\win32\GL;E:\GameClass\PhysX-Tutorial-master\PxShared\include;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\Include;$(SolutionDir)Dependencies\GLFW\include</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\lib\vc16win64;E:\GameClass\PhysX-Tutorial-master\PxShared\lib\vc16win64;$(SolutionDIr)Dependencies\GLFW\lib-vc2019;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\Snippets\Graphics\lib\win64\glut</AdditionalLibraryDirectories>
+      <AdditionalDependencies>glfw3_mt.lib;openGL32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -108,13 +170,13 @@
       <SDLCheck>
       </SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>./../../../Include;./../../../../PxShared/include;./../../../../PxShared/src/foundation/include;./../../../../PxShared/src/fastxml/include;./../../Graphics/include/win32/GL;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\Graphics\include\win32\GL;E:\GameClass\PhysX-Tutorial-master\PxShared\include;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\Include;$(SolutionDir)Dependencies\GLFW\include</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>./../../../Common/lib/vc16win64;./../../lib/vc16win64;./../../../../PxShared/lib/vc16win64;./../../Graphics/lib/win64/glut;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Winmm.lib;OpenGL32.lib;glut32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\lib\vc16win64;E:\GameClass\PhysX-Tutorial-master\PxShared\lib\vc16win64;$(SolutionDIr)Dependencies\GLFW\lib-vc2019;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\Snippets\Graphics\lib\win64\glut</AdditionalLibraryDirectories>
       <AdditionalOptions>/LIBPATH:../../../Lib/vc16win64 PhysX3CommonDEBUG_x64.lib PhysX3DEBUG_x64.lib PhysX3CookingDEBUG_x64.lib PhysX3CharacterKinematicDEBUG_x64.lib PhysX3ExtensionsDEBUG.lib PhysX3VehicleDEBUG.lib PxTaskDEBUG_x64.lib PxFoundationDEBUG_x64.lib PsFastXmlDEBUG_x64.lib PxPvdSDKDEBUG_x64.lib /LIBPATH:../../lib/vc16win64 UtilsDEBUG.lib /DEBUG</AdditionalOptions>
+      <AdditionalDependencies>glfw3_mt.lib;openGL32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>XCOPY "../../../../PxShared/bin\vc16win64\PxFoundationDEBUG_x64.dll" "$(OutDir)" /D /Y
@@ -130,10 +192,30 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\Graphics\include\win32\GL;E:\GameClass\PhysX-Tutorial-master\PxShared\include;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\Include;$(SolutionDir)Dependencies\GLFW\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalLibraryDirectories>E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\lib\vc16win64;E:\GameClass\PhysX-Tutorial-master\PxShared\lib\vc16win64;$(SolutionDIr)Dependencies\GLFW\lib-vc2019;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\Snippets\Graphics\lib\win64\glut</AdditionalLibraryDirectories>
+      <AdditionalDependencies>glfw3_mt.lib;openGL32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\Graphics\include\win32\GL;E:\GameClass\PhysX-Tutorial-master\PxShared\include;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\Include;$(SolutionDir)Dependencies\GLFW\include</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalLibraryDirectories>E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\lib\vc16win64;E:\GameClass\PhysX-Tutorial-master\PxShared\lib\vc16win64;$(SolutionDIr)Dependencies\GLFW\lib-vc2019;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\Snippets\Graphics\lib\win64\glut</AdditionalLibraryDirectories>
+      <AdditionalDependencies>glfw3_mt.lib;openGL32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -145,7 +227,7 @@
       <SDLCheck>
       </SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>./../../../Include;./../../../../PxShared/include;./../../../../PxShared/src/foundation/include;./../../../../PxShared/src/fastxml/include;./../../Graphics/include/win32/GL;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\Graphics\include\win32\GL;E:\GameClass\PhysX-Tutorial-master\PxShared\include;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\Include;$(SolutionDir)Dependencies\GLFW\include</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <PreprocessorDefinitions>_HAS_EXCEPTIONS=0;WIN32;WIN64;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;_WINSOCK_DEPRECATED_NO_WARNINGS;PHYSX_PROFILE_SDK;RENDER_SNIPPET;NDEBUG;PX_SUPPORT_PVD=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -153,9 +235,9 @@
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>Winmm.lib;OpenGL32.lib;glut32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>./../../../Common/lib/vc16win64;./../../lib/vc16win64;./../../../../PxShared/lib/vc16win64;./../../Graphics/lib/win64/glut;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\lib\vc16win64;E:\GameClass\PhysX-Tutorial-master\PxShared\lib\vc16win64;$(SolutionDIr)Dependencies\GLFW\lib-vc2019;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\Snippets\Graphics\lib\win64\glut</AdditionalLibraryDirectories>
       <AdditionalOptions>/INCREMENTAL:NO /LIBPATH:../../../Lib/vc16win64 PhysX3Common_x64.lib PhysX3_x64.lib PhysX3Cooking_x64.lib PhysX3CharacterKinematic_x64.lib PhysX3Extensions.lib PhysX3Vehicle.lib PxTask_x64.lib PxFoundation_x64.lib PsFastXml_x64.lib PxPvdSDK_x64.lib /LIBPATH:../../lib/vc16win64 Utils.lib</AdditionalOptions>
+      <AdditionalDependencies>glfw3_mt.lib;openGL32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

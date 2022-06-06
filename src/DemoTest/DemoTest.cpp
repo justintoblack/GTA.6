@@ -42,8 +42,12 @@
 #include "../Common/PVD.h"
 #include "../Utils/Utils.h"
 
+#include<iostream>
 
 #include<vector>
+#include<windows.h>
+
+#include "../InputSystem/InputSystem.h"
 
 using namespace physx;
 //默认的内存管理和错误报告器
@@ -60,6 +64,9 @@ PxMaterial*				gMaterial	= NULL;
 
 PxPvd*                  gPvd        = NULL;
 
+//创建控制器管理员
+PxControllerManager* manager = NULL;
+
 PxReal stackZ = 10.0f;
 
 
@@ -72,6 +79,9 @@ PxRigidDynamic*                         ballPig;
 
 const char* BirdName = "bird";
 const char* PigName = "pig";
+
+
+extern Snippets::Camera* sCamera;
 
 struct FilterGroup
 {
@@ -296,6 +306,135 @@ void createStack(const PxTransform& t, PxU32 size, PxReal halfExtent)
 	shape->release();
 }
 
+//自定义
+
+PxShape* shape;
+PxRigidDynamic* dynamicbody;
+PxRigidStatic* staticbody;
+PxTransform tm(0, 0, 0);
+
+///创建坐标轴
+///
+///
+void CreateCoordinateAxis(PxTransform origin,float xLength,float yLength, float zLength)
+{
+	shape = gPhysics->createShape(PxSphereGeometry(2), *gMaterial);
+	tm = origin;
+	staticbody = PxCreateStatic(*gPhysics, tm, *shape);
+	staticbody->attachShape(*shape);
+	gScene->addActor(*staticbody);
+
+	shape = gPhysics->createShape(PxBoxGeometry(xLength, 1, 1), *gMaterial);
+	tm = PxTransform(xLength, 0, 0);
+	staticbody = PxCreateStatic(*gPhysics, tm, *shape);
+	staticbody->attachShape(*shape);
+	gScene->addActor(*staticbody);
+
+	shape = gPhysics->createShape(PxBoxGeometry(1, yLength, 1), *gMaterial);
+	tm = PxTransform(0, yLength, 0);
+	staticbody = PxCreateStatic(*gPhysics, tm, *shape);
+	staticbody->attachShape(*shape);
+	gScene->addActor(*staticbody);
+
+	shape = gPhysics->createShape(PxBoxGeometry(1, 1, zLength), *gMaterial);
+	tm = PxTransform(0, 0, zLength);
+	staticbody = PxCreateStatic(*gPhysics, tm, *shape);
+	staticbody->attachShape(*shape);
+	gScene->addActor(*staticbody);
+}
+
+///生成链条
+///
+///
+PxJoint* createLimitedSpherical(PxRigidActor* a0, const PxTransform& t0, PxRigidActor* a1, const PxTransform& t1)
+{
+	PxSphericalJoint* j = PxSphericalJointCreate(*gPhysics, a0, t0, a1, t1);
+	j->setLimitCone(PxJointLimitCone(PxPi / 4, PxPi / 4, 0.05f));
+	j->setSphericalJointFlag(PxSphericalJointFlag::eLIMIT_ENABLED, true);
+	return j;
+}
+PxJoint* createBreakableFixed(PxRigidActor* a0, const PxTransform& t0, PxRigidActor* a1, const PxTransform& t1)
+{
+	PxFixedJoint* j = PxFixedJointCreate(*gPhysics, a0, t0, a1, t1);
+	j->setBreakForce(1000, 100000);
+	j->setConstraintFlag(PxConstraintFlag::eDRIVE_LIMITS_ARE_FORCES, true);
+	j->setConstraintFlag(PxConstraintFlag::eDISABLE_PREPROCESSING, true);
+	return j;
+}
+PxJoint* createDampedD6(PxRigidActor* a0, const PxTransform& t0, PxRigidActor* a1, const PxTransform& t1)
+{
+	PxD6Joint* j = PxD6JointCreate(*gPhysics, a0, t0, a1, t1);
+	j->setMotion(PxD6Axis::eSWING1, PxD6Motion::eFREE);
+	j->setMotion(PxD6Axis::eSWING2, PxD6Motion::eFREE);
+	j->setMotion(PxD6Axis::eTWIST, PxD6Motion::eFREE);
+	j->setDrive(PxD6Drive::eSLERP, PxD6JointDrive(0, 1000, FLT_MAX, true));
+	return j;
+}
+
+typedef PxJoint* (*JointCreateFunction)(PxRigidActor* a0, const PxTransform& t0, PxRigidActor* a1, const PxTransform& t1);
+
+void CreateChain(const PxTransform& t,PxU32 length,const PxGeometry& g,PxReal separation,JointCreateFunction createJoint)
+{
+	PxVec3 offset(separation / 2, 0, 0);
+	PxTransform localTm(offset);
+	PxRigidDynamic* prev = NULL;
+
+	for (PxU32 i = 0; i < length; i++)
+	{
+		PxRigidDynamic* current = PxCreateDynamic(*gPhysics, t * localTm, g, *gMaterial, 1.0f);
+		(*createJoint)(prev, prev ? PxTransform(offset) : t, current, PxTransform(-offset));
+		gScene->addActor(*current);
+		prev = current;
+		localTm.p.x += separation;
+	}
+}
+
+PxController* m_player;
+
+//创建角色控制器
+PxController* CreateCharacterController(PxExtendedVec3 initPos)
+{
+	manager = PxCreateControllerManager(*gScene);
+
+	PxCapsuleControllerDesc desc;
+
+	desc.material = gMaterial;
+	desc.position = initPos;
+	desc.radius = 2.0f;
+	desc.height = 4.0f;
+
+	//坡度限制
+	desc.slopeLimit = 0.7f;
+	desc.contactOffset = 0.1f;
+	desc.maxJumpHeight = 1.0f;
+	desc.stepOffset = 0.5f;
+
+	PxController* ctrl = manager->createController(desc);
+
+	
+	return ctrl;
+
+}
+
+InputSyetem m_inputSystem;
+CharacterActionMap characterMap;
+
+//自定义
+void MyCode()
+{
+	CreateCoordinateAxis(PxTransform(0,0,0),100,200,300);
+
+	CreateChain(PxTransform(PxVec3(0.0f, 20.0f, -10.0f)), 5, PxCapsuleGeometry(1.0f,1.0f), 4.0f, createBreakableFixed);
+	CreateChain(PxTransform(PxVec3(0.0f, 20.0f, -20.0f)), 5, PxBoxGeometry(2.0f, 0.5f, 0.5f), 4.0f, createDampedD6);
+
+	m_player = CreateCharacterController(PxExtendedVec3(5,50,5));
+
+	characterMap.SetController(m_player);
+	characterMap.SetCamera(sCamera);
+	characterMap.SetSpeed(0.1f);
+}
+
+
 //实例化物理
 void initPhysics(bool interactive)
 {
@@ -334,9 +473,9 @@ void initPhysics(bool interactive)
 	PxRigidStatic* groundPlane = PxCreatePlane(*gPhysics, PxPlane(0,1,0,0), *gMaterial);
 	gScene->addActor(*groundPlane);
 
-
-	for(PxU32 i=0;i<1;i++)
-		createStack(PxTransform(PxVec3(0,0,stackZ-=10.0f)), 1, 2.0f);
+	
+	///自定义
+	MyCode();
 
 	//if (不交互)，在render中把交互设成false就有一个默认的球滚过去撞击堆。
 	if(!interactive)
@@ -349,6 +488,32 @@ void stepPhysics(bool interactive)
 {
 	PX_UNUSED(interactive);
 	//时间
+
+	characterMap.InputAction();
+
+	//PxVec3 moveDirection(0,0,0);
+	//float speed=0.1f;
+	//if (GetAsyncKeyState(0x41))
+	//{
+	//	moveDirection+= (PxVec3(-1, 0, 0));
+	//}
+	//if (GetAsyncKeyState(0x44))
+	//{
+	//	moveDirection += (PxVec3(1, 0, 0));
+	//}
+	//if (GetAsyncKeyState(0x53))
+	//{
+	//	moveDirection += (PxVec3(0, 0, 1));
+	//}
+	//if (GetAsyncKeyState(0x57))
+	//{
+	//	moveDirection += (PxVec3(0, 0, -1));
+	//}
+
+
+	//m_player->move(PxVec3(0, -0.05f, 0)+moveDirection.getNormalized()*speed, 0.01f, 0.01f, NULL);
+
+
 	gScene->simulate(1.0f/60.0f);
 	gScene->fetchResults(true);
 }
@@ -377,7 +542,7 @@ void keyPress(unsigned char key, const PxTransform& camera)
 	{
 	case 'B':	createStack(PxTransform(PxVec3(0,0,stackZ-=10.0f)), 10, 2.0f);						break;
 	//PxSphereGeometry Transform,geometry,velocity（速度）
-	case ' ':	createDynamic(10,camera,camera.rotate(PxVec3(0,0,-1))*200);	break;
+	case ' ':	createDynamic(2,camera,camera.rotate(PxVec3(0,0,-1))*200);	break;
 	}
 }
 

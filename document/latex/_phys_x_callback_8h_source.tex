@@ -1,0 +1,119 @@
+\hypertarget{_phys_x_callback_8h_source}{}\doxysection{Phys\+XCallback.\+h}
+\label{_phys_x_callback_8h_source}\index{src/Common/PhysXCallback.h@{src/Common/PhysXCallback.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{1 \textcolor{preprocessor}{\#pragma once}}
+\DoxyCodeLine{2 }
+\DoxyCodeLine{3 \textcolor{preprocessor}{\#include "{}PxQueryReport.h"{}}}
+\DoxyCodeLine{4 \textcolor{preprocessor}{\#include "{}PxQueryFiltering.h"{}}}
+\DoxyCodeLine{5 \textcolor{preprocessor}{\#include "{}PxShape.h"{}}}
+\DoxyCodeLine{6 \textcolor{preprocessor}{\#include "{}PxRigidActor.h"{}}}
+\DoxyCodeLine{7 \textcolor{preprocessor}{\#include "{}PxFiltering.h"{}}}
+\DoxyCodeLine{8 }
+\DoxyCodeLine{9 \textcolor{comment}{//-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{10 \textcolor{comment}{// 这个保证与Morpheme系统保证兼容，只能做增量修改}}
+\DoxyCodeLine{11 \textcolor{comment}{//-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{12 \textcolor{keyword}{static} physx::PxFilterFlags defaultPhysX3FilterShader(}
+\DoxyCodeLine{13     physx::PxFilterObjectAttributes attributes0,}
+\DoxyCodeLine{14     physx::PxFilterData filterData0,}
+\DoxyCodeLine{15     physx::PxFilterObjectAttributes attributes1,}
+\DoxyCodeLine{16     physx::PxFilterData filterData1,}
+\DoxyCodeLine{17     physx::PxPairFlags \&pairFlags, }
+\DoxyCodeLine{18     \textcolor{keyword}{const} \textcolor{keywordtype}{void} * constantBlock ,}
+\DoxyCodeLine{19     physx::PxU32 constantBlockSize)}
+\DoxyCodeLine{20 \{}
+\DoxyCodeLine{21 \textcolor{comment}{// morphe me used filter callback}}
+\DoxyCodeLine{22     \textcolor{keywordtype}{bool} kinematic0 = physx::PxFilterObjectIsKinematic(attributes0);}
+\DoxyCodeLine{23     \textcolor{keywordtype}{bool} kinematic1 = physx::PxFilterObjectIsKinematic(attributes1);}
+\DoxyCodeLine{24     \textcolor{keywordflow}{if} (kinematic0 \&\& kinematic1)}
+\DoxyCodeLine{25     \{}
+\DoxyCodeLine{26         pairFlags = physx::PxPairFlags(); }
+\DoxyCodeLine{27         \textcolor{keywordflow}{return} physx::PxFilterFlag::eSUPPRESS;}
+\DoxyCodeLine{28     \}}
+\DoxyCodeLine{29 }
+\DoxyCodeLine{30     \textcolor{comment}{// Support the idea of this being called from a user's filter shader -\/ i.e. don't trample on existing flags}}
+\DoxyCodeLine{31     \textcolor{comment}{//pairFlags = physx::PxPairFlag::eSOLVE\_CONTACT}}
+\DoxyCodeLine{32     \textcolor{comment}{//  | physx::PxPairFlag::eNOTIFY\_TOUCH\_FOUND}}
+\DoxyCodeLine{33     \textcolor{comment}{//  | physx::PxPairFlag::eNOTIFY\_CONTACT\_POINTS;}}
+\DoxyCodeLine{34     pairFlags = physx::PxPairFlag::eCONTACT\_DEFAULT;}
+\DoxyCodeLine{35     pairFlags = pairFlags | physx::PxPairFlag::eSOLVE\_CONTACT}
+\DoxyCodeLine{36         | physx::PxPairFlag::eNOTIFY\_TOUCH\_FOUND}
+\DoxyCodeLine{37         | physx::PxPairFlag::eNOTIFY\_CONTACT\_POINTS;}
+\DoxyCodeLine{38 }
+\DoxyCodeLine{39     \{}
+\DoxyCodeLine{40         \textcolor{comment}{// now test groups (word0) against ignore groups (word1)}}
+\DoxyCodeLine{41         \textcolor{keywordflow}{if} ((filterData0.word0 \& filterData1.word1) || (filterData1.word0 \& filterData0.word1)) }
+\DoxyCodeLine{42         \{}
+\DoxyCodeLine{43             pairFlags = physx::PxPairFlags(); \textcolor{comment}{// disable all dynamic collisions}}
+\DoxyCodeLine{44             \textcolor{keywordflow}{return} physx::PxFilterFlag::eSUPPRESS; \textcolor{comment}{// this stops the pair being actually passed into ray probe onObjectQuery}}
+\DoxyCodeLine{45         \}}
+\DoxyCodeLine{46         \textcolor{keywordflow}{else}}
+\DoxyCodeLine{47         \{}
+\DoxyCodeLine{48             \textcolor{keywordflow}{return} physx::PxFilterFlag::eDEFAULT;}
+\DoxyCodeLine{49         \}}
+\DoxyCodeLine{50     \}}
+\DoxyCodeLine{51 \}}
+\DoxyCodeLine{52 \textcolor{comment}{//class CollisionNotifyHandler;}}
+\DoxyCodeLine{53 \textcolor{comment}{//class PhysXCollisionEventCallback : public PxSimulationEventCallback}}
+\DoxyCodeLine{54 \textcolor{comment}{//\{}}
+\DoxyCodeLine{55 \textcolor{comment}{//}}
+\DoxyCodeLine{56 \textcolor{comment}{//public:}}
+\DoxyCodeLine{57 \textcolor{comment}{//  PhysXCollisionEventCallback(ICollisionNotifyHandler* piCollisionEventsHandler);}}
+\DoxyCodeLine{58 \textcolor{comment}{//public:}}
+\DoxyCodeLine{59 \textcolor{comment}{//  virtual void                            onContact(const PxContactPairHeader\& pairHeader, const PxContactPair* pairs, PxU32 nbPairs);}}
+\DoxyCodeLine{60 \textcolor{comment}{//  virtual void                            onTrigger(PxTriggerPair* pairs, PxU32 count);}}
+\DoxyCodeLine{61 \textcolor{comment}{//  virtual void                            onConstraintBreak(PxConstraintInfo*, PxU32) \{\}}}
+\DoxyCodeLine{62 \textcolor{comment}{//  virtual void                            onWake(PxActor** , PxU32 ) \{\}}}
+\DoxyCodeLine{63 \textcolor{comment}{//  virtual void                            onSleep(PxActor** , PxU32 )\{\}}}
+\DoxyCodeLine{64 \textcolor{comment}{//private:}}
+\DoxyCodeLine{65 \textcolor{comment}{//  ICollisionNotifyHandler* m\_piCollisionEventsHandler;}}
+\DoxyCodeLine{66 \textcolor{comment}{//\};}}
+\DoxyCodeLine{67 \textcolor{comment}{//class PhysXRayCastCallback: public physx::PxRaycastBuffer}}
+\DoxyCodeLine{68 \textcolor{comment}{//\{}}
+\DoxyCodeLine{69 \textcolor{comment}{//}}
+\DoxyCodeLine{70 \textcolor{comment}{//public:}}
+\DoxyCodeLine{71 \textcolor{comment}{//  PhysXRayCastCallback(physx::PxRaycastHit* aTouches = NULL, physx::PxU32 aMaxNbTouches = 0);}}
+\DoxyCodeLine{72 \textcolor{comment}{//public:}}
+\DoxyCodeLine{73 \textcolor{comment}{//  virtual physx::PxAgain processTouches(const physx::PxRaycastHit* buffer, physx::PxU32 nbHits);}}
+\DoxyCodeLine{74 \textcolor{comment}{//\};}}
+\DoxyCodeLine{75 \textcolor{comment}{//}}
+\DoxyCodeLine{76 \textcolor{comment}{//class PhysXOverlapCallback: public physx::PxOverlapBuffer}}
+\DoxyCodeLine{77 \textcolor{comment}{//\{}}
+\DoxyCodeLine{78 \textcolor{comment}{//public:}}
+\DoxyCodeLine{79 \textcolor{comment}{//  PhysXOverlapCallback(physx::PxOverlapHit* aTouches = NULL, physx::PxU32 aMaxNbTouches = 0);}}
+\DoxyCodeLine{80 \textcolor{comment}{//public:}}
+\DoxyCodeLine{81 \textcolor{comment}{//  virtual physx::PxAgain processTouches(const physx::PxOverlapHit* buffer, physx::PxU32 nbHits);}}
+\DoxyCodeLine{82 \textcolor{comment}{//\};}}
+\DoxyCodeLine{83 \textcolor{comment}{//}}
+\DoxyCodeLine{84 \textcolor{comment}{//class PhysXSweepCallback: public physx::PxSweepBuffer}}
+\DoxyCodeLine{85 \textcolor{comment}{//\{}}
+\DoxyCodeLine{86 \textcolor{comment}{//public:}}
+\DoxyCodeLine{87 \textcolor{comment}{//  PhysXSweepCallback(physx::PxSweepHit* aTouches = NULL, physx::PxU32 aMaxNbTouches = 0);}}
+\DoxyCodeLine{88 \textcolor{comment}{//public:}}
+\DoxyCodeLine{89 \textcolor{comment}{//  virtual physx::PxAgain processTouches(const physx::PxSweepHit* buffer, physx::PxU32 nbHits);}}
+\DoxyCodeLine{90 \textcolor{comment}{//  }}
+\DoxyCodeLine{91 \textcolor{comment}{//  float time;}}
+\DoxyCodeLine{92 \textcolor{comment}{//\};}}
+\DoxyCodeLine{93 \textcolor{comment}{//}}
+\DoxyCodeLine{94 \textcolor{comment}{//class PhysXQueryFilterCallback : public physx::PxQueryFilterCallback}}
+\DoxyCodeLine{95 \textcolor{comment}{//\{}}
+\DoxyCodeLine{96 \textcolor{comment}{//public:}}
+\DoxyCodeLine{97 \textcolor{comment}{//  PhysXQueryFilterCallback();}}
+\DoxyCodeLine{98 \textcolor{comment}{//  PhysXQueryFilterCallback(const physx::PxFilterData\& queryFilterData, int32\_t ignoreID = -\/1);}}
+\DoxyCodeLine{99 \textcolor{comment}{//  virtual \string~PhysXQueryFilterCallback();}}
+\DoxyCodeLine{100 \textcolor{comment}{//}}
+\DoxyCodeLine{101 \textcolor{comment}{//protected:}}
+\DoxyCodeLine{102 \textcolor{comment}{//  physx::PxQueryHitType::Enum preFilter(}}
+\DoxyCodeLine{103 \textcolor{comment}{//      const physx::PxFilterData\& filterData, }}
+\DoxyCodeLine{104 \textcolor{comment}{//      const physx::PxShape* shape, }}
+\DoxyCodeLine{105 \textcolor{comment}{//      const physx::PxRigidActor* actor, }}
+\DoxyCodeLine{106 \textcolor{comment}{//      physx::PxHitFlags\& queryFlags);}}
+\DoxyCodeLine{107 \textcolor{comment}{//  physx::PxQueryHitType::Enum postFilter(}}
+\DoxyCodeLine{108 \textcolor{comment}{//      const physx::PxFilterData\& filterData, }}
+\DoxyCodeLine{109 \textcolor{comment}{//      const physx::PxQueryHit\& hit);}}
+\DoxyCodeLine{110 \textcolor{comment}{//protected:}}
+\DoxyCodeLine{111 \textcolor{comment}{//  physx::PxFilterData m\_queryFilterData;}}
+\DoxyCodeLine{112 \textcolor{comment}{//  int32\_t m\_ignoreID;}}
+\DoxyCodeLine{113 \textcolor{comment}{//\};}}
+
+\end{DoxyCode}
