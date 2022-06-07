@@ -27,13 +27,9 @@
 // Copyright (c) 2004-2008 AGEIA Technologies, Inc. All rights reserved.
 // Copyright (c) 2001-2004 NovodeX AG. All rights reserved.  
 
-#include<GLFW\glfw3.h>
 extern int snippetMain(int, const char*const*);
 
 int main(int argc, char** argv)
 {
-	//GLFWwindow* window;
-	//glfwInit();
-	//window = glfwCreateWindow(640, 480, "Hello World", NULL, NULL);
 	return snippetMain(argc, argv);
 }

@@ -132,12 +132,13 @@ void MouseEventCallBack()
 	}
 }
 
+//显示窗口
 void renderCallback()
 {
 	stepPhysics(true);
 
 
-	//输入事件
+	//相机跟随
 	PxVec3 pos = m_player->getPosition() - PxExtendedVec3(0, 0, 0);
 	sCamera->Update(pos);
 
@@ -163,6 +164,12 @@ void renderCallback()
 	gLastTime = gTime;
 
 	//std::cout << deltaTime;
+
+
+//#pragma region ImGui
+//	ImGui_ImplOpenGL3_NewFrame();
+//	ImGui_ImplGlfw_NewFrame();
+//#pragma endregion
 
 	
 }

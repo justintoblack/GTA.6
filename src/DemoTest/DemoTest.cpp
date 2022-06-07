@@ -312,6 +312,10 @@ PxShape* shape;
 PxRigidDynamic* dynamicbody;
 PxRigidStatic* staticbody;
 PxTransform tm(0, 0, 0);
+InputSyetem m_inputSystem;
+CharacterActionMap characterMap;
+
+
 
 ///创建坐标轴
 ///
@@ -411,13 +415,11 @@ PxController* CreateCharacterController(PxExtendedVec3 initPos)
 
 	PxController* ctrl = manager->createController(desc);
 
-	
 	return ctrl;
 
 }
 
-InputSyetem m_inputSystem;
-CharacterActionMap characterMap;
+
 
 //自定义
 void MyCode()
@@ -432,6 +434,7 @@ void MyCode()
 	characterMap.SetController(m_player);
 	characterMap.SetCamera(sCamera);
 	characterMap.SetSpeed(0.1f);
+
 }
 
 

@@ -34,12 +34,28 @@
     <ClCompile Include="..\..\src\InputSystem\InputSystem.cpp" />
     <ClCompile Include="..\..\src\Render\Camera.cpp" />
     <ClCompile Include="..\..\src\Render\Render.cpp" />
+    <ClCompile Include="Dependencies\imgui\imgui.cpp" />
+    <ClCompile Include="Dependencies\imgui\imgui_demo.cpp" />
+    <ClCompile Include="Dependencies\imgui\imgui_draw.cpp" />
+    <ClCompile Include="Dependencies\imgui\imgui_impl_glfw.cpp" />
+    <ClCompile Include="Dependencies\imgui\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="Dependencies\imgui\imgui_tables.cpp" />
+    <ClCompile Include="Dependencies\imgui\imgui_widgets.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\InputSystem\ActionMap.h" />
     <ClInclude Include="..\..\src\InputSystem\InputSystem.h" />
     <ClInclude Include="..\..\src\Render\Camera.h" />
     <ClInclude Include="..\..\src\Render\Render.h" />
+    <ClInclude Include="Dependencies\imgui\imconfig.h" />
+    <ClInclude Include="Dependencies\imgui\imgui.h" />
+    <ClInclude Include="Dependencies\imgui\imgui_impl_glfw.h" />
+    <ClInclude Include="Dependencies\imgui\imgui_impl_opengl3.h" />
+    <ClInclude Include="Dependencies\imgui\imgui_impl_opengl3_loader.h" />
+    <ClInclude Include="Dependencies\imgui\imgui_internal.h" />
+    <ClInclude Include="Dependencies\imgui\imstb_rectpack.h" />
+    <ClInclude Include="Dependencies\imgui\imstb_textedit.h" />
+    <ClInclude Include="Dependencies\imgui\imstb_truetype.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
@@ -143,10 +159,10 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\Graphics\include\win32\GL;E:\GameClass\PhysX-Tutorial-master\PxShared\include;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\Include;$(SolutionDir)Dependencies\GLFW\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\imgui;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\Graphics\include\win32\GL;E:\GameClass\PhysX-Tutorial-master\PxShared\include;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\Include;$(SolutionDir)Dependencies\GLFW\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\lib\vc16win64;E:\GameClass\PhysX-Tutorial-master\PxShared\lib\vc16win64;$(SolutionDIr)Dependencies\GLFW\lib-vc2019;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\Snippets\Graphics\lib\win64\glut</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)Dependencies\imgui;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\lib\vc16win64;E:\GameClass\PhysX-Tutorial-master\PxShared\lib\vc16win64;$(SolutionDIr)Dependencies\GLFW\lib-vc2019;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\Snippets\Graphics\lib\win64\glut</AdditionalLibraryDirectories>
       <AdditionalDependencies>glfw3_mt.lib;openGL32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -156,10 +172,10 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\Graphics\include\win32\GL;E:\GameClass\PhysX-Tutorial-master\PxShared\include;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\Include;$(SolutionDir)Dependencies\GLFW\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\imgui;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\Graphics\include\win32\GL;E:\GameClass\PhysX-Tutorial-master\PxShared\include;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\Include;$(SolutionDir)Dependencies\GLFW\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\lib\vc16win64;E:\GameClass\PhysX-Tutorial-master\PxShared\lib\vc16win64;$(SolutionDIr)Dependencies\GLFW\lib-vc2019;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\Snippets\Graphics\lib\win64\glut</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)Dependencies\imgui;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\lib\vc16win64;E:\GameClass\PhysX-Tutorial-master\PxShared\lib\vc16win64;$(SolutionDIr)Dependencies\GLFW\lib-vc2019;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\Snippets\Graphics\lib\win64\glut</AdditionalLibraryDirectories>
       <AdditionalDependencies>glfw3_mt.lib;openGL32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -170,11 +186,11 @@
       <SDLCheck>
       </SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\Graphics\include\win32\GL;E:\GameClass\PhysX-Tutorial-master\PxShared\include;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\Include;$(SolutionDir)Dependencies\GLFW\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\imgui;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\Graphics\include\win32\GL;E:\GameClass\PhysX-Tutorial-master\PxShared\include;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\Include;$(SolutionDir)Dependencies\GLFW\include</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\lib\vc16win64;E:\GameClass\PhysX-Tutorial-master\PxShared\lib\vc16win64;$(SolutionDIr)Dependencies\GLFW\lib-vc2019;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\Snippets\Graphics\lib\win64\glut</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)Dependencies\imgui;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\lib\vc16win64;E:\GameClass\PhysX-Tutorial-master\PxShared\lib\vc16win64;$(SolutionDIr)Dependencies\GLFW\lib-vc2019;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\Snippets\Graphics\lib\win64\glut</AdditionalLibraryDirectories>
       <AdditionalOptions>/LIBPATH:../../../Lib/vc16win64 PhysX3CommonDEBUG_x64.lib PhysX3DEBUG_x64.lib PhysX3CookingDEBUG_x64.lib PhysX3CharacterKinematicDEBUG_x64.lib PhysX3ExtensionsDEBUG.lib PhysX3VehicleDEBUG.lib PxTaskDEBUG_x64.lib PxFoundationDEBUG_x64.lib PsFastXmlDEBUG_x64.lib PxPvdSDKDEBUG_x64.lib /LIBPATH:../../lib/vc16win64 UtilsDEBUG.lib /DEBUG</AdditionalOptions>
       <AdditionalDependencies>glfw3_mt.lib;openGL32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
@@ -192,12 +208,12 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\Graphics\include\win32\GL;E:\GameClass\PhysX-Tutorial-master\PxShared\include;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\Include;$(SolutionDir)Dependencies\GLFW\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\imgui;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\Graphics\include\win32\GL;E:\GameClass\PhysX-Tutorial-master\PxShared\include;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\Include;$(SolutionDir)Dependencies\GLFW\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\lib\vc16win64;E:\GameClass\PhysX-Tutorial-master\PxShared\lib\vc16win64;$(SolutionDIr)Dependencies\GLFW\lib-vc2019;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\Snippets\Graphics\lib\win64\glut</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)Dependencies\imgui;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\lib\vc16win64;E:\GameClass\PhysX-Tutorial-master\PxShared\lib\vc16win64;$(SolutionDIr)Dependencies\GLFW\lib-vc2019;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\Snippets\Graphics\lib\win64\glut</AdditionalLibraryDirectories>
       <AdditionalDependencies>glfw3_mt.lib;openGL32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -209,12 +225,12 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\Graphics\include\win32\GL;E:\GameClass\PhysX-Tutorial-master\PxShared\include;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\Include;$(SolutionDir)Dependencies\GLFW\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\imgui;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\Graphics\include\win32\GL;E:\GameClass\PhysX-Tutorial-master\PxShared\include;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\Include;$(SolutionDir)Dependencies\GLFW\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\lib\vc16win64;E:\GameClass\PhysX-Tutorial-master\PxShared\lib\vc16win64;$(SolutionDIr)Dependencies\GLFW\lib-vc2019;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\Snippets\Graphics\lib\win64\glut</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)Dependencies\imgui;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\lib\vc16win64;E:\GameClass\PhysX-Tutorial-master\PxShared\lib\vc16win64;$(SolutionDIr)Dependencies\GLFW\lib-vc2019;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\Snippets\Graphics\lib\win64\glut</AdditionalLibraryDirectories>
       <AdditionalDependencies>glfw3_mt.lib;openGL32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -227,7 +243,7 @@
       <SDLCheck>
       </SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\Graphics\include\win32\GL;E:\GameClass\PhysX-Tutorial-master\PxShared\include;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\Include;$(SolutionDir)Dependencies\GLFW\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\imgui;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\Graphics\include\win32\GL;E:\GameClass\PhysX-Tutorial-master\PxShared\include;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\Include;$(SolutionDir)Dependencies\GLFW\include</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <PreprocessorDefinitions>_HAS_EXCEPTIONS=0;WIN32;WIN64;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;_WINSOCK_DEPRECATED_NO_WARNINGS;PHYSX_PROFILE_SDK;RENDER_SNIPPET;NDEBUG;PX_SUPPORT_PVD=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -235,7 +251,7 @@
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\lib\vc16win64;E:\GameClass\PhysX-Tutorial-master\PxShared\lib\vc16win64;$(SolutionDIr)Dependencies\GLFW\lib-vc2019;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\Snippets\Graphics\lib\win64\glut</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)Dependencies\imgui;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\lib\vc16win64;E:\GameClass\PhysX-Tutorial-master\PxShared\lib\vc16win64;$(SolutionDIr)Dependencies\GLFW\lib-vc2019;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\Snippets\Graphics\lib\win64\glut</AdditionalLibraryDirectories>
       <AdditionalOptions>/INCREMENTAL:NO /LIBPATH:../../../Lib/vc16win64 PhysX3Common_x64.lib PhysX3_x64.lib PhysX3Cooking_x64.lib PhysX3CharacterKinematic_x64.lib PhysX3Extensions.lib PhysX3Vehicle.lib PxTask_x64.lib PxFoundation_x64.lib PsFastXml_x64.lib PxPvdSDK_x64.lib /LIBPATH:../../lib/vc16win64 Utils.lib</AdditionalOptions>
       <AdditionalDependencies>glfw3_mt.lib;openGL32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>

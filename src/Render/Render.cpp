@@ -29,6 +29,7 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include "Render.h"
 
+
 using namespace physx;
 
 static float gCylinderData[]={
@@ -248,6 +249,7 @@ void setupDefaultWindow(const char *name)
 	int argc = 1;
 	char* argv[1] = { namestr };
 
+	
 	//初始化glut
 	glutInit(&argc, argv);
 	//显示模式
@@ -264,6 +266,24 @@ void setupDefaultWindow(const char *name)
 	glutReshapeFunc(reshapeCallback);
 	
 	delete[] namestr;
+
+//#pragma region GLFW
+//	GLFWwindow* window;
+//	glfwInit();
+//	window = glfwCreateWindow(640, 480, "Hello world", NULL, NULL);
+//#pragma endregion
+
+//#pragma region ImGui
+//
+//	//初始化ImGUI
+//	ImGui::CreateContext();
+//	ImGuiIO& io = ImGui::GetIO(); (void)io;
+//
+//	//主题颜色
+//	ImGui::StyleColorsDark();
+//	ImGui_ImplOpenGL3_Init();
+//
+//#pragma endregion
 }
 
 void setupDefaultRenderState()
@@ -298,6 +318,7 @@ void startRender(const PxVec3& cameraEye, const PxVec3& cameraDir, PxReal clipNe
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
+	//看向相机的方向
 	gluLookAt(GLdouble(cameraEye.x), GLdouble(cameraEye.y), GLdouble(cameraEye.z), GLdouble(cameraEye.x + cameraDir.x), GLdouble(cameraEye.y + cameraDir.y), GLdouble(cameraEye.z + cameraDir.z), 0.0, 1.0, 0.0);
 
 	glColor4f(0.4f, 0.4f, 0.4f, 1.0f);
