@@ -29,6 +29,13 @@
     <ClCompile Include="Dependencies\imgui\imgui_widgets.cpp">
       <Filter>imgui</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\SnippetVehicleCommon\SnippetVehicleTireFriction.cpp" />
+    <ClCompile Include="..\..\src\SnippetVehicleCommon\SnippetVehicleTankCreate.cpp" />
+    <ClCompile Include="..\..\src\SnippetVehicleCommon\SnippetVehicleSceneQuery.cpp" />
+    <ClCompile Include="..\..\src\SnippetVehicleCommon\SnippetVehicleNoDriveCreate.cpp" />
+    <ClCompile Include="..\..\src\SnippetVehicleCommon\SnippetVehicleFilterShader.cpp" />
+    <ClCompile Include="..\..\src\SnippetVehicleCommon\SnippetVehicleCreate.cpp" />
+    <ClCompile Include="..\..\src\SnippetVehicleCommon\SnippetVehicle4WCreate.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\InputSystem\ActionMap.h" />
@@ -62,6 +69,12 @@
     <ClInclude Include="Dependencies\imgui\imstb_truetype.h">
       <Filter>imgui</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\SnippetVehicleCommon\SnippetVehicleWheelQueryResult.h" />
+    <ClInclude Include="..\..\src\SnippetVehicleCommon\SnippetVehicleTireFriction.h" />
+    <ClInclude Include="..\..\src\SnippetVehicleCommon\SnippetVehicleSceneQuery.h" />
+    <ClInclude Include="..\..\src\SnippetVehicleCommon\SnippetVehicleFilterShader.h" />
+    <ClInclude Include="..\..\src\SnippetVehicleCommon\SnippetVehicleCreate.h" />
+    <ClInclude Include="..\..\src\SnippetVehicleCommon\SnippetVehicleConcurrency.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="imgui">

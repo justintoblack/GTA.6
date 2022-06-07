@@ -1,3 +1,0 @@
-﻿  Utils.cpp
-LINK : warning LNK4044: 无法识别的选项“/INCREMENTAL:NO”；已忽略
-  Utils.vcxproj -> E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\compiler\vc16win64\./../../lib/vc16win64\Utils.lib

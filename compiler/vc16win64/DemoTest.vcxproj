@@ -34,6 +34,13 @@
     <ClCompile Include="..\..\src\InputSystem\InputSystem.cpp" />
     <ClCompile Include="..\..\src\Render\Camera.cpp" />
     <ClCompile Include="..\..\src\Render\Render.cpp" />
+    <ClCompile Include="..\..\src\SnippetVehicleCommon\SnippetVehicle4WCreate.cpp" />
+    <ClCompile Include="..\..\src\SnippetVehicleCommon\SnippetVehicleCreate.cpp" />
+    <ClCompile Include="..\..\src\SnippetVehicleCommon\SnippetVehicleFilterShader.cpp" />
+    <ClCompile Include="..\..\src\SnippetVehicleCommon\SnippetVehicleNoDriveCreate.cpp" />
+    <ClCompile Include="..\..\src\SnippetVehicleCommon\SnippetVehicleSceneQuery.cpp" />
+    <ClCompile Include="..\..\src\SnippetVehicleCommon\SnippetVehicleTankCreate.cpp" />
+    <ClCompile Include="..\..\src\SnippetVehicleCommon\SnippetVehicleTireFriction.cpp" />
     <ClCompile Include="Dependencies\imgui\imgui.cpp" />
     <ClCompile Include="Dependencies\imgui\imgui_demo.cpp" />
     <ClCompile Include="Dependencies\imgui\imgui_draw.cpp" />
@@ -47,6 +54,12 @@
     <ClInclude Include="..\..\src\InputSystem\InputSystem.h" />
     <ClInclude Include="..\..\src\Render\Camera.h" />
     <ClInclude Include="..\..\src\Render\Render.h" />
+    <ClInclude Include="..\..\src\SnippetVehicleCommon\SnippetVehicleConcurrency.h" />
+    <ClInclude Include="..\..\src\SnippetVehicleCommon\SnippetVehicleCreate.h" />
+    <ClInclude Include="..\..\src\SnippetVehicleCommon\SnippetVehicleFilterShader.h" />
+    <ClInclude Include="..\..\src\SnippetVehicleCommon\SnippetVehicleSceneQuery.h" />
+    <ClInclude Include="..\..\src\SnippetVehicleCommon\SnippetVehicleTireFriction.h" />
+    <ClInclude Include="..\..\src\SnippetVehicleCommon\SnippetVehicleWheelQueryResult.h" />
     <ClInclude Include="Dependencies\imgui\imconfig.h" />
     <ClInclude Include="Dependencies\imgui\imgui.h" />
     <ClInclude Include="Dependencies\imgui\imgui_impl_glfw.h" />
@@ -134,24 +147,24 @@
     <OutDir>./../../../bin/vc16win64\</OutDir>
     <IntDir>./x64/GameDemo/debug\</IntDir>
     <TargetName>$(ProjectName)DEBUG</TargetName>
-    <LibraryPath>E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\compiler\vc16win64\Dependencies\GLFW\lib-vc2019;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\compiler\vc16win64\Dependencies\GLFW\include;$(LibraryPath)</LibraryPath>
+    <LibraryPath>D:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\compiler\vc16win64\Dependencies\GLFW\include\lib-vc2019;D:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\compiler\vc16win64\Dependencies\GLFW\include;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>./../../../bin/vc16win64\</OutDir>
     <IntDir>./x64/GameDemo/debug\</IntDir>
-    <LibraryPath>E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\compiler\vc16win64\Dependencies\GLFW\lib-vc2019;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\compiler\vc16win64\Dependencies\GLFW\include;$(LibraryPath)</LibraryPath>
+    <LibraryPath>D:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\compiler\vc16win64\Dependencies\GLFW\include\lib-vc2019;D:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\compiler\vc16win64\Dependencies\GLFW\include;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <LibraryPath>E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\compiler\vc16win64\Dependencies\GLFW\lib-vc2019;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\compiler\vc16win64\Dependencies\GLFW\include;$(LibraryPath)</LibraryPath>
+    <LibraryPath>D:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\compiler\vc16win64\Dependencies\GLFW\include\lib-vc2019;D:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\compiler\vc16win64\Dependencies\GLFW\include;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
-    <LibraryPath>E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\compiler\vc16win64\Dependencies\GLFW\lib-vc2019;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\compiler\vc16win64\Dependencies\GLFW\include;$(LibraryPath)</LibraryPath>
+    <LibraryPath>D:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\compiler\vc16win64\Dependencies\GLFW\include\lib-vc2019;D:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\compiler\vc16win64\Dependencies\GLFW\include;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <LibraryPath>E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\compiler\vc16win64\Dependencies\GLFW\lib-vc2019;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\compiler\vc16win64\Dependencies\GLFW\include;$(LibraryPath)</LibraryPath>
+    <LibraryPath>D:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\compiler\vc16win64\Dependencies\GLFW\include\lib-vc2019;D:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\compiler\vc16win64\Dependencies\GLFW\include;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
-    <LibraryPath>E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\compiler\vc16win64\Dependencies\GLFW\lib-vc2019;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\compiler\vc16win64\Dependencies\GLFW\include;$(LibraryPath)</LibraryPath>
+    <LibraryPath>D:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\compiler\vc16win64\Dependencies\GLFW\include\lib-vc2019;D:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\compiler\vc16win64\Dependencies\GLFW\include;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

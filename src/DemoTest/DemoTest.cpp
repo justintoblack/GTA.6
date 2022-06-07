@@ -49,7 +49,21 @@
 
 #include "../InputSystem/InputSystem.h"
 
+
+#include<time.h>
+#include <ctype.h>
+#include<iostream>
+#include "PxPhysicsAPI.h"
+#include<Windows.h>
+#include <vector>
+#include "vehicle/PxVehicleUtil.h"
+#include "../SnippetVehicleCommon/SnippetVehicleSceneQuery.h"
+#include "../SnippetVehicleCommon/SnippetVehicleFilterShader.h"
+#include "../SnippetVehicleCommon/SnippetVehicleTireFriction.h"
+#include "../SnippetVehicleCommon/SnippetVehicleCreate.h"
+
 using namespace physx;
+using namespace snippetvehicle;
 //默认的内存管理和错误报告器
 PxDefaultAllocator		gAllocator;
 PxDefaultErrorCallback	gErrorCallback;
@@ -61,13 +75,15 @@ PxDefaultCpuDispatcher*	gDispatcher = NULL;
 PxScene*				gScene		= NULL;
 
 PxMaterial*				gMaterial	= NULL;
-
+PxCooking* gCooking = NULL;
 PxPvd*                  gPvd        = NULL;
 
 //创建控制器管理员
 PxControllerManager* manager = NULL;
 
 PxReal stackZ = 10.0f;
+
+
 
 
 std::vector<PxRigidDynamic*>			ballToDispear;
@@ -94,6 +110,107 @@ struct FilterGroup
 		eHEIGHTFIELD = (1 << 4),
 	};
 };
+
+//车辆相关的全局变量
+
+VehicleSceneQueryData* gVehicleSceneQueryData = NULL;
+PxBatchQuery* gBatchQuery = NULL;
+
+PxVehicleDrivableSurfaceToTireFrictionPairs* gFrictionPairs = NULL;
+
+PxRigidStatic* gGroundPlane = NULL;
+PxVehicleDrive4W* gVehicle4W = NULL;
+
+bool					gIsVehicleInAir = true;
+
+PxF32 gSteerVsForwardSpeedData[2 * 8] =
+{
+	0.0f,		0.75f,
+	5.0f,		0.75f,
+	30.0f,		0.125f,
+	120.0f,		0.1f,
+	PX_MAX_F32, PX_MAX_F32,
+	PX_MAX_F32, PX_MAX_F32,
+	PX_MAX_F32, PX_MAX_F32,
+	PX_MAX_F32, PX_MAX_F32
+};
+PxFixedSizeLookupTable<8> gSteerVsForwardSpeedTable(gSteerVsForwardSpeedData, 4);
+
+PxVehicleKeySmoothingData gKeySmoothingData =
+{
+	{
+		6.0f,	//rise rate eANALOG_INPUT_ACCEL
+		6.0f,	//rise rate eANALOG_INPUT_BRAKE		
+		6.0f,	//rise rate eANALOG_INPUT_HANDBRAKE	
+		2.5f,	//rise rate eANALOG_INPUT_STEER_LEFT
+		2.5f,	//rise rate eANALOG_INPUT_STEER_RIGHT
+	},
+	{
+		10.0f,	//fall rate eANALOG_INPUT_ACCEL
+		10.0f,	//fall rate eANALOG_INPUT_BRAKE		
+		10.0f,	//fall rate eANALOG_INPUT_HANDBRAKE	
+		5.0f,	//fall rate eANALOG_INPUT_STEER_LEFT
+		5.0f	//fall rate eANALOG_INPUT_STEER_RIGHT
+	}
+};
+
+PxVehiclePadSmoothingData gPadSmoothingData =
+{
+	{
+		6.0f,	//rise rate eANALOG_INPUT_ACCEL
+		6.0f,	//rise rate eANALOG_INPUT_BRAKE		
+		6.0f,	//rise rate eANALOG_INPUT_HANDBRAKE	
+		2.5f,	//rise rate eANALOG_INPUT_STEER_LEFT
+		2.5f,	//rise rate eANALOG_INPUT_STEER_RIGHT
+	},
+	{
+		10.0f,	//fall rate eANALOG_INPUT_ACCEL
+		10.0f,	//fall rate eANALOG_INPUT_BRAKE		
+		10.0f,	//fall rate eANALOG_INPUT_HANDBRAKE	
+		5.0f,	//fall rate eANALOG_INPUT_STEER_LEFT
+		5.0f	//fall rate eANALOG_INPUT_STEER_RIGHT
+	}
+};
+
+PxVehicleDrive4WRawInputData gVehicleInputData;
+
+enum DriveMode
+{
+	eDRIVE_MODE_ACCEL_FORWARDS = 0,
+	eDRIVE_MODE_ACCEL_REVERSE,
+	eDRIVE_MODE_HARD_TURN_LEFT,
+	eDRIVE_MODE_HANDBRAKE_TURN_LEFT,
+	eDRIVE_MODE_HARD_TURN_RIGHT,
+	eDRIVE_MODE_HANDBRAKE_TURN_RIGHT,
+	eDRIVE_MODE_BRAKE,
+	eDRIVE_MODE_NONE
+};
+
+DriveMode gDriveModeOrder[] =
+{
+	eDRIVE_MODE_BRAKE,
+	eDRIVE_MODE_ACCEL_FORWARDS,
+	eDRIVE_MODE_BRAKE,
+	eDRIVE_MODE_ACCEL_REVERSE,
+	eDRIVE_MODE_BRAKE,
+	eDRIVE_MODE_HARD_TURN_LEFT,
+	eDRIVE_MODE_BRAKE,
+	eDRIVE_MODE_HARD_TURN_RIGHT,
+	eDRIVE_MODE_ACCEL_FORWARDS,
+	eDRIVE_MODE_HANDBRAKE_TURN_LEFT,
+	eDRIVE_MODE_ACCEL_FORWARDS,
+	eDRIVE_MODE_HANDBRAKE_TURN_RIGHT,
+	eDRIVE_MODE_NONE
+};
+
+PxF32					gVehicleModeLifetime = 4.0f;
+PxF32					gVehicleModeTimer = 0.0f;
+PxU32					gVehicleOrderProgress = 0;
+bool					gVehicleOrderComplete = false;
+bool					gMimicKeyInputs = false;
+
+
+
 
 
 void setupFiltering(PxShape* shape, PxU32 filterGroup, PxU32 filterMask)
@@ -419,6 +536,165 @@ PxController* CreateCharacterController(PxExtendedVec3 initPos)
 
 }
 
+//车辆相关的函数
+VehicleDesc initVehicleDesc()
+{
+	//Set up the chassis mass, dimensions, moment of inertia, and center of mass offset.
+	//The moment of inertia is just the moment of inertia of a cuboid but modified for easier steering.
+	//Center of mass offset is 0.65m above the base of the chassis and 0.25m towards the front.
+	const PxF32 chassisMass = 1500.0f;
+	const PxVec3 chassisDims(2.5f, 2.0f, 5.0f);
+	const PxVec3 chassisMOI
+	((chassisDims.y * chassisDims.y + chassisDims.z * chassisDims.z) * chassisMass / 12.0f,
+		(chassisDims.x * chassisDims.x + chassisDims.z * chassisDims.z) * 0.8f * chassisMass / 12.0f,
+		(chassisDims.x * chassisDims.x + chassisDims.y * chassisDims.y) * chassisMass / 12.0f);
+	const PxVec3 chassisCMOffset(0.0f, -chassisDims.y * 0.5f + 0.65f, 0.25f);
+
+	//Set up the wheel mass, radius, width, moment of inertia, and number of wheels.
+	//Moment of inertia is just the moment of inertia of a cylinder.
+	const PxF32 wheelMass = 20.0f;
+	const PxF32 wheelRadius = 0.5f;
+	const PxF32 wheelWidth = 0.4f;
+	const PxF32 wheelMOI = 0.5f * wheelMass * wheelRadius * wheelRadius;
+	const PxU32 nbWheels = 4;
+
+	VehicleDesc vehicleDesc;
+
+	vehicleDesc.chassisMass = chassisMass;
+	vehicleDesc.chassisDims = chassisDims;
+	vehicleDesc.chassisMOI = chassisMOI;
+	vehicleDesc.chassisCMOffset = chassisCMOffset;
+	vehicleDesc.chassisMaterial = gMaterial;
+	vehicleDesc.chassisSimFilterData = PxFilterData(COLLISION_FLAG_CHASSIS, COLLISION_FLAG_CHASSIS_AGAINST, 0, 0);
+
+	vehicleDesc.wheelMass = wheelMass;
+	vehicleDesc.wheelRadius = wheelRadius;
+	vehicleDesc.wheelWidth = wheelWidth;
+	vehicleDesc.wheelMOI = wheelMOI;
+	vehicleDesc.numWheels = nbWheels;
+	vehicleDesc.wheelMaterial = gMaterial;
+	vehicleDesc.chassisSimFilterData = PxFilterData(COLLISION_FLAG_WHEEL, COLLISION_FLAG_WHEEL_AGAINST, 0, 0);
+
+	return vehicleDesc;
+}
+
+void startAccelerateForwardsMode()
+{
+	if (gVehicle4W->mDriveDynData.getCurrentGear() == PxVehicleGearsData::eREVERSE)
+	{
+		gVehicle4W->mDriveDynData.forceGearChange(PxVehicleGearsData::eFIRST);
+	}
+
+	if (gMimicKeyInputs)
+	{
+		gVehicleInputData.setDigitalAccel(true);
+	}
+	else
+	{
+		gVehicleInputData.setAnalogAccel(1.0f);
+	}
+}
+
+void startAccelerateReverseMode()
+{
+	gVehicle4W->mDriveDynData.forceGearChange(PxVehicleGearsData::eREVERSE);
+
+	if (gMimicKeyInputs)
+	{
+		gVehicleInputData.setDigitalAccel(true);
+	}
+	else
+	{
+		gVehicleInputData.setAnalogAccel(1.0f);
+	}
+}
+
+void startBrakeMode()
+{
+	if (gMimicKeyInputs)
+	{
+		gVehicleInputData.setDigitalBrake(true);
+	}
+	else
+	{
+		gVehicleInputData.setAnalogBrake(1.0f);
+	}
+}
+
+void startTurnHardLeftMode()
+{
+	if (gMimicKeyInputs)
+	{
+		gVehicleInputData.setDigitalAccel(true);
+		gVehicleInputData.setDigitalSteerLeft(true);
+	}
+	else
+	{
+		//gVehicleInputData.setAnalogAccel(true);
+		gVehicleInputData.setAnalogSteer(-0.5f);
+	}
+}
+
+void startTurnHardRightMode()
+{
+	if (gMimicKeyInputs)
+	{
+		gVehicleInputData.setDigitalAccel(true);
+		gVehicleInputData.setDigitalSteerRight(true);
+	}
+	else
+	{
+		//gVehicleInputData.setAnalogAccel(1.0f);
+		gVehicleInputData.setAnalogSteer(0.5f);
+	}
+}
+
+void startHandbrakeTurnLeftMode()
+{
+	if (gMimicKeyInputs)
+	{
+		gVehicleInputData.setDigitalSteerLeft(true);
+		gVehicleInputData.setDigitalHandbrake(true);
+	}
+	else
+	{
+		gVehicleInputData.setAnalogSteer(-1.0f);
+		gVehicleInputData.setAnalogHandbrake(1.0f);
+	}
+}
+
+void startHandbrakeTurnRightMode()
+{
+	if (gMimicKeyInputs)
+	{
+		gVehicleInputData.setDigitalSteerRight(true);
+		gVehicleInputData.setDigitalHandbrake(true);
+	}
+	else
+	{
+		gVehicleInputData.setAnalogSteer(1.0f);
+		gVehicleInputData.setAnalogHandbrake(1.0f);
+	}
+}
+
+void releaseAllControls()
+{
+	if (gMimicKeyInputs)
+	{
+		gVehicleInputData.setDigitalAccel(false);
+		gVehicleInputData.setDigitalSteerLeft(false);
+		gVehicleInputData.setDigitalSteerRight(false);
+		gVehicleInputData.setDigitalBrake(false);
+		gVehicleInputData.setDigitalHandbrake(false);
+	}
+	else
+	{
+		gVehicleInputData.setAnalogAccel(0.0f);
+		gVehicleInputData.setAnalogSteer(0.0f);
+		gVehicleInputData.setAnalogBrake(0.0f);
+		gVehicleInputData.setAnalogHandbrake(0.0f);
+	}
+}
 
 
 //自定义
@@ -472,11 +748,49 @@ void initPhysics(bool interactive)
 	}
 	//静摩擦，动摩擦，restitution恢复原状(弹性)
 	gMaterial = gPhysics->createMaterial(0.5f, 0.5f, 0.0f);
+	gCooking = PxCreateCooking(PX_PHYSICS_VERSION, *gFoundation, PxCookingParams(PxTolerancesScale()));
 
 	PxRigidStatic* groundPlane = PxCreatePlane(*gPhysics, PxPlane(0,1,0,0), *gMaterial);
 	gScene->addActor(*groundPlane);
 
 	
+	/////////////////////////////////////////////创建车辆
+
+
+	PxInitVehicleSDK(*gPhysics);
+	PxVehicleSetBasisVectors(PxVec3(0, 1, 0), PxVec3(0, 0, 1));
+	PxVehicleSetUpdateMode(PxVehicleUpdateMode::eVELOCITY_CHANGE);
+
+	//Create the batched scene queries for the suspension raycasts.
+	gVehicleSceneQueryData = VehicleSceneQueryData::allocate(1, PX_MAX_NB_WHEELS, 1, 1, WheelSceneQueryPreFilterBlocking, NULL, gAllocator);
+	gBatchQuery = VehicleSceneQueryData::setUpBatchedSceneQuery(0, *gVehicleSceneQueryData, gScene);
+
+	//Create the friction table for each combination of tire and surface type.
+	gFrictionPairs = createFrictionPairs(gMaterial);
+
+	////Create a plane to drive on.
+	//PxFilterData groundPlaneSimFilterData(COLLISION_FLAG_GROUND, COLLISION_FLAG_GROUND_AGAINST, 0, 0);
+	//gGroundPlane = createDrivablePlane(groundPlaneSimFilterData, gMaterial, gPhysics);
+	//gScene->addActor(*gGroundPlane);
+
+	//Create a vehicle that will drive on the plane.
+	VehicleDesc vehicleDesc = initVehicleDesc();
+	gVehicle4W = createVehicle4W(vehicleDesc, gPhysics, gCooking);
+	PxTransform startTransform(PxVec3(30, (vehicleDesc.chassisDims.y * 0.5f + vehicleDesc.wheelRadius + 1.0f), 30), PxQuat(PxIdentity));
+	gVehicle4W->getRigidDynamicActor()->setGlobalPose(startTransform);
+	gScene->addActor(*gVehicle4W->getRigidDynamicActor());
+
+	//Set the vehicle to rest in first gear.
+	//Set the vehicle to use auto-gears.
+	gVehicle4W->setToRestState();
+	gVehicle4W->mDriveDynData.forceGearChange(PxVehicleGearsData::eFIRST);
+	gVehicle4W->mDriveDynData.setUseAutoGears(true);
+
+	gVehicleModeTimer = 0.0f;
+	gVehicleOrderProgress = 0;
+	startBrakeMode();
+
+	/////////////////////////////////////////////
 	///自定义
 	MyCode();
 
@@ -485,6 +799,32 @@ void initPhysics(bool interactive)
 		//PxSphereGeometry Transform,geometry,velocity（速度）
 		createDynamic(10,PxTransform(PxVec3(0,40,100)), PxVec3(0,-50,-100));
 }
+
+
+//控制车辆运动
+//void controlPress(unsigned char key)
+//{
+//	releaseAllControls();
+//	if (GetAsyncKeyState(VK_UP))
+//	{
+//		startAccelerateForwardsMode();
+//
+//	}
+//	if (GetAsyncKeyState(VK_DOWN))
+//	{
+//		startAccelerateReverseMode();
+//	}
+//	if (GetAsyncKeyState(VK_LEFT))
+//	{
+//		startTurnHardRightMode();
+//	}
+//	if (GetAsyncKeyState(VK_RIGHT))
+//	{
+//		startTurnHardLeftMode();
+//	}
+//
+//}
+
 
 //（在render中调用）
 void stepPhysics(bool interactive)
