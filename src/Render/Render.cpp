@@ -233,14 +233,57 @@ void renderGeometry(const PxGeometryHolder& h)
 
 namespace Snippets
 {
+	GLFWwindow* window;
 
 namespace
 {
+
+	//当窗口尺寸改变时调用的回调函数，重新绘制视口 glut
 void reshapeCallback(int width, int height)
 {
+	//控制视口的位置与尺寸
 	glViewport(0, 0, width, height);
 }
 }
+
+#pragma region GLFW
+void framebuffer_size_callback(GLFWwindow* window, int width, int height)
+{
+	glViewport(0, 0, width, height);
+}
+
+void processInput(GLFWwindow* window)
+{
+	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+	{
+		glfwSetWindowShouldClose(window, true);
+	}
+}
+void GLFWRender()
+{
+	while (!glfwWindowShouldClose(window))
+	{
+		//输入事件
+		processInput(window);
+
+		//渲染指令
+		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT);
+
+		setupDefaultRenderState();
+
+		//交换颜色缓冲
+		glfwSwapBuffers(window);
+		//检查触发事件
+		glfwPollEvents();
+
+	}
+	//释放分配的资源
+	glfwTerminate();
+}
+#pragma endregion
+
+
 
 void setupDefaultWindow(const char *name)
 {
@@ -263,15 +306,26 @@ void setupDefaultWindow(const char *name)
 	glutSetWindow(mainHandle);
 	glutFullScreen();
 
+	//渲染窗口尺寸和位置
 	glutReshapeFunc(reshapeCallback);
-	
 	delete[] namestr;
 
-//#pragma region GLFW
-//	GLFWwindow* window;
-//	glfwInit();
-//	window = glfwCreateWindow(640, 480, "Hello world", NULL, NULL);
-//#pragma endregion
+#pragma region GLFW
+	glfwInit();
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	window = glfwCreateWindow(640, 480, "Hello world", NULL, NULL);
+
+	glfwMakeContextCurrent(window);
+
+	glViewport(0, 0, 640, 480);
+
+	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+
+	GLFWRender();
+
+#pragma endregion
 
 //#pragma region ImGui
 //
@@ -285,6 +339,8 @@ void setupDefaultWindow(const char *name)
 //
 //#pragma endregion
 }
+
+
 
 void setupDefaultRenderState()
 {
