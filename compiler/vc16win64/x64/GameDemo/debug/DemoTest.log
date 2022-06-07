@@ -1,6 +1,24 @@
-﻿  Render.cpp
+﻿  ClassicMain.cpp
+  DemoTest.cpp
+  DemoTestRender.cpp
 F:\Windows Kits\10\Include\10.0.19041.0\shared\minwindef.h(130,1): warning C4005: “APIENTRY”: 宏重定义
 F:\Learning\mypt2\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\compiler\vc16win64\Dependencies\GLFW\include\GLFW\glfw3.h(123): message : 参见“APIENTRY”的前一个定义
+  ActionMap.cpp
+  InputSystem.cpp
+  Camera.cpp
+F:\Learning\mypt2\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\Render\Camera.cpp(105,25): warning C4305: “初始化”: 从“double”到“float”截断
+  Render.cpp
+F:\Windows Kits\10\Include\10.0.19041.0\shared\minwindef.h(130,1): warning C4005: “APIENTRY”: 宏重定义
+F:\Learning\mypt2\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\compiler\vc16win64\Dependencies\GLFW\include\GLFW\glfw3.h(123): message : 参见“APIENTRY”的前一个定义
+  imgui.cpp
+  imgui_demo.cpp
+  imgui_draw.cpp
+  imgui_impl_glfw.cpp
+  imgui_impl_opengl3.cpp
+  imgui_tables.cpp
+  imgui_widgets.cpp
+  正在生成代码...
+LINK : warning LNK4098: 默认库“LIBCMT”与其他库的使用冲突；请使用 /NODEFAULTLIB:library
   DemoTest.vcxproj -> F:\Learning\mypt2\PhysX-Tutorial-master\PhysX_3.4\bin\vc16win64\DemoTestDEBUG.exe
   复制了 0 个文件
   复制了 0 个文件
