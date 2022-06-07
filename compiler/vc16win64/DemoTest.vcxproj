@@ -34,6 +34,7 @@
     <ClCompile Include="..\..\src\InputSystem\InputSystem.cpp" />
     <ClCompile Include="..\..\src\Render\Camera.cpp" />
     <ClCompile Include="..\..\src\Render\Render.cpp" />
+    <ClCompile Include="..\..\src\Render\StbImageImpl.cpp" />
     <ClCompile Include="..\..\src\SnippetVehicleCommon\SnippetVehicle4WCreate.cpp" />
     <ClCompile Include="..\..\src\SnippetVehicleCommon\SnippetVehicleCreate.cpp" />
     <ClCompile Include="..\..\src\SnippetVehicleCommon\SnippetVehicleFilterShader.cpp" />
@@ -54,6 +55,8 @@
     <ClInclude Include="..\..\src\InputSystem\InputSystem.h" />
     <ClInclude Include="..\..\src\Render\Camera.h" />
     <ClInclude Include="..\..\src\Render\Render.h" />
+    <ClInclude Include="..\..\src\Render\Shader.h" />
+    <ClInclude Include="..\..\src\Render\stb_image.h" />
     <ClInclude Include="..\..\src\SnippetVehicleCommon\SnippetVehicleConcurrency.h" />
     <ClInclude Include="..\..\src\SnippetVehicleCommon\SnippetVehicleCreate.h" />
     <ClInclude Include="..\..\src\SnippetVehicleCommon\SnippetVehicleFilterShader.h" />
@@ -69,6 +72,10 @@
     <ClInclude Include="Dependencies\imgui\imstb_rectpack.h" />
     <ClInclude Include="Dependencies\imgui\imstb_textedit.h" />
     <ClInclude Include="Dependencies\imgui\imstb_truetype.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\src\Render\SkyBox.fs" />
+    <None Include="..\..\src\Render\SkyBox.vs" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
@@ -199,13 +206,13 @@
       <SDLCheck>
       </SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\imgui;$(SolutionDir)..\..\..\..\..\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\Graphics\include\win32\GL;$(SolutionDir)..\..\..\..\..\PhysX-Tutorial-master\PxShared\include;$(SolutionDir)..\..\..\..\..\PhysX-Tutorial-master\PhysX_3.4\Include;$(SolutionDir)Dependencies\GLFW\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\imgui;$(SolutionDir)..\..\..\..\..\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\Graphics\include\win32\GL;$(SolutionDir)..\..\..\..\..\PhysX-Tutorial-master\PxShared\include;$(SolutionDir)..\..\..\..\..\PhysX-Tutorial-master\PhysX_3.4\Include;$(SolutionDir)Dependencies\GLFW\include;$(SolutionDir)..\..\..\..\..\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\Render;$(SolutionDir)..\..\..\..\..\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\include</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>$(SolutionDir)Dependencies\imgui;$(SolutionDir)..\..\..\..\..\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\lib\vc16win64;$(SolutionDir)..\..\..\..\..\PhysX-Tutorial-master\PxShared\lib\vc16win64;$(SolutionDIr)Dependencies\GLFW\lib-vc2019;$(SolutionDir)..\..\..\..\..\PhysX-Tutorial-master\PhysX_3.4\Snippets\Graphics\lib\win64\glut</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)Dependencies\imgui;$(SolutionDir)..\..\..\..\..\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\lib\vc16win64;$(SolutionDir)..\..\..\..\..\PhysX-Tutorial-master\PxShared\lib\vc16win64;$(SolutionDIr)Dependencies\GLFW\lib-vc2019;$(SolutionDir)..\..\..\..\..\PhysX-Tutorial-master\PhysX_3.4\Snippets\Graphics\lib\win64\glut;$(SolutionDir)..\..\..\..\..\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\glew-2.1.0\lib\Release\x64</AdditionalLibraryDirectories>
       <AdditionalOptions>/LIBPATH:../../../Lib/vc16win64 PhysX3CommonDEBUG_x64.lib PhysX3DEBUG_x64.lib PhysX3CookingDEBUG_x64.lib PhysX3CharacterKinematicDEBUG_x64.lib PhysX3ExtensionsDEBUG.lib PhysX3VehicleDEBUG.lib PxTaskDEBUG_x64.lib PxFoundationDEBUG_x64.lib PsFastXmlDEBUG_x64.lib PxPvdSDKDEBUG_x64.lib /LIBPATH:../../lib/vc16win64 UtilsDEBUG.lib /DEBUG</AdditionalOptions>
-      <AdditionalDependencies>glfw3_mt.lib;openGL32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>glfw3_mt.lib;openGL32.lib;glew32s.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>XCOPY "../../../../PxShared/bin\vc16win64\PxFoundationDEBUG_x64.dll" "$(OutDir)" /D /Y

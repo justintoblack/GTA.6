@@ -36,6 +36,7 @@
     <ClCompile Include="..\..\src\SnippetVehicleCommon\SnippetVehicleFilterShader.cpp" />
     <ClCompile Include="..\..\src\SnippetVehicleCommon\SnippetVehicleCreate.cpp" />
     <ClCompile Include="..\..\src\SnippetVehicleCommon\SnippetVehicle4WCreate.cpp" />
+    <ClCompile Include="..\..\src\Render\StbImageImpl.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\InputSystem\ActionMap.h" />
@@ -75,10 +76,16 @@
     <ClInclude Include="..\..\src\SnippetVehicleCommon\SnippetVehicleFilterShader.h" />
     <ClInclude Include="..\..\src\SnippetVehicleCommon\SnippetVehicleCreate.h" />
     <ClInclude Include="..\..\src\SnippetVehicleCommon\SnippetVehicleConcurrency.h" />
+    <ClInclude Include="..\..\src\Render\Shader.h" />
+    <ClInclude Include="..\..\src\Render\stb_image.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="imgui">
       <UniqueIdentifier>{6d9b5210-00f5-4be0-9486-f44381f2c940}</UniqueIdentifier>
     </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\src\Render\SkyBox.fs" />
+    <None Include="..\..\src\Render\SkyBox.vs" />
   </ItemGroup>
 </Project>

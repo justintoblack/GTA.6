@@ -28,14 +28,68 @@
 // Copyright (c) 2001-2004 NovodeX AG. All rights reserved.  
 #define RENDER_SNIPPET 1
 #ifdef RENDER_SNIPPET
+#define GLEW_STATIC
 
 #include <vector>
 
+#include <GL/glew.h>
+#include "stb_image.h"
 #include "PxPhysicsAPI.h"
 
+#include "Shader.h"
 #include "../Render/Render.h"
 #include "../Render/Camera.h"
 #include<iostream>
+
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
+GLuint              gCubeTexture;
+Shader				gSkyboxShader;
+unsigned int		gSkyboxVAO, gSkyboxVBO;
+
+//天空盒六个面的纹理图片
+const char* gSkyboxFaces[6] = {
+	"../../assets/SkyboxImages/right.jpg",
+	"../../assets/SkyboxImages/left.jpg",
+	"../../assets/SkyboxImages/top.jpg",
+	"../../assets/SkyboxImages/bottom.jpg",
+	"../../assets/SkyboxImages/front.jpg",
+	"../../assets/SkyboxImages/back.jpg"
+};
+
+//天空盒六个方向
+const GLenum  CUBEMAP_DIRECTION[6] = {
+	GL_TEXTURE_CUBE_MAP_POSITIVE_X,
+	GL_TEXTURE_CUBE_MAP_NEGATIVE_X,
+	GL_TEXTURE_CUBE_MAP_POSITIVE_Y,
+	GL_TEXTURE_CUBE_MAP_NEGATIVE_Y,
+	GL_TEXTURE_CUBE_MAP_POSITIVE_Z,
+	GL_TEXTURE_CUBE_MAP_NEGATIVE_Z
+};
+
+//天空盒六个面的顶点
+float gSkyboxVertices[] = {
+	//right
+	1.0f, -1.0f, -1.0f,		1.0f, -1.0f, 1.0f,		1.0f,  1.0f,  1.0f,
+	1.0f,  1.0f,  1.0f,		1.0f,  1.0f, -1.0f,		1.0f, -1.0f, -1.0f,
+	//left
+	-1.0f, -1.0f,  1.0f,	-1.0f, -1.0f, -1.0f,	-1.0f,  1.0f, -1.0f,
+	-1.0f,  1.0f, -1.0f,	-1.0f,  1.0f,  1.0f,	-1.0f, -1.0f,  1.0f,
+	//top
+	-1.0f,  1.0f, -1.0f,	1.0f,  1.0f, -1.0f,		1.0f,  1.0f,  1.0f,
+	1.0f,  1.0f,  1.0f,		-1.0f,  1.0f,  1.0f,	-1.0f,  1.0f, -1.0f,
+	//bottom
+	-1.0f, -1.0f,  1.0f,	1.0f, -1.0f,  1.0f,		1.0f, -1.0f, -1.0f,
+	1.0f, -1.0f, -1.0f,		-1.0f, -1.0f, -1.0f,	-1.0f, -1.0f,  1.0f,
+	//back
+	1.0f, -1.0f,  1.0f,		-1.0f, -1.0f,  1.0f,	-1.0f,  1.0f,  1.0f,
+	-1.0f, 1.0f,  1.0f,		1.0f,  1.0f,  1.0f,		1.0f,  -1.0f,  1.0f,
+	//front
+	-1.0f, -1.0f, -1.0f,	1.0f, -1.0f, -1.0f,		1.0f,  1.0f, -1.0f,
+	1.0f,  1.0f, -1.0f,		-1.0f,  1.0f, -1.0f,	-1.0f, -1.0f, -1.0f
+};
 
 using namespace physx;
 
@@ -132,18 +186,47 @@ void MouseEventCallBack()
 	}
 }
 
+void RenderSkybox(void)
+{
+	glDepthMask(GL_FALSE);
+	gSkyboxShader.use();
+
+	glm::mat4 projectionMat = glm::perspective(45.0f, (float)glutGet(GLUT_WINDOW_WIDTH) / (float)glutGet(GLUT_WINDOW_HEIGHT), 0.1f, 1000.0f);
+
+	PxVec3 cameraPos = sCamera->getEye();
+	PxVec3 cameraDir = sCamera->getDir();
+	PxVec3 cameraUp = PxVec3(0.0f, 1.0f, 0.0f);
+	PxVec3 center = (cameraPos.operator+(cameraDir));
+	glm::mat4 viewMat = glm::lookAt(glm::vec3(cameraPos.x, cameraPos.y, cameraPos.z),
+		glm::vec3(center.x, center.y, center.z),
+		glm::vec3(cameraUp.x, cameraUp.y, cameraUp.z));
+	viewMat = glm::mat4(glm::mat3(viewMat));
+	glUniformMatrix4fv(glGetUniformLocation(gSkyboxShader.ID, "projection"), 1, GL_FALSE, glm::value_ptr(projectionMat));
+	glUniformMatrix4fv(glGetUniformLocation(gSkyboxShader.ID, "view"), 1, GL_FALSE, glm::value_ptr(viewMat));
+	//glUniformMatrix4fv(glGetUniformLocation(skyBoxShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(modelMat));
+
+	glBindVertexArray(gSkyboxVAO);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, gCubeTexture);
+	glDrawArrays(GL_TRIANGLES, 0, 36);
+	glBindVertexArray(0);
+	/*漏掉这句后，胶囊体变为两颗小球，胶囊体中间的圆柱体不见了*/
+	glDeleteBuffers(1, &gSkyboxVBO);
+	glDepthMask(GL_TRUE);
+	glUseProgram(0);
+}
+
 //显示窗口
 void renderCallback()
 {
 	stepPhysics(true);
-
 
 	//相机跟随
 	PxVec3 pos = m_player->getPosition() - PxExtendedVec3(0, 0, 0);
 	sCamera->Update(pos);
 
 	Snippets::startRender(sCamera->getEye(), sCamera->getDir());
-
+	RenderSkybox();
 	PxScene* scene;
 	PxGetPhysics().getScenes(&scene,1);
 
@@ -174,6 +257,71 @@ void exitCallback(void)
 	delete sCamera;
 	cleanupPhysics(true);
 }
+
+void SetupSkybox()
+{
+	//开启深度测试
+	glEnable(GL_DEPTH_TEST);
+	//glDepthFunc(GL_LEQUAL);
+
+	//加载SHADER
+	gSkyboxShader =
+		Shader("../../src/Render/SkyBox.vs",
+			"../../src/Render/SkyBox.fs");
+
+	// 天空盒 VAO
+
+	glGenVertexArrays(1, &gSkyboxVAO);
+	glGenBuffers(1, &gSkyboxVBO);
+	glBindVertexArray(gSkyboxVAO);
+	glBindBuffer(GL_ARRAY_BUFFER, gSkyboxVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(gSkyboxVertices), &gSkyboxVertices, GL_STATIC_DRAW);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glBindVertexArray(0);
+
+	int width, height, nrChannels;
+
+	// 禁用多边形背面上的光照、阴影和颜色计算及操作
+	glCullFace(GL_BACK);
+	//GL_CCW 表示窗口坐标上投影多边形的顶点顺序为逆时针方向的表面为正面
+	glFrontFace(GL_CCW);
+	//开启深度测试
+	glEnable(GL_DEPTH_TEST);
+	// 创建纹理对象
+	glGenTextures(1, &gCubeTexture);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, gCubeTexture);
+
+	// 设置纹理过滤模式
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	//设置纹理渲染模式
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+	//设置数据内存对齐方式
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+	//加载纹理图片
+	for (GLuint i = 0; i < 6; i++)
+	{
+		unsigned char* data = stbi_load(gSkyboxFaces[i], &width, &height, &nrChannels, 0);
+		if (data)
+		{
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB,
+				width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+		}
+		else
+		{
+			std::cout << "Failed to load : " << gSkyboxFaces[i] << std::endl;
+		}
+		stbi_image_free(data);
+	}
+
+	//开启mip贴图
+	glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
+}
+
 }
 
 
@@ -191,6 +339,9 @@ void renderLoop()
 
 	Snippets::setupDefaultWindow("PhysX Demo");
 	Snippets::setupDefaultRenderState();
+	glewInit();
+	SetupSkybox();
+
 
 	glutIdleFunc(idleCallback);
 	glutDisplayFunc(renderCallback);
