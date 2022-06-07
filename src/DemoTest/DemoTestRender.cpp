@@ -165,20 +165,6 @@ void renderCallback()
 
 	//std::cout << deltaTime;
 
-//#pragma region GLFW
-//
-//	if (!glfwWindowShouldClose)
-//	{
-//		glfwSwapBuffers(window);
-//	}
-//#pragma endregion
-
-
-
-//#pragma region ImGui
-//	ImGui_ImplOpenGL3_NewFrame();
-//	ImGui_ImplGlfw_NewFrame();
-//#pragma endregion
 
 	
 }
