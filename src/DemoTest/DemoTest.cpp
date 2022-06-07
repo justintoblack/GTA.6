@@ -768,10 +768,10 @@ void initPhysics(bool interactive)
 	//Create the friction table for each combination of tire and surface type.
 	gFrictionPairs = createFrictionPairs(gMaterial);
 
-	////Create a plane to drive on.
-	//PxFilterData groundPlaneSimFilterData(COLLISION_FLAG_GROUND, COLLISION_FLAG_GROUND_AGAINST, 0, 0);
-	//gGroundPlane = createDrivablePlane(groundPlaneSimFilterData, gMaterial, gPhysics);
-	//gScene->addActor(*gGroundPlane);
+	//Create a plane to drive on.
+	PxFilterData groundPlaneSimFilterData(COLLISION_FLAG_GROUND, COLLISION_FLAG_GROUND_AGAINST, 0, 0);
+	gGroundPlane = createDrivablePlane(groundPlaneSimFilterData, gMaterial, gPhysics);
+	gScene->addActor(*gGroundPlane);
 
 	//Create a vehicle that will drive on the plane.
 	VehicleDesc vehicleDesc = initVehicleDesc();
@@ -802,28 +802,28 @@ void initPhysics(bool interactive)
 
 
 //控制车辆运动
-//void controlPress(unsigned char key)
-//{
-//	releaseAllControls();
-//	if (GetAsyncKeyState(VK_UP))
-//	{
-//		startAccelerateForwardsMode();
-//
-//	}
-//	if (GetAsyncKeyState(VK_DOWN))
-//	{
-//		startAccelerateReverseMode();
-//	}
-//	if (GetAsyncKeyState(VK_LEFT))
-//	{
-//		startTurnHardRightMode();
-//	}
-//	if (GetAsyncKeyState(VK_RIGHT))
-//	{
-//		startTurnHardLeftMode();
-//	}
-//
-//}
+void controlPress()
+{
+	releaseAllControls();
+	if (GetAsyncKeyState(VK_UP))
+	{
+		startAccelerateForwardsMode();
+
+	}
+	if (GetAsyncKeyState(VK_DOWN))
+	{
+		startAccelerateReverseMode();
+	}
+	if (GetAsyncKeyState(VK_LEFT))
+	{
+		startTurnHardRightMode();
+	}
+	if (GetAsyncKeyState(VK_RIGHT))
+	{
+		startTurnHardLeftMode();
+	}
+
+}
 
 
 //（在render中调用）
@@ -856,6 +856,31 @@ void stepPhysics(bool interactive)
 
 	//m_player->move(PxVec3(0, -0.05f, 0)+moveDirection.getNormalized()*speed, 0.01f, 0.01f, NULL);
 
+	controlPress();
+	const PxF32 timestep = 1.0f / 60.0f;
+	if (gMimicKeyInputs)
+	{
+		PxVehicleDrive4WSmoothDigitalRawInputsAndSetAnalogInputs(gKeySmoothingData, gSteerVsForwardSpeedTable, gVehicleInputData, timestep, gIsVehicleInAir, *gVehicle4W);
+	}
+	else
+	{
+		PxVehicleDrive4WSmoothAnalogRawInputsAndSetAnalogInputs(gPadSmoothingData, gSteerVsForwardSpeedTable, gVehicleInputData, timestep, gIsVehicleInAir, *gVehicle4W);
+	}
+
+	//Raycasts.
+	PxVehicleWheels* vehicles[1] = { gVehicle4W };
+	PxRaycastQueryResult* raycastResults = gVehicleSceneQueryData->getRaycastQueryResultBuffer(0);
+	const PxU32 raycastResultsSize = gVehicleSceneQueryData->getQueryResultBufferSize();
+	PxVehicleSuspensionRaycasts(gBatchQuery, 1, vehicles, raycastResultsSize, raycastResults);
+
+	//Vehicle update.
+	const PxVec3 grav = gScene->getGravity();
+	PxWheelQueryResult wheelQueryResults[PX_MAX_NB_WHEELS];
+	PxVehicleWheelQueryResult vehicleQueryResults[1] = { {wheelQueryResults, gVehicle4W->mWheelsSimData.getNbWheels()} };
+	PxVehicleUpdates(timestep, grav, *gFrictionPairs, 1, vehicles, vehicleQueryResults);
+
+	//Work out if the vehicle is in the air.
+	gIsVehicleInAir = gVehicle4W->getRigidDynamicActor()->isSleeping() ? false : PxVehicleIsInAir(vehicleQueryResults[0]);
 
 	gScene->simulate(1.0f/60.0f);
 	gScene->fetchResults(true);
