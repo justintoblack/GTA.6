@@ -9,7 +9,9 @@ class InputSyetem
 private:
 	ActionMap* m_actionMap;
 public:
+	bool isVehicle;
 	void InputAction();
-	void SetActionMap(ActionMap newMap);
+	void SetCharacterMap(CharacterActionMap &newMap);
+	void SetVehicleMap(VehicleActionMap &newMap);
 };
 #endif // !_INPUTSYSTEM_H

@@ -44,6 +44,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include "../InputSystem/InputSystem.h"
 
 GLuint              gCubeTexture;
 Shader				gSkyboxShader;
@@ -102,6 +103,7 @@ static __int64 gTime, gLastTime;
 __int64 freq;
 PxReal deltaTime;
 extern PxController* m_player;
+extern InputSyetem inputSystem;
 
 Snippets::Camera*	sCamera;
 
@@ -220,10 +222,6 @@ void RenderSkybox(void)
 void renderCallback()
 {
 	stepPhysics(true);
-
-	//Ïà»ú¸úËæ
-	PxVec3 pos = m_player->getPosition() - PxExtendedVec3(0, 0, 0);
-	sCamera->Update(pos);
 
 	Snippets::startRender(sCamera->getEye(), sCamera->getDir());
 	RenderSkybox();

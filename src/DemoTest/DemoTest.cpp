@@ -99,6 +99,48 @@ const char* PigName = "pig";
 
 extern Snippets::Camera* sCamera;
 
+InputSyetem inputSystem;
+CharacterActionMap characterMap;
+VehicleActionMap vehicleMap;
+
+//相机跟随位置
+PxVec3 characterPos;
+PxVec3 vehiclePos;
+PxVec3* CameraFollowTarget;
+
+#pragma region 全局按键事件
+bool isQKeyDown;
+void GlobalKeyEvent()
+{
+	if (GetAsyncKeyState('Q'))
+	{
+		if (!isQKeyDown)
+		{
+			isQKeyDown = true;
+			if (inputSystem.isVehicle)
+			{
+				inputSystem.SetCharacterMap(characterMap);
+				CameraFollowTarget = &characterPos;
+				inputSystem.isVehicle = false;
+			}
+			else
+			{
+				inputSystem.SetVehicleMap(vehicleMap);
+				CameraFollowTarget = &vehiclePos;
+				inputSystem.isVehicle = true;
+			}
+		}
+	}
+	else
+	{
+		isQKeyDown = false;
+	}
+}
+
+#pragma endregion
+
+
+
 struct FilterGroup
 {
 	enum Enum
@@ -429,8 +471,7 @@ PxShape* shape;
 PxRigidDynamic* dynamicbody;
 PxRigidStatic* staticbody;
 PxTransform tm(0, 0, 0);
-InputSyetem m_inputSystem;
-CharacterActionMap characterMap;
+
 
 
 
@@ -703,14 +744,20 @@ void MyCode()
 	CreateCoordinateAxis(PxTransform(0,0,0),100,200,300);
 
 	CreateChain(PxTransform(PxVec3(0.0f, 20.0f, -10.0f)), 5, PxCapsuleGeometry(1.0f,1.0f), 4.0f, createBreakableFixed);
-	CreateChain(PxTransform(PxVec3(0.0f, 20.0f, -20.0f)), 5, PxBoxGeometry(2.0f, 0.5f, 0.5f), 4.0f, createDampedD6);
+	CreateChain(PxTransform(PxVec3(0.0f, 25.0f, -20.0f)), 5, PxBoxGeometry(2.0f, 0.5f, 0.5f), 4.0f, createDampedD6);
 
 	m_player = CreateCharacterController(PxExtendedVec3(5,50,5));
+	characterMap.SetActionMap(m_player, sCamera, 0.1f);
 
-	characterMap.SetController(m_player);
-	characterMap.SetCamera(sCamera);
-	characterMap.SetSpeed(0.1f);
+	//函数注册
+	vehicleMap.release = releaseAllControls;
+	vehicleMap.WKeyEvent = startAccelerateForwardsMode;
+	vehicleMap.SKeyEvent = startAccelerateReverseMode;
+	vehicleMap.AKeyEvent = startTurnHardRightMode;
+	vehicleMap.DKeyEvent = startTurnHardLeftMode;
 
+	inputSystem.SetCharacterMap(characterMap);
+	CameraFollowTarget = &characterPos;
 }
 
 
@@ -801,62 +848,16 @@ void initPhysics(bool interactive)
 }
 
 
-//控制车辆运动
-void controlPress()
-{
-	releaseAllControls();
-	if (GetAsyncKeyState(VK_UP))
-	{
-		startAccelerateForwardsMode();
-
-	}
-	if (GetAsyncKeyState(VK_DOWN))
-	{
-		startAccelerateReverseMode();
-	}
-	if (GetAsyncKeyState(VK_LEFT))
-	{
-		startTurnHardRightMode();
-	}
-	if (GetAsyncKeyState(VK_RIGHT))
-	{
-		startTurnHardLeftMode();
-	}
-
-}
-
-
 //（在render中调用）
 void stepPhysics(bool interactive)
 {
 	PX_UNUSED(interactive);
 	//时间
 
-	characterMap.InputAction();
-
-	//PxVec3 moveDirection(0,0,0);
-	//float speed=0.1f;
-	//if (GetAsyncKeyState(0x41))
-	//{
-	//	moveDirection+= (PxVec3(-1, 0, 0));
-	//}
-	//if (GetAsyncKeyState(0x44))
-	//{
-	//	moveDirection += (PxVec3(1, 0, 0));
-	//}
-	//if (GetAsyncKeyState(0x53))
-	//{
-	//	moveDirection += (PxVec3(0, 0, 1));
-	//}
-	//if (GetAsyncKeyState(0x57))
-	//{
-	//	moveDirection += (PxVec3(0, 0, -1));
-	//}
+	GlobalKeyEvent();
+	inputSystem.InputAction();
 
 
-	//m_player->move(PxVec3(0, -0.05f, 0)+moveDirection.getNormalized()*speed, 0.01f, 0.01f, NULL);
-
-	controlPress();
 	const PxF32 timestep = 1.0f / 60.0f;
 	if (gMimicKeyInputs)
 	{
@@ -881,6 +882,16 @@ void stepPhysics(bool interactive)
 
 	//Work out if the vehicle is in the air.
 	gIsVehicleInAir = gVehicle4W->getRigidDynamicActor()->isSleeping() ? false : PxVehicleIsInAir(vehicleQueryResults[0]);
+
+	m_player->move(physx::PxVec3(0, -0.05f, 0),0.01f,0.01f,NULL);
+
+	//相机跟随
+	characterPos= m_player->getPosition() - PxExtendedVec3(0, 0, 0);
+	vehiclePos = gVehicle4W->getRigidDynamicActor()->getGlobalPose().p;
+	sCamera->Update(*CameraFollowTarget);
+
+
+
 
 	gScene->simulate(1.0f/60.0f);
 	gScene->fetchResults(true);

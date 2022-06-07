@@ -1,23 +1,29 @@
 #include "ActionMap.h"
 #include<windows.h>
 #include<iostream>
+#include "InputSystem.h"
 
 physx::PxVec3 up(0, 1, 0);
+extern InputSyetem inputSystem;
+
+void ActionMap::InputAction()
+{
+	if (GetAsyncKeyState(VK_ESCAPE))
+	{
+		exit(0);
+	}
+}
+
+
+
 
 void CharacterActionMap::InputAction()
 {
 	physx::PxVec3 moveDirection(0, 0, 0);
 	physx::PxVec3 forward(m_camera->getDir().x, 0, m_camera->getDir().z);
 	physx::PxVec3 right=forward.cross(physx::PxVec3(0,1,0));
-	if (GetAsyncKeyState(VK_ESCAPE))
-	{
-		exit(0);
-	}
 
-	if (GetAsyncKeyState(VK_SPACE))
-	{
-		
-	}
+	ActionMap::InputAction();
 
 	if (GetAsyncKeyState('A'))
 	{
@@ -35,25 +41,40 @@ void CharacterActionMap::InputAction()
 	{
 		moveDirection +=forward	;
 	}
-	m_controller->move(physx::PxVec3(0, -0.05f, 0) + moveDirection.getNormalized() * moveSpeed, 0.01f, 0.01f, NULL);
+	m_controller->move(moveDirection.getNormalized() * moveSpeed, 0.01f, 0.01f, NULL);
 }
 
-void CharacterActionMap::SetController(physx::PxController* newController)
+void CharacterActionMap::SetActionMap(physx::PxController* newController, Snippets::Camera* camera, float speed)
 {
 	m_controller = newController;
-}
-
-void CharacterActionMap::SetCamera(Snippets::Camera* camera)
-{
 	m_camera = camera;
-}
-
-void CharacterActionMap::SetSpeed(float speed)
-{
 	moveSpeed = speed;
 }
 
-void ActionMap::InputAction()
+
+void VehicleActionMap::InputAction()
 {
-	std::cout << 1;
+	ActionMap::InputAction();
+	release();
+	if (GetAsyncKeyState('W'))
+	{
+		WKeyEvent();
+	}
+	if (GetAsyncKeyState('S'))
+	{
+		SKeyEvent();
+	}
+	if (GetAsyncKeyState('A'))
+	{
+		AKeyEvent();
+	}
+	if (GetAsyncKeyState('D'))
+	{
+		DKeyEvent();
+	}
+}
+
+void VehicleActionMap::SetActionMap(physx::PxVehicleDrive4W* newController)
+{
+	m_controller = newController;
 }

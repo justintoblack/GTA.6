@@ -1,11 +1,17 @@
 #include "InputSystem.h"
 
-void InputSyetem::InputAction()
+ void InputSyetem::InputAction()
 {
 	m_actionMap->InputAction();
 }
 
-void InputSyetem::SetActionMap(ActionMap newMap)
+void InputSyetem::SetCharacterMap(CharacterActionMap &newMap)
 {
-	*m_actionMap = newMap;
+	m_actionMap = &newMap;
 }
+
+void InputSyetem::SetVehicleMap(VehicleActionMap& newMap)
+{
+	m_actionMap = &newMap;
+}
+
