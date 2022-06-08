@@ -25,6 +25,19 @@ void CharacterActionMap::InputAction()
 
 	ActionMap::InputAction();
 
+	if (GetAsyncKeyState(VK_SPACE))
+	{
+		if (!isSpaceKeyDown)
+		{
+		SpaceKeyEvent();
+		isSpaceKeyDown = true;
+		}
+	}
+	else
+	{
+		isSpaceKeyDown = false;
+	}
+
 	if (GetAsyncKeyState('A'))
 	{
 		moveDirection -=right ;

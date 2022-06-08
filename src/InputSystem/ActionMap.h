@@ -20,7 +20,9 @@ private:
 	physx::PxController* m_controller;
 	Snippets::Camera* m_camera;
 	float moveSpeed;
+	bool isSpaceKeyDown;
 public:
+	void(*SpaceKeyEvent)();
 	void InputAction();
 	void SetActionMap(physx::PxController* newController, Snippets::Camera* camera, float speed);
 };

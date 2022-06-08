@@ -61,6 +61,7 @@
 #include "../SnippetVehicleCommon/SnippetVehicleFilterShader.h"
 #include "../SnippetVehicleCommon/SnippetVehicleTireFriction.h"
 #include "../SnippetVehicleCommon/SnippetVehicleCreate.h"
+#include "../GameDemo/TheCreator.h"
 
 using namespace physx;
 using namespace snippetvehicle;
@@ -99,9 +100,13 @@ const char* PigName = "pig";
 
 extern Snippets::Camera* sCamera;
 
+//输入
 InputSyetem inputSystem;
 CharacterActionMap characterMap;
 VehicleActionMap vehicleMap;
+
+//造物者
+TheCreator theCreator;
 
 //相机跟随位置
 PxVec3 characterPos;
@@ -551,6 +556,7 @@ void CreateChain(const PxTransform& t,PxU32 length,const PxGeometry& g,PxReal se
 	}
 }
 
+
 PxController* m_player;
 
 //创建角色控制器
@@ -573,6 +579,7 @@ PxController* CreateCharacterController(PxExtendedVec3 initPos)
 
 	PxController* ctrl = manager->createController(desc);
 
+	shape = gPhysics->createShape(PxBoxGeometry(4, 4, 4), *gMaterial);
 	return ctrl;
 
 }
@@ -737,19 +744,29 @@ void releaseAllControls()
 	}
 }
 
+void FireTest()
+{
+	createDynamic(2, PxTransform( sCamera->getEye()+sCamera->getDir()*20), sCamera->getDir() * 200);
+}
 
 //自定义
 void MyCode()
 {
+	//初始化造物者
+	theCreator.Init(gPhysics, gScene);
+
 	CreateCoordinateAxis(PxTransform(0,0,0),100,200,300);
 
 	CreateChain(PxTransform(PxVec3(0.0f, 20.0f, -10.0f)), 5, PxCapsuleGeometry(1.0f,1.0f), 4.0f, createBreakableFixed);
 	CreateChain(PxTransform(PxVec3(0.0f, 25.0f, -20.0f)), 5, PxBoxGeometry(2.0f, 0.5f, 0.5f), 4.0f, createDampedD6);
 
 	m_player = CreateCharacterController(PxExtendedVec3(5,50,5));
-	characterMap.SetActionMap(m_player, sCamera, 0.1f);
 
-	//函数注册
+	//角色Input函数注册
+	characterMap.SetActionMap(m_player, sCamera, 0.1f);
+	characterMap.SpaceKeyEvent = FireTest;
+
+	//载具Input函数注册
 	vehicleMap.release = releaseAllControls;
 	vehicleMap.WKeyEvent = startAccelerateForwardsMode;
 	vehicleMap.SKeyEvent = startAccelerateReverseMode;
@@ -758,10 +775,15 @@ void MyCode()
 
 	inputSystem.SetCharacterMap(characterMap);
 	CameraFollowTarget = &characterPos;
+
+	//创建障碍物
+	theCreator.CreateBanisters(PxTransform(20, 0.0f, 20), gMaterial,4, 10, 1, 5, 100, 100000, 50000);
+	theCreator.CreateBanisters(PxTransform(60, 0.0f, 20), gMaterial,4, 10, 1, 5, 100, 10000, 1000);
+
 }
 
 
-//实例化物理
+//实例化物理 
 void initPhysics(bool interactive)
 {
 	//PxFoundation(版本号,内存回调,错误回调)
@@ -793,6 +815,7 @@ void initPhysics(bool interactive)
 		pvdClient->setScenePvdFlag(PxPvdSceneFlag::eTRANSMIT_CONTACTS, true);
 		pvdClient->setScenePvdFlag(PxPvdSceneFlag::eTRANSMIT_SCENEQUERIES, true);
 	}
+
 	//静摩擦，动摩擦，restitution恢复原状(弹性)
 	gMaterial = gPhysics->createMaterial(0.5f, 0.5f, 0.0f);
 	gCooking = PxCreateCooking(PX_PHYSICS_VERSION, *gFoundation, PxCookingParams(PxTolerancesScale()));
@@ -915,15 +938,15 @@ void cleanupPhysics(bool interactive)
 }
 
 //按键设置
-void keyPress(unsigned char key, const PxTransform& camera)
-{
-	switch(toupper(key))
-	{
-	case 'B':	createStack(PxTransform(PxVec3(0,0,stackZ-=10.0f)), 10, 2.0f);						break;
-	//PxSphereGeometry Transform,geometry,velocity（速度）
-	case ' ':	createDynamic(2,camera,camera.rotate(PxVec3(0,0,-1))*200);	break;
-	}
-}
+//void keyPress(unsigned char key, const PxTransform& camera)
+//{
+//	switch(toupper(key))
+//	{
+//	case 'B':	createStack(PxTransform(PxVec3(0,0,stackZ-=10.0f)), 10, 2.0f);						break;
+//	//PxSphereGeometry Transform,geometry,velocity（速度）
+//	case ' ':	createDynamic(2,camera,camera.rotate(PxVec3(0,0,-1))*200);	break;
+//	}
+//}
 
 #define RENDER_SNIPPET 1
 //main
