@@ -65,7 +65,7 @@
 
 using namespace physx;
 using namespace snippetvehicle;
-//Ĭ�ϵ��ڴ�����ʹ��󱨸���
+//默认的内存管理和错误报告器
 PxDefaultAllocator		gAllocator;
 PxDefaultErrorCallback	gErrorCallback;
 
@@ -79,7 +79,7 @@ PxMaterial*				gMaterial	= NULL;
 PxCooking* gCooking = NULL;
 PxPvd*                  gPvd        = NULL;
 
-//��������������Ա
+//创建控制器管理员
 PxControllerManager* manager = NULL;
 
 PxReal stackZ = 10.0f;
@@ -100,20 +100,20 @@ const char* PigName = "pig";
 
 extern Snippets::Camera* sCamera;
 
-//����
+//输入
 InputSyetem inputSystem;
 CharacterActionMap characterMap;
 VehicleActionMap vehicleMap;
 
-//������
+//造物者
 TheCreator theCreator;
 
-//�������λ��
+//相机跟随位置
 PxVec3 characterPos;
 PxVec3 vehiclePos;
 PxVec3* CameraFollowTarget;
 
-#pragma region ȫ�ְ����¼�
+#pragma region 全局按键事件
 bool isQKeyDown;
 void GlobalKeyEvent()
 {
@@ -158,7 +158,7 @@ struct FilterGroup
 	};
 };
 
-//������ص�ȫ�ֱ���
+//车辆相关的全局变量
 
 VehicleSceneQueryData* gVehicleSceneQueryData = NULL;
 PxBatchQuery* gBatchQuery = NULL;
@@ -393,7 +393,7 @@ ContactReportCallback gContactReportCallback;
 /*
 PxBase->PxActor->PxRigidActor->PxRigidBody->PxRigidDynamic
 */
-//���춯̬����
+//创造动态刚体
 PxRigidDynamic* createDynamic( PxReal radius, const PxTransform& t, const PxVec3& velocity=PxVec3(0))
 {
 
@@ -402,20 +402,20 @@ PxRigidDynamic* createDynamic( PxReal radius, const PxTransform& t, const PxVec3
 	setupFiltering(shape, FilterGroup::eBIRD, FilterGroup::ePIG);
 
 
-	//PxPhysics object��transform of the new object ��shape of the new object ��the density of the new object(>0)
+	//PxPhysics object，transform of the new object ，shape of the new object ，the density of the new object(>0)
 	PxRigidDynamic* dynamic = gPhysics->createRigidDynamic(t);
 	dynamic->attachShape(*shape);
 
 	
 	
 
-	//���ý�����ϵ����������������linearDamping����������������������Լ���ֿ�ƽ�Ƶ���,�������������ֿ���ת�������������Ϊ0�������һֱ��ת/ƽ��
+	//设置角阻尼系数，还有线性阻尼linearDamping；线性阻尼控制物理形体或约束抵抗平移的量,而角阻尼控制其抵抗旋转的量。如果设置为0，物体会一直旋转/平移
 	dynamic->setAngularDamping(10.0f);
-	//���������ٶ� 
+	//设置线性速度 
 	dynamic->setLinearVelocity(velocity);
 
 	PxRigidBodyExt::updateMassAndInertia(*dynamic, 1.0f);
-	//���������
+	//加入鸟队列
 	ballBirdList.push_back(dynamic);
 
 	dynamic->setName(BirdName);
@@ -424,16 +424,16 @@ PxRigidDynamic* createDynamic( PxReal radius, const PxTransform& t, const PxVec3
 	return dynamic;
 }
 
-//�����������
+//创建立方体堆
 void createStack(const PxTransform& t, PxU32 size, PxReal halfExtent)
 {
 	/*
-	PxShape ��ײ��״�ĳ�����;��״�ǹ����ģ����ü����Ķ���
-	����ͨ������PxRigidActor���createShape()������PxPhysics���createShape()����������ʵ����
+	PxShape 碰撞形状的抽象类;形状是共享的，引用计数的对象。
+	可以通过调用PxRigidActor类的createShape()方法或PxPhysics类的createShape()方法来创建实例。
 	Box,Sphere,Capsule,Plane,ConvexMesh,TriangleMesh,HeightField
-	��������Material,offset,flags,name
+	可以设置Material,offset,flags,name
 	*/
-	//createShape������״;(halfExtent x,y,z)
+	//createShape构建形状;(halfExtent x,y,z)
 	PxShape* shape = gPhysics->createShape(PxBoxGeometry(halfExtent, halfExtent, halfExtent), *gMaterial);
 	
 	setupFiltering(shape, FilterGroup::ePIG, FilterGroup::eBIRD);
@@ -443,34 +443,34 @@ void createStack(const PxTransform& t, PxU32 size, PxReal halfExtent)
 	{
 		for(PxU32 j=0;j<size;j++)
 		{
-			//ָ��λ��(-10/-7..9,1,0)(-7..,3,0)(-4..,5,0)...
+			//指定位置(-10/-7..9,1,0)(-7..,3,0)(-4..,5,0)...
 			PxTransform localTm(PxVec3(PxReal(j*2) - PxReal(size), PxReal(i*2+1), 0) * halfExtent);
-			//createRigidDynamic��������
+			//createRigidDynamic构建刚体
 			PxRigidDynamic* body = gPhysics->createRigidDynamic(t.transform(localTm));
-			//attachShape����״��������;
+			//attachShape绑定形状到刚体上;
 			body->attachShape(*shape);
-			//���������͹��ԣ���ֵ��ʾ�ܶȣ�
+			//更新质量和惯性（数值表示密度）
 			PxRigidBodyExt::updateMassAndInertia(*body, 1.0f);
 
 			body->setName(PigName);
 
 			body->userData = body;
 
-			//����������
+			//加入猪队列
 			ballPigList.push_back(body);
 
 
-			//��Actor���ӵ�������,ע�͵���һ��֮�������������ò��ɼ���û����ײ���
+			//把Actor添加到场景中,注释掉这一句之后所有立方体变得不可见且没有碰撞体积
 			gScene->addActor(*body);
 			//gScene->removeActor(*body);
 
 		}
 	}
-	//�ͷ�
+	//释放
 	shape->release();
 }
 
-//�Զ���
+//自定义
 
 PxShape* shape;
 PxRigidDynamic* dynamicbody;
@@ -480,7 +480,7 @@ PxTransform tm(0, 0, 0);
 
 
 
-///����������
+///创建坐标轴
 ///
 ///
 void CreateCoordinateAxis(PxTransform origin,float xLength,float yLength, float zLength)
@@ -510,7 +510,7 @@ void CreateCoordinateAxis(PxTransform origin,float xLength,float yLength, float 
 	gScene->addActor(*staticbody);
 }
 
-///��������
+///生成链条
 ///
 ///
 PxJoint* createLimitedSpherical(PxRigidActor* a0, const PxTransform& t0, PxRigidActor* a1, const PxTransform& t1)
@@ -559,7 +559,7 @@ void CreateChain(const PxTransform& t,PxU32 length,const PxGeometry& g,PxReal se
 
 PxController* m_player;
 
-//������ɫ������
+//创建角色控制器
 PxController* CreateCharacterController(PxExtendedVec3 initPos)
 {
 	manager = PxCreateControllerManager(*gScene);
@@ -571,7 +571,7 @@ PxController* CreateCharacterController(PxExtendedVec3 initPos)
 	desc.radius = 2.0f;
 	desc.height = 4.0f;
 
-	//�¶�����
+	//坡度限制
 	desc.slopeLimit = 0.7f;
 	desc.contactOffset = 0.1f;
 	desc.maxJumpHeight = 1.0f;
@@ -584,7 +584,7 @@ PxController* CreateCharacterController(PxExtendedVec3 initPos)
 
 }
 
-//������صĺ���
+//车辆相关的函数
 VehicleDesc initVehicleDesc()
 {
 	//Set up the chassis mass, dimensions, moment of inertia, and center of mass offset.
@@ -749,10 +749,10 @@ void FireTest()
 	createDynamic(2, PxTransform( sCamera->getEye()+sCamera->getDir()*20), sCamera->getDir() * 200);
 }
 
-//�Զ���
+//自定义
 void MyCode()
 {
-	//��ʼ��������
+	//初始化造物者
 	theCreator.Init(gPhysics, gScene);
 
 	CreateCoordinateAxis(PxTransform(0,0,0),100,200,300);
@@ -762,11 +762,11 @@ void MyCode()
 
 	m_player = CreateCharacterController(PxExtendedVec3(5,50,5));
 
-	//��ɫInput����ע��
+	//角色Input函数注册
 	characterMap.SetActionMap(m_player, sCamera, 0.1f);
 	characterMap.SpaceKeyEvent = FireTest;
 
-	//�ؾ�Input����ע��
+	//载具Input函数注册
 	vehicleMap.release = releaseAllControls;
 	vehicleMap.WKeyEvent = startAccelerateForwardsMode;
 	vehicleMap.SKeyEvent = startAccelerateReverseMode;
@@ -776,28 +776,28 @@ void MyCode()
 	inputSystem.SetCharacterMap(characterMap);
 	CameraFollowTarget = &characterPos;
 
-	//�����ϰ���
+	//创建障碍物
 	theCreator.CreateBanisters(PxTransform(20, 0.0f, 20), gMaterial,4, 10, 1, 5, 100, 100000, 50000);
 	theCreator.CreateBanisters(PxTransform(60, 0.0f, 20), gMaterial,4, 10, 1, 5, 100, 10000, 1000);
 
 }
 
 
-//ʵ�������� 
+//实例化物理 
 void initPhysics(bool interactive)
 {
-	//PxFoundation(�汾��,�ڴ�ص�,����ص�)
+	//PxFoundation(版本号,内存回调,错误回调)
 	gFoundation = PxCreateFoundation(PX_FOUNDATION_VERSION, gAllocator, gErrorCallback);
 	//PVD
 	gPvd = PxCreatePvd(*gFoundation);
 	PxPvdTransport* transport = PxDefaultPvdSocketTransportCreate(PVD_HOST, 5425, 10);
 	gPvd->connect(*transport,PxPvdInstrumentationFlag::eALL);
-	//��������PxPhysics����
+	//创建顶级PxPhysics对象
 	gPhysics = PxCreatePhysics(PX_PHYSICS_VERSION, *gFoundation, PxTolerancesScale(),true,gPvd);
 
-	//?����
+	//?缩放
 	PxSceneDesc sceneDesc(gPhysics->getTolerancesScale());
-	//����
+	//重力
 	sceneDesc.gravity = PxVec3(0.0f, -9.8f, 0.0f);
 	gDispatcher = PxDefaultCpuDispatcherCreate(2);
 	sceneDesc.cpuDispatcher	= gDispatcher;
@@ -816,7 +816,7 @@ void initPhysics(bool interactive)
 		pvdClient->setScenePvdFlag(PxPvdSceneFlag::eTRANSMIT_SCENEQUERIES, true);
 	}
 
-	//��Ħ������Ħ����restitution�ָ�ԭ״(����)
+	//静摩擦，动摩擦，restitution恢复原状(弹性)
 	gMaterial = gPhysics->createMaterial(0.5f, 0.5f, 0.0f);
 	gCooking = PxCreateCooking(PX_PHYSICS_VERSION, *gFoundation, PxCookingParams(PxTolerancesScale()));
 
@@ -824,7 +824,7 @@ void initPhysics(bool interactive)
 	gScene->addActor(*groundPlane);
 
 	
-	/////////////////////////////////////////////��������
+	/////////////////////////////////////////////创建车辆
 
 
 	PxInitVehicleSDK(*gPhysics);
@@ -861,21 +861,21 @@ void initPhysics(bool interactive)
 	startBrakeMode();
 
 	/////////////////////////////////////////////
-	///�Զ���
+	///自定义
 	MyCode();
 
-	//if (������)����render�аѽ������false����һ��Ĭ�ϵ������ȥײ���ѡ�
+	//if (不交互)，在render中把交互设成false就有一个默认的球滚过去撞击堆。
 	if(!interactive)
-		//PxSphereGeometry Transform,geometry,velocity���ٶȣ�
+		//PxSphereGeometry Transform,geometry,velocity（速度）
 		createDynamic(10,PxTransform(PxVec3(0,40,100)), PxVec3(0,-50,-100));
 }
 
 
-//����render�е��ã�
+//（在render中调用）
 void stepPhysics(bool interactive)
 {
 	PX_UNUSED(interactive);
-	//ʱ��
+	//时间
 
 	GlobalKeyEvent();
 	inputSystem.InputAction();
@@ -908,7 +908,7 @@ void stepPhysics(bool interactive)
 
 	m_player->move(physx::PxVec3(0, -0.05f, 0),0.01f,0.01f,NULL);
 
-	//�������
+	//相机跟随
 	characterPos= m_player->getPosition() - PxExtendedVec3(0, 0, 0);
 	vehiclePos = gVehicle4W->getRigidDynamicActor()->getGlobalPose().p;
 	sCamera->Update(*CameraFollowTarget);
@@ -920,10 +920,10 @@ void stepPhysics(bool interactive)
 	gScene->fetchResults(true);
 }
 
-//�����������render�е��ã�
+//清空物理（在render中调用）
 void cleanupPhysics(bool interactive)
 {
-	//release()���ٶ����Լ����������ж���
+	//release()销毁对象以及包含的所有对象
 	PX_UNUSED(interactive);
 	gScene->release();
 	gDispatcher->release();
@@ -937,13 +937,13 @@ void cleanupPhysics(bool interactive)
 	printf("HelloWorld done.\n");
 }
 
-//��������
+//按键设置
 //void keyPress(unsigned char key, const PxTransform& camera)
 //{
 //	switch(toupper(key))
 //	{
 //	case 'B':	createStack(PxTransform(PxVec3(0,0,stackZ-=10.0f)), 10, 2.0f);						break;
-//	//PxSphereGeometry Transform,geometry,velocity���ٶȣ�
+//	//PxSphereGeometry Transform,geometry,velocity（速度）
 //	case ' ':	createDynamic(2,camera,camera.rotate(PxVec3(0,0,-1))*200);	break;
 //	}
 //}
