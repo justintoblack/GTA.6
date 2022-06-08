@@ -37,6 +37,7 @@
     <ClCompile Include="..\..\src\SnippetVehicleCommon\SnippetVehicleCreate.cpp" />
     <ClCompile Include="..\..\src\SnippetVehicleCommon\SnippetVehicle4WCreate.cpp" />
     <ClCompile Include="..\..\src\Render\StbImageImpl.cpp" />
+    <ClCompile Include="..\..\src\GameDemo\TheCreator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\InputSystem\ActionMap.h" />
@@ -78,6 +79,7 @@
     <ClInclude Include="..\..\src\SnippetVehicleCommon\SnippetVehicleConcurrency.h" />
     <ClInclude Include="..\..\src\Render\Shader.h" />
     <ClInclude Include="..\..\src\Render\stb_image.h" />
+    <ClInclude Include="..\..\src\GameDemo\TheCreator.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="imgui">

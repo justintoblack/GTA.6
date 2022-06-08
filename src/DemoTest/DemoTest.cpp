@@ -65,7 +65,7 @@
 
 using namespace physx;
 using namespace snippetvehicle;
-//Ä¬ÈÏµÄÄÚ´æ¹ÜÀíºÍ´íÎó±¨¸æÆ÷
+//Ä¬ï¿½Ïµï¿½ï¿½Ú´ï¿½ï¿½ï¿½ï¿½ï¿½Í´ï¿½ï¿½ó±¨¸ï¿½ï¿½ï¿½
 PxDefaultAllocator		gAllocator;
 PxDefaultErrorCallback	gErrorCallback;
 
@@ -79,7 +79,7 @@ PxMaterial*				gMaterial	= NULL;
 PxCooking* gCooking = NULL;
 PxPvd*                  gPvd        = NULL;
 
-//´´½¨¿ØÖÆÆ÷¹ÜÀíÔ±
+//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô±
 PxControllerManager* manager = NULL;
 
 PxReal stackZ = 10.0f;
@@ -100,20 +100,20 @@ const char* PigName = "pig";
 
 extern Snippets::Camera* sCamera;
 
-//ÊäÈë
+//ï¿½ï¿½ï¿½ï¿½
 InputSyetem inputSystem;
 CharacterActionMap characterMap;
 VehicleActionMap vehicleMap;
 
-//ÔìÎïÕß
+//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 TheCreator theCreator;
 
-//Ïà»ú¸úËæÎ»ÖÃ
+//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½
 PxVec3 characterPos;
 PxVec3 vehiclePos;
 PxVec3* CameraFollowTarget;
 
-#pragma region È«¾Ö°´¼üÊÂ¼þ
+#pragma region È«ï¿½Ö°ï¿½ï¿½ï¿½ï¿½Â¼ï¿½
 bool isQKeyDown;
 void GlobalKeyEvent()
 {
@@ -158,7 +158,7 @@ struct FilterGroup
 	};
 };
 
-//³µÁ¾Ïà¹ØµÄÈ«¾Ö±äÁ¿
+//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Øµï¿½È«ï¿½Ö±ï¿½ï¿½ï¿½
 
 VehicleSceneQueryData* gVehicleSceneQueryData = NULL;
 PxBatchQuery* gBatchQuery = NULL;
@@ -393,7 +393,7 @@ ContactReportCallback gContactReportCallback;
 /*
 PxBase->PxActor->PxRigidActor->PxRigidBody->PxRigidDynamic
 */
-//´´Ôì¶¯Ì¬¸ÕÌå
+//ï¿½ï¿½ï¿½ì¶¯Ì¬ï¿½ï¿½ï¿½ï¿½
 PxRigidDynamic* createDynamic( PxReal radius, const PxTransform& t, const PxVec3& velocity=PxVec3(0))
 {
 
@@ -402,20 +402,20 @@ PxRigidDynamic* createDynamic( PxReal radius, const PxTransform& t, const PxVec3
 	setupFiltering(shape, FilterGroup::eBIRD, FilterGroup::ePIG);
 
 
-	//PxPhysics object£¬transform of the new object £¬shape of the new object £¬the density of the new object(>0)
+	//PxPhysics objectï¿½ï¿½transform of the new object ï¿½ï¿½shape of the new object ï¿½ï¿½the density of the new object(>0)
 	PxRigidDynamic* dynamic = gPhysics->createRigidDynamic(t);
 	dynamic->attachShape(*shape);
 
 	
 	
 
-	//ÉèÖÃ½Ç×èÄáÏµÊý£¬»¹ÓÐÏßÐÔ×èÄálinearDamping£»ÏßÐÔ×èÄá¿ØÖÆÎïÀíÐÎÌå»òÔ¼ÊøµÖ¿¹Æ½ÒÆµÄÁ¿,¶ø½Ç×èÄá¿ØÖÆÆäµÖ¿¹Ðý×ªµÄÁ¿¡£Èç¹ûÉèÖÃÎª0£¬ÎïÌå»áÒ»Ö±Ðý×ª/Æ½ÒÆ
+	//ï¿½ï¿½ï¿½Ã½ï¿½ï¿½ï¿½ï¿½ï¿½Ïµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½linearDampingï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô¼ï¿½ï¿½ï¿½Ö¿ï¿½Æ½ï¿½Æµï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¿ï¿½ï¿½ï¿½×ªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îª0ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»Ö±ï¿½ï¿½×ª/Æ½ï¿½ï¿½
 	dynamic->setAngularDamping(10.0f);
-	//ÉèÖÃÏßÐÔËÙ¶È 
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ù¶ï¿½ 
 	dynamic->setLinearVelocity(velocity);
 
 	PxRigidBodyExt::updateMassAndInertia(*dynamic, 1.0f);
-	//¼ÓÈëÄñ¶ÓÁÐ
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	ballBirdList.push_back(dynamic);
 
 	dynamic->setName(BirdName);
@@ -424,16 +424,16 @@ PxRigidDynamic* createDynamic( PxReal radius, const PxTransform& t, const PxVec3
 	return dynamic;
 }
 
-//´´½¨Á¢·½Ìå¶Ñ
+//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 void createStack(const PxTransform& t, PxU32 size, PxReal halfExtent)
 {
 	/*
-	PxShape Åö×²ÐÎ×´µÄ³éÏóÀà;ÐÎ×´ÊÇ¹²ÏíµÄ£¬ÒýÓÃ¼ÆÊýµÄ¶ÔÏó¡£
-	¿ÉÒÔÍ¨¹ýµ÷ÓÃPxRigidActorÀàµÄcreateShape()·½·¨»òPxPhysicsÀàµÄcreateShape()·½·¨À´´´½¨ÊµÀý¡£
+	PxShape ï¿½ï¿½×²ï¿½ï¿½×´ï¿½Ä³ï¿½ï¿½ï¿½ï¿½ï¿½;ï¿½ï¿½×´ï¿½Ç¹ï¿½ï¿½ï¿½ï¿½Ä£ï¿½ï¿½ï¿½ï¿½Ã¼ï¿½ï¿½ï¿½ï¿½Ä¶ï¿½ï¿½ï¿½
+	ï¿½ï¿½ï¿½ï¿½Í¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½PxRigidActorï¿½ï¿½ï¿½createShape()ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½PxPhysicsï¿½ï¿½ï¿½createShape()ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Êµï¿½ï¿½ï¿½ï¿½
 	Box,Sphere,Capsule,Plane,ConvexMesh,TriangleMesh,HeightField
-	¿ÉÒÔÉèÖÃMaterial,offset,flags,name
+	ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Material,offset,flags,name
 	*/
-	//createShape¹¹½¨ÐÎ×´;(halfExtent x,y,z)
+	//createShapeï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×´;(halfExtent x,y,z)
 	PxShape* shape = gPhysics->createShape(PxBoxGeometry(halfExtent, halfExtent, halfExtent), *gMaterial);
 	
 	setupFiltering(shape, FilterGroup::ePIG, FilterGroup::eBIRD);
@@ -443,34 +443,34 @@ void createStack(const PxTransform& t, PxU32 size, PxReal halfExtent)
 	{
 		for(PxU32 j=0;j<size;j++)
 		{
-			//Ö¸¶¨Î»ÖÃ(-10/-7..9,1,0)(-7..,3,0)(-4..,5,0)...
+			//Ö¸ï¿½ï¿½Î»ï¿½ï¿½(-10/-7..9,1,0)(-7..,3,0)(-4..,5,0)...
 			PxTransform localTm(PxVec3(PxReal(j*2) - PxReal(size), PxReal(i*2+1), 0) * halfExtent);
-			//createRigidDynamic¹¹½¨¸ÕÌå
+			//createRigidDynamicï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 			PxRigidDynamic* body = gPhysics->createRigidDynamic(t.transform(localTm));
-			//attachShape°ó¶¨ÐÎ×´µ½¸ÕÌåÉÏ;
+			//attachShapeï¿½ï¿½ï¿½ï¿½×´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½;
 			body->attachShape(*shape);
-			//¸üÐÂÖÊÁ¿ºÍ¹ßÐÔ£¨ÊýÖµ±íÊ¾ÃÜ¶È£©
+			//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¹ï¿½ï¿½Ô£ï¿½ï¿½ï¿½Öµï¿½ï¿½Ê¾ï¿½Ü¶È£ï¿½
 			PxRigidBodyExt::updateMassAndInertia(*body, 1.0f);
 
 			body->setName(PigName);
 
 			body->userData = body;
 
-			//¼ÓÈëÖí¶ÓÁÐ
+			//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 			ballPigList.push_back(body);
 
 
-			//°ÑActorÌí¼Óµ½³¡¾°ÖÐ,×¢ÊÍµôÕâÒ»¾äÖ®ºóËùÓÐÁ¢·½Ìå±äµÃ²»¿É¼ûÇÒÃ»ÓÐÅö×²Ìå»ý
+			//ï¿½ï¿½Actorï¿½ï¿½ï¿½Óµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,×¢ï¿½Íµï¿½ï¿½ï¿½Ò»ï¿½ï¿½Ö®ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã²ï¿½ï¿½É¼ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½×²ï¿½ï¿½ï¿½
 			gScene->addActor(*body);
 			//gScene->removeActor(*body);
 
 		}
 	}
-	//ÊÍ·Å
+	//ï¿½Í·ï¿½
 	shape->release();
 }
 
-//×Ô¶¨Òå
+//ï¿½Ô¶ï¿½ï¿½ï¿½
 
 PxShape* shape;
 PxRigidDynamic* dynamicbody;
@@ -480,7 +480,7 @@ PxTransform tm(0, 0, 0);
 
 
 
-///´´½¨×ø±êÖá
+///ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 ///
 ///
 void CreateCoordinateAxis(PxTransform origin,float xLength,float yLength, float zLength)
@@ -510,7 +510,7 @@ void CreateCoordinateAxis(PxTransform origin,float xLength,float yLength, float 
 	gScene->addActor(*staticbody);
 }
 
-///Éú³ÉÁ´Ìõ
+///ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 ///
 ///
 PxJoint* createLimitedSpherical(PxRigidActor* a0, const PxTransform& t0, PxRigidActor* a1, const PxTransform& t1)
@@ -559,7 +559,7 @@ void CreateChain(const PxTransform& t,PxU32 length,const PxGeometry& g,PxReal se
 
 PxController* m_player;
 
-//´´½¨½ÇÉ«¿ØÖÆÆ÷
+//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É«ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 PxController* CreateCharacterController(PxExtendedVec3 initPos)
 {
 	manager = PxCreateControllerManager(*gScene);
@@ -571,7 +571,7 @@ PxController* CreateCharacterController(PxExtendedVec3 initPos)
 	desc.radius = 2.0f;
 	desc.height = 4.0f;
 
-	//ÆÂ¶ÈÏÞÖÆ
+	//ï¿½Â¶ï¿½ï¿½ï¿½ï¿½ï¿½
 	desc.slopeLimit = 0.7f;
 	desc.contactOffset = 0.1f;
 	desc.maxJumpHeight = 1.0f;
@@ -584,7 +584,7 @@ PxController* CreateCharacterController(PxExtendedVec3 initPos)
 
 }
 
-//³µÁ¾Ïà¹ØµÄº¯Êý
+//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ØµÄºï¿½ï¿½ï¿½
 VehicleDesc initVehicleDesc()
 {
 	//Set up the chassis mass, dimensions, moment of inertia, and center of mass offset.
@@ -749,10 +749,10 @@ void FireTest()
 	createDynamic(2, PxTransform( sCamera->getEye()+sCamera->getDir()*20), sCamera->getDir() * 200);
 }
 
-//×Ô¶¨Òå
+//ï¿½Ô¶ï¿½ï¿½ï¿½
 void MyCode()
 {
-	//³õÊ¼»¯ÔìÎïÕß
+	//ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	theCreator.Init(gPhysics, gScene);
 
 	CreateCoordinateAxis(PxTransform(0,0,0),100,200,300);
@@ -762,11 +762,11 @@ void MyCode()
 
 	m_player = CreateCharacterController(PxExtendedVec3(5,50,5));
 
-	//½ÇÉ«Inputº¯Êý×¢²á
+	//ï¿½ï¿½É«Inputï¿½ï¿½ï¿½ï¿½×¢ï¿½ï¿½
 	characterMap.SetActionMap(m_player, sCamera, 0.1f);
 	characterMap.SpaceKeyEvent = FireTest;
 
-	//ÔØ¾ßInputº¯Êý×¢²á
+	//ï¿½Ø¾ï¿½Inputï¿½ï¿½ï¿½ï¿½×¢ï¿½ï¿½
 	vehicleMap.release = releaseAllControls;
 	vehicleMap.WKeyEvent = startAccelerateForwardsMode;
 	vehicleMap.SKeyEvent = startAccelerateReverseMode;
@@ -776,28 +776,28 @@ void MyCode()
 	inputSystem.SetCharacterMap(characterMap);
 	CameraFollowTarget = &characterPos;
 
-	//´´½¨ÕÏ°­Îï
+	//ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½ï¿½ï¿½
 	theCreator.CreateBanisters(PxTransform(20, 0.0f, 20), gMaterial,4, 10, 1, 5, 100, 100000, 50000);
 	theCreator.CreateBanisters(PxTransform(60, 0.0f, 20), gMaterial,4, 10, 1, 5, 100, 10000, 1000);
 
 }
 
 
-//ÊµÀý»¯ÎïÀí 
+//Êµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 
 void initPhysics(bool interactive)
 {
-	//PxFoundation(°æ±¾ºÅ,ÄÚ´æ»Øµ÷,´íÎó»Øµ÷)
+	//PxFoundation(ï¿½æ±¾ï¿½ï¿½,ï¿½Ú´ï¿½Øµï¿½,ï¿½ï¿½ï¿½ï¿½Øµï¿½)
 	gFoundation = PxCreateFoundation(PX_FOUNDATION_VERSION, gAllocator, gErrorCallback);
 	//PVD
 	gPvd = PxCreatePvd(*gFoundation);
 	PxPvdTransport* transport = PxDefaultPvdSocketTransportCreate(PVD_HOST, 5425, 10);
 	gPvd->connect(*transport,PxPvdInstrumentationFlag::eALL);
-	//´´½¨¶¥¼¶PxPhysics¶ÔÏó
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½PxPhysicsï¿½ï¿½ï¿½ï¿½
 	gPhysics = PxCreatePhysics(PX_PHYSICS_VERSION, *gFoundation, PxTolerancesScale(),true,gPvd);
 
-	//?Ëõ·Å
+	//?ï¿½ï¿½ï¿½ï¿½
 	PxSceneDesc sceneDesc(gPhysics->getTolerancesScale());
-	//ÖØÁ¦
+	//ï¿½ï¿½ï¿½ï¿½
 	sceneDesc.gravity = PxVec3(0.0f, -9.8f, 0.0f);
 	gDispatcher = PxDefaultCpuDispatcherCreate(2);
 	sceneDesc.cpuDispatcher	= gDispatcher;
@@ -816,7 +816,7 @@ void initPhysics(bool interactive)
 		pvdClient->setScenePvdFlag(PxPvdSceneFlag::eTRANSMIT_SCENEQUERIES, true);
 	}
 
-	//¾²Ä¦²Á£¬¶¯Ä¦²Á£¬restitution»Ö¸´Ô­×´(µ¯ÐÔ)
+	//ï¿½ï¿½Ä¦ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¦ï¿½ï¿½ï¿½ï¿½restitutionï¿½Ö¸ï¿½Ô­×´(ï¿½ï¿½ï¿½ï¿½)
 	gMaterial = gPhysics->createMaterial(0.5f, 0.5f, 0.0f);
 	gCooking = PxCreateCooking(PX_PHYSICS_VERSION, *gFoundation, PxCookingParams(PxTolerancesScale()));
 
@@ -824,7 +824,7 @@ void initPhysics(bool interactive)
 	gScene->addActor(*groundPlane);
 
 	
-	/////////////////////////////////////////////´´½¨³µÁ¾
+	/////////////////////////////////////////////ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
 
 	PxInitVehicleSDK(*gPhysics);
@@ -861,21 +861,21 @@ void initPhysics(bool interactive)
 	startBrakeMode();
 
 	/////////////////////////////////////////////
-	///×Ô¶¨Òå
+	///ï¿½Ô¶ï¿½ï¿½ï¿½
 	MyCode();
 
-	//if (²»½»»¥)£¬ÔÚrenderÖÐ°Ñ½»»¥Éè³Éfalse¾ÍÓÐÒ»¸öÄ¬ÈÏµÄÇò¹ö¹ýÈ¥×²»÷¶Ñ¡£
+	//if (ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½)ï¿½ï¿½ï¿½ï¿½renderï¿½Ð°Ñ½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½falseï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½Ä¬ï¿½Ïµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¥×²ï¿½ï¿½ï¿½Ñ¡ï¿½
 	if(!interactive)
-		//PxSphereGeometry Transform,geometry,velocity£¨ËÙ¶È£©
+		//PxSphereGeometry Transform,geometry,velocityï¿½ï¿½ï¿½Ù¶È£ï¿½
 		createDynamic(10,PxTransform(PxVec3(0,40,100)), PxVec3(0,-50,-100));
 }
 
 
-//£¨ÔÚrenderÖÐµ÷ÓÃ£©
+//ï¿½ï¿½ï¿½ï¿½renderï¿½Ðµï¿½ï¿½Ã£ï¿½
 void stepPhysics(bool interactive)
 {
 	PX_UNUSED(interactive);
-	//Ê±¼ä
+	//Ê±ï¿½ï¿½
 
 	GlobalKeyEvent();
 	inputSystem.InputAction();
@@ -908,7 +908,7 @@ void stepPhysics(bool interactive)
 
 	m_player->move(physx::PxVec3(0, -0.05f, 0),0.01f,0.01f,NULL);
 
-	//Ïà»ú¸úËæ
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	characterPos= m_player->getPosition() - PxExtendedVec3(0, 0, 0);
 	vehiclePos = gVehicle4W->getRigidDynamicActor()->getGlobalPose().p;
 	sCamera->Update(*CameraFollowTarget);
@@ -920,10 +920,10 @@ void stepPhysics(bool interactive)
 	gScene->fetchResults(true);
 }
 
-//Çå¿ÕÎïÀí£¨ÔÚrenderÖÐµ÷ÓÃ£©
+//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½renderï¿½Ðµï¿½ï¿½Ã£ï¿½
 void cleanupPhysics(bool interactive)
 {
-	//release()Ïú»Ù¶ÔÏóÒÔ¼°°üº¬µÄËùÓÐ¶ÔÏó
+	//release()ï¿½ï¿½ï¿½Ù¶ï¿½ï¿½ï¿½ï¿½Ô¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶ï¿½ï¿½ï¿½
 	PX_UNUSED(interactive);
 	gScene->release();
 	gDispatcher->release();
@@ -937,13 +937,13 @@ void cleanupPhysics(bool interactive)
 	printf("HelloWorld done.\n");
 }
 
-//°´¼üÉèÖÃ
+//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 //void keyPress(unsigned char key, const PxTransform& camera)
 //{
 //	switch(toupper(key))
 //	{
 //	case 'B':	createStack(PxTransform(PxVec3(0,0,stackZ-=10.0f)), 10, 2.0f);						break;
-//	//PxSphereGeometry Transform,geometry,velocity£¨ËÙ¶È£©
+//	//PxSphereGeometry Transform,geometry,velocityï¿½ï¿½ï¿½Ù¶È£ï¿½
 //	case ' ':	createDynamic(2,camera,camera.rotate(PxVec3(0,0,-1))*200);	break;
 //	}
 //}

@@ -1,6 +1,6 @@
-﻿  DemoTestRender.cpp
-F:\Windows Kits\10\Include\10.0.19041.0\shared\minwindef.h(130,1): warning C4005: “APIENTRY”: 宏重定义
-F:\Learning\mypt2\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\compiler\vc16win64\Dependencies\GLFW\include\GLFW\glfw3.h(123): message : 参见“APIENTRY”的前一个定义
-  DemoTest.vcxproj -> F:\Learning\mypt2\PhysX-Tutorial-master\PhysX_3.4\bin\vc16win64\DemoTestDEBUG.exe
+﻿  DemoTest.cpp
+  TheCreator.cpp
+  正在生成代码...
+  DemoTest.vcxproj -> E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\compiler\vc16win64\./../../../bin/vc16win64\DemoTestDEBUG.exe
   复制了 0 个文件
   复制了 0 个文件
