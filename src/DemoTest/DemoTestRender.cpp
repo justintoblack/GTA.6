@@ -327,7 +327,7 @@ void SetupSkybox()
 void renderLoop()
 {
 	sCamera = new Snippets::Camera(PxVec3(50.0f, 50.0f, 50.0f), PxVec3(-0.6f,-0.2f,-0.7f));
-	sCamera->SetConfig(10,PxVec3(0,3,0));
+	sCamera->SetConfig(20,PxVec3(0,3,0));
 
 	//初始化鼠标位置;
 	GetCursorPos(&p);
