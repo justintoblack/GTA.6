@@ -584,7 +584,7 @@ VehicleDesc initVehicleDesc()
 	//The moment of inertia is just the moment of inertia of a cuboid but modified for easier steering.
 	//Center of mass offset is 0.65m above the base of the chassis and 0.25m towards the front.
 	const PxF32 chassisMass = 1500.0f;
-	const PxVec3 chassisDims(2.5f, 2.0f, 5.0f);
+	const PxVec3 chassisDims(2.5f * 5, 2.0f * 5, 5.0f * 10) ;
 	const PxVec3 chassisMOI
 	((chassisDims.y * chassisDims.y + chassisDims.z * chassisDims.z) * chassisMass / 12.0f,
 		(chassisDims.x * chassisDims.x + chassisDims.z * chassisDims.z) * 0.8f * chassisMass / 12.0f,
@@ -593,9 +593,9 @@ VehicleDesc initVehicleDesc()
 
 	//Set up the wheel mass, radius, width, moment of inertia, and number of wheels.
 	//Moment of inertia is just the moment of inertia of a cylinder.
-	const PxF32 wheelMass = 20.0f;
-	const PxF32 wheelRadius = 0.5f;
-	const PxF32 wheelWidth = 0.4f;
+	const PxF32 wheelMass = 20.0f ;
+	const PxF32 wheelRadius = 0.5f * 5;
+	const PxF32 wheelWidth = 0.4f * 5;
 	const PxF32 wheelMOI = 0.5f * wheelMass * wheelRadius * wheelRadius;
 	const PxU32 nbWheels = 4;
 
@@ -764,6 +764,7 @@ void MyCode()
 //实例化物理
 void initPhysics(bool interactive)
 {
+
 	//PxFoundation(版本号,内存回调,错误回调)
 	gFoundation = PxCreateFoundation(PX_FOUNDATION_VERSION, gAllocator, gErrorCallback);
 	//PVD
