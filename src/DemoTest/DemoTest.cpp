@@ -540,6 +540,8 @@ PxJoint* createDampedD6(PxRigidActor* a0, const PxTransform& t0, PxRigidActor* a
 
 typedef PxJoint* (*JointCreateFunction)(PxRigidActor* a0, const PxTransform& t0, PxRigidActor* a1, const PxTransform& t1);
 
+
+
 void CreateChain(const PxTransform& t,PxU32 length,const PxGeometry& g,PxReal separation,JointCreateFunction createJoint)
 {
 	PxVec3 offset(separation / 2, 0, 0);
