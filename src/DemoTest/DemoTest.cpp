@@ -43,11 +43,12 @@
 #include "../Utils/Utils.h"
 
 #include<iostream>
-
 #include<vector>
 #include<windows.h>
 
 #include "../InputSystem/InputSystem.h"
+#include "../GameDemo/TheCreator.h"
+#include "../Utils/Mathf.h"
 
 
 #include<time.h>
@@ -61,7 +62,6 @@
 #include "../SnippetVehicleCommon/SnippetVehicleFilterShader.h"
 #include "../SnippetVehicleCommon/SnippetVehicleTireFriction.h"
 #include "../SnippetVehicleCommon/SnippetVehicleCreate.h"
-#include "../GameDemo/TheCreator.h"
 
 using namespace physx;
 using namespace snippetvehicle;
@@ -580,8 +580,8 @@ PxController* CreateCharacterController(PxExtendedVec3 initPos)
 	desc.stepOffset = 0.5f;
 
 	PxController* ctrl = manager->createController(desc);
+	ctrl->getActor()->createShape(PxBoxGeometry(1, 1, 1), *gMaterial)->setLocalPose(PxTransform(0,4,0));
 
-	shape = gPhysics->createShape(PxBoxGeometry(4, 4, 4), *gMaterial);
 	return ctrl;
 
 }
@@ -762,7 +762,7 @@ void MyCode()
 	CreateChain(PxTransform(PxVec3(0.0f, 20.0f, -10.0f)), 5, PxCapsuleGeometry(1.0f,1.0f), 4.0f, createBreakableFixed);
 	CreateChain(PxTransform(PxVec3(0.0f, 25.0f, -20.0f)), 5, PxBoxGeometry(2.0f, 0.5f, 0.5f), 4.0f, createDampedD6);
 
-	m_player = CreateCharacterController(PxExtendedVec3(5,50,5));
+	m_player = CreateCharacterController(PxExtendedVec3(-5,10,-5));
 
 	//角色Input函数注册
 	characterMap.SetActionMap(m_player, sCamera, 0.1f);
@@ -777,12 +777,21 @@ void MyCode()
 
 	inputSystem.SetCharacterMap(characterMap);
 	CameraFollowTarget = &characterPos;
-
-	//创建障碍物
-	theCreator.CreateBanisters(PxTransform(20, 0.0f, 20), gMaterial,4, 10, 1, 5, 100, 100000, 50000);
-	theCreator.CreateBanisters(PxTransform(60, 0.0f, 20), gMaterial,4, 10, 1, 5, 100, 10000, 1000);
+	
+	//创建物体
+	//theCreator.CreateBanister(PxVec3(-50, 0.0f, -50), PxVec3(1, 1, 1), gMaterial, 3, 5, 1, 100000, 50000);
+	theCreator.CreateBanisters(PxVec3(60, 0.0f, 20), PxVec3(1,0,1),gMaterial,4, 20, 2, 5, 10, 10000, 1000);
+	theCreator.CreateBanisters(PxVec3(50, 0.0f, 20), PxVec3(1,0,2),gMaterial,4, 20, 2, 5, 10, 10000, 1000);
+	theCreator.CreateBanisters(PxVec3(10, 0.0f, 20), PxVec3(0,0,1),gMaterial,4, 20, 2, 5, 10, 10000, 1000);
+	theCreator.CreateBanisters(PxVec3(10, 0.0f, 300), PxVec3(1,0,0),gMaterial,4, 30, 2, 5, 10, 10000, 1000);
+	theCreator.CreatePoles(PxVec3(5, 0, 20), PxVec3(0,0,1),50,10, gMaterial, 0.5f, 15, 10, 10000, 10000);
+	theCreator.CreatePoles(PxVec3(55, 0, 20), PxVec3(0,0,1),50,10, gMaterial, 0.5f, 15, 10, 10000, 10000);
+	
+	//垃圾桶
+	theCreator.CreatePoles(PxVec3(50, 0.0f, 50), PxVec3(0, 0, 1), 100, 2, gMaterial, 2, 4, 10, 10000, 1000);
 
 }
+
 
 
 //实例化物理 
@@ -916,10 +925,9 @@ void stepPhysics(bool interactive)
 	sCamera->Update(*CameraFollowTarget);
 
 
-
-
 	gScene->simulate(1.0f/60.0f);
 	gScene->fetchResults(true);
+	
 }
 
 //清空物理（在render中调用）
