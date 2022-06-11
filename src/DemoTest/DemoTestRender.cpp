@@ -99,9 +99,13 @@ extern void stepPhysics(bool interactive);
 extern void cleanupPhysics(bool interactive);
 //extern void keyPress(unsigned char key, const PxTransform& camera);
 
-static __int64 gTime, gLastTime;
+//时间
+float deltaTime;		//时间插值
+float gameTime;		//当前程序执行时间
+__int64 firstCount;
 __int64 freq;
-PxReal deltaTime;
+static __int64 gTime, gLastTime;
+
 extern PxController* m_player;
 extern InputSyetem inputSystem;
 
@@ -217,7 +221,6 @@ void RenderSkybox(void)
 	glDepthMask(GL_TRUE);
 	glUseProgram(0);
 }
-
 //显示窗口
 void renderCallback()
 {
@@ -239,15 +242,12 @@ void renderCallback()
 
 	Snippets::finishRender();
 
+	//关于时间
 	QueryPerformanceCounter((LARGE_INTEGER*)&gTime); //get current count
 	QueryPerformanceFrequency((LARGE_INTEGER*)&freq); //get processor freq
-	deltaTime = (double)(gTime - gLastTime) / (double)freq;
+	deltaTime = (float)(gTime - gLastTime)/ (float)freq;
 	gLastTime = gTime;
-
-	//std::cout << deltaTime;
-
-
-	
+	gameTime = (float)(gTime - firstCount)/(float)pow(10,7);
 }
 
 void exitCallback(void)
@@ -326,6 +326,7 @@ void SetupSkybox()
 //渲染循环
 void renderLoop()
 {
+
 	sCamera = new Snippets::Camera(PxVec3(50.0f, 50.0f, 50.0f), PxVec3(-0.6f,-0.2f,-0.7f));
 	sCamera->SetConfig(20,PxVec3(0,3,0));
 
@@ -342,7 +343,14 @@ void renderLoop()
 
 
 	glutIdleFunc(idleCallback);
+
+	//注册好回调函数后
 	glutDisplayFunc(renderCallback);
+
+	//记录游戏第一帧时间
+	QueryPerformanceCounter((LARGE_INTEGER*)&gTime);
+	QueryPerformanceFrequency((LARGE_INTEGER*)&freq); 
+	firstCount = gTime;
 
 	//键盘事件回调函数
 	//glutKeyboardFunc(keyboardCallback);

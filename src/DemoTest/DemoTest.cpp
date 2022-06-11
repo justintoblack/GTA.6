@@ -789,7 +789,7 @@ void MyCode()
 	
 	//垃圾桶
 	theCreator.CreatePoles(PxVec3(50, 0.0f, 50), PxVec3(0, 0, 1), 100, 2, gMaterial, 2, 4, 10, 10000, 1000);
-
+	
 }
 
 
