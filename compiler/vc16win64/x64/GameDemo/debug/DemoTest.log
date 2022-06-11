@@ -1,6 +1,23 @@
-﻿  DemoTest.cpp
-  TheCreator.cpp
-  正在生成代码...
+﻿LINK : warning LNK4098: 默认库“LIBCMT”与其他库的使用冲突；请使用 /NODEFAULTLIB:library
+imgui_widgets.obj : warning LNK4099: 未找到 PDB“vc142.pdb”(使用“imgui_widgets.obj”或在“E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\bin\vc16win64\vc142.pdb”中寻找)；正在链接对象，如同没有调试信息一样
+imgui_tables.obj : warning LNK4099: 未找到 PDB“vc142.pdb”(使用“imgui_tables.obj”或在“E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\bin\vc16win64\vc142.pdb”中寻找)；正在链接对象，如同没有调试信息一样
+imgui_impl_opengl3.obj : warning LNK4099: 未找到 PDB“vc142.pdb”(使用“imgui_impl_opengl3.obj”或在“E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\bin\vc16win64\vc142.pdb”中寻找)；正在链接对象，如同没有调试信息一样
+imgui_impl_glfw.obj : warning LNK4099: 未找到 PDB“vc142.pdb”(使用“imgui_impl_glfw.obj”或在“E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\bin\vc16win64\vc142.pdb”中寻找)；正在链接对象，如同没有调试信息一样
+imgui_draw.obj : warning LNK4099: 未找到 PDB“vc142.pdb”(使用“imgui_draw.obj”或在“E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\bin\vc16win64\vc142.pdb”中寻找)；正在链接对象，如同没有调试信息一样
+imgui_demo.obj : warning LNK4099: 未找到 PDB“vc142.pdb”(使用“imgui_demo.obj”或在“E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\bin\vc16win64\vc142.pdb”中寻找)；正在链接对象，如同没有调试信息一样
+imgui.obj : warning LNK4099: 未找到 PDB“vc142.pdb”(使用“imgui.obj”或在“E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\bin\vc16win64\vc142.pdb”中寻找)；正在链接对象，如同没有调试信息一样
+SnippetVehicleTireFriction.obj : warning LNK4099: 未找到 PDB“vc142.pdb”(使用“SnippetVehicleTireFriction.obj”或在“E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\bin\vc16win64\vc142.pdb”中寻找)；正在链接对象，如同没有调试信息一样
+SnippetVehicleTankCreate.obj : warning LNK4099: 未找到 PDB“vc142.pdb”(使用“SnippetVehicleTankCreate.obj”或在“E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\bin\vc16win64\vc142.pdb”中寻找)；正在链接对象，如同没有调试信息一样
+SnippetVehicleSceneQuery.obj : warning LNK4099: 未找到 PDB“vc142.pdb”(使用“SnippetVehicleSceneQuery.obj”或在“E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\bin\vc16win64\vc142.pdb”中寻找)；正在链接对象，如同没有调试信息一样
+SnippetVehicleNoDriveCreate.obj : warning LNK4099: 未找到 PDB“vc142.pdb”(使用“SnippetVehicleNoDriveCreate.obj”或在“E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\bin\vc16win64\vc142.pdb”中寻找)；正在链接对象，如同没有调试信息一样
+SnippetVehicleFilterShader.obj : warning LNK4099: 未找到 PDB“vc142.pdb”(使用“SnippetVehicleFilterShader.obj”或在“E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\bin\vc16win64\vc142.pdb”中寻找)；正在链接对象，如同没有调试信息一样
+SnippetVehicleCreate.obj : warning LNK4099: 未找到 PDB“vc142.pdb”(使用“SnippetVehicleCreate.obj”或在“E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\bin\vc16win64\vc142.pdb”中寻找)；正在链接对象，如同没有调试信息一样
+SnippetVehicle4WCreate.obj : warning LNK4099: 未找到 PDB“vc142.pdb”(使用“SnippetVehicle4WCreate.obj”或在“E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\bin\vc16win64\vc142.pdb”中寻找)；正在链接对象，如同没有调试信息一样
+StbImageImpl.obj : warning LNK4099: 未找到 PDB“vc142.pdb”(使用“StbImageImpl.obj”或在“E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\bin\vc16win64\vc142.pdb”中寻找)；正在链接对象，如同没有调试信息一样
+Render.obj : warning LNK4099: 未找到 PDB“vc142.pdb”(使用“Render.obj”或在“E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\bin\vc16win64\vc142.pdb”中寻找)；正在链接对象，如同没有调试信息一样
+InputSystem.obj : warning LNK4099: 未找到 PDB“vc142.pdb”(使用“InputSystem.obj”或在“E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\bin\vc16win64\vc142.pdb”中寻找)；正在链接对象，如同没有调试信息一样
+ClassicMain.obj : warning LNK4099: 未找到 PDB“vc142.pdb”(使用“ClassicMain.obj”或在“E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\bin\vc16win64\vc142.pdb”中寻找)；正在链接对象，如同没有调试信息一样
+glew32s.lib(glew.obj) : warning LNK4099: 未找到 PDB“vc120.pdb”(使用“glew32s.lib(glew.obj)”或在“E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\bin\vc16win64\vc120.pdb”中寻找)；正在链接对象，如同没有调试信息一样
   DemoTest.vcxproj -> E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\compiler\vc16win64\./../../../bin/vc16win64\DemoTestDEBUG.exe
   复制了 0 个文件
   复制了 0 个文件

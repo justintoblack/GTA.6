@@ -1,1 +1,6 @@
-﻿  Utils.vcxproj -> E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\compiler\vc16win64\./../../lib/vc16win64\UtilsDEBUG.lib
+﻿  Mathf.cpp
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.24.28314\include\ostream(390,1): warning C4530: 使用了 C++ 异常处理程序，但未启用展开语义。请指定 /EHsc
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.24.28314\include\ostream(383): message : 在编译 类 模板 成员函数“std::basic_ostream<char,std::char_traits<char>> &std::basic_ostream<char,std::char_traits<char>>::operator <<(float)”时
+E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\Utils\Mathf.cpp(31): message : 查看对正在编译的函数 模板 实例化“std::basic_ostream<char,std::char_traits<char>> &std::basic_ostream<char,std::char_traits<char>>::operator <<(float)”的引用
+E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\Utils\Mathf.cpp(31): message : 查看对正在编译的 类 模板 实例化“std::basic_ostream<char,std::char_traits<char>>”的引用
+  Utils.vcxproj -> E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\compiler\vc16win64\./../../lib/vc16win64\UtilsDEBUG.lib
