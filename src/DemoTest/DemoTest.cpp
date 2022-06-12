@@ -800,15 +800,15 @@ void MyCode()
 	
 	//创建物体
 	//theCreator.CreateBanister(PxVec3(-50, 0.0f, -50), PxVec3(1, 1, 1), gMaterial, 3, 5, 1, 100000, 50000);
-	theCreator.CreateBanisters(PxVec3(60, 0.0f, 20), PxVec3(1,0,1),gMaterial,4, 20, 2, 5, 10, 10000, 1000);
-	theCreator.CreateBanisters(PxVec3(50, 0.0f, 20), PxVec3(1,0,2),gMaterial,4, 20, 2, 5, 10, 10000, 1000);
-	theCreator.CreateBanisters(PxVec3(10, 0.0f, 20), PxVec3(0,0,1),gMaterial,4, 20, 2, 5, 10, 10000, 1000);
-	theCreator.CreateBanisters(PxVec3(10, 0.0f, 300), PxVec3(1,0,0),gMaterial,4, 30, 2, 5, 10, 10000, 1000);
-	theCreator.CreatePoles(PxVec3(5, 0, 20), PxVec3(0,0,1),50,10, gMaterial, 0.5f, 15, 10, 10000, 10000);
-	theCreator.CreatePoles(PxVec3(55, 0, 20), PxVec3(0,0,1),50,10, gMaterial, 0.5f, 15, 10, 10000, 10000);
+	theCreator.CreateBanisters(PxVec3(60, 0.0f, 20), PxVec3(1,0,1),gMaterial,1, 20, 0.5f, 1.0f, 10, 10000, 1000);
+	theCreator.CreateBanisters(PxVec3(50, 0.0f, 20), PxVec3(1,0,2),gMaterial, 1, 20, 0.5f, 1.0f, 10, 10000, 1000);
+	theCreator.CreateBanisters(PxVec3(10, 0.0f, 20), PxVec3(0,0,1),gMaterial, 1, 20, 0.5f, 1.0f, 10, 10000, 1000);
+	theCreator.CreateBanisters(PxVec3(10, 0.0f, 300), PxVec3(1,0,0),gMaterial, 1, 20, 0.5f, 1.0f, 10, 10000, 1000);
+	theCreator.CreatePoles(PxVec3(5, 0, 20), PxVec3(0,0,1),10,10, gMaterial, 0.15f, 3.5f, 10, 10000, 10000);
+	theCreator.CreatePoles(PxVec3(55, 0, 20), PxVec3(0,0,1),50,10, gMaterial, 0.15f, 3.5f, 10, 10000, 10000);
 	
 	//垃圾桶
-	theCreator.CreatePoles(PxVec3(50, 0.0f, 50), PxVec3(0, 0, 1), 100, 2, gMaterial, 2, 4, 10, 10000, 1000);
+	theCreator.CreatePoles(PxVec3(50, 0.0f, 50), PxVec3(0, 0, 1), 20, 3, gMaterial, 0.3f, 0.7f, 10, 10000, 1000);
 	
 }
 

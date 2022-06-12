@@ -43,16 +43,16 @@ void TheCreator::CreateBanister(PxVec3 pos,PxVec3 dir,  PxMaterial* gMaterial,fl
 	//旋转四元数
 	//PxQuat q = PxQuat(Mathf::DegToRad( angle), rotate);
 	
-	PxRigidDynamic* link1 = PxCreateDynamic(*m_gPhysics,PxTransform(PxVec3(0,halfHeight,0)+pos), PxBoxGeometry(0.5f, halfHeight, 0.5f), *gMaterial, density);
+	PxRigidDynamic* link1 = PxCreateDynamic(*m_gPhysics,PxTransform(PxVec3(0,halfHeight,0)+pos), PxBoxGeometry(0.15f, halfHeight, 0.15f), *gMaterial, density);
 	PxFixedJoint* j1 = PxFixedJointCreate(*m_gPhysics, NULL, PxTransform(pos), link1, PxTransform(0, -halfHeight, 0));
 
 	PxRigidDynamic* link2 = PxCreateDynamic(*m_gPhysics, 
-		PxTransform(PxVec3(0,halfHeight*2,0)+pos+dir*halfLength, PxQuat(angle, rotate)), PxBoxGeometry(0.5f, 0.5f, halfLength), *gMaterial, density);
+		PxTransform(PxVec3(0,halfHeight*2,0)+pos+dir*halfLength, PxQuat(angle, rotate)), PxBoxGeometry(0.15f, 0.15f, halfLength), *gMaterial, density);
 	PxFixedJoint* j2 = PxFixedJointCreate(*m_gPhysics, link1, PxTransform(0, halfHeight, 0), link2,
 		PxTransform(PxVec3(0, 0, -halfLength), PxQuat(angle, -rotate)));
 
 	PxRigidDynamic* link3 = PxCreateDynamic(*m_gPhysics, PxTransform(pos+dir*halfLength*2+PxVec3(0,halfHeight,0)),
-		PxBoxGeometry(0.5f, halfHeight, 0.5f), *gMaterial, density);
+		PxBoxGeometry(0.15f, halfHeight, 0.15f), *gMaterial, density);
 	PxFixedJoint* j3 = PxFixedJointCreate(*m_gPhysics, link2, 
 		PxTransform(PxVec3( 0, 0, halfLength), PxQuat(angle, -rotate)), link3, PxTransform(0, halfHeight, 0));
 
