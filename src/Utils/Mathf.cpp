@@ -38,7 +38,7 @@ void Mathf::Debug(PxQuat q)
 
 float Mathf::Angle(PxVec3 from, PxVec3 to)
 {
-	//acos·µ»Ø²»´ø·ûºÅµÄÖµ
+	//acosï¿½ï¿½ï¿½Ø²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Åµï¿½Öµ
 	return 	PxAcos(from.dot(to) / Distance(from) / Distance(to));
 }
 

@@ -113,6 +113,23 @@ PxVec3 characterPos;
 PxVec3 vehiclePos;
 PxVec3* CameraFollowTarget;
 
+#pragma region 角色属性
+PxVec3 velocity=PxVec3(0,0,0);
+PxVec3 gravity = PxVec3(0, -9.8f, 0);
+
+PxTransform checkSphereTrans;
+float jumpHeight = 2.0f;
+float characterRadius=0.5f;
+float characterHeight=1.0f;
+float checkSphereRadius =0.1f;
+
+bool isGrounded;
+#pragma endregion
+
+//时间
+extern float deltaTime;
+extern float gameTime;
+
 #pragma region 全局按键事件
 bool isQKeyDown;
 void GlobalKeyEvent()
@@ -143,7 +160,6 @@ void GlobalKeyEvent()
 }
 
 #pragma endregion
-
 
 
 struct FilterGroup
@@ -570,17 +586,17 @@ PxController* CreateCharacterController(PxExtendedVec3 initPos)
 
 	desc.material = gMaterial;
 	desc.position = initPos;
-	desc.radius = 2.0f;
-	desc.height = 4.0f;
+	desc.radius = characterRadius;
+	desc.height = characterHeight;
 
 	//坡度限制
 	desc.slopeLimit = 0.7f;
 	desc.contactOffset = 0.1f;
 	desc.maxJumpHeight = 1.0f;
-	desc.stepOffset = 0.5f;
+	desc.stepOffset = 0.3f;
 
 	PxController* ctrl = manager->createController(desc);
-	ctrl->getActor()->createShape(PxBoxGeometry(1, 1, 1), *gMaterial)->setLocalPose(PxTransform(0,4,0));
+	//ctrl->getActor()->createShape(PxBoxGeometry(1, 1, 1), *gMaterial)->setLocalPose(PxTransform(0,4,0));
 
 	return ctrl;
 
@@ -746,9 +762,13 @@ void releaseAllControls()
 	}
 }
 
-void FireTest()
+void Jump()
 {
-	createDynamic(2, PxTransform( sCamera->getEye()+sCamera->getDir()*20), sCamera->getDir() * 200);
+	if (isGrounded)
+	{
+		velocity.y = PxSqrt(jumpHeight * gravity.y * -2);
+	}
+	std::cout << isGrounded << std::endl;
 }
 
 //自定义
@@ -762,11 +782,11 @@ void MyCode()
 	CreateChain(PxTransform(PxVec3(0.0f, 20.0f, -10.0f)), 5, PxCapsuleGeometry(1.0f,1.0f), 4.0f, createBreakableFixed);
 	CreateChain(PxTransform(PxVec3(0.0f, 25.0f, -20.0f)), 5, PxBoxGeometry(2.0f, 0.5f, 0.5f), 4.0f, createDampedD6);
 
-	m_player = CreateCharacterController(PxExtendedVec3(-5,10,-5));
+	m_player = CreateCharacterController(PxExtendedVec3(20,100,20));
 
 	//角色Input函数注册
-	characterMap.SetActionMap(m_player, sCamera, 0.1f);
-	characterMap.SpaceKeyEvent = FireTest;
+	characterMap.SetActionMap(m_player, sCamera, 5.0f);
+	characterMap.SpaceKeyEvent = Jump;
 
 	//载具Input函数注册
 	vehicleMap.release = releaseAllControls;
@@ -917,7 +937,20 @@ void stepPhysics(bool interactive)
 	//Work out if the vehicle is in the air.
 	gIsVehicleInAir = gVehicle4W->getRigidDynamicActor()->isSleeping() ? false : PxVehicleIsInAir(vehicleQueryResults[0]);
 
-	m_player->move(physx::PxVec3(0, -0.05f, 0),0.01f,0.01f,NULL);
+	//角色移动
+	PxOverlapHit hit;
+	checkSphereTrans =PxTransform (m_player->getFootPosition() - 
+		PxExtendedVec3(0, 0, 0));
+	isGrounded = PxSceneQueryExt::overlapAny(*gScene, PxSphereGeometry(checkSphereRadius),
+		checkSphereTrans, hit);
+
+	if (isGrounded&&velocity.y<0)
+	{
+		velocity.y = -0.0f;
+	}
+
+	velocity += gravity *deltaTime;
+	m_player->move(velocity*deltaTime,0.001f,0.01f,NULL);
 
 	//相机跟随
 	characterPos= m_player->getPosition() - PxExtendedVec3(0, 0, 0);

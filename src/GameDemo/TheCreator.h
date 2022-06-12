@@ -33,6 +33,9 @@ public:
 	//创建位置标志立方体(static)
 	void CreateAnchorBox(PxTransform pos, PxMaterial* gMaterial, float halfX,float halfY,float halfZ);
 
+	//创建动态球体(Dynamic)
+	void CreateDynamicSphere(PxTransform pos, PxMaterial* gMaterial, float radius);
+
 	//创建单个栅栏
 	void CreateBanister(PxVec3 pos,PxVec3 dir, PxMaterial* gMaterial, float halfHeight, 
 		float halfLength, float density, float force, float torque,BreakType type);

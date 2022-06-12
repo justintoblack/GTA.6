@@ -224,9 +224,19 @@ void RenderSkybox(void)
 //显示窗口
 void renderCallback()
 {
+	//记录游戏第一帧时间
+	if (gTime == 0)
+	{
+		QueryPerformanceCounter((LARGE_INTEGER*)&gTime);
+		QueryPerformanceFrequency((LARGE_INTEGER*)&freq);
+		gLastTime = gTime;
+		firstCount = gTime;
+		//std::cout << "first" << deltaTime << std::endl;
+	}
+
 	stepPhysics(true);
 
-	Snippets::startRender(sCamera->getEye(), sCamera->getDir());
+	Snippets::startRender(sCamera->getEye(), sCamera->getDir(),0.1f);
 	RenderSkybox();
 	PxScene* scene;
 	PxGetPhysics().getScenes(&scene,1);
@@ -248,6 +258,7 @@ void renderCallback()
 	deltaTime = (float)(gTime - gLastTime)/ (float)freq;
 	gLastTime = gTime;
 	gameTime = (float)(gTime - firstCount)/(float)pow(10,7);
+	//std::cout  << deltaTime << std::endl;
 }
 
 void exitCallback(void)
@@ -328,7 +339,7 @@ void renderLoop()
 {
 
 	sCamera = new Snippets::Camera(PxVec3(50.0f, 50.0f, 50.0f), PxVec3(-0.6f,-0.2f,-0.7f));
-	sCamera->SetConfig(20,PxVec3(0,3,0));
+	sCamera->SetConfig(2,PxVec3(0,0,0));
 
 	//初始化鼠标位置;
 	GetCursorPos(&p);
@@ -347,10 +358,7 @@ void renderLoop()
 	//注册好回调函数后
 	glutDisplayFunc(renderCallback);
 
-	//记录游戏第一帧时间
-	QueryPerformanceCounter((LARGE_INTEGER*)&gTime);
-	QueryPerformanceFrequency((LARGE_INTEGER*)&freq); 
-	firstCount = gTime;
+
 
 	//键盘事件回调函数
 	//glutKeyboardFunc(keyboardCallback);
@@ -368,6 +376,7 @@ void renderLoop()
 	atexit(exitCallback);
 
 	initPhysics(true);
+
 	glutMainLoop();
 
 }

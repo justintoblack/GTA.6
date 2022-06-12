@@ -20,6 +20,14 @@ void TheCreator::CreateAnchorBox(PxTransform pos, PxMaterial* gMaterial, float h
 	m_gScene->addActor(*ballBody);
 }
 
+void TheCreator::CreateDynamicSphere(PxTransform pos, PxMaterial* gMaterial, float radius)
+{
+	PxRigidDynamic* body = PxCreateDynamic(*m_gPhysics, pos,
+		PxSphereGeometry(radius), *gMaterial, 1.0f);
+
+	m_gScene->addActor(*body);
+}
+
 void TheCreator::CreateBanister(PxVec3 pos,PxVec3 dir,  PxMaterial* gMaterial,float halfHeight, 
 	float halfLength, float density, float force, float torque,BreakType type)
 {

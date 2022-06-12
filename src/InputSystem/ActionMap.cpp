@@ -5,6 +5,7 @@
 
 physx::PxVec3 up(0, 1, 0);
 extern InputSyetem inputSystem;
+extern float deltaTime;
 
 void ActionMap::InputAction()
 {
@@ -54,7 +55,7 @@ void CharacterActionMap::InputAction()
 	{
 		moveDirection +=forward	;
 	}
-	m_controller->move(moveDirection.getNormalized() * moveSpeed, 0.01f, 0.01f, NULL);
+	m_controller->move(moveDirection.getNormalized() * moveSpeed*deltaTime, 0.01f, 0.01f, NULL);
 }
 
 void CharacterActionMap::SetActionMap(physx::PxController* newController, Snippets::Camera* camera, float speed)
