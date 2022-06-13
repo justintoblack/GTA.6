@@ -185,7 +185,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\glew-2.1.0\include;$(SolutionDir)Dependencies\imgui;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\Graphics\include\win32\GL;E:\GameClass\PhysX-Tutorial-master\PxShared\include;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\Include;$(SolutionDir)Dependencies\GLFW\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\include;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\ModelLoading;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\Graphics\include\win32\GL;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\compiler\vc16win64\Dependencies\GLFW\include;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\Render;E:\GameClass\PhysX-Tutorial-master\PxShared\include;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\Include;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\compiler\vc16win64\Dependencies\imgui;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\glew-2.1.0\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(SolutionDir)Dependencies\imgui;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\lib\vc16win64;E:\GameClass\PhysX-Tutorial-master\PxShared\lib\vc16win64;$(SolutionDIr)Dependencies\GLFW\lib-vc2019;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\Snippets\Graphics\lib\win64\glut</AdditionalLibraryDirectories>
@@ -198,7 +198,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\glew-2.1.0\include;$(SolutionDir)Dependencies\imgui;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\Graphics\include\win32\GL;E:\GameClass\PhysX-Tutorial-master\PxShared\include;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\Include;$(SolutionDir)Dependencies\GLFW\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\include;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\ModelLoading;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\Graphics\include\win32\GL;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\compiler\vc16win64\Dependencies\GLFW\include;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\Render;E:\GameClass\PhysX-Tutorial-master\PxShared\include;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\Include;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\compiler\vc16win64\Dependencies\imgui;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\glew-2.1.0\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(SolutionDir)Dependencies\imgui;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\lib\vc16win64;E:\GameClass\PhysX-Tutorial-master\PxShared\lib\vc16win64;$(SolutionDIr)Dependencies\GLFW\lib-vc2019;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\Snippets\Graphics\lib\win64\glut</AdditionalLibraryDirectories>
@@ -212,7 +212,7 @@
       <SDLCheck>
       </SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\imgui;$(SolutionDir)..\..\..\..\..\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\Graphics\include\win32\GL;$(SolutionDir)..\..\..\..\..\PhysX-Tutorial-master\PxShared\include;$(SolutionDir)..\..\..\..\..\PhysX-Tutorial-master\PhysX_3.4\Include;$(SolutionDir)Dependencies\GLFW\include;$(SolutionDir)..\..\..\..\..\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\Render;$(SolutionDir)..\..\..\..\..\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\include;$(SolutionDir)..\..\..\..\..\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\ModelLoading</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\include;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\ModelLoading;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\Graphics\include\win32\GL;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\compiler\vc16win64\Dependencies\GLFW\include;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\Render;E:\GameClass\PhysX-Tutorial-master\PxShared\include;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\Include;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\compiler\vc16win64\Dependencies\imgui;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\glew-2.1.0\include</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -234,7 +234,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\glew-2.1.0\include;$(SolutionDir)Dependencies\imgui;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\Graphics\include\win32\GL;E:\GameClass\PhysX-Tutorial-master\PxShared\include;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\Include;$(SolutionDir)Dependencies\GLFW\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\include;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\ModelLoading;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\Graphics\include\win32\GL;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\compiler\vc16win64\Dependencies\GLFW\include;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\Render;E:\GameClass\PhysX-Tutorial-master\PxShared\include;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\Include;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\compiler\vc16win64\Dependencies\imgui;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\glew-2.1.0\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -251,7 +251,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\glew-2.1.0\include;$(SolutionDir)Dependencies\imgui;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\Graphics\include\win32\GL;E:\GameClass\PhysX-Tutorial-master\PxShared\include;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\Include;$(SolutionDir)Dependencies\GLFW\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\include;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\ModelLoading;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\Graphics\include\win32\GL;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\compiler\vc16win64\Dependencies\GLFW\include;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\Render;E:\GameClass\PhysX-Tutorial-master\PxShared\include;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\Include;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\compiler\vc16win64\Dependencies\imgui;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\glew-2.1.0\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -269,7 +269,7 @@
       <SDLCheck>
       </SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\glew-2.1.0\include;$(SolutionDir)Dependencies\imgui;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\Graphics\include\win32\GL;E:\GameClass\PhysX-Tutorial-master\PxShared\include;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\Include;$(SolutionDir)Dependencies\GLFW\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\include;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\ModelLoading;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\Graphics\include\win32\GL;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\compiler\vc16win64\Dependencies\GLFW\include;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\Render;E:\GameClass\PhysX-Tutorial-master\PxShared\include;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\Include;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\compiler\vc16win64\Dependencies\imgui;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\glew-2.1.0\include</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <PreprocessorDefinitions>_HAS_EXCEPTIONS=0;WIN32;WIN64;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;_WINSOCK_DEPRECATED_NO_WARNINGS;PHYSX_PROFILE_SDK;RENDER_SNIPPET;NDEBUG;PX_SUPPORT_PVD=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
