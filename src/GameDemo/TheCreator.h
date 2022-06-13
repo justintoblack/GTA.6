@@ -6,7 +6,8 @@
 #include "../Utils/Mathf.h"
 #include <PxPhysicsAPI.h>
 #include<ctime>
-
+#include "../SnippetVehicleCommon/SnippetVehicleFilterShader.h"
+#include "../SnippetVehicleCommon/SnippetVehicleSceneQuery.h"
 using namespace physx;
 
 
@@ -52,6 +53,10 @@ public:
 	//创建一排电线杆
 	void CreatePoles(PxVec3 pos, PxVec3 dir,float separate,PxU32 num, PxMaterial* gMaterial, float halfXZ, float halfHeight,
 		float density, float force, float torque);
+
+	//创建减速带
+	void createSlowArea(PxVec3 startPosition, PxF32 capsuleRadii, PxF32 interval, PxU32 num, PxMaterial* gMaterial);
+
 };
 
 #endif // !_THECREATOR_H

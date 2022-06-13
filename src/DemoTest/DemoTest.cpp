@@ -89,6 +89,7 @@ PxPvd*                  gPvd        = NULL;
 #define POINT_REJECT_ANGLE PxPi/4.0f
 #define NORMAL_REJECT_ANGLE PxPi/4.0f
 
+
 //Blocking sweeps require sweep hit buffers for just 1 hit per wheel.
 //Non-blocking sweeps require more hits per wheel because they return all touches on the swept shape.
 #if BLOCKING_SWEEPS
@@ -132,10 +133,10 @@ PxVec3* CameraFollowTarget;
 
 #pragma region 角色属性
 PxVec3 velocity=PxVec3(0,0,0);
-PxVec3 gravity = PxVec3(0, -9.8f, 0);
+PxVec3 gravity = PxVec3(0, -9.8f*2.0f, 0);
 
 PxTransform checkSphereTrans;
-float jumpHeight = 2.0f;
+float jumpHeight = 1.0f;
 float characterRadius=0.5f;
 float characterHeight=1.0f;
 float checkSphereRadius =0.1f;
@@ -503,35 +504,7 @@ void createStack(const PxTransform& t, PxU32 size, PxReal halfExtent)
 	shape->release();
 }
 
-void makeObjectDrivable(PxShape* &shape)
-{
 
-	PxFilterData simFilterData(COLLISION_FLAG_OBSTACLE, COLLISION_FLAG_WHEEL, PxPairFlag::eMODIFY_CONTACTS | PxPairFlag::eDETECT_CCD_CONTACT, 0);
-	shape->setSimulationFilterData(simFilterData);
-	PxFilterData qryFilterData;
-	setupDrivableSurface(qryFilterData);
-	shape->setQueryFilterData(qryFilterData);
-}
-
-void createSlowArea()
-{
-	//Create several static obstacles for the first vehicle to drive on.
-//  (i) collide only with wheel shapes
-// (ii) have continuous collision detection (CCD) enabled
-//(iii) have contact modification enabled
-// (iv) are configured to be drivable surfaces
-	const PxF32 xCoordVehicleStarts[NUM_VEHICLES] = { 30.0f };
-	const PxF32 capsuleRadii[4] = { 0.05f, 	0.1f, 0.125f, 0.135f };
-	const PxF32 capsuleZ[4] = { 50.0f, 60.0f, 70.0f, 80.0f };
-	for (PxU32 i = 0; i < 4; i++)
-	{
-		PxTransform t(PxVec3(xCoordVehicleStarts[0], capsuleRadii[i], capsuleZ[i]), PxQuat(PxIdentity));
-		PxRigidStatic* rd = gPhysics->createRigidStatic(t);
-		PxCapsuleGeometry capsuleGeom(capsuleRadii[i], 3.0f);
-		PxShape* shape = PxRigidActorExt::createExclusiveShape(*rd, capsuleGeom, *gMaterial);
-		gScene->addActor(*rd);
-	}
-}
 //自定义
 
 PxShape* shape;
@@ -748,8 +721,8 @@ VehicleDesc initVehicleDesc()
 	//Set up the chassis mass, dimensions, moment of inertia, and center of mass offset.
 	//The moment of inertia is just the moment of inertia of a cuboid but modified for easier steering.
 	//Center of mass offset is 0.65m above the base of the chassis and 0.25m towards the front.
-	const PxF32 chassisMass = 1000.0f;
-	const PxVec3 chassisDims(3 ,3,3) ;
+	const PxF32 chassisMass = 1500.f;
+	const PxVec3 chassisDims(1.6,1,5) ; //w,h,l
 	const PxVec3 chassisMOI
 	((chassisDims.y * chassisDims.y + chassisDims.z * chassisDims.z) * chassisMass / 12.0f,
 		(chassisDims.x * chassisDims.x + chassisDims.z * chassisDims.z) * 0.8f * chassisMass / 12.0f,
@@ -759,8 +732,8 @@ VehicleDesc initVehicleDesc()
 	//Set up the wheel mass, radius, width, moment of inertia, and number of wheels.
 	//Moment of inertia is just the moment of inertia of a cylinder.
 	const PxF32 wheelMass = 200.0f ;
-	const PxF32 wheelRadius = 0.5f * 5;
-	const PxF32 wheelWidth = 0.4f * 5;
+	const PxF32 wheelRadius = 0.5f ;
+	const PxF32 wheelWidth = 0.3f;
 	const PxF32 wheelMOI = 0.5f * wheelMass * wheelRadius * wheelRadius;
 	const PxU32 nbWheels = 4;
 
@@ -921,7 +894,7 @@ void MyCode()
 
 	CreateChain(PxTransform(PxVec3(0.0f, 20.0f, -10.0f)), 5, PxCapsuleGeometry(1.0f,1.0f), 4.0f, createBreakableFixed);
 	CreateChain(PxTransform(PxVec3(0.0f, 25.0f, -20.0f)), 5, PxBoxGeometry(2.0f, 0.5f, 0.5f), 4.0f, createDampedD6);
-	createSlowArea();
+
 	m_player = CreateCharacterController(PxExtendedVec3(20,100,20));
 
 	//角色Input函数注册
@@ -946,7 +919,7 @@ void MyCode()
 	theCreator.CreateBanisters(PxVec3(10, 0.0f, 300), PxVec3(1,0,0),gMaterial, 1, 20, 0.5f, 1.0f, 10, 10000, 1000);
 	theCreator.CreatePoles(PxVec3(5, 0, 20), PxVec3(0,0,1),10,10, gMaterial, 0.15f, 3.5f, 10, 10000, 10000);
 	theCreator.CreatePoles(PxVec3(55, 0, 20), PxVec3(0,0,1),50,10, gMaterial, 0.15f, 3.5f, 10, 10000, 10000);
-	
+	theCreator.createSlowArea(PxVec3(30, 0, 70), PxF32(0.01), PxF32(0.2), 30, gMaterial);
 	//垃圾桶
 	theCreator.CreatePoles(PxVec3(50, 0.0f, 50), PxVec3(0, 0, 1), 20, 3, gMaterial, 0.3f, 0.7f, 10, 10000, 1000);
 	
