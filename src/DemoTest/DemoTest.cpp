@@ -35,6 +35,7 @@
 // ****************************************************************************
 
 #include <ctype.h>
+#include <GL/glut.h>
 
 #include "PxPhysicsAPI.h"
 
@@ -43,6 +44,7 @@
 #include "../Utils/Utils.h"
 
 #include<iostream>
+#include<string>
 #include<vector>
 #include<windows.h>
 
@@ -62,9 +64,12 @@
 #include "../SnippetVehicleCommon/SnippetVehicleFilterShader.h"
 #include "../SnippetVehicleCommon/SnippetVehicleTireFriction.h"
 #include "../SnippetVehicleCommon/SnippetVehicleCreate.h"
+#include "irrKlang/irrKlang.h"  //audio
 
+using namespace irrklang;
 using namespace physx;
 using namespace snippetvehicle;
+
 //默认的内存管理和错误报告器
 PxDefaultAllocator		gAllocator;
 PxDefaultErrorCallback	gErrorCallback;
@@ -361,7 +366,32 @@ PxFilterFlags contactReportFilterShader(PxFilterObjectAttributes attributes0, Px
 	return PxFilterFlag::eDEFAULT;
 }
 
-
+class MusicEvent
+{
+public:
+	MusicEvent() {
+		this->isPlay = false;
+	}
+	ISoundEngine* PlayEngine;
+	bool isPlay;
+	void create()
+	{
+		ISoundEngine* PlayEngine = createIrrKlangDevice();
+		this->PlayEngine = PlayEngine;
+	}
+	void play(char path [])
+	{
+		PlayEngine->play2D(path, GL_TRUE);
+		this->isPlay = true;
+	}
+	void stop()
+	{
+		PlayEngine->drop();
+		this->isPlay = false;
+	}
+};
+MusicEvent carEngine;
+MusicEvent bell;
 
 class ContactReportCallback : public PxSimulationEventCallback
 {
@@ -791,6 +821,13 @@ VehicleDesc initVehicleDesc()
 
 void startAccelerateForwardsMode()
 {
+	//create engine and then start engine
+	if (carEngine.isPlay == false) {
+		carEngine.create();
+		char path[] = "../../assets/audio/carEngine.wav";
+		carEngine.play(path);
+	}
+
 	if (gVehicle4W->mDriveDynData.getCurrentGear() == PxVehicleGearsData::eREVERSE)
 	{
 		gVehicle4W->mDriveDynData.forceGearChange(PxVehicleGearsData::eFIRST);
@@ -906,6 +943,26 @@ void releaseAllControls()
 		gVehicleInputData.setAnalogHandbrake(0.0f);
 	}
 }
+void stopEngine()
+{
+	if (carEngine.isPlay == true) {
+		carEngine.stop();
+	}
+};
+void startBell()
+{
+	if (bell.isPlay == false) {
+		bell.create();
+		char path[] = "../../assets/audio/bell1.wav";
+		bell.play(path);
+	}
+};
+void stopBell()
+{
+	if (bell.isPlay == true) {
+		bell.stop();
+	}
+};
 
 
 
@@ -933,6 +990,9 @@ void MyCode()
 	vehicleMap.SKeyEvent = startAccelerateReverseMode;
 	vehicleMap.AKeyEvent = startTurnHardRightMode;
 	vehicleMap.DKeyEvent = startTurnHardLeftMode;
+	vehicleMap.EKeyEvent = startBell;
+	vehicleMap.ReleaseWKeyEvent = stopEngine;
+	vehicleMap.ReleaseEKeyEvent = stopBell;
 
 	inputSystem.SetCharacterMap(characterMap);
 	CameraFollowTarget = &characterPos;
@@ -1158,10 +1218,15 @@ void cleanupPhysics(bool interactive)
 //	}
 //}
 
+
+//audio
+
+
 #define RENDER_SNIPPET 1
 //main
 int snippetMain(int, const char*const*)
 {
+	
 #ifdef RENDER_SNIPPET
 	extern void renderLoop();
 	renderLoop();

@@ -41,6 +41,10 @@ public:
 	void (*SKeyEvent)();
 	void (*AKeyEvent)();
 	void (*DKeyEvent)();
+	void (*EKeyEvent)();
+	void (*ReleaseWKeyEvent)();
+	void (*ReleaseEKeyEvent)();
+
 
 	void InputAction();
 	void SetActionMap(physx::PxVehicleDrive4W* newController);

@@ -47,6 +47,16 @@
 #include <glm/gtc/type_ptr.hpp>
 #include "../InputSystem/InputSystem.h"
 
+#include "irrKlang/irrKlang.h"  //audio
+
+using namespace irrklang;
+ISoundEngine* BackgroundSoundEngine = createIrrKlangDevice();
+
+//ISoundEngine* SoundEngine2 = createIrrKlangDevice();
+
+
+
+
 GLuint              gCubeTexture;
 Shader				gSkyboxShader;
 unsigned int		gSkyboxVAO, gSkyboxVBO;
@@ -359,6 +369,7 @@ namespace
 }
 
 
+
 	//äÖÈ¾Ñ­»·
 	void renderLoop()
 	{
@@ -375,6 +386,8 @@ namespace
 		Snippets::setupDefaultWindow("PhysX Demo");
 		Snippets::setupDefaultRenderState();
 		glewInit();
+
+
 		//----------Render Model----------
 		gModel = Model("../../assets/objects/nanosuit/nanosuit.obj");
 		gModel2 = Model("../../assets/objects/backpack/backpack.obj");
@@ -402,7 +415,14 @@ namespace
 		atexit(exitCallback);
 
 		initPhysics(true);
+		//BackgroundSoundEngine->play2D("../../assets/audio/owu12-u5eaj.wav", GL_TRUE);
+		ISound* snd = BackgroundSoundEngine->play2D("../../assets/audio/owu12-u5eaj.wav", true, false, true);
+		if (snd)
+			snd->setVolume(0.4);
+		//SoundEngine2->play2D("../../assets/audio/bell.wav", GL_TRUE);
 
 		glutMainLoop();
+
+
 	}
 #endif

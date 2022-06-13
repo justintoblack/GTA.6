@@ -27,9 +27,18 @@
 // Copyright (c) 2004-2008 AGEIA Technologies, Inc. All rights reserved.
 // Copyright (c) 2001-2004 NovodeX AG. All rights reserved.  
 
+#include <iostream>
+
+
 extern int snippetMain(int, const char*const*);
 
 int main(int argc, char** argv)
 {
-	return snippetMain(argc, argv);
+	
+	snippetMain(argc, argv);
+
+	
+
+	
+	return 0;
 }
