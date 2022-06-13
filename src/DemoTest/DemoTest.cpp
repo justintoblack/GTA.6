@@ -115,10 +115,10 @@ PxVec3* CameraFollowTarget;
 
 #pragma region 角色属性
 PxVec3 velocity=PxVec3(0,0,0);
-PxVec3 gravity = PxVec3(0, -9.8f, 0);
+PxVec3 gravity = PxVec3(0, -9.8f*2.0f, 0);
 
 PxTransform checkSphereTrans;
-float jumpHeight = 2.0f;
+float jumpHeight = 1.0f;
 float characterRadius=0.5f;
 float characterHeight=1.0f;
 float checkSphereRadius =0.1f;
