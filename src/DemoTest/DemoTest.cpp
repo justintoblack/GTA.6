@@ -79,6 +79,24 @@ PxMaterial*				gMaterial	= NULL;
 PxCooking* gCooking = NULL;
 PxPvd*                  gPvd        = NULL;
 
+#define NUM_VEHICLES 1
+#define BLOCKING_SWEEPS 0
+#define MAX_ACCELERATION 50.0f
+//Contact modification values.
+#define WHEEL_TANGENT_VELOCITY_MULTIPLIER 0.1f
+#define MAX_IMPULSE PX_MAX_F32
+//Angle thresholds used to categorize contacts as suspension contacts or rigid body contacts.
+#define POINT_REJECT_ANGLE PxPi/4.0f
+#define NORMAL_REJECT_ANGLE PxPi/4.0f
+
+
+//Blocking sweeps require sweep hit buffers for just 1 hit per wheel.
+//Non-blocking sweeps require more hits per wheel because they return all touches on the swept shape.
+#if BLOCKING_SWEEPS
+PxU16					gNbQueryHitsPerWheel = 1;
+#else
+PxU16					gNbQueryHitsPerWheel = 8;
+#endif
 //创建控制器管理员
 PxControllerManager* manager = NULL;
 
@@ -518,6 +536,7 @@ void createStack(const PxTransform& t, PxU32 size, PxReal halfExtent)
 	shape->release();
 }
 
+
 //自定义
 
 PxShape* shape;
@@ -635,13 +654,107 @@ PxController* CreateCharacterController(PxExtendedVec3 initPos)
 }
 
 //车辆相关的函数
+class WheelContactModifyCallback : public PxContactModifyCallback
+{
+public:
+
+	WheelContactModifyCallback()
+		: PxContactModifyCallback()
+	{
+	}
+
+	~WheelContactModifyCallback() {}
+
+	void onContactModify(PxContactModifyPair* const pairs, PxU32 count)
+	{
+		for (PxU32 i = 0; i < count; i++)
+		{
+			const PxRigidActor** actors = pairs[i].actor;
+			const PxShape** shapes = pairs[i].shape;
+
+			//Search for actors that represent vehicles and shapes that represent wheels.
+			for (PxU32 j = 0; j < 2; j++)
+			{
+				const PxActor* actor = actors[j];
+				if (actor->userData && (static_cast<ActorUserData*>(actor->userData))->vehicle)
+				{
+					const PxVehicleWheels* vehicle = (static_cast<ActorUserData*>(actor->userData))->vehicle;
+					PX_ASSERT(vehicle->getRigidDynamicActor() == actors[j]);
+
+					const PxShape* shape = shapes[j];
+					if (shape->userData && (static_cast<ShapeUserData*>(shape->userData))->isWheel)
+					{
+						const PxU32 wheelId = (static_cast<ShapeUserData*>(shape->userData))->wheelId;
+						PX_ASSERT(wheelId < vehicle->mWheelsSimData.getNbWheels());
+
+						//Modify wheel contacts.
+						PxVehicleModifyWheelContacts(*vehicle, wheelId, WHEEL_TANGENT_VELOCITY_MULTIPLIER, MAX_IMPULSE, pairs[i]);
+					}
+				}
+			}
+		}
+	}
+
+private:
+
+};
+WheelContactModifyCallback gWheelContactModifyCallback;
+
+//The class WheelCCDContactModifyCallback identifies and modifies ccd contacts
+//that involve a wheel.  Contacts that can be identified and managed by the suspension
+//system are ignored.  Any contacts that remain are modified to account for the rotation
+//speed of the wheel around the rolling axis.
+class WheelCCDContactModifyCallback : public PxCCDContactModifyCallback
+{
+public:
+
+	WheelCCDContactModifyCallback()
+		: PxCCDContactModifyCallback()
+	{
+	}
+
+	~WheelCCDContactModifyCallback() {}
+
+	void onCCDContactModify(PxContactModifyPair* const pairs, PxU32 count)
+	{
+		for (PxU32 i = 0; i < count; i++)
+		{
+			const PxRigidActor** actors = pairs[i].actor;
+			const PxShape** shapes = pairs[i].shape;
+
+			//Search for actors that represent vehicles and shapes that represent wheels.
+			for (PxU32 j = 0; j < 2; j++)
+			{
+				const PxActor* actor = actors[j];
+				if (actor->userData && (static_cast<ActorUserData*>(actor->userData))->vehicle)
+				{
+					const PxVehicleWheels* vehicle = (static_cast<ActorUserData*>(actor->userData))->vehicle;
+					PX_ASSERT(vehicle->getRigidDynamicActor() == actors[j]);
+
+					const PxShape* shape = shapes[j];
+					if (shape->userData && (static_cast<ShapeUserData*>(shape->userData))->isWheel)
+					{
+						const PxU32 wheelId = (static_cast<ShapeUserData*>(shape->userData))->wheelId;
+						PX_ASSERT(wheelId < vehicle->mWheelsSimData.getNbWheels());
+
+						//Modify wheel contacts.
+						PxVehicleModifyWheelContacts(*vehicle, wheelId, WHEEL_TANGENT_VELOCITY_MULTIPLIER, MAX_IMPULSE, pairs[i]);
+					}
+				}
+			}
+		}
+	}
+};
+WheelCCDContactModifyCallback gWheelCCDContactModifyCallback;
+
+
 VehicleDesc initVehicleDesc()
 {
 	//Set up the chassis mass, dimensions, moment of inertia, and center of mass offset.
 	//The moment of inertia is just the moment of inertia of a cuboid but modified for easier steering.
 	//Center of mass offset is 0.65m above the base of the chassis and 0.25m towards the front.
-	const PxF32 chassisMass = 1500.0f;
-	const PxVec3 chassisDims(2.5f * 5, 2.0f * 5, 5.0f * 10) ;
+	const PxF32 chassisMass = 1500.f;
+	const PxVec3 chassisDims(1.6,1,5) ; //w,h,l
 	const PxVec3 chassisMOI
 	((chassisDims.y * chassisDims.y + chassisDims.z * chassisDims.z) * chassisMass / 12.0f,
 		(chassisDims.x * chassisDims.x + chassisDims.z * chassisDims.z) * 0.8f * chassisMass / 12.0f,
@@ -650,9 +763,9 @@ VehicleDesc initVehicleDesc()
 
 	//Set up the wheel mass, radius, width, moment of inertia, and number of wheels.
 	//Moment of inertia is just the moment of inertia of a cylinder.
-	const PxF32 wheelMass = 20.0f ;
-	const PxF32 wheelRadius = 0.5f * 5;
-	const PxF32 wheelWidth = 0.4f * 5;
+	const PxF32 wheelMass = 200.0f ;
+	const PxF32 wheelRadius = 0.5f ;
+	const PxF32 wheelWidth = 0.3f;
 	const PxF32 wheelMOI = 0.5f * wheelMass * wheelRadius * wheelRadius;
 	const PxU32 nbWheels = 4;
 
@@ -832,7 +945,7 @@ void MyCode()
 	theCreator.CreateBanisters(PxVec3(10, 0.0f, 300), PxVec3(1,0,0),gMaterial, 1, 20, 0.5f, 1.0f, 10, 10000, 1000);
 	theCreator.CreatePoles(PxVec3(5, 0, 20), PxVec3(0,0,1),10,10, gMaterial, 0.15f, 3.5f, 10, 10000, 10000);
 	theCreator.CreatePoles(PxVec3(55, 0, 20), PxVec3(0,0,1),50,10, gMaterial, 0.15f, 3.5f, 10, 10000, 10000);
-	
+	theCreator.createSlowArea(PxVec3(30, 0, 70), PxF32(0.01), PxF32(0.2), 30, gMaterial);
 	//垃圾桶
 	theCreator.CreatePoles(PxVec3(50, 0.0f, 50), PxVec3(0, 0, 1), 20, 3, gMaterial, 0.3f, 0.7f, 10, 10000, 1000);
 	
@@ -887,10 +1000,24 @@ void initPhysics(bool interactive)
 	PxInitVehicleSDK(*gPhysics);
 	PxVehicleSetBasisVectors(PxVec3(0, 1, 0), PxVec3(0, 0, 1));
 	PxVehicleSetUpdateMode(PxVehicleUpdateMode::eVELOCITY_CHANGE);
+	PxVehicleSetSweepHitRejectionAngles(POINT_REJECT_ANGLE, NORMAL_REJECT_ANGLE);
+	PxVehicleSetMaxHitActorAcceleration(MAX_ACCELERATION);
 
-	//Create the batched scene queries for the suspension raycasts.
-	gVehicleSceneQueryData = VehicleSceneQueryData::allocate(1, PX_MAX_NB_WHEELS, 1, 1, WheelSceneQueryPreFilterBlocking, NULL, gAllocator);
+
+	//Create the batched scene queries for the suspension sweeps.
+//Use the post-filter shader to reject hit shapes that overlap the swept wheel at the start pose of the sweep.
+	PxQueryHitType::Enum(*sceneQueryPreFilter)(PxFilterData, PxFilterData, const void*, PxU32, PxHitFlags&);
+	PxQueryHitType::Enum(*sceneQueryPostFilter)(PxFilterData, PxFilterData, const void*, PxU32, const PxQueryHit&);
+#if BLOCKING_SWEEPS
+	sceneQueryPreFilter = &WheelSceneQueryPreFilterBlocking;
+	sceneQueryPostFilter = &WheelSceneQueryPostFilterBlocking;
+#else
+	sceneQueryPreFilter = &WheelSceneQueryPreFilterNonBlocking;
+	sceneQueryPostFilter = &WheelSceneQueryPostFilterNonBlocking;
+#endif 
+	gVehicleSceneQueryData = VehicleSceneQueryData::allocate(NUM_VEHICLES, PX_MAX_NB_WHEELS, gNbQueryHitsPerWheel, NUM_VEHICLES, sceneQueryPreFilter, sceneQueryPostFilter, gAllocator);
 	gBatchQuery = VehicleSceneQueryData::setUpBatchedSceneQuery(0, *gVehicleSceneQueryData, gScene);
+
 
 	//Create the friction table for each combination of tire and surface type.
 	gFrictionPairs = createFrictionPairs(gMaterial);
@@ -948,17 +1075,22 @@ void stepPhysics(bool interactive)
 		PxVehicleDrive4WSmoothAnalogRawInputsAndSetAnalogInputs(gPadSmoothingData, gSteerVsForwardSpeedTable, gVehicleInputData, timestep, gIsVehicleInAir, *gVehicle4W);
 	}
 
-	//Raycasts.
-	PxVehicleWheels* vehicles[1] = { gVehicle4W };
-	PxRaycastQueryResult* raycastResults = gVehicleSceneQueryData->getRaycastQueryResultBuffer(0);
-	const PxU32 raycastResultsSize = gVehicleSceneQueryData->getQueryResultBufferSize();
-	PxVehicleSuspensionRaycasts(gBatchQuery, 1, vehicles, raycastResultsSize, raycastResults);
+	//Suspension sweeps (instead of raycasts).
+//Sweeps provide more information about the geometry under the wheel.
+	PxVehicleWheels* vehicles[NUM_VEHICLES] = { gVehicle4W };
+	PxSweepQueryResult* sweepResults = gVehicleSceneQueryData->getSweepQueryResultBuffer(0);
+	const PxU32 sweepResultsSize = gVehicleSceneQueryData->getQueryResultBufferSize();
+	PxVehicleSuspensionSweeps(gBatchQuery, NUM_VEHICLES, vehicles, sweepResultsSize, sweepResults, gNbQueryHitsPerWheel, NULL, 1.0f, 1.01f);
 
 	//Vehicle update.
 	const PxVec3 grav = gScene->getGravity();
-	PxWheelQueryResult wheelQueryResults[PX_MAX_NB_WHEELS];
-	PxVehicleWheelQueryResult vehicleQueryResults[1] = { {wheelQueryResults, gVehicle4W->mWheelsSimData.getNbWheels()} };
-	PxVehicleUpdates(timestep, grav, *gFrictionPairs, 1, vehicles, vehicleQueryResults);
+	PxWheelQueryResult wheelQueryResults[PX_MAX_NB_WHEELS][NUM_VEHICLES];
+	PxVehicleWheelQueryResult vehicleQueryResults[NUM_VEHICLES] =
+	{
+		{ wheelQueryResults[0], gVehicle4W->mWheelsSimData.getNbWheels() },
+	};
+	PxVehicleUpdates(timestep, grav, *gFrictionPairs, NUM_VEHICLES, vehicles, vehicleQueryResults);
+
 
 	//Work out if the vehicle is in the air.
 	gIsVehicleInAir = gVehicle4W->getRigidDynamicActor()->isSleeping() ? false : PxVehicleIsInAir(vehicleQueryResults[0]);

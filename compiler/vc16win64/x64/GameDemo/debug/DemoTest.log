@@ -1,6 +1,41 @@
-﻿  DemoTest.cpp
-F:\Learning\mypt2\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\DemoTest\DemoTest.cpp(1,1): warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
-F:\Learning\mypt2\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\DemoTest\DemoTest.cpp(927,1): warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
-  DemoTest.vcxproj -> F:\Learning\mypt2\PhysX-Tutorial-master\PhysX_3.4\bin\vc16win64\DemoTestDEBUG.exe
+﻿  ClassicMain.cpp
+  DemoTest.cpp
+E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\DemoTest\DemoTest.cpp(1,1): warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\DemoTest\DemoTest.cpp(757,36): warning C4305: “参数”: 从“double”到“float”截断
+E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\DemoTest\DemoTest.cpp(960,1): warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+  DemoTestRender.cpp
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\shared\minwindef.h(130,1): warning C4005: “APIENTRY”: 宏重定义
+E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\third_party\includes\GLFW\glfw3.h(123): message : 参见“APIENTRY”的前一个定义
+E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\ModelLoading\mesh.h(90,1): warning C4267: “参数”: 从“size_t”转换到“GLsizei”，可能丢失数据
+  TheCreator.cpp
+E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\GameDemo\TheCreator.cpp(151,20): warning C4018: “<”: 有符号/无符号不匹配
+  ActionMap.cpp
+  InputSystem.cpp
+  Camera.cpp
+E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\Render\Camera.cpp(105,25): warning C4305: “初始化”: 从“double”到“float”截断
+  Render.cpp
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\shared\minwindef.h(130,1): warning C4005: “APIENTRY”: 宏重定义
+E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\third_party\includes\GLFW\glfw3.h(123): message : 参见“APIENTRY”的前一个定义
+  StbImageImpl.cpp
+  SnippetVehicle4WCreate.cpp
+  SnippetVehicleCreate.cpp
+  SnippetVehicleFilterShader.cpp
+  SnippetVehicleNoDriveCreate.cpp
+  SnippetVehicleSceneQuery.cpp
+  SnippetVehicleTankCreate.cpp
+  SnippetVehicleTireFriction.cpp
+  imgui.cpp
+  imgui_demo.cpp
+  imgui_draw.cpp
+  imgui_impl_glfw.cpp
+  正在生成代码...
+  正在编译...
+  imgui_impl_opengl3.cpp
+  imgui_tables.cpp
+  imgui_widgets.cpp
+  正在生成代码...
+LINK : warning LNK4098: 默认库“LIBCMT”与其他库的使用冲突；请使用 /NODEFAULTLIB:library
+glew32s.lib(glew.obj) : warning LNK4099: 未找到 PDB“vc120.pdb”(使用“glew32s.lib(glew.obj)”或在“E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\bin\vc16win64\vc120.pdb”中寻找)；正在链接对象，如同没有调试信息一样
+  DemoTest.vcxproj -> E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\compiler\vc16win64\./../../../bin/vc16win64\DemoTestDEBUG.exe
   复制了 0 个文件
   复制了 0 个文件

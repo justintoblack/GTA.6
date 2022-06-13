@@ -1,5 +1,36 @@
 #include "TheCreator.h"
 
+using namespace snippetvehicle;
+//使物体表面可行驶
+void makeObjectDrivable(PxShape*& shape)
+{
+
+	PxFilterData simFilterData(COLLISION_FLAG_OBSTACLE, COLLISION_FLAG_WHEEL, PxPairFlag::eMODIFY_CONTACTS | PxPairFlag::eDETECT_CCD_CONTACT, 0);
+	shape->setSimulationFilterData(simFilterData);
+	PxFilterData qryFilterData;
+	setupDrivableSurface(qryFilterData);
+	shape->setQueryFilterData(qryFilterData);
+}
+
+void TheCreator::createSlowArea(PxVec3 startPosition, PxF32 capsuleRadii, PxF32 interval, PxU32 num, PxMaterial* gMaterial)
+{
+	//Create several static obstacles for the first vehicle to drive on.
+	//  (i) collide only with wheel shapes
+	// (ii) have continuous collision detection (CCD) enabled
+	//(iii) have contact modification enabled
+	// (iv) are configured to be drivable surfaces
+	for (PxU32 i = 0; i < num; i++)
+	{
+		PxF32 zPosition = startPosition.z + i * interval;
+		PxTransform t(PxVec3(startPosition.x, capsuleRadii, zPosition), PxQuat(PxIdentity));
+		PxRigidStatic* rd = m_gPhysics->createRigidStatic(t);
+		PxCapsuleGeometry capsuleGeom(capsuleRadii, 3.0f);
+		PxShape* shape = PxRigidActorExt::createExclusiveShape(*rd, capsuleGeom, *gMaterial);
+		makeObjectDrivable(shape);
+		m_gScene->addActor(*rd);
+	}
+}
+
 void TheCreator::Init(PxPhysics* physics, PxScene* gScene)
 {
 	m_gPhysics = physics;
