@@ -83,7 +83,7 @@
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{809F8893-32BA-4FD4-86B6-F825B7778A82}</ProjectGuid>
     <RootNamespace>Project1</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.18362.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -156,24 +156,30 @@
     <OutDir>./../../../bin/vc16win64\</OutDir>
     <IntDir>./x64/GameDemo/debug\</IntDir>
     <TargetName>$(ProjectName)DEBUG</TargetName>
-    <LibraryPath>E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\compiler\vc16win64\Dependencies\GLFW\include\lib-vc2019;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\compiler\vc16win64\Dependencies\GLFW\include;$(LibraryPath)</LibraryPath>
+    <LibraryPath>D:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\compiler\vc16win64\Dependencies\GLFW\include\lib-vc2019;D:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\compiler\vc16win64\Dependencies\GLFW\include;$(LibraryPath)</LibraryPath>
+    <IncludePath>D:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\glew-2.1.0\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>./../../../bin/vc16win64\</OutDir>
     <IntDir>./x64/GameDemo/debug\</IntDir>
-    <LibraryPath>E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\compiler\vc16win64\Dependencies\GLFW\include\lib-vc2019;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\compiler\vc16win64\Dependencies\GLFW\include;$(LibraryPath)</LibraryPath>
+    <LibraryPath>D:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\compiler\vc16win64\Dependencies\GLFW\include\lib-vc2019;D:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\compiler\vc16win64\Dependencies\GLFW\include;$(LibraryPath)</LibraryPath>
+    <IncludePath>D:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\glew-2.1.0\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <LibraryPath>E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\compiler\vc16win64\Dependencies\GLFW\include\lib-vc2019;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\compiler\vc16win64\Dependencies\GLFW\include;$(LibraryPath)</LibraryPath>
+    <LibraryPath>D:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\compiler\vc16win64\Dependencies\GLFW\include\lib-vc2019;D:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\compiler\vc16win64\Dependencies\GLFW\include;$(LibraryPath)</LibraryPath>
+    <IncludePath>D:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\glew-2.1.0\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
-    <LibraryPath>E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\compiler\vc16win64\Dependencies\GLFW\include\lib-vc2019;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\compiler\vc16win64\Dependencies\GLFW\include;$(LibraryPath)</LibraryPath>
+    <LibraryPath>D:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\compiler\vc16win64\Dependencies\GLFW\include\lib-vc2019;D:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\compiler\vc16win64\Dependencies\GLFW\include;$(LibraryPath)</LibraryPath>
+    <IncludePath>D:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\glew-2.1.0\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <LibraryPath>E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\compiler\vc16win64\Dependencies\GLFW\include\lib-vc2019;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\compiler\vc16win64\Dependencies\GLFW\include;$(LibraryPath)</LibraryPath>
+    <LibraryPath>D:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\compiler\vc16win64\Dependencies\GLFW\include\lib-vc2019;D:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\compiler\vc16win64\Dependencies\GLFW\include;$(LibraryPath)</LibraryPath>
+    <IncludePath>D:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\glew-2.1.0\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
-    <LibraryPath>E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\compiler\vc16win64\Dependencies\GLFW\include\lib-vc2019;E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\compiler\vc16win64\Dependencies\GLFW\include;$(LibraryPath)</LibraryPath>
+    <LibraryPath>D:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\compiler\vc16win64\Dependencies\GLFW\include\lib-vc2019;D:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\compiler\vc16win64\Dependencies\GLFW\include;$(LibraryPath)</LibraryPath>
+    <IncludePath>D:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\glew-2.1.0\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
