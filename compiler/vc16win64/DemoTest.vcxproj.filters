@@ -82,6 +82,7 @@
     <ClInclude Include="..\..\src\GameDemo\TheCreator.h" />
     <ClInclude Include="..\..\src\ModelLoading\mesh.h" />
     <ClInclude Include="..\..\src\ModelLoading\model.h" />
+    <ClInclude Include="..\..\src\DemoTest\GameObject.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="imgui">

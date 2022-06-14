@@ -46,6 +46,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include "../InputSystem/InputSystem.h"
+#include "../Utils/Mathf.h"
+#include "../Utils/Mathf.cpp"
 
 #include "irrKlang/irrKlang.h"  //audio
 
@@ -119,6 +121,9 @@ __int64 firstCount;
 __int64 freq;
 static __int64 gTime, gLastTime;
 
+///////////////////////DemoTest///////////////////////////////
+extern PxVec3 moveDir;
+glm::vec3 forwardDir(0,0,1);
 extern PxController* m_player;
 extern InputSyetem inputSystem;
 
@@ -301,14 +306,22 @@ namespace
 	}
 
 	//传入模型对象model，以及模型的位置pos
-	void RenderModel(Model& model, glm::vec3 pos, Shader& shader)
+	void RenderModel(Model& model, glm::vec3 pos, glm::vec3 dir , Shader& shader)
 	{
 		//glEnable(GL_DEPTH_TEST);
 		model.setPos(pos);
 		shader.use();
 		glm::mat4 modelMat = glm::mat4(1.0f);
 		modelMat = glm::translate(modelMat, model.getPos());
-		//modelMat = glm::scale(modelMat, glm::vec3(2.0f, 2.0f, 2.0f));
+
+		//modelMat = glm::rotate(modelMat, 1.0f, glm::vec3(0, -1, 0));
+		modelMat *= glm::mat4_cast(glm::quatLookAt(dir, glm::vec3(0, 1, 0)));
+
+		modelMat = glm::scale(modelMat, glm::vec3(0.1f, 0.1f, 0.1f));
+		
+		
+
+
 		glm::mat4 viewMat = getViewMat();
 		glm::mat4 projectionMat = glm::perspective(45.0f, (float)glutGet(GLUT_WINDOW_WIDTH) / (float)glutGet(GLUT_WINDOW_HEIGHT), 0.1f, 1000.0f);
 		glUniformMatrix4fv(glGetUniformLocation(gModelShader.ID, "projection"), 1, GL_FALSE, glm::value_ptr(projectionMat));
@@ -322,26 +335,39 @@ namespace
 	//显示窗口
 	void renderCallback()
 	{
-		//记录游戏第一帧时间
-		if (gTime == 0)
-		{
-			QueryPerformanceCounter((LARGE_INTEGER*)&gTime);
-			QueryPerformanceFrequency((LARGE_INTEGER*)&freq);
-			gLastTime = gTime;
-			firstCount = gTime;
-			//std::cout << "first" << deltaTime << std::endl;
-		}
-
+		//物理模拟
 		stepPhysics(true);
 
+		//渲染相机场景
 		Snippets::startRender(sCamera->getEye(), sCamera->getDir(),0.1f);
 		RenderSkybox();
-		RenderModel(gModel, glm::vec3(-20.0f, 10.0f, -45.0f), gModelShader);
-		RenderModel(gModel2, glm::vec3(-28.0f, 15.0f, -47.0f), gModelShader);
+
+
+		/////////////////////Test//////////////////////////
+
+
+		float rotateSpeed = 10;
+		//表示正在移动
+		PxExtendedVec3 haha= m_player->getFootPosition();
+		if (!moveDir.isZero())
+		{
+			glm::vec3 targetDir = glm::vec3(moveDir.x, 0, moveDir.z);
+			forwardDir = glm::normalize( Mathf::Slerp(forwardDir, targetDir, deltaTime * rotateSpeed));
+		}
+			RenderModel(gModel, glm::vec3(haha.x, haha.y, haha.z),-forwardDir, gModelShader);
+			//RenderModel(gModel, glm::vec3(-20.0f, 10.0f, -45.0f), gModelShader);
+		//RenderModel(gModel2, glm::vec3(-28.0f, 15.0f, -47.0f), gModelShader);
+
+
+		///////////////EndTest////////////////////////////
+
+
+
+
 		PxScene* scene;
 		PxGetPhysics().getScenes(&scene,1);
 
-		//获取
+		//获取场景中的Actor并用OpenGL渲染
 		PxU32 nbActors = scene->getNbActors(PxActorTypeFlag::eRIGID_DYNAMIC | PxActorTypeFlag::eRIGID_STATIC);
 		if(nbActors)
 		{
@@ -420,6 +446,13 @@ namespace
 		if (snd)
 			snd->setVolume(0.4);
 		//SoundEngine2->play2D("../../assets/audio/bell.wav", GL_TRUE);
+
+		//记录游戏第一帧时间
+
+		QueryPerformanceCounter((LARGE_INTEGER*)&gTime);
+		QueryPerformanceFrequency((LARGE_INTEGER*)&freq);
+		gLastTime = gTime;
+		firstCount = gTime;
 
 		glutMainLoop();
 

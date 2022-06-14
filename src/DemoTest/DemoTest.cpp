@@ -35,7 +35,6 @@
 // ****************************************************************************
 
 #include <ctype.h>
-#include <GL/glut.h>
 
 #include "PxPhysicsAPI.h"
 
@@ -65,6 +64,8 @@
 #include "../SnippetVehicleCommon/SnippetVehicleTireFriction.h"
 #include "../SnippetVehicleCommon/SnippetVehicleCreate.h"
 #include "irrKlang/irrKlang.h"  //audio
+
+#include "model.h"
 
 using namespace irrklang;
 using namespace physx;
@@ -136,6 +137,7 @@ PxVec3 characterPos;
 PxVec3 vehiclePos;
 PxVec3* CameraFollowTarget;
 
+
 #pragma region 角色属性
 PxVec3 velocity=PxVec3(0,0,0);
 PxVec3 gravity = PxVec3(0, -9.8f*2.0f, 0);
@@ -163,7 +165,6 @@ void Jump()
 	{
 		velocity.y = PxSqrt(jumpHeight * gravity.y * -2);
 	}
-	std::cout << isGrounded << std::endl;
 }
 
 //冲刺
@@ -229,8 +230,15 @@ struct FilterGroup
 	};
 };
 
-//车辆相关的全局变量
+//触发器相关变量
 
+//PxVec3 triggerPos = PxVec3(30, 1, 100);
+PxVec3 triggerPos[] = { PxVec3(30, 1, 70) , PxVec3(30, 1, 110) , PxVec3(30, 1, 150) , PxVec3(30, 1, 170) , PxVec3(70, 1, 190) , PxVec3(70, 1, 220) , PxVec3(100, 1, 220) , PxVec3(130, 1, 170) , PxVec3(150, 1, 160) , PxVec3(130, 1, 160) , PxVec3(90, 1,120), PxVec3(60, 1, 100), PxVec3(50, 1, 50), PxVec3(30, 1, 20) };
+int triggerBoxNum = sizeof(triggerPos) / sizeof(triggerPos[0]);
+bool isTouchTriggerBox = false;
+int currentTriggerIndex = -1;
+
+//车辆相关的全局变量
 VehicleSceneQueryData* gVehicleSceneQueryData = NULL;
 PxBatchQuery* gBatchQuery = NULL;
 
@@ -238,7 +246,7 @@ PxVehicleDrivableSurfaceToTireFrictionPairs* gFrictionPairs = NULL;
 
 PxRigidStatic* gGroundPlane = NULL;
 PxVehicleDrive4W* gVehicle4W = NULL;
-
+PxRigidDynamic* gTreasureActor = NULL;
 bool					gIsVehicleInAir = true;
 
 PxF32 gSteerVsForwardSpeedData[2 * 8] =
@@ -328,7 +336,29 @@ bool					gVehicleOrderComplete = false;
 bool					gMimicKeyInputs = false;
 
 
+//创建新的目标触发器
+void createTriggerBox()
+{
+	currentTriggerIndex += 1;
+	if (currentTriggerIndex >= triggerBoxNum)
+	{
+		currentTriggerIndex = 0;
+	}
+	PxVec3 pos = triggerPos[currentTriggerIndex];
+	if (gTreasureActor != NULL)
+	{
+		gScene->removeActor(*gTreasureActor);
+	}
 
+	gTreasureActor = PxCreateDynamic(*gPhysics, PxTransform(pos),
+		PxBoxGeometry(PxVec3(1, 1, 1)), *gMaterial, 1.0f);
+	gTreasureActor->setActorFlag(PxActorFlag::eDISABLE_GRAVITY, true);
+	PxShape* treasureShape;
+	gTreasureActor->getShapes(&treasureShape, 1);
+	treasureShape->setFlag(PxShapeFlag::eSIMULATION_SHAPE, false);
+	treasureShape->setFlag(PxShapeFlag::eTRIGGER_SHAPE, true);
+	gScene->addActor(*gTreasureActor);
+}
 
 
 void setupFiltering(PxShape* shape, PxU32 filterGroup, PxU32 filterMask)
@@ -344,12 +374,12 @@ PxFilterFlags contactReportFilterShader(PxFilterObjectAttributes attributes0, Px
 	PxFilterObjectAttributes attributes1, PxFilterData filterData1,
 	PxPairFlags& pairFlags, const void* constantBlock, PxU32 constantBlockSize)
 {
-	PX_UNUSED(attributes0);
-	PX_UNUSED(attributes1);
-	PX_UNUSED(filterData0);
-	PX_UNUSED(filterData1);
-	PX_UNUSED(constantBlockSize);
-	PX_UNUSED(constantBlock);
+	//PX_UNUSED(attributes0);
+	//PX_UNUSED(attributes1);
+	//PX_UNUSED(filterData0);
+	//PX_UNUSED(filterData1);
+	//PX_UNUSED(constantBlockSize);
+	//PX_UNUSED(constantBlock);
 
 	//
 	// Enable CCD for the pair, request contact reports for initial and CCD contacts.
@@ -357,9 +387,13 @@ PxFilterFlags contactReportFilterShader(PxFilterObjectAttributes attributes0, Px
 	// pose at the time of contact.
 	//
 
+	if (PxFilterObjectIsTrigger(attributes0) || PxFilterObjectIsTrigger(attributes1))
+	{
+		pairFlags = PxPairFlag::eTRIGGER_DEFAULT;
+		return PxFilterFlag::eDEFAULT;
+	}
+
 	pairFlags = PxPairFlag::eCONTACT_DEFAULT
-		| PxPairFlag::eDETECT_CCD_CONTACT
-		| PxPairFlag::eNOTIFY_TOUCH_CCD
 		| PxPairFlag::eNOTIFY_TOUCH_FOUND
 		| PxPairFlag::eNOTIFY_CONTACT_POINTS
 		| PxPairFlag::eCONTACT_EVENT_POSE;
@@ -398,7 +432,19 @@ class ContactReportCallback : public PxSimulationEventCallback
 	void onConstraintBreak(PxConstraintInfo* constraints, PxU32 count) { PX_UNUSED(constraints); PX_UNUSED(count); }
 	void onWake(PxActor** actors, PxU32 count) { PX_UNUSED(actors); PX_UNUSED(count); }
 	void onSleep(PxActor** actors, PxU32 count) { PX_UNUSED(actors); PX_UNUSED(count); }
-	void onTrigger(PxTriggerPair* pairs, PxU32 count) { PX_UNUSED(pairs); PX_UNUSED(count); }
+	void onTrigger(PxTriggerPair* pairs, PxU32 count) {
+		for (PxU32 i = 0; i < count; i++)
+		{
+			// ignore pairs when shapes have been deleted
+			if (pairs[i].flags & (PxTriggerPairFlag::eREMOVED_SHAPE_TRIGGER | PxTriggerPairFlag::eREMOVED_SHAPE_OTHER))
+				continue;
+
+			if ((pairs[i].otherActor == gVehicle4W->getRigidDynamicActor()) && (pairs[i].triggerActor == gTreasureActor))
+			{
+				isTouchTriggerBox = true;
+			}
+		}
+	}
 	void onAdvance(const PxRigidBody*const*, const PxTransform*, const PxU32) {}
 	void onContact(const PxContactPairHeader& pairHeader, const PxContactPair* pairs, PxU32 nbPairs)
 	{
@@ -565,6 +611,8 @@ void createStack(const PxTransform& t, PxU32 size, PxReal halfExtent)
 	//释放
 	shape->release();
 }
+
+
 
 
 //自定义
@@ -973,7 +1021,7 @@ void MyCode()
 	theCreator.Init(gPhysics, gScene);
 
 	CreateCoordinateAxis(PxTransform(0,0,0),100,200,300);
-
+	createTriggerBox();
 	CreateChain(PxTransform(PxVec3(0.0f, 20.0f, -10.0f)), 5, PxCapsuleGeometry(1.0f,1.0f), 4.0f, createBreakableFixed);
 	CreateChain(PxTransform(PxVec3(0.0f, 25.0f, -20.0f)), 5, PxBoxGeometry(2.0f, 0.5f, 0.5f), 4.0f, createDampedD6);
 
@@ -1007,8 +1055,12 @@ void MyCode()
 	theCreator.CreatePoles(PxVec3(55, 0, 20), PxVec3(0,0,1),50,10, gMaterial, 0.15f, 3.5f, 10, 10000, 10000);
 	theCreator.createSlowArea(PxVec3(30, 0, 70), PxF32(0.01), PxF32(0.2), 30, gMaterial);
 	//垃圾桶
-	theCreator.CreatePoles(PxVec3(50, 0.0f, 50), PxVec3(0, 0, 1), 20, 3, gMaterial, 0.3f, 0.7f, 10, 10000, 1000);
+	theCreator.CreatePoles(PxVec3(50, 0.0f, 50), PxVec3(0, 0, 1), 20, 10, gMaterial, 0.3f, 0.7f, 10, 10000, 10000);
 	
+
+
+	
+
 }
 
 
@@ -1124,6 +1176,11 @@ void stepPhysics(bool interactive)
 	GlobalKeyEvent();
 	inputSystem.InputAction();
 
+	if (isTouchTriggerBox)
+	{
+		isTouchTriggerBox = false;
+		createTriggerBox();
+	}
 
 	const PxF32 timestep = 1.0f / 60.0f;
 	if (gMimicKeyInputs)
@@ -1178,6 +1235,7 @@ void stepPhysics(bool interactive)
 
 	m_player->move(moveDir * curSpeed * deltaTime, 0.001f, 0.01f, NULL);
 	m_player->move(velocity*deltaTime,0.001f,0.01f,NULL);
+
 
 	//相机跟随
 	characterPos= m_player->getPosition() - PxExtendedVec3(0, 0, 0);

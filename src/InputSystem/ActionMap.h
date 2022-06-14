@@ -9,7 +9,7 @@
 class ActionMap
 {
 private:
-	bool _qKeyDown;
+	//bool _qKeyDown;
 public:
 	virtual void InputAction();
 };
@@ -23,11 +23,11 @@ private:
 	float moveSpeed;
 	bool isSpaceKeyDown;
 public:
-	physx::PxVec2 GetArrowKeyValue();
 	void(*SpaceKeyEvent)();
 	void(*ShiftKeyEvent)(bool isPress);
 	void InputAction();
 	void SetActionMap(physx::PxController* newController, Snippets::Camera* camera, float speed);
+	physx::PxVec2 GetArrowKeyValue();
 };
 
 class VehicleActionMap : public ActionMap
@@ -35,7 +35,6 @@ class VehicleActionMap : public ActionMap
 private:
 	physx::PxVehicleDrive4W* m_controller;
 public:
-	//º¯ÊýÖ¸Õë
 	void (*release)();
 	void (*WKeyEvent)();
 	void (*SKeyEvent)();
