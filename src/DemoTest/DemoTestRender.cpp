@@ -33,14 +33,14 @@
 #include <vector>
 
 #include <GL/glew.h>
-#include "stb_image.h"
+#include "../Render/stb_image.h"
 #include "PxPhysicsAPI.h"
 
 //#include "Shader.h"
 #include "../Render/Render.h"
 #include "../Render/Camera.h"
 #include<iostream>
-#include "model.h"
+#include "../ModelLoading/model.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
