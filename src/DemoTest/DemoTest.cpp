@@ -65,7 +65,7 @@
 #include "../SnippetVehicleCommon/SnippetVehicleCreate.h"
 #include "irrKlang/irrKlang.h"  //audio
 
-#include "model.h"
+//#include "model.h"
 
 using namespace irrklang;
 using namespace physx;
@@ -415,7 +415,7 @@ public:
 	}
 	void play(char path [])
 	{
-		PlayEngine->play2D(path, GL_TRUE);
+		PlayEngine->play2D(path, true);
 		this->isPlay = true;
 	}
 	void stop()
