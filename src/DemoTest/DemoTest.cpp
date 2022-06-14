@@ -713,6 +713,7 @@ PxController* CreateCharacterController(PxExtendedVec3 initPos)
 
 	PxCapsuleControllerDesc desc;
 
+
 	desc.material = gMaterial;
 	desc.position = initPos;
 	desc.radius = characterRadius;
@@ -725,7 +726,7 @@ PxController* CreateCharacterController(PxExtendedVec3 initPos)
 	desc.stepOffset = 0.3f;
 
 	PxController* ctrl = manager->createController(desc);
-	//ctrl->getActor()->createShape(PxBoxGeometry(1, 1, 1), *gMaterial)->setLocalPose(PxTransform(0,4,0));
+	ctrl->getActor()->setActorFlag(PxActorFlag::eVISUALIZATION, true);
 
 	return ctrl;
 
@@ -1026,7 +1027,12 @@ void MyCode()
 	CreateChain(PxTransform(PxVec3(0.0f, 25.0f, -20.0f)), 5, PxBoxGeometry(2.0f, 0.5f, 0.5f), 4.0f, createDampedD6);
 
 	m_player = CreateCharacterController(PxExtendedVec3(20,100,20));
-
+	PxRigidDynamic* playerActor = m_player->getActor();
+	PxShape* playerShape;
+	playerActor->getShapes(&playerShape, 1);
+	playerShape->setFlag(PxShapeFlag::eSIMULATION_SHAPE, false);
+	playerShape->setFlag(PxShapeFlag::eTRIGGER_SHAPE, true);
+	gScene->addActor(*playerActor);
 	//角色Input函数注册
 	characterMap.SetActionMap(m_player, sCamera, 5.0f);
 	characterMap.SpaceKeyEvent = Jump;

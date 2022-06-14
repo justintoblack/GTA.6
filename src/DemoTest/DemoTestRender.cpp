@@ -441,6 +441,8 @@ namespace
 		atexit(exitCallback);
 
 		initPhysics(true);
+
+		//------------------audio
 		//BackgroundSoundEngine->play2D("../../assets/audio/owu12-u5eaj.wav", GL_TRUE);
 		ISound* snd = BackgroundSoundEngine->play2D("../../assets/audio/owu12-u5eaj.wav", true, false, true);
 		if (snd)
