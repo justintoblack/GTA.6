@@ -41,7 +41,7 @@ void Mathf::Debug(PxQuat q)
 //弧度
 float Mathf::Angle(PxVec3 from, PxVec3 to)
 {
-	//acos���ز������ŵ�ֵ
+
 	return 	PxAcos(from.dot(to) / Distance(from) / Distance(to));
 }
 
