@@ -376,8 +376,8 @@ namespace
 		Snippets::setupDefaultRenderState();
 		glewInit();
 		//----------Render Model----------
-		gModel = Model("../../assets/objects/nanosuit/nanosuit.obj");
-		gModel2 = Model("../../assets/objects/backpack/backpack.obj");
+		//gModel = Model("../../assets/objects/nanosuit/nanosuit.obj");
+		//gModel2 = Model("../../assets/objects/backpack/backpack.obj");
 		gModelShader = Shader("../../src/ModelLoading/model_loading.vs",
 								"../../src/ModelLoading/model_loading.fs");
 		//----------Render Model----------

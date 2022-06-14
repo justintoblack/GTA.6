@@ -36,9 +36,10 @@ void Mathf::Debug(PxQuat q)
 	cout << "(" << q.x << "," << q.y << "," << q.z <<","<<q.w<< ")" << endl;
 }
 
+//两向量的弧度
 float Mathf::Angle(PxVec3 from, PxVec3 to)
 {
-	//acos���ز������ŵ�ֵ
+
 	return 	PxAcos(from.dot(to) / Distance(from) / Distance(to));
 }
 
