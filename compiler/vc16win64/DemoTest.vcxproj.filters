@@ -80,6 +80,8 @@
     <ClInclude Include="..\..\src\Render\Shader.h" />
     <ClInclude Include="..\..\src\Render\stb_image.h" />
     <ClInclude Include="..\..\src\GameDemo\TheCreator.h" />
+    <ClInclude Include="..\..\src\ModelLoading\mesh.h" />
+    <ClInclude Include="..\..\src\ModelLoading\model.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="imgui">
@@ -89,5 +91,7 @@
   <ItemGroup>
     <None Include="..\..\src\Render\SkyBox.fs" />
     <None Include="..\..\src\Render\SkyBox.vs" />
+    <None Include="..\..\src\ModelLoading\model_loading.fs" />
+    <None Include="..\..\src\ModelLoading\model_loading.vs" />
   </ItemGroup>
 </Project>

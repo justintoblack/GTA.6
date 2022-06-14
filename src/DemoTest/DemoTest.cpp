@@ -134,6 +134,10 @@ PxVec3* CameraFollowTarget;
 #pragma region 角色属性
 PxVec3 velocity=PxVec3(0,0,0);
 PxVec3 gravity = PxVec3(0, -9.8f*2.0f, 0);
+PxVec3 moveDir;
+PxVec3 characterForward;
+PxVec3 characterRight;
+
 
 PxTransform checkSphereTrans;
 float jumpHeight = 1.0f;
@@ -141,7 +145,35 @@ float characterRadius=0.5f;
 float characterHeight=1.0f;
 float checkSphereRadius =0.1f;
 
+float curSpeed;
+float walkSpeed = 3.0f;
+float sprintSpeed = 7.0f;
+
 bool isGrounded;
+
+///跳跃
+void Jump()
+{
+	if (isGrounded)
+	{
+		velocity.y = PxSqrt(jumpHeight * gravity.y * -2);
+	}
+	std::cout << isGrounded << std::endl;
+}
+
+//冲刺
+void Sprint(bool isSprint)
+{
+	if (isSprint)
+	{
+		curSpeed = sprintSpeed;
+	}
+	else
+	{
+		curSpeed = walkSpeed;
+	}
+}
+
 #pragma endregion
 
 //时间
@@ -922,14 +954,7 @@ void releaseAllControls()
 	}
 }
 
-void Jump()
-{
-	if (isGrounded)
-	{
-		velocity.y = PxSqrt(jumpHeight * gravity.y * -2);
-	}
-	std::cout << isGrounded << std::endl;
-}
+
 
 //自定义
 void MyCode()
@@ -947,6 +972,7 @@ void MyCode()
 	//角色Input函数注册
 	characterMap.SetActionMap(m_player, sCamera, 5.0f);
 	characterMap.SpaceKeyEvent = Jump;
+	characterMap.ShiftKeyEvent = Sprint;
 
 	//载具Input函数注册
 	vehicleMap.release = releaseAllControls;
@@ -1125,7 +1151,14 @@ void stepPhysics(bool interactive)
 	//Work out if the vehicle is in the air.
 	gIsVehicleInAir = gVehicle4W->getRigidDynamicActor()->isSleeping() ? false : PxVehicleIsInAir(vehicleQueryResults[0]);
 
-	//角色移动
+
+	///////////////////////////角色移动///////////////////////
+	characterForward = PxVec3(sCamera->getDir().x, 0, sCamera->getDir().z);
+	characterRight = characterForward.cross(PxVec3(0, 1, 0));
+	moveDir = characterForward * characterMap.GetArrowKeyValue().x
+		+ characterRight * characterMap.GetArrowKeyValue().y;
+	moveDir = moveDir.getNormalized();
+
 	PxOverlapHit hit;
 	checkSphereTrans =PxTransform (m_player->getFootPosition() - 
 		PxExtendedVec3(0, 0, 0));
@@ -1138,6 +1171,8 @@ void stepPhysics(bool interactive)
 	}
 
 	velocity += gravity *deltaTime;
+
+	m_player->move(moveDir * curSpeed * deltaTime, 0.001f, 0.01f, NULL);
 	m_player->move(velocity*deltaTime,0.001f,0.01f,NULL);
 
 	//相机跟随

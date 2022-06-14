@@ -16,16 +16,17 @@ void ActionMap::InputAction()
 }
 
 
-
+physx::PxVec2 CharacterActionMap::GetArrowKeyValue()
+{
+	return arrowKey;
+}
 
 void CharacterActionMap::InputAction()
 {
-	physx::PxVec3 moveDirection(0, 0, 0);
-	physx::PxVec3 forward(m_camera->getDir().x, 0, m_camera->getDir().z);
-	physx::PxVec3 right=forward.cross(physx::PxVec3(0,1,0));
+	physx::PxVec2 arrow(0,0);
 
 	ActionMap::InputAction();
-
+	
 	if (GetAsyncKeyState(VK_SPACE))
 	{
 		if (!isSpaceKeyDown)
@@ -41,21 +42,29 @@ void CharacterActionMap::InputAction()
 
 	if (GetAsyncKeyState('A'))
 	{
-		moveDirection -=right ;
+		arrow += physx::PxVec2(0,-1);
 	}
 	if (GetAsyncKeyState('D'))
 	{
-		moveDirection += right;
+		arrow += physx::PxVec2(0, 1);
 	}
 	if (GetAsyncKeyState('S'))
 	{
-		moveDirection -= forward;
+		arrow += physx::PxVec2(-1, 0);
 	}
 	if (GetAsyncKeyState('W'))
 	{
-		moveDirection +=forward	;
+		arrow += physx::PxVec2(1, 0);
 	}
-	m_controller->move(moveDirection.getNormalized() * moveSpeed*deltaTime, 0.01f, 0.01f, NULL);
+	if (GetAsyncKeyState(VK_LSHIFT))
+	{
+		ShiftKeyEvent(true);
+	}
+	else
+	{
+		ShiftKeyEvent(false);
+	}
+	arrowKey = arrow;
 }
 
 void CharacterActionMap::SetActionMap(physx::PxController* newController, Snippets::Camera* camera, float speed)

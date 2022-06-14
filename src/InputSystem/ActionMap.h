@@ -19,10 +19,13 @@ class CharacterActionMap :public ActionMap
 private:
 	physx::PxController* m_controller;
 	Snippets::Camera* m_camera;
+	physx::PxVec2 arrowKey;
 	float moveSpeed;
 	bool isSpaceKeyDown;
 public:
+	physx::PxVec2 GetArrowKeyValue();
 	void(*SpaceKeyEvent)();
+	void(*ShiftKeyEvent)(bool isPress);
 	void InputAction();
 	void SetActionMap(physx::PxController* newController, Snippets::Camera* camera, float speed);
 };
