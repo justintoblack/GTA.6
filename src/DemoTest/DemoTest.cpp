@@ -63,8 +63,11 @@
 #include "../SnippetVehicleCommon/SnippetVehicleTireFriction.h"
 #include "../SnippetVehicleCommon/SnippetVehicleCreate.h"
 
+#include "model.h"
+
 using namespace physx;
 using namespace snippetvehicle;
+
 //默认的内存管理和错误报告器
 PxDefaultAllocator		gAllocator;
 PxDefaultErrorCallback	gErrorCallback;
@@ -131,6 +134,7 @@ PxVec3 characterPos;
 PxVec3 vehiclePos;
 PxVec3* CameraFollowTarget;
 
+
 #pragma region 角色属性
 PxVec3 velocity=PxVec3(0,0,0);
 PxVec3 gravity = PxVec3(0, -9.8f*2.0f, 0);
@@ -158,7 +162,6 @@ void Jump()
 	{
 		velocity.y = PxSqrt(jumpHeight * gravity.y * -2);
 	}
-	std::cout << isGrounded << std::endl;
 }
 
 //冲刺
@@ -947,7 +950,7 @@ void MyCode()
 	theCreator.CreatePoles(PxVec3(55, 0, 20), PxVec3(0,0,1),50,10, gMaterial, 0.15f, 3.5f, 10, 10000, 10000);
 	theCreator.createSlowArea(PxVec3(30, 0, 70), PxF32(0.01), PxF32(0.2), 30, gMaterial);
 	//垃圾桶
-	theCreator.CreatePoles(PxVec3(50, 0.0f, 50), PxVec3(0, 0, 1), 20, 3, gMaterial, 0.3f, 0.7f, 10, 10000, 1000);
+	theCreator.CreatePoles(PxVec3(50, 0.0f, 50), PxVec3(0, 0, 1), 20, 10, gMaterial, 0.3f, 0.7f, 10, 10000, 10000);
 	
 }
 
@@ -1118,6 +1121,7 @@ void stepPhysics(bool interactive)
 
 	m_player->move(moveDir * curSpeed * deltaTime, 0.001f, 0.01f, NULL);
 	m_player->move(velocity*deltaTime,0.001f,0.01f,NULL);
+
 
 	//相机跟随
 	characterPos= m_player->getPosition() - PxExtendedVec3(0, 0, 0);
