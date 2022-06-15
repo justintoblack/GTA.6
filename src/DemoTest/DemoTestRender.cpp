@@ -62,7 +62,7 @@ ISoundEngine* BackgroundSoundEngine = createIrrKlangDevice();
 GLuint              gCubeTexture;
 Shader				gSkyboxShader;
 unsigned int		gSkyboxVAO, gSkyboxVBO;
-Model				gModel, gModel2;
+Model				gModel, gModel2,gCarModel;
 Shader				gModelShader;
 
 //天空盒六个面的纹理图片
@@ -126,7 +126,7 @@ extern PxVec3 moveDir;
 glm::vec3 forwardDir(0,0,1);
 extern PxController* m_player;
 extern InputSyetem inputSystem;
-
+extern PxVehicleDrive4W* gVehicle4W;
 Snippets::Camera*	sCamera;
 
 //鼠标
@@ -348,13 +348,14 @@ namespace
 
 		float rotateSpeed = 10;
 		//表示正在移动
-		PxExtendedVec3 haha= m_player->getFootPosition();
+		//PxExtendedVec3 haha = m_player->getFootPosition();
+		PxVec3 haha = gVehicle4W->getRigidDynamicActor()->getGlobalPose().p;
 		if (!moveDir.isZero())
 		{
 			glm::vec3 targetDir = glm::vec3(moveDir.x, 0, moveDir.z);
 			forwardDir = glm::normalize( Mathf::Slerp(forwardDir, targetDir, deltaTime * rotateSpeed));
 		}
-			RenderModel(gModel, glm::vec3(haha.x, haha.y, haha.z),-forwardDir, gModelShader);
+			RenderModel(gCarModel, glm::vec3(haha.x, haha.y, haha.z),-forwardDir, gModelShader); 
 			//RenderModel(gModel, glm::vec3(-20.0f, 10.0f, -45.0f), gModelShader);
 		//RenderModel(gModel2, glm::vec3(-28.0f, 15.0f, -47.0f), gModelShader);
 
@@ -415,8 +416,9 @@ namespace
 
 
 		//----------Render Model----------
-		gModel = Model("../../assets/objects/nanosuit/nanosuit.obj");
-		gModel2 = Model("../../assets/objects/backpack/backpack.obj");
+		//gModel = Model("../../assets/objects/nanosuit/nanosuit.obj");
+		//gModel2 = Model("../../assets/objects/backpack/backpack.obj");
+		gCarModel= Model("../../assets/objects/car/car.obj");
 		gModelShader = Shader("../../src/ModelLoading/model_loading.vs",
 								"../../src/ModelLoading/model_loading.fs");
 		//----------Render Model----------
