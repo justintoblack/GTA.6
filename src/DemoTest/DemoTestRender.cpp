@@ -33,14 +33,14 @@
 #include <vector>
 
 #include <GL/glew.h>
-#include "stb_image.h"
+#include "../Render/stb_image.h"
 #include "PxPhysicsAPI.h"
 
 //#include "Shader.h"
 #include "../Render/Render.h"
 #include "../Render/Camera.h"
 #include<iostream>
-#include "model.h"
+#include "../ModelLoading/model.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -48,6 +48,16 @@
 #include "../InputSystem/InputSystem.h"
 #include "../Utils/Mathf.h"
 #include "../Utils/Mathf.cpp"
+
+#include "irrKlang/irrKlang.h"  //audio
+
+using namespace irrklang;
+ISoundEngine* BackgroundSoundEngine = createIrrKlangDevice();
+
+//ISoundEngine* SoundEngine2 = createIrrKlangDevice();
+
+
+
 
 GLuint              gCubeTexture;
 Shader				gSkyboxShader;
@@ -385,6 +395,7 @@ namespace
 }
 
 
+
 	//渲染循环
 	void renderLoop()
 	{
@@ -401,6 +412,8 @@ namespace
 		Snippets::setupDefaultWindow("PhysX Demo");
 		Snippets::setupDefaultRenderState();
 		glewInit();
+
+
 		//----------Render Model----------
 		gModel = Model("../../assets/objects/nanosuit/nanosuit.obj");
 		gModel2 = Model("../../assets/objects/backpack/backpack.obj");
@@ -429,6 +442,13 @@ namespace
 
 		initPhysics(true);
 
+		//------------------audio
+		//BackgroundSoundEngine->play2D("../../assets/audio/owu12-u5eaj.wav", GL_TRUE);
+		ISound* snd = BackgroundSoundEngine->play2D("../../assets/audio/owu12-u5eaj.wav", true, false, true);
+		if (snd)
+			snd->setVolume(0.4);
+		//SoundEngine2->play2D("../../assets/audio/bell.wav", GL_TRUE);
+
 		//记录游戏第一帧时间
 
 		QueryPerformanceCounter((LARGE_INTEGER*)&gTime);
@@ -437,5 +457,7 @@ namespace
 		firstCount = gTime;
 
 		glutMainLoop();
+
+
 	}
 #endif

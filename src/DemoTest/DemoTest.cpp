@@ -43,6 +43,7 @@
 #include "../Utils/Utils.h"
 
 #include<iostream>
+#include<string>
 #include<vector>
 #include<windows.h>
 
@@ -62,9 +63,11 @@
 #include "../SnippetVehicleCommon/SnippetVehicleFilterShader.h"
 #include "../SnippetVehicleCommon/SnippetVehicleTireFriction.h"
 #include "../SnippetVehicleCommon/SnippetVehicleCreate.h"
+#include "irrKlang/irrKlang.h"  //audio
 
-#include "model.h"
+//#include "model.h"
 
+using namespace irrklang;
 using namespace physx;
 using namespace snippetvehicle;
 
@@ -397,7 +400,32 @@ PxFilterFlags contactReportFilterShader(PxFilterObjectAttributes attributes0, Px
 	return PxFilterFlag::eDEFAULT;
 }
 
-
+class MusicEvent
+{
+public:
+	MusicEvent() {
+		this->isPlay = false;
+	}
+	ISoundEngine* PlayEngine;
+	bool isPlay;
+	void create()
+	{
+		ISoundEngine* PlayEngine = createIrrKlangDevice();
+		this->PlayEngine = PlayEngine;
+	}
+	void play(char path [])
+	{
+		PlayEngine->play2D(path, true);
+		this->isPlay = true;
+	}
+	void stop()
+	{
+		PlayEngine->drop();
+		this->isPlay = false;
+	}
+};
+MusicEvent carEngine;
+MusicEvent bell;
 
 class ContactReportCallback : public PxSimulationEventCallback
 {
@@ -685,6 +713,7 @@ PxController* CreateCharacterController(PxExtendedVec3 initPos)
 
 	PxCapsuleControllerDesc desc;
 
+
 	desc.material = gMaterial;
 	desc.position = initPos;
 	desc.radius = characterRadius;
@@ -697,7 +726,7 @@ PxController* CreateCharacterController(PxExtendedVec3 initPos)
 	desc.stepOffset = 0.3f;
 
 	PxController* ctrl = manager->createController(desc);
-	//ctrl->getActor()->createShape(PxBoxGeometry(1, 1, 1), *gMaterial)->setLocalPose(PxTransform(0,4,0));
+	ctrl->getActor()->setActorFlag(PxActorFlag::eVISUALIZATION, true);
 
 	return ctrl;
 
@@ -841,6 +870,13 @@ VehicleDesc initVehicleDesc()
 
 void startAccelerateForwardsMode()
 {
+	//create engine and then start engine
+	if (carEngine.isPlay == false) {
+		carEngine.create();
+		char path[] = "../../assets/audio/carEngine.wav";
+		carEngine.play(path);
+	}
+
 	if (gVehicle4W->mDriveDynData.getCurrentGear() == PxVehicleGearsData::eREVERSE)
 	{
 		gVehicle4W->mDriveDynData.forceGearChange(PxVehicleGearsData::eFIRST);
@@ -956,6 +992,26 @@ void releaseAllControls()
 		gVehicleInputData.setAnalogHandbrake(0.0f);
 	}
 }
+void stopEngine()
+{
+	if (carEngine.isPlay == true) {
+		carEngine.stop();
+	}
+};
+void startBell()
+{
+	if (bell.isPlay == false) {
+		bell.create();
+		char path[] = "../../assets/audio/bell1.wav";
+		bell.play(path);
+	}
+};
+void stopBell()
+{
+	if (bell.isPlay == true) {
+		bell.stop();
+	}
+};
 
 
 
@@ -978,7 +1034,12 @@ void MyCode()
 	playerShape->setFlag(PxShapeFlag::eSIMULATION_SHAPE, false);
 	playerShape->setFlag(PxShapeFlag::eTRIGGER_SHAPE, true);
 	gScene->addActor(*playerActor);
-
+	PxRigidDynamic* playerActor = m_player->getActor();
+	PxShape* playerShape;
+	playerActor->getShapes(&playerShape, 1);
+	playerShape->setFlag(PxShapeFlag::eSIMULATION_SHAPE, false);
+	playerShape->setFlag(PxShapeFlag::eTRIGGER_SHAPE, true);
+	gScene->addActor(*playerActor);
 	//角色Input函数注册
 	characterMap.SetActionMap(m_player, sCamera, 5.0f);
 	characterMap.SpaceKeyEvent = Jump;
@@ -990,6 +1051,9 @@ void MyCode()
 	vehicleMap.SKeyEvent = startAccelerateReverseMode;
 	vehicleMap.AKeyEvent = startTurnHardRightMode;
 	vehicleMap.DKeyEvent = startTurnHardLeftMode;
+	vehicleMap.EKeyEvent = startBell;
+	vehicleMap.ReleaseWKeyEvent = stopEngine;
+	vehicleMap.ReleaseEKeyEvent = stopBell;
 
 	inputSystem.SetCharacterMap(characterMap);
 	CameraFollowTarget = &characterPos;
@@ -1225,10 +1289,15 @@ void cleanupPhysics(bool interactive)
 //	}
 //}
 
+
+//audio
+
+
 #define RENDER_SNIPPET 1
 //main
 int snippetMain(int, const char* const*)
 {
+	
 #ifdef RENDER_SNIPPET
 	extern void renderLoop();
 	renderLoop();

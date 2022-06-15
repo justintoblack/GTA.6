@@ -29,8 +29,9 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include "Render.h"
 
-
 using namespace physx;
+
+
 
 static float gCylinderData[]={
 	1.0f,0.0f,1.0f,1.0f,0.0f,1.0f,1.0f,0.0f,0.0f,1.0f,0.0f,0.0f,
@@ -306,6 +307,7 @@ void setupDefaultWindow(const char *name)
 	glutSetWindow(mainHandle);
 	glutFullScreen();
 
+
 	//äÖÈ¾´°¿Ú³ß´çºÍÎ»ÖÃ
 	glutReshapeFunc(reshapeCallback);
 	delete[] namestr;
@@ -441,6 +443,7 @@ void renderActors(PxRigidActor** actors, const PxU32 numActors, bool shadows, co
 void finishRender()
 {
 	glutSwapBuffers();
+	//SoundEngine->drop();
 }
 
 void renderText(int x, int y, const char text[], int len)

@@ -83,18 +83,35 @@ void VehicleActionMap::InputAction()
 	{
 		WKeyEvent();
 	}
+	else 
+	{
+		ReleaseWKeyEvent();
+	}
+
 	if (GetAsyncKeyState('S'))
 	{
 		SKeyEvent();
 	}
+
 	if (GetAsyncKeyState('A'))
 	{
 		AKeyEvent();
 	}
+
 	if (GetAsyncKeyState('D'))
 	{
 		DKeyEvent();
 	}
+
+	if (GetAsyncKeyState('E'))
+	{
+		EKeyEvent();
+	}
+	else 
+	{
+		ReleaseEKeyEvent();
+	}
+
 }
 
 void VehicleActionMap::SetActionMap(physx::PxVehicleDrive4W* newController)
