@@ -333,10 +333,11 @@ void glut_display_func()
 		//glClearColor(clear_color.x * clear_color.w, clear_color.y * clear_color.w, clear_color.z * clear_color.w, clear_color.w);
 		//glClear(GL_COLOR_BUFFER_BIT);
 		//glUseProgram(0); // You may want this if using this code in an OpenGL 3+ context where shaders may be bound, but prefer using the GL3+ code.
-		
+		//ImGui_ImplOpenGL2_RenderDrawData(ImGui::GetDrawData());
 
 		glutSwapBuffers();
-		//glutPostRedisplay();
+		glutPostRedisplay();
+		
 	}
 
 
@@ -362,8 +363,8 @@ void setupDefaultWindow(const char *name)
 
 	//glutGameModeString("1920x1080");
 	//glutEnterGameMode();
-
-	glutInitWindowSize(512, 512);
+	//glutInitWindowPosition(960, 0);
+	glutInitWindowSize(1920, 1080);
 
 
 	int mainHandle = glutCreateWindow(name);
@@ -406,7 +407,7 @@ void startRender(const PxVec3& cameraEye, const PxVec3& cameraDir, PxReal clipNe
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	ImGui_ImplOpenGL2_RenderDrawData(ImGui::GetDrawData());
+	
 
 	// Setup camera
 	glMatrixMode(GL_PROJECTION);
@@ -481,8 +482,8 @@ void renderActors(PxRigidActor** actors, const PxU32 numActors, bool shadows, co
 
 void finishRender()
 {
-	glutSwapBuffers();
-	//glutPostRedisplay();
+	//glutSwapBuffers();
+	
 }
 
 void renderText(int x, int y, const char text[], int len)

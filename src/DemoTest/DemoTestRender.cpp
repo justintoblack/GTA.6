@@ -335,7 +335,9 @@ namespace
 	//显示窗口
 	void renderCallback()
 	{
+		
 		Snippets::glut_display_func();
+		
 		//物理模拟
 		stepPhysics(true);
 
@@ -434,6 +436,7 @@ namespace
 		glutIdleFunc(idleCallback);
 		//注册好回调函数后
 		glutDisplayFunc(renderCallback);
+		//glutDisplayFunc(Snippets::glut_display_func);
 
 
 		//=======================
