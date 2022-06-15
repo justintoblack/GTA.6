@@ -1014,6 +1014,8 @@ void stopBell()
 };
 
 
+GameObject testObject;
+extern Model gModel2;
 
 //自定义
 void MyCode()
@@ -1063,6 +1065,11 @@ void MyCode()
 	//垃圾桶
 	theCreator.CreatePoles(PxVec3(50, 0.0f, 50), PxVec3(0, 0, 1), 20, 10, gMaterial, 0.3f, 0.7f, 10, 10000, 10000);
 	
+	testObject.AddRigidbody(true);
+	testObject.AddModel(gModel2);
+	testObject.AddBoxCollider(4.35f,4.25f,4.6f, PxTransform(0, 4.29f, 0));
+	testObject.SetTransform(PxTransform(10,10,10));
+	testObject.AddToScene();
 }
 
 
@@ -1174,6 +1181,7 @@ void stepPhysics(bool interactive)
 {
 	PX_UNUSED(interactive);
 	//时间
+
 
 	GlobalKeyEvent();
 	inputSystem.InputAction();

@@ -50,11 +50,26 @@ public:
         this->pos = newPos;
     }
 
+    //void setQuat(glm::quat q)
+    //{
+    //    this->q = q;
+    //}
+    void setScale(glm::vec3 s)
+    {
+        this->scale = s;
+    }
     glm::vec3 getPos()
     {
         return this->pos;
     }
-
+    //glm::quat getQuat()
+    //{
+    //    return this->q;
+    //}
+    glm::vec3 getScale()
+    {
+        return this->scale;
+    }
 private:
     // loads a model with supported ASSIMP extensions from file and stores the resulting meshes in the meshes vector.
     void loadModel(string const &path)
@@ -215,6 +230,8 @@ private:
 
     //used in model matrix
     glm::vec3 pos = glm::vec3(0.0f, 0.0f, 0.0f);
+    //glm::quat q=glm::quat(0,0,0,0);
+    glm::vec3 scale = glm::vec3(1, 1, 1);
 };
 
 

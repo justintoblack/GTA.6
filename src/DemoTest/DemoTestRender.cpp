@@ -48,6 +48,7 @@
 #include "../InputSystem/InputSystem.h"
 #include "../Utils/Mathf.h"
 #include "../Utils/Mathf.cpp"
+#include "../DemoTest/GameObject.h"
 
 #include "irrKlang/irrKlang.h"  //audio
 
@@ -122,6 +123,8 @@ __int64 freq;
 static __int64 gTime, gLastTime;
 
 ///////////////////////DemoTest///////////////////////////////
+extern GameObject testObject;
+
 extern PxVec3 moveDir;
 glm::vec3 forwardDir(0,0,1);
 extern PxController* m_player;
@@ -137,7 +140,7 @@ bool needToPass=false;
 
 namespace
 {
-
+	
 	void motionCallback(int x, int y)
 	{
 
@@ -317,7 +320,7 @@ namespace
 		//modelMat = glm::rotate(modelMat, 1.0f, glm::vec3(0, -1, 0));
 		modelMat *= glm::mat4_cast(glm::quatLookAt(dir, glm::vec3(0, 1, 0)));
 
-		modelMat = glm::scale(modelMat, glm::vec3(0.1f, 0.1f, 0.1f));
+		modelMat = glm::scale(modelMat, glm::vec3(.1f, .1f, .1f));
 		
 		
 
@@ -328,6 +331,37 @@ namespace
 		glUniformMatrix4fv(glGetUniformLocation(gModelShader.ID, "view"), 1, GL_FALSE, glm::value_ptr(viewMat));
 		glUniformMatrix4fv(glGetUniformLocation(gModelShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(modelMat));
 		model.Draw(shader);
+
+		glUseProgram(0);
+	}
+
+	//渲染GameObject
+	void RenderGameObject(GameObject &gameObject)
+	{
+		//需要跟踪物理模拟
+		if (gameObject.g_rigidBody&&gameObject.g_rigidBody->getType()==
+			PxActorType::eRIGID_DYNAMIC)
+		{
+			cout << "has" << endl;
+			gameObject.transform = gameObject.g_rigidBody->getGlobalPose();
+		}
+		//不需要
+		else
+		{
+			cout << "no" << endl;
+		}
+
+		gModelShader.use();
+		glm::mat4 modelMat = glm::mat4(1.0f);
+		modelMat = glm::translate(modelMat, Mathf::P3ToV3(gameObject.transform.p));
+		modelMat *= glm::mat4_cast(Mathf::Toquat(gameObject.transform.q));
+		modelMat = glm::scale(modelMat, gameObject.g_model->getScale());
+		glm::mat4 viewMat = getViewMat();
+		glm::mat4 projectionMat = glm::perspective(45.0f, (float)glutGet(GLUT_WINDOW_WIDTH) / (float)glutGet(GLUT_WINDOW_HEIGHT), 0.1f, 1000.0f);
+		glUniformMatrix4fv(glGetUniformLocation(gModelShader.ID, "projection"), 1, GL_FALSE, glm::value_ptr(projectionMat));
+		glUniformMatrix4fv(glGetUniformLocation(gModelShader.ID, "view"), 1, GL_FALSE, glm::value_ptr(viewMat));
+		glUniformMatrix4fv(glGetUniformLocation(gModelShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(modelMat));
+		gameObject.g_model->Draw(gModelShader);
 
 		glUseProgram(0);
 	}
@@ -345,6 +379,7 @@ namespace
 
 		/////////////////////Test//////////////////////////
 
+		RenderGameObject(testObject);
 
 		float rotateSpeed = 10;
 		//表示正在移动
@@ -356,10 +391,11 @@ namespace
 		}
 			RenderModel(gModel, glm::vec3(haha.x, haha.y, haha.z),-forwardDir, gModelShader);
 			//RenderModel(gModel, glm::vec3(-20.0f, 10.0f, -45.0f), gModelShader);
-		//RenderModel(gModel2, glm::vec3(-28.0f, 15.0f, -47.0f), gModelShader);
+		//RenderModel(gModel2, glm::vec3(10.0, 1.0f, 10.0f),glm::vec3(0,0,1),
+		//	gModelShader);
 
 
-		///////////////EndTest////////////////////////////
+		/////////////////////EndTest////////////////////////////
 
 
 
@@ -416,7 +452,8 @@ namespace
 
 		//----------Render Model----------
 		gModel = Model("../../assets/objects/nanosuit/nanosuit.obj");
-		gModel2 = Model("../../assets/objects/backpack/backpack.obj");
+		//gModel2 = Model("../../assets/objects/backpack/backpack.obj");
+		gModel2 = Model("../../assets/objects/Models/SM_Bld_Station_01.fbx");
 		gModelShader = Shader("../../src/ModelLoading/model_loading.vs",
 								"../../src/ModelLoading/model_loading.fs");
 		//----------Render Model----------

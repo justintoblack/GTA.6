@@ -10,6 +10,21 @@ float Mathf::RadToDeg(float rad)
 	return 180/PxPi*rad;
 }
 
+glm::vec3 Mathf::P3ToV3(PxVec3 a)
+{
+	return glm::vec3(a.x,a.y,a.z);
+}
+
+PxVec3 Mathf::V3ToP3(glm::vec3 a)
+{
+	return PxVec3(a.x,a.y,a.z);
+}
+
+glm::quat Mathf::Toquat(PxQuat q)
+{
+	return glm::quat(q.w,q.x,q.y,q.z);
+}
+
 //PxVec3 Mathf::QuatToEuler(PxQuat q)
 //{
 //	//PxVec3 result;

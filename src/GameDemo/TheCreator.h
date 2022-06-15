@@ -8,8 +8,10 @@
 #include<ctime>
 #include "../SnippetVehicleCommon/SnippetVehicleFilterShader.h"
 #include "../SnippetVehicleCommon/SnippetVehicleSceneQuery.h"
-using namespace physx;
+#include "../DemoTest/GameObject.h"
+#include <list>
 
+using namespace physx;
 
 enum BreakType
 {

@@ -405,7 +405,7 @@ void renderActors(PxRigidActor** actors, const PxU32 numActors, bool shadows, co
 			const PxMat44 shapePose(PxShapeExt::getGlobalPose(*shapes[j], *actors[i]));
 			PxGeometryHolder h = shapes[j]->getGeometry();
 
-			if (shapes[j]->getFlags() & PxShapeFlag::eTRIGGER_SHAPE)
+			//if (shapes[j]->getFlags() & PxShapeFlag::eTRIGGER_SHAPE)
 			glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
 			
 			// render object
@@ -421,7 +421,7 @@ void renderActors(PxRigidActor** actors, const PxU32 numActors, bool shadows, co
 			renderGeometry(h);
 			glPopMatrix();
 
-			glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
+			glPolygonMode( GL_FRONT_AND_BACK, GL_FILL);
 
 			if(shadows)/*阴影，，，效果表现上有瑕疵但不知道怎么优化*/
 			{
