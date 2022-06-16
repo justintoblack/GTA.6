@@ -55,6 +55,7 @@
     <ClInclude Include="..\..\src\Bone\Animation.h" />
     <ClInclude Include="..\..\src\Bone\Animator.h" />
     <ClInclude Include="..\..\src\Bone\Bone.h" />
+    <ClInclude Include="..\..\src\Bone\MeshAnimation.h" />
     <ClInclude Include="..\..\src\Bone\ModelAnimation.h" />
     <ClInclude Include="..\..\src\DemoTest\GameObject.h" />
     <ClInclude Include="..\..\src\GameDemo\TheCreator.h" />

@@ -358,28 +358,28 @@ namespace
 
 		///////////////EndTest////////////////////////////
 
-		//{//--------------------render anim------------------------
-		//	gAnimator->UpdateAnimation(deltaTime);
-		//	gModelAnimShader.use();
-		//	glm::mat4 modelMat = glm::mat4(1.0f);
-		//	modelMat = glm::translate(modelMat, glm::vec3(5.0f, 5.0f, 5.0f));
-		//	//modelMat = glm::rotate(modelMat, 1.0f, glm::vec3(0, -1, 0));
-		//	modelMat = glm::scale(modelMat, glm::vec3(2.0f, 2.0f, 2.0f));
-		//	glm::mat4 viewMat = getViewMat();
-		//	glm::mat4 projectionMat = glm::perspective(60.0f, (float)glutGet(GLUT_WINDOW_WIDTH) / (float)glutGet(GLUT_WINDOW_HEIGHT), 0.1f, 1000.0f);
-		//	glUniformMatrix4fv(glGetUniformLocation(gModelAnimShader.ID, "projection"), 1, GL_FALSE, glm::value_ptr(projectionMat));
-		//	glUniformMatrix4fv(glGetUniformLocation(gModelAnimShader.ID, "view"), 1, GL_FALSE, glm::value_ptr(viewMat));
-		//	glUniformMatrix4fv(glGetUniformLocation(gModelAnimShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(modelMat));
-		//	vector<glm::mat4> transform = gAnimator->GetFinalBoneMatrices();
-		//	for (int i = 0; i < transform.size(); i++)
-		//	{
-		//		string name = "finalBonesMatrices[" + std::to_string(i) + "]";
-		//		glUniformMatrix4fv(glGetUniformLocation(gModelAnimShader.ID, name.c_str()), 1, GL_FALSE, &transform[i][0][0]);
-		//	}
-		//	//gModelAnim->Draw(gModelAnimShader);
-		//	glUseProgram(0);
-		//	//---------------------render anim-------------------------
-		//}
+		{//--------------------render anim------------------------
+			gAnimator->UpdateAnimation(deltaTime);
+			gModelAnimShader.use();
+			glm::mat4 modelMat = glm::mat4(1.0f);
+			modelMat = glm::translate(modelMat, glm::vec3(5.0f, 2.0f, 5.0f));
+			//modelMat = glm::rotate(modelMat, 1.0f, glm::vec3(0, -1, 0));
+			modelMat = glm::scale(modelMat, glm::vec3(3.0f, 3.0f, 3.0f));
+			glm::mat4 viewMat = getViewMat();
+			glm::mat4 projectionMat = glm::perspective(45.0f, (float)glutGet(GLUT_WINDOW_WIDTH) / (float)glutGet(GLUT_WINDOW_HEIGHT), 0.1f, 1000.0f);
+			glUniformMatrix4fv(glGetUniformLocation(gModelAnimShader.ID, "projection"), 1, GL_FALSE, glm::value_ptr(projectionMat));
+			glUniformMatrix4fv(glGetUniformLocation(gModelAnimShader.ID, "view"), 1, GL_FALSE, glm::value_ptr(viewMat));
+			glUniformMatrix4fv(glGetUniformLocation(gModelAnimShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(modelMat));
+			vector<glm::mat4> transform = gAnimator->GetFinalBoneMatrices();
+			for (int i = 0; i < transform.size(); i++)
+			{
+				string name = "finalBonesMatrices[" + std::to_string(i) + "]";
+				glUniformMatrix4fv(glGetUniformLocation(gModelAnimShader.ID, name.c_str()), 1, GL_FALSE, &transform[i][0][0]);
+			}
+			gModelAnim->Draw(gModelAnimShader);
+			glUseProgram(0);
+			//---------------------render anim-------------------------
+		}
 
 
 		PxScene* scene;
@@ -443,10 +443,10 @@ void renderLoop()
 	//----------Model Anim-----------------------------
 	gModelAnimShader = Shader("../../src/Bone/ModelAnim.vs",
 		"../../src/Bone/ModelAnim.fs");
-	string modelAnimPath("F:/Learning/OpenGLESDemo-main/app/src/main/assets/cowboy/cowboy.dae");
+	string modelAnimPath("../../assets/objects/walking/Walking.dae");
 	gModelAnim = new ModelAnimation(modelAnimPath);
-	/*gAnimation = new Animation(modelAnimPath, gModelAnim);
-	gAnimator = new Animator(gAnimation);*/
+	gAnimation = new Animation(modelAnimPath, gModelAnim);
+	gAnimator = new Animator(gAnimation);
 
 	//----------Model Anim-----------------------------
 

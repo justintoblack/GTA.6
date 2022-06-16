@@ -33,6 +33,14 @@ public :
 			cout << "ERROR::ASSIMP:: " << importer.GetErrorString() << endl;
 			return;
 		}
+		cout << "Animation:: 找到了";
+		cout << scene->mNumAnimations;
+		cout << "个动画" << endl;
+		if (scene->mNumAnimations == 0)
+		{
+			cout << "Animation:: No Animations." << endl;
+			return;
+		}
 		//暂时只加载第一个动画
 		aiAnimation* animation = scene->mAnimations[0];
 		mDuration = animation->mDuration;

@@ -10,7 +10,7 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
-#include "mesh.h"
+#include "MeshAnimation.h"
 #include "Shader.h"
 #include "Bone.h"
 #include <AssimpGlmUtil.h>

@@ -76,7 +76,7 @@ glm::vec3 Mathf::Slerp(glm::vec3 a, glm::vec3 b, float t)
 	b = glm::normalize(b);
 	float angle = PxAcos(glm::dot(a, b));
 	angle = glm::clamp(angle, 0.001f,3.141f);
-	cout << angle << endl;
+	//cout << angle << endl;
 	glm::vec3 result = (sin((1 - t) * angle) / sin(angle)) * a +
 		(sin(t * angle) / sin(angle)) * b;
 	return glm::normalize(result);

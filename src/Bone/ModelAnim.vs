@@ -16,7 +16,7 @@ uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
 
-uniform mat4 finalBoneMatrices[MAX_BONE];
+uniform mat4 finalBonesMatrices[MAX_BONE];
 
 
 void main()
@@ -33,7 +33,7 @@ void main()
             position = vec4(aPos, 1.0f);
             break;
         }
-        position += finalBoneMatrices[boneIDs[i]] * weights[i] * vec4(aPos, 1.0f);
+        position += finalBonesMatrices[boneIDs[i]] * weights[i] * vec4(aPos, 1.0f);
     }
     gl_Position = projection * view * model * position;
 }
