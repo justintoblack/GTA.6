@@ -432,7 +432,7 @@ void renderLoop()
 	//----------Render Model----------
 	//gModel = Model("../../assets/objects/nanosuit/nanosuit.obj");
 	//gModel2 = Model("../../assets/objects/backpack/backpack.obj");
-	//gModel2 = Model("F:/Learning/OpenGLESDemo-main/app/src/main/assets/cowboy/cowboy.dae");
+	gModel2 = Model("F:/Learning/OpenGLESDemo-main/app/src/main/assets/cowboy/cowboy.dae");
 	gModelShader = Shader("../../src/ModelLoading/model_loading.vs",
 		"../../src/ModelLoading/model_loading.fs");
 
@@ -443,7 +443,8 @@ void renderLoop()
 	//----------Model Anim-----------------------------
 	gModelAnimShader = Shader("../../src/Bone/ModelAnim.vs",
 		"../../src/Bone/ModelAnim.fs");
-	string modelAnimPath("../../assets/objects/walking/Walking.dae");
+	//string modelAnimPath("F:\\Learning\\mypt2\\PhysX-Tutorial-master\\PhysX_3.4\\SCUT2022_Nayeon\\assets\\objects\\benz\\uploads_files_2787791_Mercedes+Benz+GLS+580.fbx");
+	string modelAnimPath("..\\..\\assets\\objects\\walk\\Walk.dae");
 	gModelAnim = new ModelAnimation(modelAnimPath);
 	gAnimation = new Animation(modelAnimPath, gModelAnim);
 	gAnimator = new Animator(gAnimation);
