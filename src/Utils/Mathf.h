@@ -50,6 +50,9 @@ w = cos(RotationAngle / 2)*/
 		static glm::vec3 Slerp(glm::vec3 a, glm::vec3 b, float t);
 		static PxVec3 Slerp(PxVec3 a, PxVec3 b, float t);
 		static PxQuat Slerp(PxQuat a, PxQuat b, float t);
+
+		static PxVec3 ModelToWorld(PxVec3 WorldPosition, PxVec3 LocalPosition, PxQuat WorldRotation);
+
 	};
 
 

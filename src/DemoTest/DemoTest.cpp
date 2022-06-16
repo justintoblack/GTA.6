@@ -1028,18 +1028,6 @@ void MyCode()
 
 	m_player = CreateCharacterController(PxExtendedVec3(20, 100, 20));
 	
-	PxRigidDynamic *playerActor= m_player->getActor();
-	PxShape* playerShape;
-	playerActor->getShapes(&playerShape, 1);
-	playerShape->setFlag(PxShapeFlag::eSIMULATION_SHAPE, false);
-	playerShape->setFlag(PxShapeFlag::eTRIGGER_SHAPE, true);
-	gScene->addActor(*playerActor);
-	PxRigidDynamic* playerActor = m_player->getActor();
-	PxShape* playerShape;
-	playerActor->getShapes(&playerShape, 1);
-	playerShape->setFlag(PxShapeFlag::eSIMULATION_SHAPE, false);
-	playerShape->setFlag(PxShapeFlag::eTRIGGER_SHAPE, true);
-	gScene->addActor(*playerActor);
 	//角色Input函数注册
 	characterMap.SetActionMap(m_player, sCamera, 5.0f);
 	characterMap.SpaceKeyEvent = Jump;
@@ -1185,7 +1173,6 @@ void stepPhysics(bool interactive)
 {
 	PX_UNUSED(interactive);
 	//时间
-
 	GlobalKeyEvent();
 	inputSystem.InputAction();
 
@@ -1220,7 +1207,7 @@ void stepPhysics(bool interactive)
 		{ wheelQueryResults[0], gVehicle4W->mWheelsSimData.getNbWheels() },
 	};
 	PxVehicleUpdates(timestep, grav, *gFrictionPairs, NUM_VEHICLES, vehicles, vehicleQueryResults);
-
+	
 
 	//Work out if the vehicle is in the air.
 	gIsVehicleInAir = gVehicle4W->getRigidDynamicActor()->isSleeping() ? false : PxVehicleIsInAir(vehicleQueryResults[0]);

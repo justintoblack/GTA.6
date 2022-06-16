@@ -107,3 +107,9 @@ PxQuat Mathf::Slerp(PxQuat a, PxQuat b, float t)
 	return result;
 }
 
+PxVec3 Mathf::ModelToWorld(PxVec3 WorldPosition, PxVec3 LocalPosition, PxQuat WorldRotation)
+{
+
+	return PxVec3();
+}
+

@@ -332,6 +332,32 @@ namespace
 		glUseProgram(0);
 	}
 
+	//äÖÈ¾³µÁ¾
+	void RenderCar(Model& model, glm::vec3 pos, glm::vec3 dir, Shader& shader)
+	{
+		//glEnable(GL_DEPTH_TEST);
+		model.setPos(pos);
+		shader.use();
+		glm::mat4 modelMat = glm::mat4(1.0f);
+		modelMat = glm::translate(modelMat, model.getPos());
+
+		//modelMat = glm::rotate(modelMat, 1.0f, glm::vec3(0, -1, 0));
+		modelMat *= glm::mat4_cast(glm::quatLookAt(dir, glm::vec3(0, 1, 0)));
+
+		modelMat = glm::scale(modelMat, glm::vec3(0.1f, 0.1f, 0.1f));
+
+
+
+
+		glm::mat4 viewMat = getViewMat();
+		glm::mat4 projectionMat = glm::perspective(45.0f, (float)glutGet(GLUT_WINDOW_WIDTH) / (float)glutGet(GLUT_WINDOW_HEIGHT), 0.1f, 1000.0f);
+		glUniformMatrix4fv(glGetUniformLocation(gModelShader.ID, "projection"), 1, GL_FALSE, glm::value_ptr(projectionMat));
+		glUniformMatrix4fv(glGetUniformLocation(gModelShader.ID, "view"), 1, GL_FALSE, glm::value_ptr(viewMat));
+		glUniformMatrix4fv(glGetUniformLocation(gModelShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(modelMat));
+		model.Draw(shader);
+
+		glUseProgram(0);
+	}
 	//ÏÔÊ¾´°¿Ú
 	void renderCallback()
 	{
@@ -359,6 +385,14 @@ namespace
 			//RenderModel(gModel, glm::vec3(-20.0f, 10.0f, -45.0f), gModelShader);
 		//RenderModel(gModel2, glm::vec3(-28.0f, 15.0f, -47.0f), gModelShader);
 
+		PxShape* vehicleshapes[5];
+		gVehicle4W->getRigidDynamicActor()->getShapes(vehicleshapes, 5);
+		for (size_t i = 0; i < 5; i++)
+		{
+			
+			Mathf::Debug(vehicleshapes[i]->getLocalPose().q);
+		}
+		
 
 		///////////////EndTest////////////////////////////
 

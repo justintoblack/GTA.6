@@ -264,6 +264,9 @@ PxVehicleDrive4W* createVehicle4W(const VehicleDesc& vehicle4WDesc, PxPhysics* p
 			 wheelsSimData);
 	}
 
+
+
+
 	//Set up the sim data for the vehicle drive model.
 	PxVehicleDriveSimData4W driveSimData;
 	{
@@ -311,8 +314,7 @@ PxVehicleDrive4W* createVehicle4W(const VehicleDesc& vehicle4WDesc, PxPhysics* p
 	configureUserData(vehDrive4W, vehicle4WDesc.actorUserData, vehicle4WDesc.shapeUserDatas);
 
 	//Free the sim data because we don't need that any more.
-	wheelsSimData->free();
-
+	//wheelsSimData->free();
 	return vehDrive4W;
 }
 
