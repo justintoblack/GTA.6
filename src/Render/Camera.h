@@ -59,7 +59,7 @@ private:
 	float				mDistanceToTarget;
 	float				mMinDistance=3;
 	float				mMaxDistance=6;
-	float				mDamp=5.0f;
+	float				mDamp=3.0f;
 };
 
 
