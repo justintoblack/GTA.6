@@ -48,12 +48,19 @@
 #include "../InputSystem/InputSystem.h"
 #include "../Utils/Mathf.h"
 #include "../Utils/Mathf.cpp"
+#include "ModelAnimation.h"
+#include "Animation.h"
+#include "Animator.h"
 
 GLuint              gCubeTexture;
 Shader				gSkyboxShader;
 unsigned int		gSkyboxVAO, gSkyboxVBO;
 Model				gModel, gModel2;
 Shader				gModelShader;
+Shader				gModelAnimShader;
+ModelAnimation* gModelAnim;
+Animation* gAnimation;
+Animator* gAnimator;
 
 //天空盒六个面的纹理图片
 const char* gSkyboxFaces[6] = {
@@ -100,7 +107,7 @@ float gSkyboxVertices[] = {
 using namespace physx;
 
 extern void initPhysics(bool interactive);
-extern void stepPhysics(bool interactive);	
+extern void stepPhysics(bool interactive);
 extern void cleanupPhysics(bool interactive);
 //extern void keyPress(unsigned char key, const PxTransform& camera);
 
@@ -113,17 +120,17 @@ static __int64 gTime, gLastTime;
 
 ///////////////////////DemoTest///////////////////////////////
 extern PxVec3 moveDir;
-glm::vec3 forwardDir(0,0,1);
+glm::vec3 forwardDir(0, 0, 1);
 extern PxController* m_player;
 extern InputSyetem inputSystem;
 
-Snippets::Camera*	sCamera;
+Snippets::Camera* sCamera;
 
 //鼠标
 POINT p;
 int lastX; int lastY;
 
-bool needToPass=false;
+bool needToPass = false;
 
 namespace
 {
@@ -131,8 +138,8 @@ namespace
 	void motionCallback(int x, int y)
 	{
 
-		int dx=lastX - x;
-		int dy= lastY - y;
+		int dx = lastX - x;
+		int dy = lastY - y;
 
 		if (needToPass)
 		{
@@ -148,9 +155,9 @@ namespace
 		//std::cout << x << " " << GetSystemMetrics(SM_CXSCREEN) << std::endl;
 
 		//到达窗口边界
-		if (x <= 0 || x >= GetSystemMetrics(SM_CXSCREEN)-1 || y <= 0 || y >= GetSystemMetrics(SM_CYSCREEN)-1)
+		if (x <= 0 || x >= GetSystemMetrics(SM_CXSCREEN) - 1 || y <= 0 || y >= GetSystemMetrics(SM_CYSCREEN) - 1)
 		{
-			SetCursorPos(GetSystemMetrics(SM_CXSCREEN)/2, GetSystemMetrics(SM_CYSCREEN)/2);
+			SetCursorPos(GetSystemMetrics(SM_CXSCREEN) / 2, GetSystemMetrics(SM_CYSCREEN) / 2);
 			needToPass = true;
 		}
 	}
@@ -175,7 +182,7 @@ namespace
 	}
 
 	//鼠标移动
-	void OnMouseMove(int x,int y)
+	void OnMouseMove(int x, int y)
 	{
 		motionCallback(x, y);
 	}
@@ -194,7 +201,7 @@ namespace
 		else
 		{
 			std::cout << "移动" << std::endl;
-			OnMouseMove(p.x,p.y);
+			OnMouseMove(p.x, p.y);
 			lastX = p.x;
 			lastY = p.y;
 		}
@@ -219,7 +226,7 @@ namespace
 
 		//加载SHADER
 		gSkyboxShader = Shader("../../src/Render/SkyBox.vs",
-								"../../src/Render/SkyBox.fs");
+			"../../src/Render/SkyBox.fs");
 
 		// 天空盒 VAO
 		glGenVertexArrays(1, &gSkyboxVAO);
@@ -296,7 +303,7 @@ namespace
 	}
 
 	//传入模型对象model，以及模型的位置pos
-	void RenderModel(Model& model, glm::vec3 pos, glm::vec3 dir , Shader& shader)
+	void RenderModel(Model& model, glm::vec3 pos, glm::vec3 dir, Shader& shader)
 	{
 		//glEnable(GL_DEPTH_TEST);
 		model.setPos(pos);
@@ -307,9 +314,9 @@ namespace
 		//modelMat = glm::rotate(modelMat, 1.0f, glm::vec3(0, -1, 0));
 		modelMat *= glm::mat4_cast(glm::quatLookAt(dir, glm::vec3(0, 1, 0)));
 
-		modelMat = glm::scale(modelMat, glm::vec3(0.1f, 0.1f, 0.1f));
-		
-		
+		modelMat = glm::scale(modelMat, glm::vec3(2.0f, 2.0f, 2.0f));
+
+
 
 
 		glm::mat4 viewMat = getViewMat();
@@ -329,7 +336,7 @@ namespace
 		stepPhysics(true);
 
 		//渲染相机场景
-		Snippets::startRender(sCamera->getEye(), sCamera->getDir(),0.1f);
+		Snippets::startRender(sCamera->getEye(), sCamera->getDir(), 0.1f);
 		RenderSkybox();
 
 
@@ -338,28 +345,49 @@ namespace
 
 		float rotateSpeed = 10;
 		//表示正在移动
-		PxExtendedVec3 haha= m_player->getFootPosition();
+		PxExtendedVec3 haha = m_player->getFootPosition();
 		if (!moveDir.isZero())
 		{
 			glm::vec3 targetDir = glm::vec3(moveDir.x, 0, moveDir.z);
-			forwardDir = glm::normalize( Mathf::Slerp(forwardDir, targetDir, deltaTime * rotateSpeed));
+			forwardDir = glm::normalize(Mathf::Slerp(forwardDir, targetDir, deltaTime * rotateSpeed));
 		}
-			RenderModel(gModel, glm::vec3(haha.x, haha.y, haha.z),-forwardDir, gModelShader);
-			//RenderModel(gModel, glm::vec3(-20.0f, 10.0f, -45.0f), gModelShader);
-		//RenderModel(gModel2, glm::vec3(-28.0f, 15.0f, -47.0f), gModelShader);
+		RenderModel(gModel, glm::vec3(haha.x, haha.y, haha.z), -forwardDir, gModelShader);
+		//RenderModel(gModel, glm::vec3(-20.0f, 10.0f, -45.0f), gModelShader);
+		RenderModel(gModel2, glm::vec3(10.0f, 5.0f, 10.0f), glm::vec3(0.0f, 0.0f, 1.0f), gModelShader);
 
 
 		///////////////EndTest////////////////////////////
 
-
+		//{//--------------------render anim------------------------
+		//	gAnimator->UpdateAnimation(deltaTime);
+		//	gModelAnimShader.use();
+		//	glm::mat4 modelMat = glm::mat4(1.0f);
+		//	modelMat = glm::translate(modelMat, glm::vec3(5.0f, 5.0f, 5.0f));
+		//	//modelMat = glm::rotate(modelMat, 1.0f, glm::vec3(0, -1, 0));
+		//	modelMat = glm::scale(modelMat, glm::vec3(2.0f, 2.0f, 2.0f));
+		//	glm::mat4 viewMat = getViewMat();
+		//	glm::mat4 projectionMat = glm::perspective(60.0f, (float)glutGet(GLUT_WINDOW_WIDTH) / (float)glutGet(GLUT_WINDOW_HEIGHT), 0.1f, 1000.0f);
+		//	glUniformMatrix4fv(glGetUniformLocation(gModelAnimShader.ID, "projection"), 1, GL_FALSE, glm::value_ptr(projectionMat));
+		//	glUniformMatrix4fv(glGetUniformLocation(gModelAnimShader.ID, "view"), 1, GL_FALSE, glm::value_ptr(viewMat));
+		//	glUniformMatrix4fv(glGetUniformLocation(gModelAnimShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(modelMat));
+		//	vector<glm::mat4> transform = gAnimator->GetFinalBoneMatrices();
+		//	for (int i = 0; i < transform.size(); i++)
+		//	{
+		//		string name = "finalBonesMatrices[" + std::to_string(i) + "]";
+		//		glUniformMatrix4fv(glGetUniformLocation(gModelAnimShader.ID, name.c_str()), 1, GL_FALSE, &transform[i][0][0]);
+		//	}
+		//	//gModelAnim->Draw(gModelAnimShader);
+		//	glUseProgram(0);
+		//	//---------------------render anim-------------------------
+		//}
 
 
 		PxScene* scene;
-		PxGetPhysics().getScenes(&scene,1);
+		PxGetPhysics().getScenes(&scene, 1);
 
 		//获取场景中的Actor并用OpenGL渲染
 		PxU32 nbActors = scene->getNbActors(PxActorTypeFlag::eRIGID_DYNAMIC | PxActorTypeFlag::eRIGID_STATIC);
-		if(nbActors)
+		if (nbActors)
 		{
 			std::vector<PxRigidActor*> actors(nbActors);
 			scene->getActors(PxActorTypeFlag::eRIGID_DYNAMIC | PxActorTypeFlag::eRIGID_STATIC, reinterpret_cast<PxActor**>(&actors[0]), nbActors);
@@ -371,9 +399,9 @@ namespace
 		//关于时间
 		QueryPerformanceCounter((LARGE_INTEGER*)&gTime); //get current count
 		QueryPerformanceFrequency((LARGE_INTEGER*)&freq); //get processor freq
-		deltaTime = (float)(gTime - gLastTime)/ (float)freq;
+		deltaTime = (float)(gTime - gLastTime) / (float)freq;
 		gLastTime = gTime;
-		gameTime = (float)(gTime - firstCount)/(float)pow(10,7);
+		gameTime = (float)(gTime - firstCount) / (float)pow(10, 7);
 		//std::cout  << deltaTime << std::endl;
 	}
 
@@ -385,57 +413,70 @@ namespace
 }
 
 
-	//渲染循环
-	void renderLoop()
-	{
+//渲染循环
+void renderLoop()
+{
 
-		sCamera = new Snippets::Camera(PxVec3(50.0f, 50.0f, 50.0f), PxVec3(-0.6f,-0.2f,-0.7f));
-		sCamera->SetConfig(4,PxVec3(0,0,0));
+	sCamera = new Snippets::Camera(PxVec3(50.0f, 50.0f, 50.0f), PxVec3(-0.6f, -0.2f, -0.7f));
+	sCamera->SetConfig(4, PxVec3(0, 10, 0));
 
-		//初始化鼠标位置;
-		GetCursorPos(&p);
-		lastX = p.x;
-		lastY = p.y;
+	//初始化鼠标位置;
+	GetCursorPos(&p);
+	lastX = p.x;
+	lastY = p.y;
 
 
-		Snippets::setupDefaultWindow("PhysX Demo");
-		Snippets::setupDefaultRenderState();
-		glewInit();
-		//----------Render Model----------
-		gModel = Model("../../assets/objects/nanosuit/nanosuit.obj");
-		gModel2 = Model("../../assets/objects/backpack/backpack.obj");
-		gModelShader = Shader("../../src/ModelLoading/model_loading.vs",
-								"../../src/ModelLoading/model_loading.fs");
-		//----------Render Model----------
-		SetupSkybox();
+	Snippets::setupDefaultWindow("PhysX Demo");
+	Snippets::setupDefaultRenderState();
+	glewInit();
+	//----------Render Model----------
+	//gModel = Model("../../assets/objects/nanosuit/nanosuit.obj");
+	//gModel2 = Model("../../assets/objects/backpack/backpack.obj");
+	//gModel2 = Model("F:/Learning/OpenGLESDemo-main/app/src/main/assets/cowboy/cowboy.dae");
+	gModelShader = Shader("../../src/ModelLoading/model_loading.vs",
+		"../../src/ModelLoading/model_loading.fs");
 
-		glutIdleFunc(idleCallback);
-		//注册好回调函数后
-		glutDisplayFunc(renderCallback);
 
-		//键盘事件回调函数
-		//glutKeyboardFunc(keyboardCallback);
+	//----------Render Model----------
+	SetupSkybox();
 
-		glutSetCursor(GLUT_CURSOR_NONE);
+	//----------Model Anim-----------------------------
+	gModelAnimShader = Shader("../../src/Bone/ModelAnim.vs",
+		"../../src/Bone/ModelAnim.fs");
+	string modelAnimPath("F:/Learning/OpenGLESDemo-main/app/src/main/assets/cowboy/cowboy.dae");
+	gModelAnim = new ModelAnimation(modelAnimPath);
+	/*gAnimation = new Animation(modelAnimPath, gModelAnim);
+	gAnimator = new Animator(gAnimation);*/
 
-		//glutMouseFunc(mouseCallback);
+	//----------Model Anim-----------------------------
 
-		glutMotionFunc(motionCallback);
-		glutPassiveMotionFunc(motionCallback);
-	
-		//motionCallback(0,0);
+	glutIdleFunc(idleCallback);
+	//注册好回调函数后
+	glutDisplayFunc(renderCallback);
 
-		atexit(exitCallback);
+	//键盘事件回调函数
+	//glutKeyboardFunc(keyboardCallback);
 
-		initPhysics(true);
+	glutSetCursor(GLUT_CURSOR_NONE);
 
-		//记录游戏第一帧时间
+	//glutMouseFunc(mouseCallback);
 
-		QueryPerformanceCounter((LARGE_INTEGER*)&gTime);
-		QueryPerformanceFrequency((LARGE_INTEGER*)&freq);
-		gLastTime = gTime;
-		firstCount = gTime;
+	glutMotionFunc(motionCallback);
+	glutPassiveMotionFunc(motionCallback);
 
-		glutMainLoop();
-	}
+	//motionCallback(0,0);
+
+	atexit(exitCallback);
+
+	initPhysics(true);
+
+	//记录游戏第一帧时间
+
+	QueryPerformanceCounter((LARGE_INTEGER*)&gTime);
+	QueryPerformanceFrequency((LARGE_INTEGER*)&freq);
+	gLastTime = gTime;
+	firstCount = gTime;
+
+	glutMainLoop();
+}
 #endif

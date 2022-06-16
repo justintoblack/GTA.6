@@ -83,6 +83,10 @@
     <ClInclude Include="..\..\src\ModelLoading\mesh.h" />
     <ClInclude Include="..\..\src\ModelLoading\model.h" />
     <ClInclude Include="..\..\src\DemoTest\GameObject.h" />
+    <ClInclude Include="..\..\src\Bone\Animation.h" />
+    <ClInclude Include="..\..\src\Bone\Animator.h" />
+    <ClInclude Include="..\..\src\Bone\Bone.h" />
+    <ClInclude Include="..\..\src\Bone\ModelAnimation.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="imgui">
@@ -94,5 +98,7 @@
     <None Include="..\..\src\Render\SkyBox.vs" />
     <None Include="..\..\src\ModelLoading\model_loading.fs" />
     <None Include="..\..\src\ModelLoading\model_loading.vs" />
+    <None Include="..\..\src\Bone\ModelAnim.fs" />
+    <None Include="..\..\src\Bone\ModelAnim.vs" />
   </ItemGroup>
 </Project>

@@ -52,6 +52,10 @@
     <ClCompile Include="Dependencies\imgui\imgui_widgets.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\src\Bone\Animation.h" />
+    <ClInclude Include="..\..\src\Bone\Animator.h" />
+    <ClInclude Include="..\..\src\Bone\Bone.h" />
+    <ClInclude Include="..\..\src\Bone\ModelAnimation.h" />
     <ClInclude Include="..\..\src\DemoTest\GameObject.h" />
     <ClInclude Include="..\..\src\GameDemo\TheCreator.h" />
     <ClInclude Include="..\..\src\InputSystem\ActionMap.h" />
@@ -79,6 +83,8 @@
     <ClInclude Include="Dependencies\imgui\imstb_truetype.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\src\Bone\ModelAnim.fs" />
+    <None Include="..\..\src\Bone\ModelAnim.vs" />
     <None Include="..\..\src\ModelLoading\model_loading.fs" />
     <None Include="..\..\src\ModelLoading\model_loading.vs" />
     <None Include="..\..\src\Render\SkyBox.fs" />
@@ -213,7 +219,7 @@
       <SDLCheck>
       </SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\imgui;$(SolutionDir)..\..\..\..\..\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\Common;$(SolutionDir)..\..\..\..\..\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\GameDemo;$(SolutionDir)..\..\..\..\..\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\InputSystem;$(SolutionDir)..\..\..\..\..\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\Utils;$(SolutionDir)..\..\..\..\..\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\SnippetVehicleCommon;$(SolutionDir)..\..\..\..\..\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\ModelLoading;$(SolutionDir)..\..\..\..\..\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\Render;$(SolutionDir)..\..\..\..\..\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\third_party\includes</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\imgui;$(SolutionDir)..\..\..\..\..\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\Common;$(SolutionDir)..\..\..\..\..\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\GameDemo;$(SolutionDir)..\..\..\..\..\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\InputSystem;$(SolutionDir)..\..\..\..\..\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\Utils;$(SolutionDir)..\..\..\..\..\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\SnippetVehicleCommon;$(SolutionDir)..\..\..\..\..\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\ModelLoading;$(SolutionDir)..\..\..\..\..\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\Render;$(SolutionDir)..\..\..\..\..\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\third_party\includes;$(SolutionDir)..\..\..\..\..\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\Bone</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
