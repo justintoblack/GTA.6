@@ -64,6 +64,25 @@ void CharacterActionMap::InputAction()
 	{
 		ShiftKeyEvent(false);
 	}
+
+	if (GetAsyncKeyState(VK_LBUTTON))
+	{
+		if (!isLeftButtonDown)
+		{
+			isLeftButtonDown = true;
+			LeftButtonDownEvent();
+		}
+		LeftButtonEvent();
+	}
+	else
+	{
+		isLeftButtonDown = false;
+	}
+
+	if (GetAsyncKeyState(VK_RBUTTON))
+	{
+		std::cout << "youjian" << std::endl;
+	}
 	arrowKey = arrow;
 }
 

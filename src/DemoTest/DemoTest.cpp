@@ -67,6 +67,7 @@
 
 #include "model.h"
 
+
 using namespace irrklang;
 using namespace physx;
 using namespace snippetvehicle;
@@ -84,6 +85,7 @@ PxScene*				gScene		= NULL;
 PxMaterial*				gMaterial	= NULL;
 PxCooking* gCooking = NULL;
 PxPvd*                  gPvd        = NULL;
+
 
 #define NUM_VEHICLES 1
 #define BLOCKING_SWEEPS 0
@@ -165,6 +167,17 @@ void Jump()
 	{
 		velocity.y = PxSqrt(jumpHeight * gravity.y * -2);
 	}
+}
+
+//左键
+void FireFirst()
+{
+	cout << "fireFirst" << endl;
+}
+
+void Fire()
+{
+	cout << "fire "<< endl;
 }
 
 //冲刺
@@ -726,10 +739,8 @@ PxController* CreateCharacterController(PxExtendedVec3 initPos)
 	desc.stepOffset = 0.3f;
 
 	PxController* ctrl = manager->createController(desc);
-	ctrl->getActor()->setActorFlag(PxActorFlag::eVISUALIZATION, true);
 
 	return ctrl;
-
 }
 
 //车辆相关的函数
@@ -1040,6 +1051,10 @@ void MyCode()
 	characterMap.SpaceKeyEvent = Jump;
 	characterMap.ShiftKeyEvent = Sprint;
 
+
+	characterMap.LeftButtonDownEvent = FireFirst;
+	characterMap.LeftButtonEvent = Fire;
+
 	//载具Input函数注册
 	vehicleMap.release = releaseAllControls;
 	vehicleMap.WKeyEvent = startAccelerateForwardsMode;
@@ -1065,11 +1080,14 @@ void MyCode()
 	//垃圾桶
 	theCreator.CreatePoles(PxVec3(50, 0.0f, 50), PxVec3(0, 0, 1), 20, 10, gMaterial, 0.3f, 0.7f, 10, 10000, 10000);
 	
+
+	//GameObject
 	testObject.AddRigidbody(true);
 	testObject.AddModel(gModel2);
 	testObject.AddBoxCollider(4.35f,4.25f,4.6f, PxTransform(0, 4.29f, 0));
 	testObject.SetTransform(PxTransform(10,10,10));
 	testObject.AddToScene();
+
 }
 
 
@@ -1096,7 +1114,6 @@ void initPhysics(bool interactive)
 	sceneDesc.filterShader = contactReportFilterShader;
 	sceneDesc.simulationEventCallback = &gContactReportCallback;
 	gScene = gPhysics->createScene(sceneDesc);
-
 
 
 	PxPvdSceneClient* pvdClient = gScene->getScenePvdClient();
@@ -1245,6 +1262,25 @@ void stepPhysics(bool interactive)
 
 	m_player->move(moveDir * curSpeed * deltaTime, 0.001f, 0.01f, NULL);
 	m_player->move(velocity*deltaTime,0.001f,0.01f,NULL);
+
+	////////////////////////////移动结束////////////////////////////////
+
+
+
+	/////////////////////////////射线////////////////////////////////
+
+	PxVec3 origin = m_player->getActor()->getGlobalPose().p+PxVec3(0,0,3);
+	PxVec3 unitDir = PxVec3(0, 0, 1);
+	PxReal maxDistance = 10.0f;
+	PxRaycastBuffer raycasthit;
+
+	if (gScene->raycast(origin, unitDir, maxDistance, raycasthit))
+	{
+		Mathf::Debug( raycasthit.block.position);
+	}
+
+	////////////////////////////射线结束////////////////////////////////
+
 
 
 	//相机跟随

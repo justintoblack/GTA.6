@@ -342,13 +342,7 @@ namespace
 		if (gameObject.g_rigidBody&&gameObject.g_rigidBody->getType()==
 			PxActorType::eRIGID_DYNAMIC)
 		{
-			cout << "has" << endl;
 			gameObject.transform = gameObject.g_rigidBody->getGlobalPose();
-		}
-		//不需要
-		else
-		{
-			cout << "no" << endl;
 		}
 
 		gModelShader.use();
@@ -381,7 +375,7 @@ namespace
 
 		RenderGameObject(testObject);
 
-		float rotateSpeed = 10;
+		float rotateSpeed = 5;
 		//表示正在移动
 		PxExtendedVec3 haha= m_player->getFootPosition();
 		if (!moveDir.isZero())

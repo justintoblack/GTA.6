@@ -44,7 +44,6 @@ w = cos(RotationAngle / 2)*/
 		static void Debug(PxQuat q);
 
 		static float Angle(PxVec3 from, PxVec3 to);
-		static float Distance(PxVec3 vec);
 
 		static float Lerp(float a, float b, float t);
 		static PxVec3 Lerp(PxVec3 a, PxVec3 b, float t);
