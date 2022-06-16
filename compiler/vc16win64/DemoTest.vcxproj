@@ -47,6 +47,8 @@
     <ClCompile Include="Dependencies\imgui\imgui_demo.cpp" />
     <ClCompile Include="Dependencies\imgui\imgui_draw.cpp" />
     <ClCompile Include="Dependencies\imgui\imgui_impl_glfw.cpp" />
+    <ClCompile Include="Dependencies\imgui\imgui_impl_glut.cpp" />
+    <ClCompile Include="Dependencies\imgui\imgui_impl_opengl2.cpp" />
     <ClCompile Include="Dependencies\imgui\imgui_impl_opengl3.cpp" />
     <ClCompile Include="Dependencies\imgui\imgui_tables.cpp" />
     <ClCompile Include="Dependencies\imgui\imgui_widgets.cpp" />
@@ -71,6 +73,8 @@
     <ClInclude Include="Dependencies\imgui\imconfig.h" />
     <ClInclude Include="Dependencies\imgui\imgui.h" />
     <ClInclude Include="Dependencies\imgui\imgui_impl_glfw.h" />
+    <ClInclude Include="Dependencies\imgui\imgui_impl_glut.h" />
+    <ClInclude Include="Dependencies\imgui\imgui_impl_opengl2.h" />
     <ClInclude Include="Dependencies\imgui\imgui_impl_opengl3.h" />
     <ClInclude Include="Dependencies\imgui\imgui_impl_opengl3_loader.h" />
     <ClInclude Include="Dependencies\imgui\imgui_internal.h" />
@@ -213,11 +217,11 @@
       <SDLCheck>
       </SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\imgui;$(SolutionDir)..\..\..\..\..\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\Common;$(SolutionDir)..\..\..\..\..\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\GameDemo;$(SolutionDir)..\..\..\..\..\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\InputSystem;$(SolutionDir)..\..\..\..\..\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\Utils;$(SolutionDir)..\..\..\..\..\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\SnippetVehicleCommon;$(SolutionDir)..\..\..\..\..\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\ModelLoading;$(SolutionDir)..\..\..\..\..\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\Render;$(SolutionDir)..\..\..\..\..\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\third_party\includes</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\..\..\..\..\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\third_party\includes</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>$(SolutionDir)..\..\..\..\..\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\third_party\dlls;$(SolutionDir)..\..\..\..\..\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\third_party\libs;$(SolutionDir)Dependencies\imgui;$(SolutionDir)..\..\..\..\..\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\lib\vc16win64;$(SolutionDir)..\..\..\..\..\PhysX-Tutorial-master\PxShared\lib\vc16win64;$(SolutionDIr)Dependencies\GLFW\lib-vc2019;$(SolutionDir)..\..\..\..\..\PhysX-Tutorial-master\PhysX_3.4\Snippets\Graphics\lib\win64\glut;$(SolutionDir)..\..\..\..\..\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\glew-2.1.0\lib\Release\x64;$(SolutionDir)..\..\..\..\..\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\lib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)..\..\..\..\..\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\third_party\libs</AdditionalLibraryDirectories>
       <AdditionalOptions>/LIBPATH:../../../Lib/vc16win64 PhysX3CommonDEBUG_x64.lib PhysX3DEBUG_x64.lib PhysX3CookingDEBUG_x64.lib PhysX3CharacterKinematicDEBUG_x64.lib PhysX3ExtensionsDEBUG.lib PhysX3VehicleDEBUG.lib PxTaskDEBUG_x64.lib PxFoundationDEBUG_x64.lib PsFastXmlDEBUG_x64.lib PxPvdSDKDEBUG_x64.lib /LIBPATH:../../lib/vc16win64 UtilsDEBUG.lib /DEBUG</AdditionalOptions>
       <AdditionalDependencies>glfw3_mt.lib;openGL32.lib;glew32s.lib;assimp.lib;irrKlang.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>

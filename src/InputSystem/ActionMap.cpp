@@ -7,11 +7,26 @@ physx::PxVec3 up(0, 1, 0);
 extern InputSyetem inputSystem;
 extern float deltaTime;
 
+extern void SwitchMode();
+
+ActionMap::ActionMap()
+{
+	EscKeyEvent = SwitchMode;
+}
+
 void ActionMap::InputAction()
 {
 	if (GetAsyncKeyState(VK_ESCAPE))
 	{
-		exit(0);
+		if (!isEscKeyDown)
+		{
+			EscKeyEvent();
+			isEscKeyDown = true;
+		}
+	}
+	else
+	{
+		isEscKeyDown = false;
 	}
 }
 

@@ -33,14 +33,14 @@
 #include <vector>
 
 #include <GL/glew.h>
-#include "stb_image.h"
+#include "../Render/stb_image.h"
 #include "PxPhysicsAPI.h"
 
 //#include "Shader.h"
 #include "../Render/Render.h"
 #include "../Render/Camera.h"
 #include<iostream>
-#include "model.h"
+#include "../ModelLoading/model.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -363,11 +363,19 @@ namespace
 	//显示窗口
 	void renderCallback()
 	{
+		
+		Snippets::glut_display_func();
+		
 		//物理模拟
 		stepPhysics(true);
 
 		//渲染相机场景
 		Snippets::startRender(sCamera->getEye(), sCamera->getDir(),0.1f);
+
+		
+
+
+
 		RenderSkybox();
 
 
@@ -383,7 +391,7 @@ namespace
 			glm::vec3 targetDir = glm::vec3(moveDir.x, 0, moveDir.z);
 			forwardDir = glm::normalize( Mathf::Slerp(forwardDir, targetDir, deltaTime * rotateSpeed));
 		}
-			RenderModel(gModel, glm::vec3(haha.x, haha.y, haha.z),-forwardDir, gModelShader);
+		RenderModel(gModel, glm::vec3(haha.x, haha.y, haha.z),-forwardDir, gModelShader);
 			//RenderModel(gModel, glm::vec3(-20.0f, 10.0f, -45.0f), gModelShader);
 		//RenderModel(gModel2, glm::vec3(10.0, 1.0f, 10.0f),glm::vec3(0,0,1),
 		//	gModelShader);
@@ -438,8 +446,9 @@ namespace
 		lastX = p.x;
 		lastY = p.y;
 
+		//Snippets::setupDefaultGLFWWindows();
 
-		Snippets::setupDefaultWindow("PhysX Demo");
+		Snippets::setupDefaultWindow("Nayeon Studio");
 		Snippets::setupDefaultRenderState();
 		glewInit();
 
@@ -453,9 +462,34 @@ namespace
 		//----------Render Model----------
 		SetupSkybox();
 
+
+
 		glutIdleFunc(idleCallback);
 		//注册好回调函数后
 		glutDisplayFunc(renderCallback);
+		//glutDisplayFunc(Snippets::glut_display_func);
+
+
+		//=======================
+		// Setup Dear ImGui context
+		IMGUI_CHECKVERSION();
+		ImGui::CreateContext();
+		ImGuiIO& io = ImGui::GetIO(); (void)io;
+		//io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+
+		// Setup Dear ImGui style
+		ImGui::StyleColorsDark();
+		//ImGui::StyleColorsClassic();
+
+		// Setup Platform/Renderer backends
+		// FIXME: Consider reworking this example to install our own GLUT funcs + forward calls ImGui_ImplGLUT_XXX ones, instead of using ImGui_ImplGLUT_InstallFuncs().
+		ImGui_ImplGLUT_Init();
+		ImGui_ImplGLUT_InstallFuncs();
+		ImGui_ImplOpenGL2_Init();
+		//============================
+		
+
+
 
 		//键盘事件回调函数
 		//glutKeyboardFunc(keyboardCallback);
@@ -490,5 +524,11 @@ namespace
 		glutMainLoop();
 
 
+
+		//===========================================
+		ImGui_ImplOpenGL2_Shutdown();
+		ImGui_ImplGLUT_Shutdown();
+		ImGui::DestroyContext();
+		//===========================================
 	}
 #endif

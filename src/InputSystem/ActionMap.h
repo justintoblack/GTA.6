@@ -10,7 +10,10 @@ class ActionMap
 {
 private:
 	//bool _qKeyDown;
+	bool isEscKeyDown;
 public:
+	ActionMap();
+	void(*EscKeyEvent)();
 	virtual void InputAction();
 };
 

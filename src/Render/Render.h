@@ -34,11 +34,13 @@
 #include "PxPhysicsAPI.h"
 #include "foundation/PxPreprocessor.h"
 
-#include<GLFW\glfw3.h>
+//test
+//#include<GLFW\glfw3.h>
+#include <stdio.h>
+#include "../../compiler/vc16win64/Dependencies/imgui/imgui.h"
+#include "../../compiler/vc16win64/Dependencies/imgui/imgui_impl_glut.h"
+#include "../../compiler/vc16win64/Dependencies/imgui/imgui_impl_opengl2.h"
 
-#include "imgui.h"
-#include "imgui_impl_glfw.h"
-#include "imgui_impl_opengl3.h"
 
 #if PX_WINDOWS
 #include <windows.h>
@@ -62,6 +64,10 @@ void renderActors(physx::PxRigidActor** actors, const physx::PxU32 numActors, bo
 void finishRender();
 void renderText(int x, int y, const char text[], int len);
 void renderGameOver(const char text[], int len);
+
+//void setupDefaultGLFWWindows();
+
+void glut_display_func();
 }
 
 #define MAX_NUM_ACTOR_SHAPES 128

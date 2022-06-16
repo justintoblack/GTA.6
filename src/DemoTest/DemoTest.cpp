@@ -64,8 +64,9 @@
 #include "../SnippetVehicleCommon/SnippetVehicleTireFriction.h"
 #include "../SnippetVehicleCommon/SnippetVehicleCreate.h"
 #include "irrKlang/irrKlang.h"  //audio
+#include <GL\glut.h>
 
-#include "model.h"
+//#include "model.h"
 
 
 using namespace irrklang;
@@ -139,14 +140,19 @@ PxVec3 characterPos;
 PxVec3 vehiclePos;
 PxVec3* CameraFollowTarget;
 
+//GameObject
+GameObject testObject;
+
 
 #pragma region 角色属性
+PxController* m_player;
+
 PxVec3 velocity=PxVec3(0,0,0);
 PxVec3 gravity = PxVec3(0, -9.8f*2.0f, 0);
 PxVec3 moveDir;
 PxVec3 characterForward;
 PxVec3 characterRight;
-
+PxVec3 fireOffset(0, 0, 1);
 
 PxTransform checkSphereTrans;
 float jumpHeight = 1.0f;
@@ -159,6 +165,7 @@ float walkSpeed = 3.0f;
 float sprintSpeed = 7.0f;
 
 bool isGrounded;
+bool isAiming;
 
 ///跳跃
 void Jump()
@@ -173,6 +180,18 @@ void Jump()
 void FireFirst()
 {
 	cout << "fireFirst" << endl;
+	PxRaycastBuffer hit;
+	PxVec3 firePoint = m_player->getActor()->getGlobalPose().p;
+	if (gScene->raycast(firePoint, sCamera->getDir(), 100, hit))
+	{
+		if (hit.block.actor->getType() == PxActorType::eRIGID_DYNAMIC)
+		{
+			float force = 100;
+			cout <<((GameObject*) testObject.g_rigidBody->userData)->Name<<endl;
+			((PxRigidDynamic*)hit.block.actor)->addForce(sCamera->getDir()*force,PxForceMode::eIMPULSE);
+			//cout << testObject.Name<<endl;
+		}
+	}
 }
 
 void Fire()
@@ -200,6 +219,7 @@ extern float deltaTime;
 extern float gameTime;
 
 #pragma region 全局按键事件
+bool isInGameMode=true;
 bool isQKeyDown;
 void GlobalKeyEvent()
 {
@@ -228,6 +248,21 @@ void GlobalKeyEvent()
 	}
 }
 
+//切换游戏模式
+void SwitchMode()
+{
+	isInGameMode = !isInGameMode;
+	if (isInGameMode)
+	{
+		cout << "game" << endl;
+		glutSetCursor(GLUT_CURSOR_NONE);
+	}
+	else
+	{
+		cout << "edit" << endl;
+		glutSetCursor(GLUT_CURSOR_LEFT_ARROW);
+	} 
+};
 #pragma endregion
 
 
@@ -428,7 +463,7 @@ public:
 	}
 	void play(char path [])
 	{
-		PlayEngine->play2D(path, GL_TRUE);
+		PlayEngine->play2D(path, true);
 		this->isPlay = true;
 	}
 	void stop()
@@ -717,7 +752,6 @@ void CreateChain(const PxTransform& t,PxU32 length,const PxGeometry& g,PxReal se
 }
 
 
-PxController* m_player;
 
 //创建角色控制器
 PxController* CreateCharacterController(PxExtendedVec3 initPos)
@@ -739,6 +773,10 @@ PxController* CreateCharacterController(PxExtendedVec3 initPos)
 	desc.stepOffset = 0.3f;
 
 	PxController* ctrl = manager->createController(desc);
+
+	PxShape* haha;
+	ctrl->getActor()->getShapes(&haha, 1);
+	haha->setFlag(PxShapeFlag::eSCENE_QUERY_SHAPE, false);
 
 	return ctrl;
 }
@@ -1025,7 +1063,6 @@ void stopBell()
 };
 
 
-GameObject testObject;
 extern Model gModel2;
 
 //自定义
@@ -1082,6 +1119,7 @@ void MyCode()
 	
 
 	//GameObject
+	testObject.Name ="house";
 	testObject.AddRigidbody(true);
 	testObject.AddModel(gModel2);
 	testObject.AddBoxCollider(4.35f,4.25f,4.6f, PxTransform(0, 4.29f, 0));
@@ -1269,15 +1307,35 @@ void stepPhysics(bool interactive)
 
 	/////////////////////////////射线////////////////////////////////
 
-	PxVec3 origin = m_player->getActor()->getGlobalPose().p+PxVec3(0,0,3);
-	PxVec3 unitDir = PxVec3(0, 0, 1);
-	PxReal maxDistance = 10.0f;
-	PxRaycastBuffer raycasthit;
+	//PxVec3 origin = m_player->getActor()->getGlobalPose().p+PxVec3(0,0,3);
+	//PxVec3 unitDir = PxVec3(0, 0, 1);
+	//PxReal maxDistance = 10.0f;
+	//PxRaycastBuffer raycasthit;
 
-	if (gScene->raycast(origin, unitDir, maxDistance, raycasthit))
-	{
-		Mathf::Debug( raycasthit.block.position);
-	}
+	//if (gScene->raycast(origin, unitDir, maxDistance, raycasthit))
+	//{
+	//	if (raycasthit.block.actor)
+	//	{
+	//		cout << raycasthit.block.actor->getType()<<endl;
+	//		if (raycasthit.block.actor->getType() == PxActorType::eRIGID_DYNAMIC)
+	//		{
+	//			cout << "dy" << endl;
+	//		}
+	//		else
+	//		{
+	//			cout << "noDy" << endl;
+	//		}
+	//		if (raycasthit.block.actor->getType() == PxActorType::eRIGID_STATIC)
+	//		{
+	//			cout << "static" << endl;
+	//		}
+	//		else
+	//		{
+	//			cout << "noStatic" << endl;
+	//		}
+	//		cout<< raycasthit.block.actor->getType()<<endl;
+	//	}
+	//}
 
 	////////////////////////////射线结束////////////////////////////////
 
@@ -1286,6 +1344,7 @@ void stepPhysics(bool interactive)
 	//相机跟随
 	characterPos= m_player->getPosition() - PxExtendedVec3(0, 0, 0);
 	vehiclePos = gVehicle4W->getRigidDynamicActor()->getGlobalPose().p;
+
 	sCamera->Update(*CameraFollowTarget);
 
 

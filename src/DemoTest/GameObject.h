@@ -1,7 +1,7 @@
 #pragma once
 #ifndef _GameObject_H
 #define _GameObject_H
-#include <model.h>
+#include "../ModelLoading/model.h"
 
 using namespace physx;
 
@@ -13,6 +13,7 @@ class GameObject
 {
 private:
 public:
+	string Name;
 	PxTransform transform;
 	//PxVec3 scale;
 
@@ -24,6 +25,7 @@ public:
 		transform = PxTransform(0,0,0);
 		//scale = PxVec3(1, 1, 1);
 	}
+
 
 	//ÉèÖÃGameObjectÎ»ÖÃ
 	void SetTransform(PxTransform trans)
@@ -49,6 +51,7 @@ public:
 		{
 			g_rigidBody = gPhysics->createRigidStatic(transform);
 		}
+		g_rigidBody->userData=this;
 	};
 
 	//Ìí¼ÓBoxCollider
