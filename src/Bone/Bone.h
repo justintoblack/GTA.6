@@ -72,6 +72,9 @@ public:
 			keyScale.mScale = AssimpGlmUtil::ConvertAiVec3DToGlmVec3(aiKeyScale.mValue);
 			mScaleKeys.push_back(keyScale);
 		}
+		/*cout << "mNumPosition " << mNumPosition << endl;
+		cout << "mNumRotation " << mNumRotation << endl;
+		cout << "mNumScale " << mNumScale << endl;*/
 	}
 
 	//先获取插值后的结果，相乘后更新LocalTransform矩阵

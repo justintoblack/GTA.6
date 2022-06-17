@@ -49,7 +49,7 @@ public :
 		mTicksPerSecond = animation->mTicksPerSecond;
 		cout << "TicksPerSecond:" << mTicksPerSecond << endl;
 		mGlobalTransformation = scene->mRootNode->mTransformation;
-		//mGlobalTransformation = mGlobalTransformation.Inverse();
+		mGlobalTransformation = mGlobalTransformation.Inverse();
 		ReadBones(animation, *model);
 		ReadHierarchyNode(mRootNode, scene->mRootNode);
 	}

@@ -22,7 +22,9 @@ public:
 	void UpdateAnimation(float dt)
 	{
 		mCurrentTick += dt * mCurrentAnimation->GetTicksPerSecond();
+		cout << "mCurrentTick:" << mCurrentTick << endl;
 		mCurrentTick = fmod(mCurrentTick, mCurrentAnimation->GetDuration());
+		cout<<"after fmod, mCurrentTick:" << mCurrentTick << endl;
 		CalculateBoneTransform(&(mCurrentAnimation->GetRootNode()), glm::mat4(1.0f));
 	}
 

@@ -203,7 +203,7 @@ private:
     {
         for (int i = 0; i < MAX_BONE_INFLUENCE; i++)
         {
-            if (vertex.m_BoneIDs[i] < 0)
+            if (vertex.m_BoneIDs[i] == DEFAULT_BONE_ID)
             {
                 vertex.m_BoneIDs[i] = boneID;
                 vertex.m_Weights[i] = weight;
@@ -246,10 +246,14 @@ private:
             //即该骨骼对vertexID顶点有着mWeight的影响权重
             int numWeights = pNowBone->mNumWeights;
             aiVertexWeight* weightsArray = pNowBone->mWeights;
+            
             for (int weightIndex = 0; weightIndex < numWeights; weightIndex++)
             {
                 int vertexID = weightsArray[weightIndex].mVertexId;
-                int weight = weightsArray[weightIndex].mWeight;
+                //之前将weight的float类型写成了int
+                float weight = weightsArray[weightIndex].mWeight;
+                /*cout << "bonename, vertexid, weights:" << boneName
+                    << " " << vertexID << " " << weight << endl;*/
                 //将该骨骼对顶点的影响设置到顶点中
                 setBoneWeightToVertex(vertices[vertexID], boneID, weight);
             }
