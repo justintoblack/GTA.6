@@ -9,6 +9,7 @@ extern	PxPhysics* gPhysics;
 extern	PxMaterial* gMaterial;
 extern	PxScene* gScene;
 
+
 class GameObject
 {
 private:
@@ -32,6 +33,12 @@ public:
 	{
 		transform = trans;
 		g_rigidBody->setGlobalPose(trans);
+	}
+
+	void SetTransform(float gameObjectPosition[3])
+	{
+		transform = { gameObjectPosition[0], gameObjectPosition[1], gameObjectPosition[2] };
+		g_rigidBody->setGlobalPose({ gameObjectPosition[0], gameObjectPosition[1], gameObjectPosition[2] });
 	}
 
 	//°ó¶¨Ä£ÐÍ

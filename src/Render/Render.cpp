@@ -28,14 +28,26 @@
 // Copyright (c) 2001-2004 NovodeX AG. All rights reserved.  
 #define _CRT_SECURE_NO_WARNINGS
 #include "Render.h"
+#include <iostream>
+
 
 using namespace physx;
 
 
-// ImGUI state
+//==================================================================ImGUI state
+bool main_window = true;  //之所以不设置为静态全局变量，是因为在DemoTestRender.cpp中会使用到这个变量
 static bool show_demo_window = false;
 static bool show_another_window = false;
+
 static ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+bool backgroundMusic = false;
+float volume;
+float gameObjectPosition[3] = { 0.10f, 0.20f, 0.30f };
+
+
+//==================================================================ImGUI state
+
+
 
 
 static float gCylinderData[]={
@@ -239,25 +251,21 @@ void renderGeometry(const PxGeometryHolder& h)
 		break;
 	}
 }
-bool backgroundMusic = false;
-float volume;
 
+//Imgui渲染具体内容
 void my_display_code()
 {
-	// 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
-	if (show_demo_window)
-		ImGui::ShowDemoWindow(&show_demo_window);
-
-	// 2. Show a simple window that we create ourselves. We use a Begin/End pair to created a named window.
+	if (main_window)
 	{
+
 		static int counter = 0;
 
-		ImGui::Begin("Console");                          // Create a window called "Hello, world!" and append into it.
+		ImGui::Begin("Console",&main_window);                          // Create a window called "Hello, world!" and append into it.
 
 		ImGui::Text("setting:");      
-		ImGui::Checkbox("Demo Window", &show_demo_window);      // Edit bools storing our window open/close state
-		ImGui::Checkbox("Another Window", &show_another_window);// Display some text (you can use a format strings too)
-		ImGui::Checkbox("backgroundMusic:", &backgroundMusic);
+		//ImGui::Checkbox("Demo Window", &show_demo_window);      // Edit bools storing our window open/close state
+		ImGui::Checkbox("Game Object Settings Window", &show_another_window);// Display some text (you can use a format strings too)
+		ImGui::Checkbox("backgroundMusic", &backgroundMusic);
 		ImGui::SliderFloat("volume", &volume, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
 		ImGui::ColorEdit3("clear color", (float*)&clear_color); // Edit 3 floats representing a color
 
@@ -267,18 +275,32 @@ void my_display_code()
 		ImGui::Text("counter = %d", counter);
 		ImGui::SameLine();
 		ImGui::Text("counter = %d", counter);
-
+		ImGui::Checkbox("Demo Window", &show_demo_window);
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+
+		
+
+
 		ImGui::End();
 	}
 	if (show_another_window)
 	{
-		ImGui::Begin("Another Window", &show_another_window);   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
-		ImGui::Text("Hello from another window!");
-		if (ImGui::Button("Close Me"))
+		ImGui::Begin("Game Object Settings Window", &show_another_window);   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
+		ImGui::Text("Here are some game object settings below:");
+
+		const char* items[] = { "AAAA", "BBBB", "CCCC", "DDDD", "EEEE", "FFFF", "GGGG", "HHHH", "IIIIIII", "JJJJ", "KKKKKKK" };
+		static int item_current = 0;
+		ImGui::Combo("combo", &item_current, items, IM_ARRAYSIZE(items));
+
+		
+		ImGui::InputFloat3("position(x, y, z)", gameObjectPosition);
+
+		if (ImGui::Button("Close the window"))
 			show_another_window = false;
 		ImGui::End();
 	}
+	if (show_demo_window)
+		ImGui::ShowDemoWindow(&show_demo_window);
 }
 namespace Snippets
 {

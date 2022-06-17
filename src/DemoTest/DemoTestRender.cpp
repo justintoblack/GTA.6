@@ -49,7 +49,7 @@
 #include "../Utils/Mathf.cpp"
 #include "../DemoTest/GameObject.h"
 
-#include "irrKlang/irrKlang.h"  //audio
+#include "irrKlang/irrKlang.h" 
 
 using namespace irrklang;
 using namespace physx;
@@ -127,13 +127,14 @@ extern InputSyetem inputSystem;
 Snippets::Camera*	sCamera;
 
 
-/////////////////////////audio//////////////////////////////////
+/////////////////////////Imgui//////////////////////////////////
 
 extern bool backgroundMusic;
 extern float volume;
+extern  float gameObjectPosition[3];
 
 
-// /////////////////////////audio//////////////////////////////////
+// /////////////////////////Imgui//////////////////////////////////
  
 
 
@@ -388,6 +389,7 @@ namespace
 		gameObject.g_model->Draw(gModelShader);
 
 		glUseProgram(0);
+
 	}
 
 	
@@ -442,6 +444,7 @@ namespace
 		/////////////////////角色渲染//////////////////////////
 
 		RenderGameObject(testObject);
+		testObject.SetTransform(gameObjectPosition);
 
 		float rotateSpeed = 5;
 		//表示正在移动
@@ -558,8 +561,8 @@ namespace
 
 		//glutMouseFunc(mouseCallback);
 
-		glutMotionFunc(motionCallback);
-		glutPassiveMotionFunc(motionCallback);
+		//glutMotionFunc(motionCallback);
+		//glutPassiveMotionFunc(motionCallback);
 	
 		//motionCallback(0,0);
 
