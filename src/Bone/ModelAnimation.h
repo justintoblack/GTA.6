@@ -234,7 +234,9 @@ private:
             if (mBoneInfoMap.find(boneName) == mBoneInfoMap.end()) {
                 BoneInfo boneInfo;
                 //指定当前的骨骼数量作为该新骨骼的ID
-                boneInfo.id = mBoneCount++;
+                //bug,漏写boneID = mBoneCount++;导致每次set的时候boneid都是-1
+                boneID = mBoneCount++;
+                boneInfo.id = boneID;
                 //获取offset矩阵，转为glm::mat4格式
                 boneInfo.offset = AssimpGlmUtil::ConvertAiMatrix44ToGlmMat4(pNowBone->mOffsetMatrix);
                 //建立映射，方便后续查找
@@ -255,7 +257,20 @@ private:
                 /*cout << "bonename, vertexid, weights:" << boneName
                     << " " << vertexID << " " << weight << endl;*/
                 //将该骨骼对顶点的影响设置到顶点中
+                
+                /*cout << "before:" << endl;
+                for (int vIndex = 0; vIndex < MAX_BONE_INFLUENCE; vIndex++)
+                {
+                    cout << "boneid, weight:" << vertices[vertexID].m_BoneIDs[vIndex] << " "
+                        << vertices[vertexID].m_Weights[vIndex] << endl;
+                }*/
                 setBoneWeightToVertex(vertices[vertexID], boneID, weight);
+                /*cout << "after:" << endl;
+                for (int vIndex = 0; vIndex < MAX_BONE_INFLUENCE; vIndex++)
+                {
+                    cout << "boneid, weight:" << vertices[vertexID].m_BoneIDs[vIndex] << " "
+                        << vertices[vertexID].m_Weights[vIndex] << endl;
+                }*/
             }
             
         }

@@ -60,7 +60,7 @@ public:
 		//递归计算子节点的变换
 		int numChild = nowNode->numChildren;
 		for (int childIndex = 0; childIndex < numChild; childIndex++)
-			CalculateBoneTransform(&nowNode->children[childIndex], nowGlobalTransform);
+			CalculateBoneTransform(&(nowNode->children[childIndex]), nowGlobalTransform);
 	}
 
 	void PlayAnimation(Animation* animation) {
