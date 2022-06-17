@@ -27,6 +27,13 @@ private:
 
 public:
 
+	vector<GameObject> SceneGameObject;
+
+	Model  poleModel;
+	Model  stationModel;
+	Model  stationModel_01;
+	Model  road;
+
 	//初始化
 	void Init(PxPhysics* physics,PxScene* gScene);
 
@@ -59,6 +66,8 @@ public:
 	//创建减速带
 	void createSlowArea(PxVec3 startPosition, PxF32 capsuleRadii, PxF32 interval, PxU32 num, PxMaterial* gMaterial);
 
+	//创建GameObject
+	void CreateGameObject();
 };
 
 #endif // !_THECREATOR_H

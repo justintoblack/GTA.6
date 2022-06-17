@@ -49,7 +49,8 @@
 #include "../Utils/Mathf.cpp"
 #include "../DemoTest/GameObject.h"
 
-#include "irrKlang/irrKlang.h" 
+#include "irrKlang/irrKlang.h"  //audio
+#include "../GameDemo/TheCreator.h"
 
 using namespace irrklang;
 using namespace physx;
@@ -117,7 +118,8 @@ __int64 freq;
 static __int64 gTime, gLastTime;
 
 ///////////////////////DemoTest///////////////////////////////
-extern GameObject testObject;
+extern TheCreator theCreator;
+extern GameObject gameObject_00;
 
 extern PxVec3 moveDir;
 glm::vec3 forwardDir(0,0,1);
@@ -130,8 +132,8 @@ Snippets::Camera*	sCamera;
 /////////////////////////Imgui//////////////////////////////////
 
 extern bool backgroundMusic;
-extern float volume;
-extern  float gameObjectPosition[3];
+extern float volume0;
+
 
 
 // /////////////////////////Imgui//////////////////////////////////
@@ -408,12 +410,12 @@ namespace
 			char path[] = "../../assets/audio/owu12-u5eaj.wav";
 			snd = backgroundMusicEngine->play2D(path, true, false, true);
 			if (snd)
-				snd->setVolume(volume);
+				snd->setVolume(volume0);
 			engineState = true;
 			}
 			else
 			{
-				snd->setVolume(volume);
+				snd->setVolume(volume0);
 			}
 		}
 		else
@@ -443,9 +445,12 @@ namespace
 
 		/////////////////////角色渲染//////////////////////////
 
-		RenderGameObject(testObject);
-		testObject.SetTransform(gameObjectPosition);
+		for (int i = 0; i < theCreator.SceneGameObject.size(); i++)
+		{
+			RenderGameObject(theCreator.SceneGameObject[i]);
+		}
 
+		
 		float rotateSpeed = 5;
 		//表示正在移动
 		PxExtendedVec3 haha= m_player->getFootPosition();
@@ -561,8 +566,8 @@ namespace
 
 		//glutMouseFunc(mouseCallback);
 
-		//glutMotionFunc(motionCallback);
-		//glutPassiveMotionFunc(motionCallback);
+		glutMotionFunc(motionCallback);
+		glutPassiveMotionFunc(motionCallback);
 	
 		//motionCallback(0,0);
 

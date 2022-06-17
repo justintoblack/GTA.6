@@ -1,6 +1,8 @@
 #include "TheCreator.h"
 
 using namespace snippetvehicle;
+
+
 //使物体表面可行驶
 void makeObjectDrivable(PxShape*& shape)
 {
@@ -35,6 +37,11 @@ void TheCreator::Init(PxPhysics* physics, PxScene* gScene)
 {
 	m_gPhysics = physics;
 	m_gScene = gScene;
+
+	poleModel = Model("../../assets/objects/Models/SM_Prop_LightPole_Base_02.fbx");
+	stationModel = Model("../../assets/objects/Models/SM_Bld_Station_01.fbx");
+	stationModel_01 = Model("../../assets/objects/Models/SM_Bld_Station_03.fbx");
+	road = Model("../../assets/objects/Models/SM_Env_Road_Bare_01.fbx");
 }
 
 void TheCreator::CreateAnchorBall(PxTransform pos, PxMaterial* gMaterial,float radius)
@@ -130,17 +137,27 @@ void TheCreator::CreateBanisters(physx::PxVec3 pos, physx:: PxVec3 dir, PxMateri
 void TheCreator::CreatePole(PxVec3 pos, PxMaterial* gMaterial,float radius,
 	float halfHeight,float density,float force,float torque)
 {
+	//GameObject gameObject;
+	//gameObject.Name = "Pole";
+	//gameObject.AddRigidbody(true);
+	//gameObject.AddBoxCollider(radius, halfHeight, radius, PxTransform(0, halfHeight, 0));
+	//gameObject.AddModel(poleModel);
+	//gameObject.SetTransform(PxTransform(pos));
+	//gameObject.AddToScene();
+
+
 	PxRigidDynamic* link = PxCreateDynamic(*m_gPhysics,
-		PxTransform(pos+PxVec3(0,halfHeight,0)), 
-		PxBoxGeometry(radius, halfHeight,radius),
+		PxTransform(pos + PxVec3(0, halfHeight, 0)),
+		PxBoxGeometry(radius, halfHeight, radius),
 		*gMaterial, density);
 
-	PxFixedJoint* j = PxFixedJointCreate(*m_gPhysics, NULL, PxTransform(pos), link, 
-		PxTransform(PxVec3(0, -halfHeight, 0)));
+	PxFixedJoint* j = PxFixedJointCreate(*m_gPhysics, NULL, PxTransform(pos), link,
+		PxTransform(PxVec3(0, 0, 0)));
 
 	j->setBreakForce(force, torque);
 
-	m_gScene->addActor(*link);
+	gScene->addActor(*link);
+	//SceneGameObject.push_back(gameObject);
 }
 
 void TheCreator::CreatePoles(PxVec3 pos, PxVec3 dir, float separate, PxU32 num, PxMaterial* gMaterial, float halfXZ, float halfHeight, float density, float force, float torque)
@@ -154,4 +171,41 @@ void TheCreator::CreatePoles(PxVec3 pos, PxVec3 dir, float separate, PxU32 num, 
 		CreatePole(pos, gMaterial, halfXZ, halfHeight, density, force, torque);
 	}
 }
+extern  float gameObjectPosition[3];
+void TheCreator::CreateGameObject()
+{
+	GameObject tempObject;
+	tempObject.Name = "name";
+	tempObject.AddRigidbody(false);
+	tempObject.AddModel(stationModel);
+	tempObject.AddBoxCollider(4.35f, 4.25f, 4.6f, PxTransform(0, 4.29f, 0));
+	tempObject.SetTransform(PxTransform(20, 0, 10));
+	tempObject.AddToScene();
 
+	SceneGameObject.push_back(tempObject);
+
+	tempObject.Name = "name";
+	tempObject.AddRigidbody(false);
+	tempObject.AddModel(stationModel_01);
+	tempObject.AddBoxCollider(5.38f, 2.87f, 2.95f, PxTransform(0, 2.87f, 0));
+	tempObject.SetTransform(PxTransform(29, 0, 10));
+	tempObject.AddToScene();
+
+	SceneGameObject.push_back(tempObject);
+
+	tempObject.Name = "name";
+	tempObject.AddRigidbody(false);
+	tempObject.AddModel(stationModel_01);
+	tempObject.AddBoxCollider(5.38f, 2.87f, 2.95f, PxTransform(0, 2.87f, 0));
+	tempObject.SetTransform(PxTransform(11, 0, 10));
+	tempObject.AddToScene();
+
+	SceneGameObject.push_back(tempObject);
+
+	//tempObject.Name = "name";
+	//tempObject.AddModel(road);
+	//tempObject.SetTransform(PxTransform(20, 1, 20));
+	//tempObject.AddToScene();
+
+	//SceneGameObject.push_back(tempObject);
+}

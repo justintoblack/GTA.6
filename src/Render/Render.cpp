@@ -35,14 +35,18 @@ using namespace physx;
 
 
 //==================================================================ImGUI state
-bool main_window = true;  //之所以不设置为静态全局变量，是因为在DemoTestRender.cpp中会使用到这个变量
+bool main_window = false;  //之所以不设置为静态全局变量，是因为在DemoTestRender.cpp中会使用到这个变量
 static bool show_demo_window = false;
 static bool show_another_window = false;
 
-static ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+//ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+physx::PxVec3 clear_color = physx::PxVec3(0.45f, 0.55f, 0.60f);
 bool backgroundMusic = false;
-float volume;
+bool soundEffect = false;
+float volume0;
+float volume1;
 float gameObjectPosition[3] = { 0.10f, 0.20f, 0.30f };
+bool editState;
 
 
 //==================================================================ImGUI state
@@ -266,11 +270,13 @@ void my_display_code()
 		//ImGui::Checkbox("Demo Window", &show_demo_window);      // Edit bools storing our window open/close state
 		ImGui::Checkbox("Game Object Settings Window", &show_another_window);// Display some text (you can use a format strings too)
 		ImGui::Checkbox("backgroundMusic", &backgroundMusic);
-		ImGui::SliderFloat("volume", &volume, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
-		ImGui::ColorEdit3("clear color", (float*)&clear_color); // Edit 3 floats representing a color
+		ImGui::SliderFloat("backgroundMusicVolume", &volume0, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
+		ImGui::Checkbox("soundEffect", &soundEffect);
+		ImGui::SliderFloat("soundEffectVolume", &volume1, 0.0f, 1.0f);
+		ImGui::ColorEdit3("set color", (float*)&clear_color); // Edit 3 floats representing a color
 
 		if (ImGui::Button("Button"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
-			counter++;
+			editState = true;
 		ImGui::SameLine();
 		ImGui::Text("counter = %d", counter);
 		ImGui::SameLine();
@@ -397,7 +403,7 @@ void setupDefaultRenderState()
 	// Setup lighting 光照设置
 	glEnable(GL_LIGHTING);
 	PxReal ambientColor[]	= { 0.0f, 0.1f, 0.2f, 0.0f };
-	PxReal diffuseColor[]	= { 1.0f, 1.0f, 1.0f, 0.0f };		
+	PxReal diffuseColor[]	= { 0.1f, 0.1f, 0.1f, 0.0f };
 	PxReal specularColor[]	= { 0.0f, 0.0f, 0.0f, 0.0f };		
 	PxReal position[]		= { 100.0f, 100.0f, 400.0f, 1.0f };		
 	glLightfv(GL_LIGHT0, GL_AMBIENT, ambientColor);
