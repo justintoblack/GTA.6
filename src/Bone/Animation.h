@@ -41,6 +41,7 @@ public :
 			cout << "Animation:: No Animations." << endl;
 			return;
 		}
+		cout << "动画名：" << scene->mAnimations[0]->mName.data << endl;
 		//暂时只加载第一个动画
 		aiAnimation* animation = scene->mAnimations[0];
 		mDuration = animation->mDuration;

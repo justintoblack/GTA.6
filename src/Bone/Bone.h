@@ -159,10 +159,10 @@ private:
 		//获取当前时间点的上一个和下一个关键帧
 		KeyPosition lastKey = mPositionKeys[animIndex];
 		KeyPosition nextKey = mPositionKeys[animIndex + 1];
-		if (animIndex >= mNumPosition - 1) {
+		if (animIndex > mNumPosition - 1) {
 			cout << "1=============" << animIndex << endl;
 		}
-		if (animIndex + 1 >= mNumPosition - 1)
+		if (animIndex + 1 > mNumPosition - 1)
 		{
 			cout << "2================="<< animIndex << endl;
 		}

@@ -364,7 +364,7 @@ namespace
 			glm::mat4 modelMat = glm::mat4(1.0f);
 			modelMat = glm::translate(modelMat, glm::vec3(5.0f, 2.0f, 5.0f));
 			//modelMat = glm::rotate(modelMat, 1.0f, glm::vec3(0, -1, 0));
-			modelMat = glm::scale(modelMat, glm::vec3(3.0f, 3.0f, 3.0f));
+			modelMat = glm::scale(modelMat, glm::vec3(0.1f, 0.1f, 0.1f));
 			glm::mat4 viewMat = getViewMat();
 			glm::mat4 projectionMat = glm::perspective(45.0f, (float)glutGet(GLUT_WINDOW_WIDTH) / (float)glutGet(GLUT_WINDOW_HEIGHT), 0.1f, 1000.0f);
 			glUniformMatrix4fv(glGetUniformLocation(gModelAnimShader.ID, "projection"), 1, GL_FALSE, glm::value_ptr(projectionMat));
@@ -432,7 +432,7 @@ void renderLoop()
 	//----------Render Model----------
 	//gModel = Model("../../assets/objects/nanosuit/nanosuit.obj");
 	//gModel2 = Model("../../assets/objects/backpack/backpack.obj");
-	gModel2 = Model("F:/Learning/OpenGLESDemo-main/app/src/main/assets/cowboy/cowboy.dae");
+	gModel2 = Model("F:/Learning/mypt2/PhysX-Tutorial-master/PhysX_3.4/SCUT2022_Nayeon/assets/cowboy/cowboy.dae");
 	gModelShader = Shader("../../src/ModelLoading/model_loading.vs",
 		"../../src/ModelLoading/model_loading.fs");
 
@@ -444,7 +444,7 @@ void renderLoop()
 	gModelAnimShader = Shader("../../src/Bone/ModelAnim.vs",
 		"../../src/Bone/ModelAnim.fs");
 	//string modelAnimPath("F:\\Learning\\mypt2\\PhysX-Tutorial-master\\PhysX_3.4\\SCUT2022_Nayeon\\assets\\objects\\benz\\uploads_files_2787791_Mercedes+Benz+GLS+580.fbx");
-	string modelAnimPath("..\\..\\assets\\objects\\walk\\Walk.dae");
+	string modelAnimPath("F:/Learning/mypt2/PhysX-Tutorial-master/PhysX_3.4/SCUT2022_Nayeon/assets/objects/FastRun.fbx");
 	gModelAnim = new ModelAnimation(modelAnimPath);
 	gAnimation = new Animation(modelAnimPath, gModelAnim);
 	gAnimator = new Animator(gAnimation);
