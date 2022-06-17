@@ -195,7 +195,7 @@ private:
         cout << "结束：ExtractBoneInfo.." << endl;
         return Mesh(vertices, indices, textures);
     }
-
+    
     /**
     * 将该Bone信息指定给Vertex，即：指定了vertex被boneID骨骼影响，影响权重为weight
     */
@@ -212,11 +212,12 @@ private:
         }
     }
 
+    //bug点，第二个参数vector<Vertex>& 忘记写引用，导致并没有真正的更改到顶点上
     /**
     * @param mesh 要处理骨骼的mesh
     * @param vertices 该mesh的所有顶点
     */
-    void ExtractBoneInfo(aiMesh* mesh, vector<Vertex> vertices)
+    void ExtractBoneInfo(aiMesh* mesh, vector<Vertex>& vertices)
     {
         //对Mesh的每块骨骼进行处理
         for (int boneIndex = 0; boneIndex < mesh->mNumBones; boneIndex++)

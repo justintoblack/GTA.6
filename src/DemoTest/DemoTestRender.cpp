@@ -454,8 +454,8 @@ void renderLoop()
 	//----------Model Anim-----------------------------
 	gModelAnimShader = Shader("../../src/Bone/ModelAnim.vs",
 		"../../src/Bone/ModelAnim.fs");
-	//string modelAnimPath("F:\\Learning\\mypt2\\PhysX-Tutorial-master\\PhysX_3.4\\SCUT2022_Nayeon\\assets\\objects\\benz\\uploads_files_2787791_Mercedes+Benz+GLS+580.fbx");
 	string modelAnimPath("F:/Learning/mypt2/PhysX-Tutorial-master/PhysX_3.4/SCUT2022_Nayeon/assets/objects/FastRun.fbx");
+	//string modelAnimPath("F:/Learning/mypt2/PhysX-Tutorial-master/PhysX_3.4/SCUT2022_Nayeon/assets/objects/walk/Walk.dae");
 	gModelAnim = new ModelAnimation(modelAnimPath);
 	gAnimation = new Animation(modelAnimPath, gModelAnim);
 	gAnimator = new Animator(gAnimation);
