@@ -140,7 +140,16 @@ PxVec3 characterPos;
 PxVec3 vehiclePos;
 PxVec3* CameraFollowTarget;
 
-//GameObject
+
+#pragma region Models
+//Model model_00;
+#pragma endregion
+
+#pragma region GameObject
+//GameObject gameObject_00;
+
+#pragma endregion
+
 GameObject testObject;
 
 
@@ -179,7 +188,6 @@ void Jump()
 //左键
 void FireFirst()
 {
-	cout << "fireFirst" << endl;
 	PxRaycastBuffer hit;
 	PxVec3 firePoint = m_player->getActor()->getGlobalPose().p;
 	if (gScene->raycast(firePoint, sCamera->getDir(), 100, hit))
@@ -196,7 +204,6 @@ void FireFirst()
 
 void Fire()
 {
-	cout << "fire "<< endl;
 }
 
 //冲刺
@@ -1126,6 +1133,13 @@ void MyCode()
 	testObject.SetTransform(PxTransform(10,10,10));
 	testObject.AddToScene();
 
+	//model_00=Model("../../assets/objects/Models/SM_Bld_Station_01.fbx");
+	//gameObject_00.Name = "SM_Bld_Station_01";
+	//gameObject_00.AddRigidbody(false);
+	//gameObject_00.AddModel(model_00);
+	//gameObject_00.AddBoxCollider(4.35f, 4.25f, 4.6f, PxTransform(0, 4.29f, 0));
+	//gameObject_00.SetTransform(PxTransform(20, 10, 20));
+	//gameObject_00.AddToScene();
 }
 
 

@@ -333,7 +333,7 @@ void glut_display_func()
 		//glClearColor(clear_color.x * clear_color.w, clear_color.y * clear_color.w, clear_color.z * clear_color.w, clear_color.w);
 		//glClear(GL_COLOR_BUFFER_BIT);
 		//glUseProgram(0); // You may want this if using this code in an OpenGL 3+ context where shaders may be bound, but prefer using the GL3+ code.
-		ImGui_ImplOpenGL2_RenderDrawData(ImGui::GetDrawData());
+		//ImGui_ImplOpenGL2_RenderDrawData(ImGui::GetDrawData());
 
 		glutSwapBuffers();
 		glutPostRedisplay();
@@ -364,7 +364,7 @@ void setupDefaultWindow(const char *name)
 	//glutGameModeString("1920x1080");
 	//glutEnterGameMode();
 	//glutInitWindowPosition(960, 0);
-	glutInitWindowSize(1920/1.5f, 1080/1.5f);
+	glutInitWindowSize(1920/1.5, 1080/1.5);
 
 
 	int mainHandle = glutCreateWindow(name);

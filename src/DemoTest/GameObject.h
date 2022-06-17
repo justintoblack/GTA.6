@@ -54,6 +54,11 @@ public:
 		g_rigidBody->userData=this;
 	};
 
+	void AddRigidbody(PxRigidDynamic* body)
+	{
+		g_rigidBody = body;
+	}
+
 	//Ìí¼ÓBoxCollider
 	void AddBoxCollider(float halfX,float halfY,float halfZ,PxTransform localPos)
 	{
@@ -67,6 +72,15 @@ public:
 	void AddSphereCollider(float radius,PxTransform localPos)
 	{
 		PxShape* shape = gPhysics->createShape(PxSphereGeometry(radius), 
+			*gMaterial);
+		shape->setLocalPose(localPos);
+		g_rigidBody->attachShape(*shape);
+	}
+
+	//Ìí¼Ócapsule
+	void AddCapsuleCollider(float radius,float halfHeigght,PxTransform localPos)
+	{
+		PxShape* shape = gPhysics->createShape(PxCapsuleGeometry(radius, halfHeigght),
 			*gMaterial);
 		shape->setLocalPose(localPos);
 		g_rigidBody->attachShape(*shape);

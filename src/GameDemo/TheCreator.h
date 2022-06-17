@@ -27,6 +27,7 @@ private:
 
 public:
 
+	vector<GameObject> SceneGameObject;
 	//≥ı ºªØ
 	void Init(PxPhysics* physics,PxScene* gScene);
 

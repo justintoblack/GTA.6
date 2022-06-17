@@ -51,6 +51,7 @@
 #include "../DemoTest/GameObject.h"
 
 #include "irrKlang/irrKlang.h"  //audio
+#include "../GameDemo/TheCreator.h"
 
 using namespace irrklang;
 ISoundEngine* BackgroundSoundEngine = createIrrKlangDevice();
@@ -123,7 +124,9 @@ __int64 freq;
 static __int64 gTime, gLastTime;
 
 ///////////////////////DemoTest///////////////////////////////
+extern TheCreator theCreator;
 extern GameObject testObject;
+extern GameObject gameObject_00;
 
 extern PxVec3 moveDir;
 glm::vec3 forwardDir(0,0,1);
@@ -381,8 +384,12 @@ namespace
 
 		/////////////////////Test//////////////////////////
 
-		RenderGameObject(testObject);
+		//for (int i = 0; i < theCreator.SceneGameObject.size(); i++)
+		//{
+		//	RenderGameObject(theCreator.SceneGameObject[i]);
+		//}
 
+		RenderGameObject(testObject);
 		float rotateSpeed = 5;
 		//表示正在移动
 		PxExtendedVec3 haha= m_player->getFootPosition();

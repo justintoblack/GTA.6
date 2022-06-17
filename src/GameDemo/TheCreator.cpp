@@ -1,6 +1,8 @@
 #include "TheCreator.h"
 
 using namespace snippetvehicle;
+
+
 //使物体表面可行驶
 void makeObjectDrivable(PxShape*& shape)
 {
@@ -140,7 +142,16 @@ void TheCreator::CreatePole(PxVec3 pos, PxMaterial* gMaterial,float radius,
 
 	j->setBreakForce(force, torque);
 
-	m_gScene->addActor(*link);
+	////Model  myModel = Model("../../assets/objects/Models/SM_Prop_LightPole_Base_02.fbx");
+
+	//GameObject gameObject;
+	//gameObject.Name = "Pole";
+	//gameObject.AddRigidbody(link);
+	////gameObject.AddModel(model);
+	//gameObject.SetTransform(PxTransform(pos));
+	////gameObject.AddToScene();
+
+	//SceneGameObject.push_back(gameObject);
 }
 
 void TheCreator::CreatePoles(PxVec3 pos, PxVec3 dir, float separate, PxU32 num, PxMaterial* gMaterial, float halfXZ, float halfHeight, float density, float force, float torque)

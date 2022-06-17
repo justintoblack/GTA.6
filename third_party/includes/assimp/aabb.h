@@ -71,7 +71,7 @@ struct aiAABB {
             mMin(min), mMax(max) {
         // empty
     }
-
+               
     ///	@brief  The class destructor.
     ~aiAABB() {
         // empty
