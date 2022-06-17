@@ -443,7 +443,7 @@ void renderLoop()
 	//----------Render Model----------
 	//gModel = Model("../../assets/objects/nanosuit/nanosuit.obj");
 	//gModel2 = Model("../../assets/objects/backpack/backpack.obj");
-	gModel2 = Model("F:/Learning/mypt2/PhysX-Tutorial-master/PhysX_3.4/SCUT2022_Nayeon/assets/cowboy/cowboy.dae");
+	//gModel2 = Model("F:/Learning/mypt2/PhysX-Tutorial-master/PhysX_3.4/SCUT2022_Nayeon/assets/cowboy/cowboy.dae");
 	gModelShader = Shader("../../src/ModelLoading/model_loading.vs",
 		"../../src/ModelLoading/model_loading.fs");
 

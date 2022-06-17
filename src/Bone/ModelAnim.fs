@@ -1,5 +1,5 @@
-#version 300 es
-precision mediump float;
+#version 330 core
+//precision mediump float;
 out vec4 FragColor;
 
 in vec2 TexCoords;

@@ -10,24 +10,9 @@ F:\Learning\mypt2\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\ModelLoadi
 F:\Learning\mypt2\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\Utils\Mathf.cpp(1,1): warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
 F:\Learning\mypt2\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\Bone\ModelAnimation.h(222,43): warning C4018: “<”: 有符号/无符号不匹配
   正在生成代码...
-F:\Learning\mypt2\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\Bone\Bone.h(114): warning C4715: “Bone::getRotationIndex”: 不是所有的控件路径都返回值
 F:\Learning\mypt2\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\Bone\Bone.h(123): warning C4715: “Bone::getScaleIndex”: 不是所有的控件路径都返回值
+F:\Learning\mypt2\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\Bone\Bone.h(114): warning C4715: “Bone::getRotationIndex”: 不是所有的控件路径都返回值
 F:\Learning\mypt2\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\Bone\Bone.h(105): warning C4715: “Bone::getPositionIndex”: 不是所有的控件路径都返回值
-LINK : warning LNK4098: 默认库“LIBCMT”与其他库的使用冲突；请使用 /NODEFAULTLIB:library
-glew32s.lib(glew.obj) : warning LNK4099: 未找到 PDB“vc120.pdb”(使用“glew32s.lib(glew.obj)”或在“F:\Learning\mypt2\PhysX-Tutorial-master\PhysX_3.4\bin\vc16win64\vc120.pdb”中寻找)；正在链接对象，如同没有调试信息一样
-libcpmtd.lib(xlock.obj) : warning LNK4020: “f:\learning\mypt2\physx-tutorial-master\physx_3.4\scut2022_nayeon\compiler\vc16win64\x64\gamedemo\debug\vc142.pdb”中的类型记录已损坏；某些符号和类型可能无法从调试器中访问
-libcpmtd.lib(xwcsxfrm.obj) : warning LNK4020: “f:\learning\mypt2\physx-tutorial-master\physx_3.4\scut2022_nayeon\compiler\vc16win64\x64\gamedemo\debug\vc142.pdb”中的类型记录已损坏；某些符号和类型可能无法从调试器中访问
-libvcruntimed.lib(memchr.obj) : warning LNK4020: “f:\learning\mypt2\physx-tutorial-master\physx_3.4\scut2022_nayeon\compiler\vc16win64\x64\gamedemo\debug\vc142.pdb”中的类型记录已损坏；某些符号和类型可能无法从调试器中访问
-libvcruntimed.lib(jmpuwind.obj) : warning LNK4020: “f:\learning\mypt2\physx-tutorial-master\physx_3.4\scut2022_nayeon\compiler\vc16win64\x64\gamedemo\debug\vc142.pdb”中的类型记录已损坏；某些符号和类型可能无法从调试器中访问
-libucrtd.lib(locale_initializer.obj) : warning LNK4020: “f:\learning\mypt2\physx-tutorial-master\physx_3.4\scut2022_nayeon\compiler\vc16win64\x64\gamedemo\debug\vc142.pdb”中的类型记录已损坏；某些符号和类型可能无法从调试器中访问
-libucrtd.lib(getlocaleinfoa.obj) : warning LNK4020: “f:\learning\mypt2\physx-tutorial-master\physx_3.4\scut2022_nayeon\compiler\vc16win64\x64\gamedemo\debug\vc142.pdb”中的类型记录已损坏；某些符号和类型可能无法从调试器中访问
-libucrtd.lib(strnicmp.obj) : warning LNK4020: “f:\learning\mypt2\physx-tutorial-master\physx_3.4\scut2022_nayeon\compiler\vc16win64\x64\gamedemo\debug\vc142.pdb”中的类型记录已损坏；某些符号和类型可能无法从调试器中访问
-LINK : warning LNK4020: “f:\learning\mypt2\physx-tutorial-master\physx_3.4\scut2022_nayeon\compiler\vc16win64\x64\gamedemo\debug\vc142.pdb”中的类型记录已损坏；某些符号和类型可能无法从调试器中访问
-LINK : warning LNK4020: “f:\learning\mypt2\physx-tutorial-master\physx_3.4\scut2022_nayeon\compiler\vc16win64\x64\gamedemo\debug\vc142.pdb”中的类型记录已损坏；某些符号和类型可能无法从调试器中访问
-LINK : warning LNK4020: “f:\learning\mypt2\physx-tutorial-master\physx_3.4\scut2022_nayeon\compiler\vc16win64\x64\gamedemo\debug\vc142.pdb”中的类型记录已损坏；某些符号和类型可能无法从调试器中访问
-LINK : warning LNK4020: “f:\learning\mypt2\physx-tutorial-master\physx_3.4\scut2022_nayeon\compiler\vc16win64\x64\gamedemo\debug\vc142.pdb”中的类型记录已损坏；某些符号和类型可能无法从调试器中访问
-LINK : warning LNK4020: “f:\learning\mypt2\physx-tutorial-master\physx_3.4\scut2022_nayeon\compiler\vc16win64\x64\gamedemo\debug\vc142.pdb”中的类型记录已损坏；某些符号和类型可能无法从调试器中访问
-LINK : warning LNK4020: “f:\learning\mypt2\physx-tutorial-master\physx_3.4\scut2022_nayeon\compiler\vc16win64\x64\gamedemo\debug\vc142.pdb”中的类型记录已损坏；某些符号和类型可能无法从调试器中访问
   DemoTest.vcxproj -> F:\Learning\mypt2\PhysX-Tutorial-master\PhysX_3.4\bin\vc16win64\DemoTestDEBUG.exe
   复制了 0 个文件
   复制了 0 个文件
