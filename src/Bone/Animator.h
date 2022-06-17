@@ -22,9 +22,9 @@ public:
 	void UpdateAnimation(float dt)
 	{
 		mCurrentTick += dt * mCurrentAnimation->GetTicksPerSecond();
-		cout << "mCurrentTick:" << mCurrentTick << endl;
+		//cout << "mCurrentTick:" << mCurrentTick << endl;
 		mCurrentTick = fmod(mCurrentTick, mCurrentAnimation->GetDuration());
-		cout<<"after fmod, mCurrentTick:" << mCurrentTick << endl;
+		//cout<<"after fmod, mCurrentTick:" << mCurrentTick << endl;
 		CalculateBoneTransform(&(mCurrentAnimation->GetRootNode()), glm::mat4(1.0f));
 	}
 
@@ -54,6 +54,7 @@ public:
 			glm::mat4 offset = bonemap[nowNodeName].offset;
 			//根节点变换 * 逐个父节点累乘到当前节点得到的TRS变换 * 从骨骼空间到网格空间的变换
 			mFinalBoneMatrices[boneID] = mRootGlobalTransform * nowGlobalTransform * offset;
+
 		}
 
 		//递归计算子节点的变换

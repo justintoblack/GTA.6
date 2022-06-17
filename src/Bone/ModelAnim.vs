@@ -11,13 +11,13 @@ layout (location = 6) in vec4 weights;
 out vec2 TexCoords;
 
 const int MAX_BONE_INFLUENCE = 4;
-const int MAX_BONE = 100;
+const int MAX_BONES = 100;
 const int DEFAULT_BONE_ID = -1;
 uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
 
-uniform mat4 finalBonesMatrices[MAX_BONE];
+uniform mat4 finalBonesMatrices[MAX_BONES];
 
 
 void main()
@@ -29,7 +29,7 @@ void main()
     {
         if (boneIDs[i] == DEFAULT_BONE_ID)
             continue;
-        if (boneIDs[i] >= MAX_BONE_INFLUENCE)
+        if (boneIDs[i] >= MAX_BONES)
         {
             position = vec4(aPos, 1.0f);
             break;
@@ -37,4 +37,5 @@ void main()
         position += finalBonesMatrices[boneIDs[i]] * weights[i] * vec4(aPos, 1.0f);
     }
     gl_Position = projection * view * model * position;
+    
 }

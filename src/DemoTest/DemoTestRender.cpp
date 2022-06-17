@@ -361,7 +361,7 @@ namespace
 		totalTime += deltaTime; 
 		
 		{//--------------------render anim------------------------
-			cout << "DemotestRender::render anim:: totalTime:" << totalTime << endl;
+			//cout << "DemotestRender::render anim:: totalTime:" << totalTime << endl;
 			gAnimator->UpdateAnimation(deltaTime);
 			gModelAnimShader.use();
 			glm::mat4 modelMat = glm::mat4(1.0f);
@@ -378,7 +378,14 @@ namespace
 			{
 				string name = "finalBonesMatrices[" + std::to_string(i) + "]";
 				glUniformMatrix4fv(glGetUniformLocation(gModelAnimShader.ID, name.c_str()), 1, GL_FALSE, &transform[i][0][0]);
-				
+				/*cout << name << endl;
+				for (int j = 0; j < 4; j++) {
+					for (int k = 0; k < 4; k++) {
+						cout << transform[i][j][k] << ", ";
+					}
+					cout << endl;
+				}
+				cout << endl;*/
 			}
 			gModelAnim->Draw(gModelAnimShader);
 			glUseProgram(0);
