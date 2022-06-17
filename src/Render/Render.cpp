@@ -346,12 +346,12 @@ void setupDefaultWindow(const char *name)
 	//glutGameModeString("1920x1080");
 	//glutEnterGameMode();
 	//glutInitWindowPosition(960, 0);
-	glutInitWindowSize(1920/1.5f, 1080/1.5f);
+	glutInitWindowSize(1920, 1080);
 
 
 	int mainHandle = glutCreateWindow(name);
 	glutSetWindow(mainHandle);
-	glutFullScreen();
+	//glutFullScreen();
 
 	//glutCreateWindow(name);
 	//glutFullScreen();

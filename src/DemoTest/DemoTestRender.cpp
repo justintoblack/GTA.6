@@ -554,12 +554,12 @@ namespace
 		//键盘事件回调函数
 		//glutKeyboardFunc(keyboardCallback);
 
-		glutSetCursor(GLUT_CURSOR_NONE);
+		//glutSetCursor(GLUT_CURSOR_NONE);
 
 		//glutMouseFunc(mouseCallback);
 
-		//glutMotionFunc(motionCallback);
-		//glutPassiveMotionFunc(motionCallback);
+		glutMotionFunc(motionCallback);
+		glutPassiveMotionFunc(motionCallback);
 	
 		//motionCallback(0,0);
 

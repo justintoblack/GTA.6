@@ -51,7 +51,7 @@
 #include "../GameDemo/TheCreator.h"
 #include "../Utils/Mathf.h"
 
-
+#include <GL/glut.h>
 #include<time.h>
 #include <ctype.h>
 #include<iostream>
