@@ -51,7 +51,7 @@
 #include "../GameDemo/TheCreator.h"
 #include "../Utils/Mathf.h"
 
-
+#include <GL/glut.h>
 #include<time.h>
 #include <ctype.h>
 #include<iostream>
@@ -63,10 +63,8 @@
 #include "../SnippetVehicleCommon/SnippetVehicleFilterShader.h"
 #include "../SnippetVehicleCommon/SnippetVehicleTireFriction.h"
 #include "../SnippetVehicleCommon/SnippetVehicleCreate.h"
-#include "irrKlang/irrKlang.h"  //audio
-#include <GL\glut.h>
+#include "irrKlang/irrKlang.h"
 
-//#include "model.h"
 
 
 using namespace irrklang;
@@ -457,9 +455,15 @@ class MusicEvent
 public:
 	MusicEvent() {
 		this->isPlay = false;
+		this->volume = 0.5f;
 	}
-	ISoundEngine* PlayEngine;
+	MusicEvent(float volume) {
+		this->isPlay = false;
+		this->volume = volume;
+	}
+	ISoundEngine* PlayEngine = nullptr;
 	bool isPlay;
+	float volume;
 	void create()
 	{
 		ISoundEngine* PlayEngine = createIrrKlangDevice();
@@ -467,7 +471,10 @@ public:
 	}
 	void play(char path [])
 	{
-		PlayEngine->play2D(path, true);
+		//PlayEngine->play2D(path, true);
+		ISound* snd = PlayEngine->play2D(path, true, false, true);
+		if (snd)
+			snd->setVolume(volume);
 		this->isPlay = true;
 	}
 	void stop()
@@ -476,8 +483,8 @@ public:
 		this->isPlay = false;
 	}
 };
-MusicEvent carEngine;
-MusicEvent bell;
+MusicEvent carEngine(1.0f);
+MusicEvent bell(1.0f);
 
 class ContactReportCallback : public PxSimulationEventCallback
 {
@@ -1387,7 +1394,6 @@ void cleanupPhysics(bool interactive)
 //}
 
 
-//audio
 
 
 #define RENDER_SNIPPET 1

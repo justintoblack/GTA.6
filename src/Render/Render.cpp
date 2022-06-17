@@ -33,7 +33,7 @@ using namespace physx;
 
 
 // ImGUI state
-static bool show_demo_window = true;
+static bool show_demo_window = false;
 static bool show_another_window = false;
 static ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
@@ -58,45 +58,7 @@ static float gCylinderData[]={
 static PxVec3 gVertexBuffer[MAX_NUM_MESH_VEC3S];
 
 
-void my_display_code()
-{
-	// 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
-	if (show_demo_window)
-		ImGui::ShowDemoWindow(&show_demo_window);
 
-	// 2. Show a simple window that we create ourselves. We use a Begin/End pair to created a named window.
-	{
-		static float f = 0.0f;
-		static int counter = 0;
-
-		ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
-
-		ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
-		ImGui::Checkbox("Demo Window", &show_demo_window);      // Edit bools storing our window open/close state
-		ImGui::Checkbox("Another Window", &show_another_window);
-
-		ImGui::SliderFloat("float", &f, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
-		ImGui::ColorEdit3("clear color", (float*)&clear_color); // Edit 3 floats representing a color
-
-		if (ImGui::Button("Button"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
-			counter++;
-		ImGui::SameLine();
-		ImGui::Text("counter = %d", counter);
-
-		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-		ImGui::End();
-	}
-
-	// 3. Show another simple window.
-	if (show_another_window)
-	{
-		ImGui::Begin("Another Window", &show_another_window);   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
-		ImGui::Text("Hello from another window!");
-		if (ImGui::Button("Close Me"))
-			show_another_window = false;
-		ImGui::End();
-	}
-}
 
 void renderGeometry(const PxGeometryHolder& h)
 {
@@ -277,46 +239,49 @@ void renderGeometry(const PxGeometryHolder& h)
 		break;
 	}
 }
+bool backgroundMusic = false;
+float volume;
 
+void my_display_code()
+{
+	// 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
+	if (show_demo_window)
+		ImGui::ShowDemoWindow(&show_demo_window);
+
+	// 2. Show a simple window that we create ourselves. We use a Begin/End pair to created a named window.
+	{
+		static int counter = 0;
+
+		ImGui::Begin("Console");                          // Create a window called "Hello, world!" and append into it.
+
+		ImGui::Text("setting:");      
+		ImGui::Checkbox("Demo Window", &show_demo_window);      // Edit bools storing our window open/close state
+		ImGui::Checkbox("Another Window", &show_another_window);// Display some text (you can use a format strings too)
+		ImGui::Checkbox("backgroundMusic:", &backgroundMusic);
+		ImGui::SliderFloat("volume", &volume, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
+		ImGui::ColorEdit3("clear color", (float*)&clear_color); // Edit 3 floats representing a color
+
+		if (ImGui::Button("Button"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
+			counter++;
+		ImGui::SameLine();
+		ImGui::Text("counter = %d", counter);
+		ImGui::SameLine();
+		ImGui::Text("counter = %d", counter);
+
+		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+		ImGui::End();
+	}
+	if (show_another_window)
+	{
+		ImGui::Begin("Another Window", &show_another_window);   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
+		ImGui::Text("Hello from another window!");
+		if (ImGui::Button("Close Me"))
+			show_another_window = false;
+		ImGui::End();
+	}
+}
 namespace Snippets
 {
-//#pragma region GLFW
-//	GLFWwindow* window;
-//void framebuffer_size_callback(GLFWwindow* window, int width, int height)
-//{
-//	glViewport(0, 0, width, height);
-//}
-//
-//void processInput(GLFWwindow* window)
-//{
-//	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-//	{
-//		glfwSetWindowShouldClose(window, true);
-//	}
-//}
-//void GLFWRender()
-//{
-//	while (!glfwWindowShouldClose(window))
-//	{
-//		//输入事件
-//		processInput(window);
-//
-//		//渲染指令
-//		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-//		glClear(GL_COLOR_BUFFER_BIT);
-//
-//		setupDefaultRenderState();
-//
-//		//交换颜色缓冲
-//		glfwSwapBuffers(window);
-//		//检查触发事件
-//		glfwPollEvents();
-//
-//	}
-//	//释放分配的资源
-//	glfwTerminate();
-//}
-//#pragma endregion
 
 void glut_display_func()
 	{
@@ -340,13 +305,30 @@ void glut_display_func()
 		
 	}
 
+void changeSize(int w, int h) {
 
-	//当窗口尺寸改变时调用的回调函数，重新绘制视口 glut
-void reshapeCallback(int width, int height)
-{
-	//控制视口的位置与尺寸
-	glViewport(0, 0, width, height);
+	// Prevent a divide by zero, when window is too short
+	// (you cant make a window of zero width).
+	if (h == 0)
+		h = 1;
+	float ratio = 1.0 * w / h;
+
+	// Use the Projection Matrix
+	glMatrixMode(GL_PROJECTION);
+
+	// Reset Matrix
+	glLoadIdentity();
+
+	// Set the viewport to be the entire window
+	glViewport(0, 0, w, h);
+
+	// Set the correct perspective.
+	gluPerspective(45, ratio, 0.1, 1000);
+
+	// Get Back to the Modelview
+	glMatrixMode(GL_MODELVIEW);
 }
+
 
 void setupDefaultWindow(const char *name)
 {
@@ -364,19 +346,20 @@ void setupDefaultWindow(const char *name)
 	//glutGameModeString("1920x1080");
 	//glutEnterGameMode();
 	//glutInitWindowPosition(960, 0);
-	glutInitWindowSize(1920/1.5, 1080/1.5);
+	glutInitWindowSize(1920, 1080);
 
 
 	int mainHandle = glutCreateWindow(name);
 	glutSetWindow(mainHandle);
-	glutFullScreen();
+	//glutFullScreen();
 
 	//glutCreateWindow(name);
+	//glutFullScreen();
 
 
 
 	//渲染窗口尺寸和位置
-	glutReshapeFunc(reshapeCallback);
+	glutReshapeFunc(changeSize);
 	delete[] namestr;
 }
 
