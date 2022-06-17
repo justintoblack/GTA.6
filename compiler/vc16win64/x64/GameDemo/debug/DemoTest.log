@@ -5,8 +5,8 @@ F:\Learning\mypt2\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\ModelLoadi
 F:\Learning\mypt2\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\Utils\Mathf.cpp(1,1): warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
 F:\Learning\mypt2\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\Bone\ModelAnimation.h(221,43): warning C4018: “<”: 有符号/无符号不匹配
 F:\Learning\mypt2\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\Bone\Bone.h(111): warning C4715: “Bone::getRotationIndex”: 不是所有的控件路径都返回值
-F:\Learning\mypt2\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\Bone\Bone.h(120): warning C4715: “Bone::getScaleIndex”: 不是所有的控件路径都返回值
 F:\Learning\mypt2\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\Bone\Bone.h(102): warning C4715: “Bone::getPositionIndex”: 不是所有的控件路径都返回值
+F:\Learning\mypt2\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\Bone\Bone.h(120): warning C4715: “Bone::getScaleIndex”: 不是所有的控件路径都返回值
   DemoTest.vcxproj -> F:\Learning\mypt2\PhysX-Tutorial-master\PhysX_3.4\bin\vc16win64\DemoTestDEBUG.exe
   复制了 0 个文件
   复制了 0 个文件
