@@ -190,8 +190,9 @@ private:
         textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
 
         //extract bone info
+        cout << "开始：ExtractBoneInfo.." << endl;
         ExtractBoneInfo(mesh, vertices);
-
+        cout << "结束：ExtractBoneInfo.." << endl;
         return Mesh(vertices, indices, textures);
     }
 
@@ -226,6 +227,8 @@ private:
             aiBone* pNowBone = mesh->mBones[boneIndex];
             //获取骨骼名称
             string boneName = pNowBone->mName.C_Str();
+            cout << "boneIndex:" << boneIndex << "  ";
+            cout << "骨骼名称：" << boneName << endl;
             //如果当前不存在该名字的骨骼
             //则将bondID和offset矩阵存储到BoneInfo中，将该新的BoneInfo添加到映射表mBoneInfoMap
             if (mBoneInfoMap.find(boneName) == mBoneInfoMap.end()) {

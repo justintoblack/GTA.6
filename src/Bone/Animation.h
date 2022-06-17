@@ -45,7 +45,9 @@ public :
 		//暂时只加载第一个动画
 		aiAnimation* animation = scene->mAnimations[0];
 		mDuration = animation->mDuration;
+		cout << "Duration:" << mDuration << endl;
 		mTicksPerSecond = animation->mTicksPerSecond;
+		cout << "TicksPerSecond:" << mTicksPerSecond << endl;
 		mGlobalTransformation = scene->mRootNode->mTransformation;
 		//mGlobalTransformation = mGlobalTransformation.Inverse();
 		ReadBones(animation, *model);

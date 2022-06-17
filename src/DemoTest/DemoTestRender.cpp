@@ -114,6 +114,7 @@ extern void cleanupPhysics(bool interactive);
 //时间
 float deltaTime;		//时间插值
 float gameTime;		//当前程序执行时间
+float totalTime;
 __int64 firstCount;
 __int64 freq;
 static __int64 gTime, gLastTime;
@@ -357,8 +358,10 @@ namespace
 
 
 		///////////////EndTest////////////////////////////
-
+		totalTime += deltaTime;
+		
 		{//--------------------render anim------------------------
+			cout << "DemotestRender::render anim:: totalTime:" << totalTime << endl;
 			gAnimator->UpdateAnimation(deltaTime);
 			gModelAnimShader.use();
 			glm::mat4 modelMat = glm::mat4(1.0f);
