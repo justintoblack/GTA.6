@@ -30,16 +30,15 @@
 #ifdef RENDER_SNIPPET
 #define GLEW_STATIC
 
+#include<iostream>
 #include <vector>
 
 #include <GL/glew.h>
 #include "../Render/stb_image.h"
 #include "PxPhysicsAPI.h"
 
-//#include "Shader.h"
 #include "../Render/Render.h"
 #include "../Render/Camera.h"
-#include<iostream>
 #include "../ModelLoading/model.h"
 
 #include <glm/glm.hpp>
@@ -53,11 +52,7 @@
 #include "irrKlang/irrKlang.h"  //audio
 
 using namespace irrklang;
-ISoundEngine* BackgroundSoundEngine = createIrrKlangDevice();
-
-//ISoundEngine* SoundEngine2 = createIrrKlangDevice();
-
-
+using namespace physx;
 
 
 GLuint              gCubeTexture;
@@ -108,7 +103,6 @@ float gSkyboxVertices[] = {
 	1.0f,  1.0f, -1.0f,		-1.0f,  1.0f, -1.0f,	-1.0f, -1.0f, -1.0f
 };
 
-using namespace physx;
 
 extern void initPhysics(bool interactive);
 extern void stepPhysics(bool interactive);	
@@ -132,13 +126,25 @@ extern InputSyetem inputSystem;
 
 Snippets::Camera*	sCamera;
 
+
+/////////////////////////audio//////////////////////////////////
+
+extern bool backgroundMusic;
+extern float volume;
+
+
+// /////////////////////////audio//////////////////////////////////
+ 
+
+
+
 //鼠标
 POINT p;
 int lastX; int lastY;
 
 bool needToPass=false;
 
-namespace
+namespace 
 {
 	
 	void motionCallback(int x, int y)
@@ -168,14 +174,14 @@ namespace
 		}
 	}
 
-	//void keyboardCallback(unsigned char key, int x, int y)
-	//{
-	//	if(key==27)
-	//		exit(0);
-	//
-	//	if(!sCamera->handleKey(key, x, y))
-	//		//keyPress(key, sCamera->getTransform());
-	//}
+	void keyboardCallback(unsigned char key, int x, int y)
+	{
+		if(key==27)
+			exit(0);
+	
+		/*if(!sCamera->handleKey(key, x, y))
+			keyPress(key, sCamera->getTransform());*/
+	}
 
 	void mouseCallback(int button, int state, int x, int y)
 	{
@@ -184,7 +190,31 @@ namespace
 
 	void idleCallback()
 	{
+		//必要的
 		glutPostRedisplay();
+
+		
+	}
+
+	void initImGUI()
+	{
+		//=======================
+		// Setup Dear ImGui context
+		IMGUI_CHECKVERSION();
+		ImGui::CreateContext();
+		ImGuiIO& io = ImGui::GetIO(); (void)io;
+		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+
+		// Setup Dear ImGui style
+		//ImGui::StyleColorsDark();
+		ImGui::StyleColorsClassic();
+
+		// Setup Platform/Renderer backends
+		// FIXME: Consider reworking this example to install our own GLUT funcs + forward calls ImGui_ImplGLUT_XXX ones, instead of using ImGui_ImplGLUT_InstallFuncs().
+		ImGui_ImplGLUT_Init();
+		ImGui_ImplGLUT_InstallFuncs();
+		ImGui_ImplOpenGL2_Init();
+		//============================
 	}
 
 	//鼠标移动
@@ -360,17 +390,47 @@ namespace
 		glUseProgram(0);
 	}
 
+	
+	bool engineState = false;
+	ISoundEngine* backgroundMusicEngine = nullptr;
+	ISound* snd = nullptr;
 	//显示窗口
 	void renderCallback()
 	{
-		
+		//背景音乐播放状态机
+		if (backgroundMusic == true)
+		{
+			if (engineState == false)
+			{
+			backgroundMusicEngine = createIrrKlangDevice();
+			char path[] = "../../assets/audio/owu12-u5eaj.wav";
+			snd = backgroundMusicEngine->play2D(path, true, false, true);
+			if (snd)
+				snd->setVolume(volume);
+			engineState = true;
+			}
+			else
+			{
+				snd->setVolume(volume);
+			}
+		}
+		else
+		{
+			if (engineState == true)
+			{
+				backgroundMusicEngine->drop();
+				engineState = false;
+			}
+		}
+
+		//Imgui中需要加入渲染回调的函数
 		Snippets::glut_display_func();
 		
 		//物理模拟
 		stepPhysics(true);
 
 		//渲染相机场景
-		Snippets::startRender(sCamera->getEye(), sCamera->getDir(),0.1f);
+		Snippets::startRender(sCamera->getEye(), sCamera->getDir(),0.1f, 1000.0f);
 
 		
 
@@ -379,7 +439,7 @@ namespace
 		RenderSkybox();
 
 
-		/////////////////////Test//////////////////////////
+		/////////////////////角色渲染//////////////////////////
 
 		RenderGameObject(testObject);
 
@@ -398,8 +458,6 @@ namespace
 
 
 		/////////////////////EndTest////////////////////////////
-
-
 
 
 		PxScene* scene;
@@ -429,12 +487,18 @@ namespace
 	{
 		delete sCamera;
 		cleanupPhysics(true);
+
+		//===========================================
+		ImGui_ImplOpenGL2_Shutdown();
+		ImGui_ImplGLUT_Shutdown();
+		ImGui::DestroyContext();
+		//===========================================
 	}
 }
 
 
 
-	//渲染循环
+	//渲染流程
 	void renderLoop()
 	{
 
@@ -450,7 +514,11 @@ namespace
 
 		Snippets::setupDefaultWindow("Nayeon Studio");
 		Snippets::setupDefaultRenderState();
+
 		glewInit();
+
+
+
 
 
 		//----------Render Model----------
@@ -464,29 +532,21 @@ namespace
 
 
 
+
+
+
+		//这个idle函数意为空闲函数，将在事件队列的最后（即完成鼠标键盘事件响应，准备下一个渲染帧，渲染当前帧）进行，具有最低的优先级
 		glutIdleFunc(idleCallback);
-		//注册好回调函数后
+
+		
+
 		glutDisplayFunc(renderCallback);
-		//glutDisplayFunc(Snippets::glut_display_func);
 
 
-		//=======================
-		// Setup Dear ImGui context
-		IMGUI_CHECKVERSION();
-		ImGui::CreateContext();
-		ImGuiIO& io = ImGui::GetIO(); (void)io;
-		//io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
 
-		// Setup Dear ImGui style
-		ImGui::StyleColorsDark();
-		//ImGui::StyleColorsClassic();
 
-		// Setup Platform/Renderer backends
-		// FIXME: Consider reworking this example to install our own GLUT funcs + forward calls ImGui_ImplGLUT_XXX ones, instead of using ImGui_ImplGLUT_InstallFuncs().
-		ImGui_ImplGLUT_Init();
-		ImGui_ImplGLUT_InstallFuncs();
-		ImGui_ImplOpenGL2_Init();
-		//============================
+		initImGUI();
+		
 		
 
 
@@ -498,21 +558,14 @@ namespace
 
 		//glutMouseFunc(mouseCallback);
 
-		glutMotionFunc(motionCallback);
-		glutPassiveMotionFunc(motionCallback);
+		//glutMotionFunc(motionCallback);
+		//glutPassiveMotionFunc(motionCallback);
 	
 		//motionCallback(0,0);
 
 		atexit(exitCallback);
 
 		initPhysics(true);
-
-		//------------------audio
-		//BackgroundSoundEngine->play2D("../../assets/audio/owu12-u5eaj.wav", GL_TRUE);
-		ISound* snd = BackgroundSoundEngine->play2D("../../assets/audio/owu12-u5eaj.wav", true, false, true);
-		if (snd)
-			snd->setVolume(0.4);
-		//SoundEngine2->play2D("../../assets/audio/bell.wav", GL_TRUE);
 
 		//记录游戏第一帧时间
 
@@ -522,13 +575,5 @@ namespace
 		firstCount = gTime;
 
 		glutMainLoop();
-
-
-
-		//===========================================
-		ImGui_ImplOpenGL2_Shutdown();
-		ImGui_ImplGLUT_Shutdown();
-		ImGui::DestroyContext();
-		//===========================================
 	}
 #endif

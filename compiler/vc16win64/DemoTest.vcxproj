@@ -217,7 +217,7 @@
       <SDLCheck>
       </SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\..\..\..\..\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\third_party\includes</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\..\..\..\..\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\third_party\includes;$(SolutionDir)..\..\..\..\..\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\compiler\vc16win64\Dependencies\imgui</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
