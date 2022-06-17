@@ -202,10 +202,82 @@ void TheCreator::CreateGameObject()
 
 	SceneGameObject.push_back(tempObject);
 
-	tempObject.Name = "name";
-	tempObject.AddModel(road);
-	tempObject.SetTransform(PxTransform(20, 1, 20));
-	tempObject.AddToScene();
+	//tempObject.Name = "name";
+	//tempObject.AddModel(road);
+	//tempObject.SetTransform(PxTransform(20, 1, 20));
+	//tempObject.AddToScene();
 
-	SceneGameObject.push_back(tempObject);
+	//SceneGameObject.push_back(tempObject);
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
