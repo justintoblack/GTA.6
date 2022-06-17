@@ -150,7 +150,6 @@ PxVec3* CameraFollowTarget;
 
 #pragma endregion
 
-GameObject testObject;
 
 
 #pragma region 角色属性
@@ -195,9 +194,7 @@ void FireFirst()
 		if (hit.block.actor->getType() == PxActorType::eRIGID_DYNAMIC)
 		{
 			float force = 100;
-			cout <<((GameObject*) testObject.g_rigidBody->userData)->Name<<endl;
 			((PxRigidDynamic*)hit.block.actor)->addForce(sCamera->getDir()*force,PxForceMode::eIMPULSE);
-			//cout << testObject.Name<<endl;
 		}
 	}
 }
@@ -692,19 +689,19 @@ void CreateCoordinateAxis(PxTransform origin,float xLength,float yLength, float 
 	gScene->addActor(*staticbody);
 
 	shape = gPhysics->createShape(PxBoxGeometry(xLength, 1, 1), *gMaterial);
-	tm = PxTransform(xLength, 0, 0);
+	tm = PxTransform(PxVec3(xLength, 0, 0)+origin.p);
 	staticbody = PxCreateStatic(*gPhysics, tm, *shape);
 	staticbody->attachShape(*shape);
 	gScene->addActor(*staticbody);
 
 	shape = gPhysics->createShape(PxBoxGeometry(1, yLength, 1), *gMaterial);
-	tm = PxTransform(0, yLength, 0);
+	tm = PxTransform(PxVec3( 0, yLength, 0)+origin.p);
 	staticbody = PxCreateStatic(*gPhysics, tm, *shape);
 	staticbody->attachShape(*shape);
 	gScene->addActor(*staticbody);
 
 	shape = gPhysics->createShape(PxBoxGeometry(1, 1, zLength), *gMaterial);
-	tm = PxTransform(0, 0, zLength);
+	tm = PxTransform(PxVec3( 0, 0, zLength)+origin.p);
 	staticbody = PxCreateStatic(*gPhysics, tm, *shape);
 	staticbody->attachShape(*shape);
 	gScene->addActor(*staticbody);
@@ -1078,7 +1075,7 @@ void MyCode()
 	//初始化造物者
 	theCreator.Init(gPhysics, gScene);
 
-	CreateCoordinateAxis(PxTransform(0,0,0),100,200,300);
+	CreateCoordinateAxis(PxTransform(-100,0,-100),100,200,300);
 	createTriggerBox();
 	CreateChain(PxTransform(PxVec3(0.0f, 20.0f, -10.0f)), 5, PxCapsuleGeometry(1.0f,1.0f), 4.0f, createBreakableFixed);
 	CreateChain(PxTransform(PxVec3(0.0f, 25.0f, -20.0f)), 5, PxBoxGeometry(2.0f, 0.5f, 0.5f), 4.0f, createDampedD6);
@@ -1118,21 +1115,15 @@ void MyCode()
 	theCreator.CreateBanisters(PxVec3(50, 0.0f, 20), PxVec3(1,0,2),gMaterial, 1, 20, 0.5f, 1.0f, 10, 10000, 1000);
 	theCreator.CreateBanisters(PxVec3(10, 0.0f, 20), PxVec3(0,0,1),gMaterial, 1, 20, 0.5f, 1.0f, 10, 10000, 1000);
 	theCreator.CreateBanisters(PxVec3(10, 0.0f, 300), PxVec3(1,0,0),gMaterial, 1, 20, 0.5f, 1.0f, 10, 10000, 1000);
-	theCreator.CreatePoles(PxVec3(5, 0, 20), PxVec3(0,0,1),10,10, gMaterial, 0.15f, 3.5f, 10, 10000, 10000);
-	theCreator.CreatePoles(PxVec3(55, 0, 20), PxVec3(0,0,1),50,10, gMaterial, 0.15f, 3.5f, 10, 10000, 10000);
+	theCreator.CreatePoles(PxVec3(5, 0, 20), PxVec3(0,0,1),10,10, gMaterial, 0.15f, 2.5f, 10, 10000, 100);
+	theCreator.CreatePoles(PxVec3(55, 0, 20), PxVec3(0,0,1),50,10, gMaterial, 0.15f, 2.5f, 10, 10000, 100);
 	theCreator.createSlowArea(PxVec3(30, 0, 70), PxF32(0.01), PxF32(0.2), 30, gMaterial);
 	//垃圾桶
 	theCreator.CreatePoles(PxVec3(50, 0.0f, 50), PxVec3(0, 0, 1), 20, 10, gMaterial, 0.3f, 0.7f, 10, 10000, 10000);
 	
 
-	//GameObject
-	testObject.Name ="house";
-	testObject.AddRigidbody(true);
-	testObject.AddModel(gModel2);
-	testObject.AddBoxCollider(4.35f,4.25f,4.6f, PxTransform(0, 4.29f, 0));
-	testObject.SetTransform(PxTransform(10,10,10));
-	testObject.AddToScene();
 
+	theCreator.CreateGameObject();
 	//model_00=Model("../../assets/objects/Models/SM_Bld_Station_01.fbx");
 	//gameObject_00.Name = "SM_Bld_Station_01";
 	//gameObject_00.AddRigidbody(false);

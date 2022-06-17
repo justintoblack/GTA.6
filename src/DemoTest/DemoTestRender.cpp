@@ -125,7 +125,6 @@ static __int64 gTime, gLastTime;
 
 ///////////////////////DemoTest///////////////////////////////
 extern TheCreator theCreator;
-extern GameObject testObject;
 extern GameObject gameObject_00;
 
 extern PxVec3 moveDir;
@@ -384,12 +383,11 @@ namespace
 
 		/////////////////////Test//////////////////////////
 
-		//for (int i = 0; i < theCreator.SceneGameObject.size(); i++)
-		//{
-		//	RenderGameObject(theCreator.SceneGameObject[i]);
-		//}
+		for (int i = 0; i < theCreator.SceneGameObject.size(); i++)
+		{
+			RenderGameObject(theCreator.SceneGameObject[i]);
+		}
 
-		RenderGameObject(testObject);
 		float rotateSpeed = 5;
 		//表示正在移动
 		PxExtendedVec3 haha= m_player->getFootPosition();
