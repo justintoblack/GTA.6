@@ -516,7 +516,6 @@ namespace
 		gWheelModel_fr = Model("../../assets/objects/car/wheel_fr.obj");
 		gWheelModel_bl = Model("../../assets/objects/car/wheel_bl.obj");
 		gWheelModel_br= Model("../../assets/objects/car/wheel_br.obj");
-
 		//gModel = Model("../../assets/objects/nanosuit/nanosuit.obj");
 		//gModel2 = Model("../../assets/objects/backpack/backpack.obj");
 		gModel2 = Model("../../assets/objects/Models/house.fbx");
@@ -524,6 +523,7 @@ namespace
 								"../../src/ModelLoading/model_loading.fs");
 		//----------Render Model----------
 		SetupSkybox();
+
 
 
 
