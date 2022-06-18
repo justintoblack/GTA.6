@@ -119,8 +119,15 @@ __int64 freq;
 static __int64 gTime, gLastTime;
 
 ///////////////////////DemoTest///////////////////////////////
+
+extern GameObject carObject;
+extern GameObject wheelFLObj;
+extern GameObject wheelFRObj;
+extern GameObject wheelBLObj;
+extern GameObject wheelBRObj;
+
 extern GameObject testObject;
-extern CarGameObject carObject;
+//extern CarGameObject carObject;
 extern TheCreator theCreator;
 extern GameObject gameObject_00;
 
@@ -353,7 +360,16 @@ namespace
 		//是否有父物体
 		if (gameObject.parent != nullptr)
 		{
+			gameObject.transform = gameObject.parent->transform.transform(gameObject.localTransform);
+			gameObject.transform.q= gameObject.parent->transform.q;
+			gameObject.transform.q *=gameObject.localTransform.q;
+			//gameObject.transform = gameObject.parent->transform.transform
+			//(gameObject.localTransform);
 
+			//gameObject.transform.q *= gameObject.localTransform.q;
+
+
+			Mathf::Debug(gameObject.transform.q);
 		}
 		//需要跟踪物理模拟
 		else if (gameObject.g_rigidBody&&gameObject.g_rigidBody->getType()==
@@ -479,13 +495,18 @@ namespace
 
 
 		/////////////////////角色渲染//////////////////////////
-		RenderCarObject(carObject);
+		//RenderCarObject(carObject);
 
 		for (int i = 0; i < theCreator.SceneGameObject.size(); i++)
 		{
 			RenderGameObject(theCreator.SceneGameObject[i]);
 		}
 
+		RenderGameObject(carObject);
+		RenderGameObject(wheelFLObj);
+		RenderGameObject(wheelFRObj);
+		RenderGameObject(wheelBLObj);
+		RenderGameObject(wheelBRObj);
 		
 		float rotateSpeed = 5;
 		//表示正在移动
@@ -569,9 +590,9 @@ namespace
 
 
 		//----------Render Model----------
-		gBodyModel = Model("../../assets/objects/car/body.obj");
-		gWheelModel_fl = Model("../../assets/objects/car/wheel_fl.obj");
-		gWheelModel_fr = Model("../../assets/objects/car/wheel_fr.obj");
+		gBodyModel = Model("../../assets/objects/Models/carBody.fbx");
+		gWheelModel_fl = Model("../../assets/objects/Models/wheel_left.fbx");
+		gWheelModel_fr = Model("../../assets/objects/Models/wheel_right.fbx");
 		gWheelModel_bl = Model("../../assets/objects/car/wheel_bl.obj");
 		gWheelModel_br= Model("../../assets/objects/car/wheel_br.obj");
 

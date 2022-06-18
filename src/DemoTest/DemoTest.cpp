@@ -146,7 +146,7 @@ PxVec3* CameraFollowTarget;
 
 //GameObject
 GameObject testObject;
-CarGameObject carObject;
+//CarGameObject carObject;
 
 #pragma region 角色属性
 PxController* m_player;
@@ -293,6 +293,20 @@ bool isTouchTriggerBox = false;
 int currentTriggerIndex = -1;
 
 //车辆相关的全局变量
+GameObject carObject;
+GameObject wheelFLObj;
+GameObject wheelFRObj;
+GameObject wheelBLObj;
+GameObject wheelBRObj;
+PxTransform wheelLF;
+PxTransform wheelRF;
+PxTransform wheelLB;
+PxTransform wheelRB;
+PxShape* wheels[5];
+
+PxRigidDynamic* carBody;
+
+
 VehicleSceneQueryData* gVehicleSceneQueryData = NULL;
 PxBatchQuery* gBatchQuery = NULL;
 
@@ -1133,9 +1147,28 @@ void MyCode()
 	
 	theCreator.CreateGameObject();
 
-	carObject.Name = "car";
+
+	carBody = gVehicle4W->getRigidDynamicActor();
+	carObject.Name = "carBody";
+	carObject.AddRigidbody(carBody);
+	carObject.AddModel(gBodyModel);
+	carObject.AddToScene();
+
+	carBody->getShapes(wheels, 5);
+
+	wheelFLObj.parent = &carObject;
+	wheelFRObj.parent = &carObject;
+	wheelBLObj.parent = &carObject;
+	wheelBRObj.parent = &carObject;
+
+	wheelFLObj.AddModel(gWheelModel_fl);
+	wheelFRObj.AddModel(gWheelModel_fr);
+	wheelBLObj.AddModel(gWheelModel_fl);
+	wheelBRObj.AddModel(gWheelModel_fr);
+
+	/*carObject.Name = "car";
 	carObject.SetRigidbody(gVehicle4W->getRigidDynamicActor());
-	carObject.AddModel(gBodyModel, gWheelModel_fl, gWheelModel_fr, gWheelModel_bl, gWheelModel_br);
+	carObject.AddModel(gBodyModel, gWheelModel_fl, gWheelModel_fr, gWheelModel_bl, gWheelModel_br);*/
 
 }
 
@@ -1231,6 +1264,7 @@ void initPhysics(bool interactive)
 	gVehicleOrderProgress = 0;
 	startBrakeMode();
 
+
 	/////////////////////////////////////////////
 	///自定义
 	MyCode();
@@ -1314,6 +1348,21 @@ void stepPhysics(bool interactive)
 
 	////////////////////////////移动结束////////////////////////////////
 
+	/////////////////////////////载具更新////////////////////////////////////
+
+	wheelLF = wheels[0]->getLocalPose();
+	wheelRF = wheels[1]->getLocalPose();
+	wheelLB = wheels[2]->getLocalPose();
+	wheelRB = wheels[3]->getLocalPose();
+
+
+	wheelFLObj.SetLocalTransform(wheelLF);
+	wheelFRObj.SetLocalTransform(wheelRF);
+	wheelBLObj.SetLocalTransform(wheelLB);
+	wheelBRObj.SetLocalTransform(wheelRB);
+
+
+	////////////////////////////////////////////////////////////
 	//相机跟随
 	characterPos = m_player->getPosition() - PxExtendedVec3(0, 0, 0);
 	vehiclePos = gVehicle4W->getRigidDynamicActor()->getGlobalPose().p;

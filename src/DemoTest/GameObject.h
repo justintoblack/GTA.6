@@ -15,20 +15,19 @@ class GameObject
 private:
 public:
 	string Name;
-	PxTransform worldTransform;
 	PxTransform transform;
-	GameObject* parent;
+	PxTransform localTransform;
+	GameObject* parent=nullptr;
 	//PxVec3 scale;
 
-	Model*  g_model;
-	PxRigidActor*  g_rigidBody;
+	Model*  g_model=nullptr;
+	PxRigidActor*  g_rigidBody=nullptr;
 
 	GameObject()
 	{
 		transform = PxTransform(0,0,0);
 		//scale = PxVec3(1, 1, 1);
 	}
-
 
 	//设置GameObject位置
 	void SetTransform(PxTransform trans)
@@ -38,6 +37,12 @@ public:
 		{
 			g_rigidBody->setGlobalPose(trans);
 		}
+	}
+
+	//设置局部坐标
+	void SetLocalTransform(PxTransform trans)
+	{
+		localTransform = trans;
 	}
 
 	void SetTransform(float gameObjectPosition[3])

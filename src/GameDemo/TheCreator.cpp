@@ -42,7 +42,7 @@ void TheCreator::Init(PxPhysics* physics, PxScene* gScene)
 	stationModel = Model("../../assets/objects/Models/SM_Bld_Station_01.fbx");
 	stationModel_01 = Model("../../assets/objects/Models/SM_Bld_Station_03.fbx");
 	road = Model("../../assets/objects/Models/SM_Env_Road_Bare_01.fbx");
-	_carBody=Model("../../assets/objects/Models/body.obj");
+	_carBody=Model("../../assets/objects/Models/carBody.fbx");
 	_carWheelLeft=Model("../../assets/objects/Models/wheel_left.fbx");
 	_carWheelRight=Model("../../assets/objects/Models/wheel_right.fbx");
 }
