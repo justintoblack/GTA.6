@@ -131,6 +131,7 @@ extern bool main_window;
 InputSyetem inputSystem;
 CharacterActionMap characterMap;
 VehicleActionMap vehicleMap;
+EditActionMap editMap;
 
 //造物者
 TheCreator theCreator;
@@ -248,11 +249,13 @@ void SwitchMode()
 	if (isInGameMode)
 	{
 		main_window = false;
+		inputSystem.SetCharacterMap(characterMap);
 		glutSetCursor(GLUT_CURSOR_NONE);
 	}
 	else
 	{
 		main_window = true;
+		inputSystem.SetEditMap(editMap);
 		glutSetCursor(GLUT_CURSOR_LEFT_ARROW);
 	} 
 };
@@ -1121,15 +1124,6 @@ void MyCode()
 	
 	theCreator.CreateGameObject();
 
-	///////////////////////////////Test////////////////////////////////
-	PxTransform test(PxVec3(1,0,0),PxQuat(Mathf::DegToRad(90),PxVec3(1,0,0)));
-	PxTransform test2(PxVec3(0,0,1),PxQuat(Mathf::DegToRad(90),PxVec3(0,-1,0)));
-	PxTransform result;
-	result = test2.transformInv(test);
-	Mathf::Debug(result.p);
-	Mathf::Debug(result.q);
-	theCreator.CreateAnchorBall(result, gMaterial, 1);
-
 }
 
 
@@ -1352,6 +1346,10 @@ void stepPhysics(bool interactive)
 	if (isInGameMode)
 	{
 		sCamera->Update(*CameraFollowTarget);
+	}
+	else
+	{
+		sCamera->goFront(editMap.GetArrowKeyValue());
 	}
 
 

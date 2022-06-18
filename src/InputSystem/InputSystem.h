@@ -13,5 +13,6 @@ public:
 	void InputAction();
 	void SetCharacterMap(CharacterActionMap &newMap);
 	void SetVehicleMap(VehicleActionMap &newMap);
+	void SetEditMap(EditActionMap &newMap);
 };
 #endif // !_INPUTSYSTEM_H

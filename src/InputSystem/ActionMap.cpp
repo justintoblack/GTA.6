@@ -33,6 +33,13 @@ void ActionMap::InputAction()
 		{
 			sCamera->handleMotion(dx, dy);
 		}
+		else
+		{
+			if (GetAsyncKeyState(VK_RBUTTON))
+			{
+				sCamera->handleMotion(dx, dy);
+			}
+		}
 	}
 	//到达窗口边界
 	if (p.x <= 0 || p.x >= GetSystemMetrics(SM_CXSCREEN)-1 || p.y <= 0 || p.y >= GetSystemMetrics(SM_CYSCREEN)-1)
@@ -185,4 +192,35 @@ void VehicleActionMap::InputAction()
 void VehicleActionMap::SetActionMap(physx::PxVehicleDrive4W* newController)
 {
 	m_controller = newController;
+}
+
+void EditActionMap::InputAction()
+{
+	physx::PxVec2 arrow(0, 0);
+
+	ActionMap::InputAction();
+
+	if (GetAsyncKeyState('A'))
+	{
+		arrow += physx::PxVec2(0, -1);
+	}
+	if (GetAsyncKeyState('D'))
+	{
+		arrow += physx::PxVec2(0, 1);
+	}
+	if (GetAsyncKeyState('S'))
+	{
+		arrow += physx::PxVec2(-1, 0);
+	}
+	if (GetAsyncKeyState('W'))
+	{
+		arrow += physx::PxVec2(1, 0);
+	}
+
+	arrowKey = arrow;
+}
+
+physx::PxVec2 EditActionMap::GetArrowKeyValue()
+{
+	return arrowKey;
 }

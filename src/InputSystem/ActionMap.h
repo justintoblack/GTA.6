@@ -4,6 +4,7 @@
 
 #include<PxPhysicsAPI.h>
 #include "../Render/Camera.h"
+#include "../Utils/Mathf.h"
 
 extern Snippets::Camera* sCamera;
 class ActionMap
@@ -61,10 +62,13 @@ public:
 	void SetActionMap(physx::PxVehicleDrive4W* newController);
 };
 
-//class EditActionMap:public ActionMap
-//{
-//private:
-//public:
-//}
+class EditActionMap :public ActionMap
+{
+private:
+	physx::PxVec2 arrowKey;
+public:
+	void InputAction();
+	physx::PxVec2 GetArrowKeyValue();
+};
 
 #endif // !_ACTIONMAP_H
