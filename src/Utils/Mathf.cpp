@@ -48,6 +48,7 @@ void Mathf::Debug(PxVec3 vec)
 	cout << "(" << vec.x << "," << vec.y << "," << vec.z << ")" << endl;
 }
 
+
 void Mathf::Debug(PxQuat q)
 {
 	cout << "(" << q.x << "," << q.y << "," << q.z <<","<<q.w<< ")" << endl;

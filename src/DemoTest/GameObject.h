@@ -9,6 +9,7 @@ extern	PxPhysics* gPhysics;
 extern	PxMaterial* gMaterial;
 extern	PxScene* gScene;
 
+
 class GameObject
 {
 private:
@@ -34,6 +35,12 @@ public:
 		g_rigidBody->setGlobalPose(trans);
 	}
 
+	void SetTransform(float gameObjectPosition[3])
+	{
+		transform = { gameObjectPosition[0], gameObjectPosition[1], gameObjectPosition[2] };
+		g_rigidBody->setGlobalPose({ gameObjectPosition[0], gameObjectPosition[1], gameObjectPosition[2] });
+	}
+
 	//绑定模型
 	void AddModel(Model &model)
 	{
@@ -54,6 +61,11 @@ public:
 		g_rigidBody->userData=this;
 	};
 
+	void AddRigidbody(PxRigidDynamic* body)
+	{
+		g_rigidBody = body;
+	}
+
 	//添加BoxCollider
 	void AddBoxCollider(float halfX,float halfY,float halfZ,PxTransform localPos)
 	{
@@ -67,6 +79,15 @@ public:
 	void AddSphereCollider(float radius,PxTransform localPos)
 	{
 		PxShape* shape = gPhysics->createShape(PxSphereGeometry(radius), 
+			*gMaterial);
+		shape->setLocalPose(localPos);
+		g_rigidBody->attachShape(*shape);
+	}
+
+	//添加capsule
+	void AddCapsuleCollider(float radius,float halfHeigght,PxTransform localPos)
+	{
+		PxShape* shape = gPhysics->createShape(PxCapsuleGeometry(radius, halfHeigght),
 			*gMaterial);
 		shape->setLocalPose(localPos);
 		g_rigidBody->attachShape(*shape);

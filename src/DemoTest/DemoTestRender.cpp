@@ -30,16 +30,15 @@
 #ifdef RENDER_SNIPPET
 #define GLEW_STATIC
 
+#include<iostream>
 #include <vector>
 
 #include <GL/glew.h>
 #include "../Render/stb_image.h"
 #include "PxPhysicsAPI.h"
 
-//#include "Shader.h"
 #include "../Render/Render.h"
 #include "../Render/Camera.h"
-#include<iostream>
 #include "../ModelLoading/model.h"
 #include"../DemoTest/CarGameObject.h"
 #include <glm/glm.hpp>
@@ -51,13 +50,10 @@
 #include "../DemoTest/GameObject.h"
 
 #include "irrKlang/irrKlang.h"  //audio
+#include "../GameDemo/TheCreator.h"
 
 using namespace irrklang;
-ISoundEngine* BackgroundSoundEngine = createIrrKlangDevice();
-
-//ISoundEngine* SoundEngine2 = createIrrKlangDevice();
-
-
+using namespace physx;
 
 
 GLuint              gCubeTexture;
@@ -109,7 +105,6 @@ float gSkyboxVertices[] = {
 	1.0f,  1.0f, -1.0f,		-1.0f,  1.0f, -1.0f,	-1.0f, -1.0f, -1.0f
 };
 
-using namespace physx;
 
 extern void initPhysics(bool interactive);
 extern void stepPhysics(bool interactive);	
@@ -126,6 +121,9 @@ static __int64 gTime, gLastTime;
 ///////////////////////DemoTest///////////////////////////////
 extern GameObject testObject;
 extern CarGameObject carObject;
+extern TheCreator theCreator;
+extern GameObject gameObject_00;
+
 extern PxVec3 moveDir;
 glm::vec3 forwardDir(0,0,1);
 extern PxController* m_player;
@@ -133,50 +131,63 @@ extern InputSyetem inputSystem;
 extern PxVehicleDrive4W* gVehicle4W;
 Snippets::Camera*	sCamera;
 
+
+/////////////////////////Imgui//////////////////////////////////
+
+extern bool backgroundMusic;
+extern float volume0;
+
+
+
+// /////////////////////////Imgui//////////////////////////////////
+ 
+
+
+
 //鼠标
-POINT p;
-int lastX; int lastY;
+//POINT p;
+//int lastX; int lastY;
 
-bool needToPass=false;
+//bool needToPass=false;
 
-namespace
+namespace 
 {
 	
-	void motionCallback(int x, int y)
-	{
-
-		int dx=lastX - x;
-		int dy= lastY - y;
-
-		if (needToPass)
-		{
-			needToPass = false;
-		}
-		else
-		{
-			sCamera->handleMotion(dx, dy);
-		}
-
-		lastX = x;
-		lastY = y;
-		//std::cout << x << " " << GetSystemMetrics(SM_CXSCREEN) << std::endl;
-
-		//到达窗口边界
-		if (x <= 0 || x >= GetSystemMetrics(SM_CXSCREEN)-1 || y <= 0 || y >= GetSystemMetrics(SM_CYSCREEN)-1)
-		{
-			SetCursorPos(GetSystemMetrics(SM_CXSCREEN)/2, GetSystemMetrics(SM_CYSCREEN)/2);
-			needToPass = true;
-		}
-	}
-
-	//void keyboardCallback(unsigned char key, int x, int y)
+	//void motionCallback(int x, int y)
 	//{
-	//	if(key==27)
-	//		exit(0);
-	//
-	//	if(!sCamera->handleKey(key, x, y))
-	//		//keyPress(key, sCamera->getTransform());
+
+	//	int dx=lastX - x;
+	//	int dy= lastY - y;
+
+	//	if (needToPass)
+	//	{
+	//		needToPass = false;
+	//	}
+	//	else
+	//	{
+	//		sCamera->handleMotion(dx, dy);
+	//	}
+
+	//	lastX = x;
+	//	lastY = y;
+	//	//std::cout << x << " " << GetSystemMetrics(SM_CXSCREEN) << std::endl;
+
+	//	//到达窗口边界
+	//	if (x <= 0 || x >= GetSystemMetrics(SM_CXSCREEN)-1 || y <= 0 || y >= GetSystemMetrics(SM_CYSCREEN)-1)
+	//	{
+	//		SetCursorPos(GetSystemMetrics(SM_CXSCREEN)/2, GetSystemMetrics(SM_CYSCREEN)/2);
+	//		needToPass = true;
+	//	}
 	//}
+
+	void keyboardCallback(unsigned char key, int x, int y)
+	{
+		if(key==27)
+			exit(0);
+	
+		/*if(!sCamera->handleKey(key, x, y))
+			keyPress(key, sCamera->getTransform());*/
+	}
 
 	void mouseCallback(int button, int state, int x, int y)
 	{
@@ -185,34 +196,58 @@ namespace
 
 	void idleCallback()
 	{
+		//必要的
 		glutPostRedisplay();
+
+		
+	}
+
+	void initImGUI()
+	{
+		//=======================
+		// Setup Dear ImGui context
+		IMGUI_CHECKVERSION();
+		ImGui::CreateContext();
+		ImGuiIO& io = ImGui::GetIO(); (void)io;
+		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+
+		// Setup Dear ImGui style
+		//ImGui::StyleColorsDark();
+		ImGui::StyleColorsClassic();
+
+		// Setup Platform/Renderer backends
+		// FIXME: Consider reworking this example to install our own GLUT funcs + forward calls ImGui_ImplGLUT_XXX ones, instead of using ImGui_ImplGLUT_InstallFuncs().
+		ImGui_ImplGLUT_Init();
+		ImGui_ImplGLUT_InstallFuncs();
+		ImGui_ImplOpenGL2_Init();
+		//============================
 	}
 
 	//鼠标移动
-	void OnMouseMove(int x,int y)
-	{
-		motionCallback(x, y);
-	}
+	//void OnMouseMove(int x,int y)
+	//{
+	//	//motionCallback(x, y);
+	//}
 
 	//鼠标事件监听
-	void MouseEventCallBack()
-	{
-		//获取当前鼠标位置
-		GetCursorPos(&p);
-		//未移动
-		if (lastX == p.x && lastY == p.y)
-		{
+	//void MouseEventCallBack()
+	//{
+	//	//获取当前鼠标位置
+	//	GetCursorPos(&p);
+	//	//未移动
+	//	if (lastX == p.x && lastY == p.y)
+	//	{
 
-		}
-		//移动
-		else
-		{
-			std::cout << "移动" << std::endl;
-			OnMouseMove(p.x,p.y);
-			lastX = p.x;
-			lastY = p.y;
-		}
-	}
+	//	}
+	//	//移动
+	//	else
+	//	{
+	//		std::cout << "移动" << std::endl;
+	//		OnMouseMove(p.x,p.y);
+	//		lastX = p.x;
+	//		lastY = p.y;
+	//	}
+	//}
 
 	glm::mat4 getViewMat() {
 		PxVec3 cameraPos = sCamera->getEye();
@@ -361,6 +396,7 @@ namespace
 		gameObject.g_model->Draw(gModelShader);
 
 		glUseProgram(0);
+
 	}
 
 	//渲染车辆
@@ -415,36 +451,71 @@ namespace
 	}
 
 
+	
+	bool engineState = false;
+	ISoundEngine* backgroundMusicEngine = nullptr;
+	ISound* snd = nullptr;
 	//显示窗口
 	void renderCallback()
 	{
-		
+		//背景音乐播放状态机
+		if (backgroundMusic == true)
+		{
+			if (engineState == false)
+			{
+			backgroundMusicEngine = createIrrKlangDevice();
+			char path[] = "../../assets/audio/owu12-u5eaj.wav";
+			snd = backgroundMusicEngine->play2D(path, true, false, true);
+			if (snd)
+				snd->setVolume(volume0);
+			engineState = true;
+			}
+			else
+			{
+				snd->setVolume(volume0);
+			}
+		}
+		else
+		{
+			if (engineState == true)
+			{
+				backgroundMusicEngine->drop();
+				engineState = false;
+			}
+		}
+
+		//Imgui中需要加入渲染回调的函数
 		Snippets::glut_display_func();
 		
 		//物理模拟
 		stepPhysics(true);
 
 		//渲染相机场景
-		Snippets::startRender(sCamera->getEye(), sCamera->getDir(),0.1f);
+		Snippets::startRender(sCamera->getEye(), sCamera->getDir(),0.1f, 1000.0f);
 
 		RenderSkybox();
 
 
-		/////////////////////Test//////////////////////////
+		/////////////////////角色渲染//////////////////////////
 
 		RenderGameObject(testObject);
 		RenderCarObject(carObject);
-		//float rotateSpeed = 5;
-		////表示正在移动
-		//PxExtendedVec3 haha = m_player->getFootPosition();
-		//PxVec3 lala = gVehicle4W->getRigidDynamicActor()->getGlobalPose().p;
-		//if (!moveDir.isZero())
-		//{
-		//	glm::vec3 targetDir = glm::vec3(moveDir.x, 0, moveDir.z);
-		//	forwardDir = glm::normalize( Mathf::Slerp(forwardDir, targetDir, deltaTime * rotateSpeed));
-		//}
-		//RenderModel(gBodyModel, glm::vec3(lala.x, lala.y, lala.z), glm::vec3(0, 0, 1), gModelShader);
-		//RenderModel(gModel, glm::vec3(haha.x, haha.y, haha.z),-forwardDir, gModelShader);
+
+		for (int i = 0; i < theCreator.SceneGameObject.size(); i++)
+		{
+			RenderGameObject(theCreator.SceneGameObject[i]);
+		}
+
+		
+		float rotateSpeed = 5;
+		//表示正在移动
+		PxExtendedVec3 haha= m_player->getFootPosition();
+		if (!moveDir.isZero())
+		{
+			glm::vec3 targetDir = glm::vec3(moveDir.x, 0, moveDir.z);
+			forwardDir = glm::normalize( Mathf::Slerp(forwardDir, targetDir, deltaTime * rotateSpeed));
+		}
+		RenderModel(gModel, glm::vec3(haha.x, haha.y, haha.z),-forwardDir, gModelShader);
 			//RenderModel(gModel, glm::vec3(-20.0f, 10.0f, -45.0f), gModelShader);
 		//RenderModel(gModel2, glm::vec3(10.0, 1.0f, 10.0f),glm::vec3(0,0,1),
 		//	gModelShader);
@@ -454,8 +525,6 @@ namespace
 		
 
 		/////////////////////EndTest////////////////////////////
-
-
 
 
 		PxScene* scene;
@@ -485,12 +554,18 @@ namespace
 	{
 		delete sCamera;
 		cleanupPhysics(true);
+
+		//===========================================
+		ImGui_ImplOpenGL2_Shutdown();
+		ImGui_ImplGLUT_Shutdown();
+		ImGui::DestroyContext();
+		//===========================================
 	}
 }
 
 
 
-	//渲染循环
+	//渲染流程
 	void renderLoop()
 	{
 
@@ -498,25 +573,32 @@ namespace
 		sCamera->SetConfig(4,PxVec3(0,0,0));
 
 		//初始化鼠标位置;
-		GetCursorPos(&p);
-		lastX = p.x;
-		lastY = p.y;
+		//GetCursorPos(&p);
+		//lastX = p.x;
+		//lastY = p.y;
 
 		//Snippets::setupDefaultGLFWWindows();
 
 		Snippets::setupDefaultWindow("Nayeon Studio");
 		Snippets::setupDefaultRenderState();
+
 		glewInit();
 
 
 
 
+<<<<<<< HEAD
 		gBodyModel = Model("../../assets/objects/car/body.obj");
 		gWheelModel_fl = Model("../../assets/objects/car/wheel_fl.obj");
 		gWheelModel_fr = Model("../../assets/objects/car/wheel_fr.obj");
 		gWheelModel_bl = Model("../../assets/objects/car/wheel_bl.obj");
 		gWheelModel_br= Model("../../assets/objects/car/wheel_br.obj");
 		//gModel = Model("../../assets/objects/nanosuit/nanosuit.obj");
+=======
+
+		//----------Render Model----------
+		gModel = Model("../../assets/objects/nanosuit/nanosuit.obj");
+>>>>>>> bfa33d91eb6ff3eb8106cbf3b3e9895cf38ef059
 		//gModel2 = Model("../../assets/objects/backpack/backpack.obj");
 		gModel2 = Model("../../assets/objects/Models/house.fbx");
 		gModelShader = Shader("../../src/ModelLoading/model_loading.vs",
@@ -527,29 +609,23 @@ namespace
 
 
 
+<<<<<<< HEAD
+=======
+
+
+		//这个idle函数意为空闲函数，将在事件队列的最后（即完成鼠标键盘事件响应，准备下一个渲染帧，渲染当前帧）进行，具有最低的优先级
+>>>>>>> bfa33d91eb6ff3eb8106cbf3b3e9895cf38ef059
 		glutIdleFunc(idleCallback);
-		//注册好回调函数后
+
+		
+
 		glutDisplayFunc(renderCallback);
-		//glutDisplayFunc(Snippets::glut_display_func);
 
 
-		//=======================
-		// Setup Dear ImGui context
-		IMGUI_CHECKVERSION();
-		ImGui::CreateContext();
-		ImGuiIO& io = ImGui::GetIO(); (void)io;
-		//io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
 
-		// Setup Dear ImGui style
-		ImGui::StyleColorsDark();
-		//ImGui::StyleColorsClassic();
 
-		// Setup Platform/Renderer backends
-		// FIXME: Consider reworking this example to install our own GLUT funcs + forward calls ImGui_ImplGLUT_XXX ones, instead of using ImGui_ImplGLUT_InstallFuncs().
-		ImGui_ImplGLUT_Init();
-		ImGui_ImplGLUT_InstallFuncs();
-		ImGui_ImplOpenGL2_Init();
-		//============================
+		initImGUI();
+		
 		
 
 
@@ -561,21 +637,15 @@ namespace
 
 		//glutMouseFunc(mouseCallback);
 
-		glutMotionFunc(motionCallback);
-		glutPassiveMotionFunc(motionCallback);
+		//glutMotionFunc(motionCallback);
+
+		//glutPassiveMotionFunc(motionCallback);
 	
 		//motionCallback(0,0);
 
 		atexit(exitCallback);
 
 		initPhysics(true);
-
-		//------------------audio
-		//BackgroundSoundEngine->play2D("../../assets/audio/owu12-u5eaj.wav", GL_TRUE);
-		ISound* snd = BackgroundSoundEngine->play2D("../../assets/audio/owu12-u5eaj.wav", true, false, true);
-		if (snd)
-			snd->setVolume(0.4);
-		//SoundEngine2->play2D("../../assets/audio/bell.wav", GL_TRUE);
 
 		//记录游戏第一帧时间
 
@@ -585,13 +655,5 @@ namespace
 		firstCount = gTime;
 
 		glutMainLoop();
-
-
-
-		//===========================================
-		ImGui_ImplOpenGL2_Shutdown();
-		ImGui_ImplGLUT_Shutdown();
-		ImGui::DestroyContext();
-		//===========================================
 	}
 #endif

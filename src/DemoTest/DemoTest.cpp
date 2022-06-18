@@ -52,7 +52,11 @@
 #include "../GameDemo/TheCreator.h"
 #include "../Utils/Mathf.h"
 
+<<<<<<< HEAD
 #include"../DemoTest/CarGameObject.h"
+=======
+#include <GL/glut.h>
+>>>>>>> bfa33d91eb6ff3eb8106cbf3b3e9895cf38ef059
 #include<time.h>
 #include <ctype.h>
 #include<iostream>
@@ -64,10 +68,8 @@
 #include "../SnippetVehicleCommon/SnippetVehicleFilterShader.h"
 #include "../SnippetVehicleCommon/SnippetVehicleTireFriction.h"
 #include "../SnippetVehicleCommon/SnippetVehicleCreate.h"
-#include "irrKlang/irrKlang.h"  //audio
-#include <GL\glut.h>
+#include "irrKlang/irrKlang.h"
 
-//#include "model.h"
 
 
 using namespace irrklang;
@@ -127,11 +129,14 @@ const char* PigName = "pig";
 
 
 extern Snippets::Camera* sCamera;
+extern bool main_window;
+
 
 //输入
 InputSyetem inputSystem;
 CharacterActionMap characterMap;
 VehicleActionMap vehicleMap;
+EditActionMap editMap;
 
 //造物者
 TheCreator theCreator;
@@ -141,9 +146,12 @@ PxVec3 characterPos;
 PxVec3 vehiclePos;
 PxVec3* CameraFollowTarget;
 
+<<<<<<< HEAD
 //GameObject
 GameObject testObject;
 CarGameObject carObject;
+=======
+>>>>>>> bfa33d91eb6ff3eb8106cbf3b3e9895cf38ef059
 
 #pragma region 角色属性
 PxController* m_player;
@@ -180,7 +188,6 @@ void Jump()
 //左键
 void FireFirst()
 {
-	cout << "fireFirst" << endl;
 	PxRaycastBuffer hit;
 	PxVec3 firePoint = m_player->getActor()->getGlobalPose().p;
 	if (gScene->raycast(firePoint, sCamera->getDir(), 100, hit))
@@ -188,16 +195,13 @@ void FireFirst()
 		if (hit.block.actor->getType() == PxActorType::eRIGID_DYNAMIC)
 		{
 			float force = 100;
-			cout <<((GameObject*) testObject.g_rigidBody->userData)->Name<<endl;
 			((PxRigidDynamic*)hit.block.actor)->addForce(sCamera->getDir()*force,PxForceMode::eIMPULSE);
-			//cout << testObject.Name<<endl;
 		}
 	}
 }
 
 void Fire()
 {
-	cout << "fire "<< endl;
 }
 
 //冲刺
@@ -255,12 +259,14 @@ void SwitchMode()
 	isInGameMode = !isInGameMode;
 	if (isInGameMode)
 	{
-		cout << "game" << endl;
+		main_window = false;
+		inputSystem.SetCharacterMap(characterMap);
 		glutSetCursor(GLUT_CURSOR_NONE);
 	}
 	else
 	{
-		cout << "edit" << endl;
+		main_window = true;
+		inputSystem.SetEditMap(editMap);
 		glutSetCursor(GLUT_CURSOR_LEFT_ARROW);
 	} 
 };
@@ -455,7 +461,7 @@ public:
 	MusicEvent() {
 		this->isPlay = false;
 	}
-	ISoundEngine* PlayEngine;
+	ISoundEngine* PlayEngine = nullptr;
 	bool isPlay;
 	void create()
 	{
@@ -464,7 +470,16 @@ public:
 	}
 	void play(char path [])
 	{
-		PlayEngine->play2D(path, true);
+		extern bool soundEffect;
+		extern float volume1;
+		if (soundEffect == false)
+		{
+			volume1 = 0.0f;
+		}
+		//PlayEngine->play2D(path, true);
+		ISound* snd = PlayEngine->play2D(path, true, false, true);
+		if (snd)
+			snd->setVolume(volume1);
 		this->isPlay = true;
 	}
 	void stop()
@@ -686,19 +701,19 @@ void CreateCoordinateAxis(PxTransform origin, float xLength, float yLength, floa
 	gScene->addActor(*staticbody);
 
 	shape = gPhysics->createShape(PxBoxGeometry(xLength, 1, 1), *gMaterial);
-	tm = PxTransform(xLength, 0, 0);
+	tm = PxTransform(PxVec3(xLength, 0, 0)+origin.p);
 	staticbody = PxCreateStatic(*gPhysics, tm, *shape);
 	staticbody->attachShape(*shape);
 	gScene->addActor(*staticbody);
 
 	shape = gPhysics->createShape(PxBoxGeometry(1, yLength, 1), *gMaterial);
-	tm = PxTransform(0, yLength, 0);
+	tm = PxTransform(PxVec3( 0, yLength, 0)+origin.p);
 	staticbody = PxCreateStatic(*gPhysics, tm, *shape);
 	staticbody->attachShape(*shape);
 	gScene->addActor(*staticbody);
 
 	shape = gPhysics->createShape(PxBoxGeometry(1, 1, zLength), *gMaterial);
-	tm = PxTransform(0, 0, zLength);
+	tm = PxTransform(PxVec3( 0, 0, zLength)+origin.p);
 	staticbody = PxCreateStatic(*gPhysics, tm, *shape);
 	staticbody->attachShape(*shape);
 	gScene->addActor(*staticbody);
@@ -1077,8 +1092,18 @@ void MyCode()
 	CreateChain(PxTransform(PxVec3(0.0f, 20.0f, -10.0f)), 5, PxCapsuleGeometry(1.0f, 1.0f), 4.0f, createBreakableFixed);
 	CreateChain(PxTransform(PxVec3(0.0f, 25.0f, -20.0f)), 5, PxBoxGeometry(2.0f, 0.5f, 0.5f), 4.0f, createDampedD6);
 
+<<<<<<< HEAD
 	m_player = CreateCharacterController(PxExtendedVec3(20, 100, 20));
 	
+=======
+	m_player = CreateCharacterController(PxExtendedVec3(5,100,5));
+	PxRigidDynamic* playerActor = m_player->getActor();
+	PxShape* playerShape;
+	playerActor->getShapes(&playerShape, 1);
+	playerShape->setFlag(PxShapeFlag::eSIMULATION_SHAPE, false);
+	playerShape->setFlag(PxShapeFlag::eTRIGGER_SHAPE, true);
+	gScene->addActor(*playerActor);
+>>>>>>> bfa33d91eb6ff3eb8106cbf3b3e9895cf38ef059
 	//角色Input函数注册
 	characterMap.SetActionMap(m_player, sCamera, 5.0f);
 	characterMap.SpaceKeyEvent = Jump;
@@ -1103,6 +1128,7 @@ void MyCode()
 
 	//创建物体
 	//theCreator.CreateBanister(PxVec3(-50, 0.0f, -50), PxVec3(1, 1, 1), gMaterial, 3, 5, 1, 100000, 50000);
+<<<<<<< HEAD
 	theCreator.CreateBanisters(PxVec3(60, 0.0f, 20), PxVec3(1, 0, 1), gMaterial, 1, 20, 0.5f, 1.0f, 10, 10000, 1000);
 	theCreator.CreateBanisters(PxVec3(50, 0.0f, 20), PxVec3(1, 0, 2), gMaterial, 1, 20, 0.5f, 1.0f, 10, 10000, 1000);
 	theCreator.CreateBanisters(PxVec3(10, 0.0f, 20), PxVec3(0, 0, 1), gMaterial, 1, 20, 0.5f, 1.0f, 10, 10000, 1000);
@@ -1120,6 +1146,19 @@ void MyCode()
 	testObject.AddBoxCollider(4.35f,4.25f,4.6f, PxTransform(0, 4.29f, 0));
 	testObject.SetTransform(PxTransform(10,10,10));
 	testObject.AddToScene();
+=======
+	theCreator.CreateBanisters(PxVec3(60, 0.0f, 20), PxVec3(1,0,1),gMaterial,1, 20, 0.5f, 1.0f, 10, 10000, 1000);
+	theCreator.CreateBanisters(PxVec3(50, 0.0f, 20), PxVec3(1,0,2),gMaterial, 1, 20, 0.5f, 1.0f, 10, 10000, 1000);
+	theCreator.CreateBanisters(PxVec3(10, 0.0f, 20), PxVec3(0,0,1),gMaterial, 1, 20, 0.5f, 1.0f, 10, 10000, 1000);
+	theCreator.CreateBanisters(PxVec3(10, 0.0f, 300), PxVec3(1,0,0),gMaterial, 1, 20, 0.5f, 1.0f, 10, 10000, 1000);
+	theCreator.CreatePoles(PxVec3(5, 0, 20), PxVec3(0,0,1),10,10, gMaterial, 0.15f, 2.5f, 10, 10000, 100);
+	theCreator.CreatePoles(PxVec3(55, 0, 20), PxVec3(0,0,1),50,10, gMaterial, 0.15f, 2.5f, 10, 10000, 100);
+	theCreator.createSlowArea(PxVec3(30, 0, 70), PxF32(0.01), PxF32(0.2), 30, gMaterial);
+	//垃圾桶
+	theCreator.CreatePoles(PxVec3(50, 0.0f, 50), PxVec3(0, 0, 1), 20, 10, gMaterial, 0.3f, 0.7f, 10, 10000, 10000);
+	
+	theCreator.CreateGameObject();
+>>>>>>> bfa33d91eb6ff3eb8106cbf3b3e9895cf38ef059
 
 	carObject.Name = "car";
 	carObject.SetRigidbody(gVehicle4W->getRigidDynamicActor());
@@ -1344,7 +1383,14 @@ void stepPhysics(bool interactive)
 	characterPos = m_player->getPosition() - PxExtendedVec3(0, 0, 0);
 	vehiclePos = gVehicle4W->getRigidDynamicActor()->getGlobalPose().p;
 
-	sCamera->Update(*CameraFollowTarget);
+	if (isInGameMode)
+	{
+		sCamera->Update(*CameraFollowTarget);
+	}
+	else
+	{
+		sCamera->goFront(editMap.GetArrowKeyValue());
+	}
 
 
 	gScene->simulate(1.0f / 60.0f);
@@ -1381,7 +1427,6 @@ void cleanupPhysics(bool interactive)
 //}
 
 
-//audio
 
 
 #define RENDER_SNIPPET 1

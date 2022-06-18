@@ -28,14 +28,30 @@
 // Copyright (c) 2001-2004 NovodeX AG. All rights reserved.  
 #define _CRT_SECURE_NO_WARNINGS
 #include "Render.h"
+#include <iostream>
+
 
 using namespace physx;
 
 
-// ImGUI state
-static bool show_demo_window = true;
+//==================================================================ImGUI state
+bool main_window = false;  //之所以不设置为静态全局变量，是因为在DemoTestRender.cpp中会使用到这个变量
+static bool show_demo_window = false;
 static bool show_another_window = false;
-static ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+
+//ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+physx::PxVec3 clear_color = physx::PxVec3(0.45f, 0.55f, 0.60f);
+bool backgroundMusic = false;
+bool soundEffect = false;
+float volume0;
+float volume1;
+float gameObjectPosition[3] = { 0.10f, 0.20f, 0.30f };
+bool editState;
+
+
+//==================================================================ImGUI state
+
+
 
 
 static float gCylinderData[]={
@@ -58,45 +74,7 @@ static float gCylinderData[]={
 static PxVec3 gVertexBuffer[MAX_NUM_MESH_VEC3S];
 
 
-void my_display_code()
-{
-	// 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
-	if (show_demo_window)
-		ImGui::ShowDemoWindow(&show_demo_window);
 
-	// 2. Show a simple window that we create ourselves. We use a Begin/End pair to created a named window.
-	{
-		static float f = 0.0f;
-		static int counter = 0;
-
-		ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
-
-		ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
-		ImGui::Checkbox("Demo Window", &show_demo_window);      // Edit bools storing our window open/close state
-		ImGui::Checkbox("Another Window", &show_another_window);
-
-		ImGui::SliderFloat("float", &f, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
-		ImGui::ColorEdit3("clear color", (float*)&clear_color); // Edit 3 floats representing a color
-
-		if (ImGui::Button("Button"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
-			counter++;
-		ImGui::SameLine();
-		ImGui::Text("counter = %d", counter);
-
-		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-		ImGui::End();
-	}
-
-	// 3. Show another simple window.
-	if (show_another_window)
-	{
-		ImGui::Begin("Another Window", &show_another_window);   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
-		ImGui::Text("Hello from another window!");
-		if (ImGui::Button("Close Me"))
-			show_another_window = false;
-		ImGui::End();
-	}
-}
 
 void renderGeometry(const PxGeometryHolder& h)
 {
@@ -278,45 +256,60 @@ void renderGeometry(const PxGeometryHolder& h)
 	}
 }
 
+//Imgui渲染具体内容
+void my_display_code()
+{
+	if (main_window)
+	{
+
+		static int counter = 0;
+
+		ImGui::Begin("Console",&main_window);                          // Create a window called "Hello, world!" and append into it.
+
+		ImGui::Text("setting:");      
+		//ImGui::Checkbox("Demo Window", &show_demo_window);      // Edit bools storing our window open/close state
+		ImGui::Checkbox("Game Object Settings Window", &show_another_window);// Display some text (you can use a format strings too)
+		ImGui::Checkbox("backgroundMusic", &backgroundMusic);
+		ImGui::SliderFloat("backgroundMusicVolume", &volume0, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
+		ImGui::Checkbox("soundEffect", &soundEffect);
+		ImGui::SliderFloat("soundEffectVolume", &volume1, 0.0f, 1.0f);
+		ImGui::ColorEdit3("set color", (float*)&clear_color); // Edit 3 floats representing a color
+
+		if (ImGui::Button("Button"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
+			editState = true;
+		ImGui::SameLine();
+		ImGui::Text("counter = %d", counter);
+		ImGui::SameLine();
+		ImGui::Text("counter = %d", counter);
+		ImGui::Checkbox("Demo Window", &show_demo_window);
+		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+
+		
+
+
+		ImGui::End();
+	}
+	if (show_another_window)
+	{
+		ImGui::Begin("Game Object Settings Window", &show_another_window);   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
+		ImGui::Text("Here are some game object settings below:");
+
+		const char* items[] = { "AAAA", "BBBB", "CCCC", "DDDD", "EEEE", "FFFF", "GGGG", "HHHH", "IIIIIII", "JJJJ", "KKKKKKK" };
+		static int item_current = 0;
+		ImGui::Combo("combo", &item_current, items, IM_ARRAYSIZE(items));
+
+		
+		ImGui::InputFloat3("position(x, y, z)", gameObjectPosition);
+
+		if (ImGui::Button("Close the window"))
+			show_another_window = false;
+		ImGui::End();
+	}
+	if (show_demo_window)
+		ImGui::ShowDemoWindow(&show_demo_window);
+}
 namespace Snippets
 {
-//#pragma region GLFW
-//	GLFWwindow* window;
-//void framebuffer_size_callback(GLFWwindow* window, int width, int height)
-//{
-//	glViewport(0, 0, width, height);
-//}
-//
-//void processInput(GLFWwindow* window)
-//{
-//	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-//	{
-//		glfwSetWindowShouldClose(window, true);
-//	}
-//}
-//void GLFWRender()
-//{
-//	while (!glfwWindowShouldClose(window))
-//	{
-//		//输入事件
-//		processInput(window);
-//
-//		//渲染指令
-//		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-//		glClear(GL_COLOR_BUFFER_BIT);
-//
-//		setupDefaultRenderState();
-//
-//		//交换颜色缓冲
-//		glfwSwapBuffers(window);
-//		//检查触发事件
-//		glfwPollEvents();
-//
-//	}
-//	//释放分配的资源
-//	glfwTerminate();
-//}
-//#pragma endregion
 
 void glut_display_func()
 	{
@@ -340,13 +333,30 @@ void glut_display_func()
 		
 	}
 
+void changeSize(int w, int h) {
 
-	//当窗口尺寸改变时调用的回调函数，重新绘制视口 glut
-void reshapeCallback(int width, int height)
-{
-	//控制视口的位置与尺寸
-	glViewport(0, 0, width, height);
+	// Prevent a divide by zero, when window is too short
+	// (you cant make a window of zero width).
+	if (h == 0)
+		h = 1;
+	float ratio = 1.0 * w / h;
+
+	// Use the Projection Matrix
+	glMatrixMode(GL_PROJECTION);
+
+	// Reset Matrix
+	glLoadIdentity();
+
+	// Set the viewport to be the entire window
+	glViewport(0, 0, w, h);
+
+	// Set the correct perspective.
+	gluPerspective(45, ratio, 0.1, 1000);
+
+	// Get Back to the Modelview
+	glMatrixMode(GL_MODELVIEW);
 }
+
 
 void setupDefaultWindow(const char *name)
 {
@@ -369,14 +379,15 @@ void setupDefaultWindow(const char *name)
 
 	int mainHandle = glutCreateWindow(name);
 	glutSetWindow(mainHandle);
-	glutFullScreen();
+	//glutFullScreen();
 
 	//glutCreateWindow(name);
+	//glutFullScreen();
 
 
 
 	//渲染窗口尺寸和位置
-	glutReshapeFunc(reshapeCallback);
+	glutReshapeFunc(changeSize);
 	delete[] namestr;
 }
 
@@ -392,7 +403,7 @@ void setupDefaultRenderState()
 	// Setup lighting 光照设置
 	glEnable(GL_LIGHTING);
 	PxReal ambientColor[]	= { 0.0f, 0.1f, 0.2f, 0.0f };
-	PxReal diffuseColor[]	= { 1.0f, 1.0f, 1.0f, 0.0f };		
+	PxReal diffuseColor[]	= { 0.1f, 0.1f, 0.1f, 0.0f };
 	PxReal specularColor[]	= { 0.0f, 0.0f, 0.0f, 0.0f };		
 	PxReal position[]		= { 100.0f, 100.0f, 400.0f, 1.0f };		
 	glLightfv(GL_LIGHT0, GL_AMBIENT, ambientColor);

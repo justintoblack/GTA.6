@@ -22,6 +22,8 @@
 using namespace std;
 
 static unsigned int TextureFromFile(const char *path, const string &directory, bool gamma = false);
+static unsigned int TextureFrom_FBX_EmbeddedTexture(const aiTexture* aiTex, bool gama = false);
+static unsigned int GenerateTex(unsigned char* data, int width, int height, int nrComponents, bool gama = false);
 
 class Model 
 {
@@ -186,16 +188,16 @@ private:
         // normal: texture_normalN
 
         // 1. diffuse maps
-        vector<Texture> diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
+        vector<Texture> diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse", scene);
         textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
         // 2. specular maps
-        vector<Texture> specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
+        vector<Texture> specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular",scene);
         textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
         // 3. normal maps
-        std::vector<Texture> normalMaps = loadMaterialTextures(material, aiTextureType_HEIGHT, "texture_normal");
+        std::vector<Texture> normalMaps = loadMaterialTextures(material, aiTextureType_HEIGHT, "texture_normal",scene);
         textures.insert(textures.end(), normalMaps.begin(), normalMaps.end());
         // 4. height maps
-        std::vector<Texture> heightMaps = loadMaterialTextures(material, aiTextureType_AMBIENT, "texture_height");
+        std::vector<Texture> heightMaps = loadMaterialTextures(material, aiTextureType_AMBIENT, "texture_height",scene);
         textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
         
         // return a mesh object created from the extracted mesh data
@@ -204,7 +206,7 @@ private:
 
     // checks all material textures of a given type and loads the textures if they're not loaded yet.
     // the required info is returned as a Texture struct.
-    vector<Texture> loadMaterialTextures(aiMaterial *mat, aiTextureType type, string typeName)
+    vector<Texture> loadMaterialTextures(aiMaterial *mat, aiTextureType type, string typeName,const aiScene*scene)
     {
         vector<Texture> textures;
         for(unsigned int i = 0; i < mat->GetTextureCount(type); i++)
@@ -226,7 +228,22 @@ private:
             if(!skip)
             {   // if texture hasn't been loaded already, load it
                 Texture texture;
-                texture.id = TextureFromFile(str.C_Str(), this->directory);
+
+                //判断是否内嵌贴图
+                auto tex = scene->GetEmbeddedTexture(str.C_Str());
+
+                if (tex != nullptr)
+                {
+                    //有内嵌贴图
+                    cout << "有贴图" << endl;
+                    texture.id = TextureFrom_FBX_EmbeddedTexture(tex);
+                }
+                else
+                {
+                    //无内嵌贴图，外部图片路径加载
+                    cout << "无贴图" << endl;
+                    texture.id = TextureFromFile(str.C_Str(), this->directory);
+                }
                 texture.type = typeName;
                 texture.path = str.C_Str();
                 textures.push_back(texture);
@@ -280,6 +297,64 @@ unsigned int TextureFromFile(const char *path, const string &directory, bool gam
     else
     {
         std::cout << "Texture failed to load at path: " << path << std::endl;
+        stbi_image_free(data);
+    }
+
+    return textureID;
+}
+
+unsigned int TextureFrom_FBX_EmbeddedTexture(const aiTexture* aiTex, bool gama)
+{
+    int width, height, channels;
+
+    unsigned char* data = nullptr;
+
+    if (aiTex->mHeight == 0)
+    {
+        data = stbi_load_from_memory(reinterpret_cast<unsigned char*>(aiTex->pcData),
+            aiTex->mWidth, &width, &height, &channels, 0);
+    }
+    else
+    {
+        data = stbi_load_from_memory(reinterpret_cast<unsigned char*>(aiTex->pcData), 
+            aiTex->mWidth* aiTex->mHeight, &width, &height, &channels, 0);
+    }
+
+    return GenerateTex(data, width, height, channels);
+}
+
+unsigned int GenerateTex(unsigned char* data, int width, int height, int nrComponents, bool gama)
+{
+    unsigned int textureID;
+    glGenTextures(1, &textureID);
+
+    if (data)
+    {
+        GLenum format;
+        if (nrComponents == 1)
+            format = GL_RED;
+        else if (nrComponents == 3)
+            format = GL_RGB;
+        else if (nrComponents == 4)
+            format = GL_RGBA;
+
+        glBindTexture(GL_TEXTURE_2D, textureID);
+
+        //伽马矫正需要设置内部格式（第三个参数）为GL_SRGB或者GL_SRGB_ALPHA，这里未设置，可参考伽马矫正那一章节
+        //https://learnopengl-cn.github.io/05%20Advanced%20Lighting/02%20Gamma%20Correction/
+        glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
+        glGenerateMipmap(GL_TEXTURE_2D);
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+        stbi_image_free(data);
+    }
+    else
+    {
+        std::cout << "Texture failed to load at path: " << std::endl;
         stbi_image_free(data);
     }
 

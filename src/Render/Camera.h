@@ -44,7 +44,7 @@ public:
 	bool				handleKey(unsigned char key, int x, int y, float speed = 1.0f);
 	void				handleMotion(int x, int y);
 	void				handleAnalogMove(float x, float y);
-	void				goFront(float speed);
+	void				goFront(physx::PxVec2 arrow);
 	void				Update(physx::PxVec3 pos);
 	void				SetConfig(float dis,physx::PxVec3 offset);
 	physx::PxVec3		getEye()	const;
@@ -60,6 +60,7 @@ private:
 	float				mMinDistance=3;
 	float				mMaxDistance=6;
 	float				mDamp=3.0f;
+	float				_editMoveSpeed = 10;
 };
 
 
