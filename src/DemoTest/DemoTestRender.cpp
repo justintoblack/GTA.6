@@ -367,9 +367,6 @@ namespace
 			//(gameObject.localTransform);
 
 			//gameObject.transform.q *= gameObject.localTransform.q;
-
-
-			Mathf::Debug(gameObject.transform.q);
 		}
 		//需要跟踪物理模拟
 		else if (gameObject.g_rigidBody&&gameObject.g_rigidBody->getType()==
@@ -601,25 +598,13 @@ namespace
 		//----------Render Model----------
 		SetupSkybox();
 
-
-
-
-
 		//这个idle函数意为空闲函数，将在事件队列的最后（即完成鼠标键盘事件响应，准备下一个渲染帧，渲染当前帧）进行，具有最低的优先级
 		glutIdleFunc(idleCallback);
 
-		
-
 		glutDisplayFunc(renderCallback);
-
-
-
 
 		initImGUI();
 		
-		
-
-
 
 		//键盘事件回调函数
 		//glutKeyboardFunc(keyboardCallback);

@@ -14,7 +14,7 @@ class GameObject
 {
 private:
 public:
-	string Name;
+	char Name[32]="gameObject";
 	PxTransform transform;
 	PxTransform localTransform;
 	GameObject* parent=nullptr;

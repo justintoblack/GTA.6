@@ -140,13 +140,13 @@ void TheCreator::CreateBanisters(physx::PxVec3 pos, physx:: PxVec3 dir, PxMateri
 void TheCreator::CreatePole(PxVec3 pos, PxMaterial* gMaterial,float radius,
 	float halfHeight,float density,float force,float torque)
 {
-	//GameObject gameObject;
+	GameObject gameObject;
 	//gameObject.Name = "Pole";
-	//gameObject.AddRigidbody(true);
-	//gameObject.AddBoxCollider(radius, halfHeight, radius, PxTransform(0, 0, 0));
-	//gameObject.AddModel(poleModel);
-	//gameObject.SetTransform(PxTransform(pos));
-	//gameObject.AddToScene();
+	gameObject.AddRigidbody(true);
+	gameObject.AddBoxCollider(radius, halfHeight, radius, PxTransform(0, 0, 0));
+	gameObject.AddModel(poleModel);
+	gameObject.SetTransform(PxTransform(PxVec3(pos)+PxVec3(0,halfHeight,0)));
+	gameObject.AddToScene();
 
 
 	//PxRigidDynamic* link = PxCreateDynamic(*m_gPhysics,
@@ -154,13 +154,13 @@ void TheCreator::CreatePole(PxVec3 pos, PxMaterial* gMaterial,float radius,
 	//	PxBoxGeometry(radius, halfHeight, radius),
 	//	*gMaterial, density);
 
-	//PxFixedJoint* j = PxFixedJointCreate(*m_gPhysics, NULL, PxTransform(pos), gameObject.g_rigidBody,
-	//	PxTransform(PxVec3(0,0, 0)));
+	PxFixedJoint* j = PxFixedJointCreate(*m_gPhysics, NULL, PxTransform(pos), gameObject.g_rigidBody,
+		PxTransform(PxVec3(0,-halfHeight, 0)));
 
-	//j->setBreakForce(force, torque);
+	j->setBreakForce(force, torque);
 
 	////gScene->addActor(*link);
-	//SceneGameObject.push_back(gameObject);
+	SceneGameObject.push_back(gameObject);
 }
 
 void TheCreator::CreatePoles(PxVec3 pos, PxVec3 dir, float separate, PxU32 num, PxMaterial* gMaterial, float halfXZ, float halfHeight, float density, float force, float torque)
@@ -178,7 +178,7 @@ extern  float gameObjectPosition[3];
 void TheCreator::CreateGameObject()
 {
 	GameObject tempObject;
-	tempObject.Name = "station_00";
+	//tempObject.Name = "station_00";
 	tempObject.AddRigidbody(false);
 	tempObject.AddModel(stationModel);
 	tempObject.AddBoxCollider(4.35f, 4.25f, 4.6f, PxTransform(0, 4.29f, 0));
@@ -187,7 +187,7 @@ void TheCreator::CreateGameObject()
 
 	SceneGameObject.push_back(tempObject);
 
-	tempObject.Name = "station_01";
+	//tempObject.Name = "station_01";
 	tempObject.AddRigidbody(false);
 	tempObject.AddModel(stationModel_01);
 	tempObject.AddBoxCollider(5.38f, 2.87f, 2.95f, PxTransform(0, 2.87f, 0));
@@ -196,7 +196,7 @@ void TheCreator::CreateGameObject()
 
 	SceneGameObject.push_back(tempObject);
 
-	tempObject.Name = "station_02";
+	//tempObject.Name = "station_02";
 	tempObject.AddRigidbody(false);
 	tempObject.AddModel(stationModel_01);
 	tempObject.AddBoxCollider(5.38f, 2.87f, 2.95f, PxTransform(0, 2.87f, 0));
@@ -214,23 +214,6 @@ void TheCreator::CreateGameObject()
 
 	//SceneGameObject.push_back(tempObject);
 
-	tempObject.Name = "carWheelLeft";
-	tempObject.AddRigidbody(false);
-	tempObject.AddModel(_carWheelLeft);
-	//tempObject.AddBoxCollider(5.38f, 2.87f, 2.95f, PxTransform(0, 0, 0));
-	tempObject.SetTransform(PxTransform(5, 0, 5));
-	tempObject.AddToScene();
-
-	SceneGameObject.push_back(tempObject);
-
-	tempObject.Name = "carWheelRight";
-	tempObject.AddRigidbody(false);
-	tempObject.AddModel(_carWheelRight);
-	//tempObject.AddBoxCollider(5.38f, 2.87f, 2.95f, PxTransform(0, 0, 0));
-	tempObject.SetTransform(PxTransform(5, 1, 5));
-	tempObject.AddToScene();
-
-	SceneGameObject.push_back(tempObject);
 }
 
 

@@ -57,7 +57,12 @@ bool editState;
 //==================================================================ImGUI state
 
 
+//////////////////////////ImGUI-Content//////////////////////////////
+static GameObject* curGameObject=nullptr;
+static float positionArr[3] = { 0,0,0 };
+static char  _objName[32];
 
+//////////////////////////////ImGUI////////////////////////////////
 
 static float gCylinderData[]={
 	1.0f,0.0f,1.0f,1.0f,0.0f,1.0f,1.0f,0.0f,0.0f,1.0f,0.0f,0.0f,
@@ -293,20 +298,36 @@ void my_display_code()
 	if (show_another_window)
 	{
 		ImGui::Begin("Hierarchy", &show_another_window);   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
-		ImGui::Text("Here are some game object settings below:");
+		//ImGui::Text("Here are some game object settings below:");
 
+		//GameObject¡–±Ì
+		
 		for (int i = 0; i < theCreator.SceneGameObject.size(); i++)
 		{
-			const char* p = theCreator.SceneGameObject[i].Name.data();
-			ImGui::Button(p);
-		}
+			ImGui::PushID(i);
+			if (ImGui::Button(theCreator.SceneGameObject[i].Name))
+			{
+				//GameObject
+				curGameObject = &theCreator.SceneGameObject[i];
 
-		const char* items[] = { "AAAA", "BBBB", "CCCC", "DDDD", "EEEE", "FFFF", "GGGG", "HHHH", "IIIIIII", "JJJJ", "KKKKKKK" };
-		static int item_current = 0;
-		ImGui::Combo("combo", &item_current, items, IM_ARRAYSIZE(items));
+				//Name
+				const char* tempName = curGameObject->Name;
+				strcpy(_objName, tempName);
+
+				//Position
+				positionArr[0] = curGameObject->transform.p.x;
+				positionArr[1] = curGameObject->transform.p.y;
+				positionArr[2] = curGameObject->transform.p.z;
+
+			}
+			ImGui::PopID();
+		}
+		//const char* items[] = { "AAAA", "BBBB", "CCCC", "DDDD", "EEEE", "FFFF", "GGGG", "HHHH", "IIIIIII", "JJJJ", "KKKKKKK" };
+		//static int item_current = 0;
+		//ImGui::Combo("combo", &item_current, items, IM_ARRAYSIZE(items));
 
 		
-		ImGui::InputFloat3("position(x, y, z)", gameObjectPosition);
+		//ImGui::InputFloat3("position(x, y, z)", gameObjectPosition);
 
 		//if (ImGui::Button("Close the window"))
 		//	show_another_window = false;
@@ -315,6 +336,28 @@ void my_display_code()
 	if (inspector_window)
 	{
 		ImGui::Begin("Inspector", &inspector_window);
+
+		if (curGameObject != nullptr)
+		{
+			ImGui::Text("Name");
+			ImGui::InputTextWithHint(" ", "input GameObject name", _objName,
+				IM_ARRAYSIZE(_objName));
+			ImGui::Text("Position");
+			ImGui::PushItemWidth((ImGui::GetContentRegionAvail().x)/3-33);
+			ImGui::DragFloat("x", &positionArr[0], 0.01);
+			ImGui::SameLine();
+			ImGui::DragFloat("y", &positionArr[1], 0.01);
+			ImGui::SameLine();
+			ImGui::DragFloat("z", &positionArr[2], 0.01);
+
+			curGameObject->SetTransform(PxTransform(positionArr[0], positionArr[1], positionArr[2]));
+
+			char* str = _objName;
+			strcpy(curGameObject->Name, str);
+
+			ImGui::PopItemWidth();
+		}
+
 		ImGui::End();
 	}
 	if (show_demo_window)

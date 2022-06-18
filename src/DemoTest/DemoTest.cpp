@@ -1148,7 +1148,7 @@ void MyCode()
 
 
 	carBody = gVehicle4W->getRigidDynamicActor();
-	carObject.Name = "carBody";
+	//carObject.Name = "carBody";
 	carObject.AddRigidbody(carBody);
 	carObject.AddModel(gBodyModel);
 	carObject.AddToScene();
