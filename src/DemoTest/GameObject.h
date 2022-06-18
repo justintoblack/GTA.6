@@ -98,5 +98,12 @@ public:
 	{
 		gScene->addActor(*g_rigidBody);
 	}
+
+	void SetRigidbody(PxRigidActor* rigidBody)
+	{
+		rigidBody->userData = this;
+		g_rigidBody = rigidBody;
+		
+	}
 };
 #endif // !GameObject

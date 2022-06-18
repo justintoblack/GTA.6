@@ -52,6 +52,7 @@
     <ClCompile Include="Dependencies\imgui\imgui_widgets.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\src\DemoTest\CarGameObject.h" />
     <ClInclude Include="..\..\src\DemoTest\GameObject.h" />
     <ClInclude Include="..\..\src\GameDemo\TheCreator.h" />
     <ClInclude Include="..\..\src\InputSystem\ActionMap.h" />

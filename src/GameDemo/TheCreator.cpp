@@ -26,7 +26,7 @@ void TheCreator::createSlowArea(PxVec3 startPosition, PxF32 capsuleRadii, PxF32 
 		PxF32 zPosition = startPosition.z + i * interval;
 		PxTransform t(PxVec3(startPosition.x, capsuleRadii, zPosition), PxQuat(PxIdentity));
 		PxRigidStatic* rd = m_gPhysics->createRigidStatic(t);
-		PxCapsuleGeometry capsuleGeom(capsuleRadii, 3.0f);
+		PxCapsuleGeometry capsuleGeom(capsuleRadii, 3.0f); 
 		PxShape* shape = PxRigidActorExt::createExclusiveShape(*rd, capsuleGeom, *gMaterial);
 		makeObjectDrivable(shape);
 		m_gScene->addActor(*rd);

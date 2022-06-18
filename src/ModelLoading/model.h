@@ -31,6 +31,8 @@ public:
     // model data 
     vector<Texture> textures_loaded;	// stores all the textures loaded so far, optimization to make sure textures aren't loaded more than once.
     vector<Mesh>    meshes;
+    vector<aiString> meshNames;
+    int nMesh;
     string directory;
     bool gammaCorrection;
     Model(){}
@@ -45,6 +47,7 @@ public:
     {
         for(unsigned int i = 0; i < meshes.size(); i++)
             meshes[i].Draw(shader);
+        
     }
     
     void setPos(glm::vec3 newPos)
@@ -97,12 +100,17 @@ private:
     void processNode(aiNode *node, const aiScene *scene)
     {
         // process each mesh located at the current node
+        nMesh = node->mNumMeshes;
         for(unsigned int i = 0; i < node->mNumMeshes; i++)
         {
             // the node object only contains indices to index the actual objects in the scene. 
             // the scene contains all the data, node is just to keep stuff organized (like relations between nodes).
+
             aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
             meshes.push_back(processMesh(mesh, scene));
+            aiString name = mesh->mName;
+            meshNames.push_back(name);
+
         }
         // after we've processed all of the meshes (if any) we then recursively process each of the children nodes
         for(unsigned int i = 0; i < node->mNumChildren; i++)

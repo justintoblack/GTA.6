@@ -40,7 +40,7 @@
 #include "../Render/Render.h"
 #include "../Render/Camera.h"
 #include "../ModelLoading/model.h"
-
+#include"../DemoTest/CarGameObject.h"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -60,6 +60,7 @@ GLuint              gCubeTexture;
 Shader				gSkyboxShader;
 unsigned int		gSkyboxVAO, gSkyboxVBO;
 Model				gModel, gModel2;
+Model               gBodyModel, gWheelModel_fl, gWheelModel_fr, gWheelModel_bl, gWheelModel_br;
 Shader				gModelShader;
 
 //天空盒六个面的纹理图片
@@ -118,6 +119,8 @@ __int64 freq;
 static __int64 gTime, gLastTime;
 
 ///////////////////////DemoTest///////////////////////////////
+extern GameObject testObject;
+extern CarGameObject carObject;
 extern TheCreator theCreator;
 extern GameObject gameObject_00;
 
@@ -125,7 +128,7 @@ extern PxVec3 moveDir;
 glm::vec3 forwardDir(0,0,1);
 extern PxController* m_player;
 extern InputSyetem inputSystem;
-
+extern PxVehicleDrive4W* gVehicle4W;
 Snippets::Camera*	sCamera;
 
 
@@ -342,6 +345,8 @@ namespace
 		glUseProgram(0);
 	}
 
+
+
 	//渲染GameObject
 	void RenderGameObject(GameObject &gameObject)
 	{
@@ -369,6 +374,59 @@ namespace
 			glUseProgram(0);
 		}
 	}
+
+	//渲染车辆
+	void RenderCarObject(CarGameObject& gameObject)
+	{
+		//需要跟踪物理模拟
+		if (gameObject.g_rigidBody && gameObject.g_rigidBody->getType() ==
+			PxActorType::eRIGID_DYNAMIC)
+		{
+			gameObject.transform = gameObject.g_rigidBody->getGlobalPose();
+		}
+
+		PxShape* vehicleshapes[5];  //4个车轮，1个车体的shape
+		gVehicle4W->getRigidDynamicActor()->getShapes(vehicleshapes, 5);
+		PxTransform pose = vehicleshapes[0]->getLocalPose(); //获取左前轮
+
+
+		//渲染车体
+		gModelShader.use();
+		glm::mat4 modelMat = glm::mat4(1.0f);
+		modelMat = glm::translate(modelMat, Mathf::P3ToV3(gameObject.transform.p-PxVec3(0,0.5,0)));
+		modelMat *= glm::mat4_cast(Mathf::Toquat(gameObject.transform.q));
+
+		modelMat = glm::scale(modelMat, gameObject.g_body->getScale());
+		glm::mat4 viewMat = getViewMat();
+		glm::mat4 projectionMat = glm::perspective(45.0f, (float)glutGet(GLUT_WINDOW_WIDTH) / (float)glutGet(GLUT_WINDOW_HEIGHT), 0.1f, 1000.0f);
+		glUniformMatrix4fv(glGetUniformLocation(gModelShader.ID, "projection"), 1, GL_FALSE, glm::value_ptr(projectionMat));
+		glUniformMatrix4fv(glGetUniformLocation(gModelShader.ID, "view"), 1, GL_FALSE, glm::value_ptr(viewMat));
+		glUniformMatrix4fv(glGetUniformLocation(gModelShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(modelMat));
+		gameObject.g_body->Draw(gModelShader);
+
+		//渲染车轮
+		//应该对每个车轮应用不同转换矩阵，目前测试，只使用一个转换矩阵
+		modelMat = glm::mat4(1.0f);
+		modelMat = glm::translate(modelMat, Mathf::P3ToV3(gameObject.transform.p - PxVec3(0, 0.5, 0)));
+
+
+
+		modelMat *= glm::mat4_cast(Mathf::Toquat(gameObject.transform.q));
+		//增加风火轮特性 
+		modelMat *= glm::mat4_cast(Mathf::Toquat(pose.q));
+		modelMat = glm::scale(modelMat, gameObject.g_body->getScale());
+		viewMat = getViewMat();
+		projectionMat = glm::perspective(45.0f, (float)glutGet(GLUT_WINDOW_WIDTH) / (float)glutGet(GLUT_WINDOW_HEIGHT), 0.1f, 1000.0f);
+		glUniformMatrix4fv(glGetUniformLocation(gModelShader.ID, "projection"), 1, GL_FALSE, glm::value_ptr(projectionMat));
+		glUniformMatrix4fv(glGetUniformLocation(gModelShader.ID, "view"), 1, GL_FALSE, glm::value_ptr(viewMat));
+		glUniformMatrix4fv(glGetUniformLocation(gModelShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(modelMat));
+		gameObject.g_wheel_fl->Draw(gModelShader);
+		gameObject.g_wheel_fr->Draw(gModelShader);
+		gameObject.g_wheel_bl->Draw(gModelShader);
+		gameObject.g_wheel_br->Draw(gModelShader);
+		glUseProgram(0);
+	}
+
 
 	
 	bool engineState = false;
@@ -412,14 +470,11 @@ namespace
 		//渲染相机场景
 		Snippets::startRender(sCamera->getEye(), sCamera->getDir(),0.1f, 1000.0f);
 
-		
-
-
-
 		RenderSkybox();
 
 
 		/////////////////////角色渲染//////////////////////////
+		RenderCarObject(carObject);
 
 		for (int i = 0; i < theCreator.SceneGameObject.size(); i++)
 		{
@@ -440,6 +495,9 @@ namespace
 		//RenderModel(gModel2, glm::vec3(10.0, 1.0f, 10.0f),glm::vec3(0,0,1),
 		//	gModelShader);
 
+
+
+		
 
 		/////////////////////EndTest////////////////////////////
 
@@ -506,14 +564,18 @@ namespace
 
 
 		//----------Render Model----------
+		gBodyModel = Model("../../assets/objects/car/body.obj");
+		gWheelModel_fl = Model("../../assets/objects/car/wheel_fl.obj");
+		gWheelModel_fr = Model("../../assets/objects/car/wheel_fr.obj");
+		gWheelModel_bl = Model("../../assets/objects/car/wheel_bl.obj");
+		gWheelModel_br= Model("../../assets/objects/car/wheel_br.obj");
+
 		gModel = Model("../../assets/objects/nanosuit/nanosuit.obj");
-		//gModel2 = Model("../../assets/objects/backpack/backpack.obj");
-		gModel2 = Model("../../assets/objects/Models/SM_Bld_Station_01.fbx");
+		gModel2 = Model("../../assets/objects/Models/house.fbx");
 		gModelShader = Shader("../../src/ModelLoading/model_loading.vs",
 								"../../src/ModelLoading/model_loading.fs");
 		//----------Render Model----------
 		SetupSkybox();
-
 
 
 

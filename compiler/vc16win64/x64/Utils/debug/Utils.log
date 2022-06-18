@@ -1,3 +1,6 @@
+<<<<<<< HEAD
+﻿  Utils.vcxproj -> D:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\compiler\vc16win64\./../../lib/vc16win64\UtilsDEBUG.lib
+=======
 ﻿  Mathf.cpp
 D:\Homework\实训\PhysX-Tutorial-master\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\Utils\Mathf.cpp(1,1): warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
 D:\Homework\实训\PhysX-Tutorial-master\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\third_party\includes\glm\detail\type_quat.hpp(48,30): warning C4201: 使用了非标准扩展: 无名称的结构/联合
@@ -10,3 +13,4 @@ D:\Homework\实训\PhysX-Tutorial-master\PhysX-Tutorial-master\PhysX_3.4\SCUT202
   D:\Homework\实训\PhysX-Tutorial-master\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\third_party\includes\foundation\PxVec3.h(302) : 注意: 在此行上通过对比检查索引 "m" 范围
   D:\Homework\实训\PhysX-Tutorial-master\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\third_party\includes\foundation\PxVec3.h(303) : 注意: 此行上的源调用
   Utils.vcxproj -> D:\Homework\实训\PhysX-Tutorial-master\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\lib\vc16win64\UtilsDEBUG.lib
+>>>>>>> bfa33d91eb6ff3eb8106cbf3b3e9895cf38ef059
