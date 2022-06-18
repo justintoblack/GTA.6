@@ -1136,27 +1136,7 @@ void MyCode()
 	carObject.AddModel(gBodyModel, gWheelModel_fl, gWheelModel_fr, gWheelModel_bl, gWheelModel_br);
 
 
-	// set immutable properties.
-	PxU32 maxParticles = 1000;
-	bool perParticleRestOffset = false;
 
-	// create particle system in PhysX SDK
-	PxParticleSystem* ps = gPhysics->createParticleSystem(maxParticles, perParticleRestOffset);
-
-	// add particle system to scene, in case creation was successful
-	if (ps)
-		gScene->addActor(*ps);
-	PxU32 numNewAppParticles = 100;
-	const PxU32 newAppParticleIndices =1;
-	const PxVec3 newAppParticlePositions = PxVec3(30, 0, 30);
-	const PxVec3 newAppParticleVelocity= PxVec3(1, 1, 1);
-	PxParticleCreationData particleCreationData;
-	particleCreationData.numParticles = numNewAppParticles;
-	particleCreationData.indexBuffer = PxStrideIterator<const PxU32>(&newAppParticleIndices);
-	particleCreationData.positionBuffer = PxStrideIterator<const PxVec3>(&newAppParticlePositions);
-	particleCreationData.velocityBuffer = PxStrideIterator<const PxVec3>(&newAppParticleVelocity, 0);
-	// create particles in *PxParticleSystem* ps
-	bool success = ps->createParticles(particleCreationData);
 
 
 }
