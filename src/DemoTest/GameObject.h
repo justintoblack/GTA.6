@@ -20,7 +20,7 @@ public:
 
 	Model*  g_model;
 	PxRigidActor*  g_rigidBody;
-	
+
 	GameObject()
 	{
 		transform = PxTransform(0,0,0);

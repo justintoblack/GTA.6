@@ -125,7 +125,8 @@ const char* PigName = "pig";
 
 extern Snippets::Camera* sCamera;
 extern bool main_window;
-
+extern bool show_another_window;
+extern bool inspector_window;
 
 //输入
 InputSyetem inputSystem;
@@ -249,12 +250,16 @@ void SwitchMode()
 	if (isInGameMode)
 	{
 		main_window = false;
+		show_another_window = false;
+		inspector_window = false;
 		inputSystem.SetCharacterMap(characterMap);
 		glutSetCursor(GLUT_CURSOR_NONE);
 	}
 	else
 	{
 		main_window = true;
+		show_another_window = true;
+		inspector_window = true;
 		inputSystem.SetEditMap(editMap);
 		glutSetCursor(GLUT_CURSOR_LEFT_ARROW);
 	} 
@@ -1300,44 +1305,6 @@ void stepPhysics(bool interactive)
 	m_player->move(velocity*deltaTime,0.001f,0.01f,NULL);
 
 	////////////////////////////移动结束////////////////////////////////
-
-
-
-	/////////////////////////////射线////////////////////////////////
-
-	//PxVec3 origin = m_player->getActor()->getGlobalPose().p+PxVec3(0,0,3);
-	//PxVec3 unitDir = PxVec3(0, 0, 1);
-	//PxReal maxDistance = 10.0f;
-	//PxRaycastBuffer raycasthit;
-
-	//if (gScene->raycast(origin, unitDir, maxDistance, raycasthit))
-	//{
-	//	if (raycasthit.block.actor)
-	//	{
-	//		cout << raycasthit.block.actor->getType()<<endl;
-	//		if (raycasthit.block.actor->getType() == PxActorType::eRIGID_DYNAMIC)
-	//		{
-	//			cout << "dy" << endl;
-	//		}
-	//		else
-	//		{
-	//			cout << "noDy" << endl;
-	//		}
-	//		if (raycasthit.block.actor->getType() == PxActorType::eRIGID_STATIC)
-	//		{
-	//			cout << "static" << endl;
-	//		}
-	//		else
-	//		{
-	//			cout << "noStatic" << endl;
-	//		}
-	//		cout<< raycasthit.block.actor->getType()<<endl;
-	//	}
-	//}
-
-	////////////////////////////射线结束////////////////////////////////
-
-
 
 	//相机跟随
 	characterPos= m_player->getPosition() - PxExtendedVec3(0, 0, 0);

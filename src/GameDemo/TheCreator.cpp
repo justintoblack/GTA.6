@@ -42,6 +42,9 @@ void TheCreator::Init(PxPhysics* physics, PxScene* gScene)
 	stationModel = Model("../../assets/objects/Models/SM_Bld_Station_01.fbx");
 	stationModel_01 = Model("../../assets/objects/Models/SM_Bld_Station_03.fbx");
 	road = Model("../../assets/objects/Models/SM_Env_Road_Bare_01.fbx");
+	_carBody=Model("../../assets/objects/Models/body.obj");
+	_carWheelLeft=Model("../../assets/objects/Models/wheel_left.fbx");
+	_carWheelRight=Model("../../assets/objects/Models/wheel_right.fbx");
 }
 
 void TheCreator::CreateAnchorBall(PxTransform pos, PxMaterial* gMaterial,float radius)
@@ -175,7 +178,7 @@ extern  float gameObjectPosition[3];
 void TheCreator::CreateGameObject()
 {
 	GameObject tempObject;
-	tempObject.Name = "name";
+	tempObject.Name = "station_00";
 	tempObject.AddRigidbody(false);
 	tempObject.AddModel(stationModel);
 	tempObject.AddBoxCollider(4.35f, 4.25f, 4.6f, PxTransform(0, 4.29f, 0));
@@ -184,7 +187,7 @@ void TheCreator::CreateGameObject()
 
 	SceneGameObject.push_back(tempObject);
 
-	tempObject.Name = "name";
+	tempObject.Name = "station_01";
 	tempObject.AddRigidbody(false);
 	tempObject.AddModel(stationModel_01);
 	tempObject.AddBoxCollider(5.38f, 2.87f, 2.95f, PxTransform(0, 2.87f, 0));
@@ -193,7 +196,7 @@ void TheCreator::CreateGameObject()
 
 	SceneGameObject.push_back(tempObject);
 
-	tempObject.Name = "name";
+	tempObject.Name = "station_02";
 	tempObject.AddRigidbody(false);
 	tempObject.AddModel(stationModel_01);
 	tempObject.AddBoxCollider(5.38f, 2.87f, 2.95f, PxTransform(0, 2.87f, 0));
@@ -203,11 +206,31 @@ void TheCreator::CreateGameObject()
 	SceneGameObject.push_back(tempObject);
 
 	//tempObject.Name = "name";
-	//tempObject.AddModel(road);
-	//tempObject.SetTransform(PxTransform(20, 1, 20));
+	//tempObject.AddRigidbody(false);
+	//tempObject.AddModel(_carBody);
+	//tempObject.AddBoxCollider(5.38f, 2.87f, 2.95f, PxTransform(0, 0, 0));
+	//tempObject.SetTransform(PxTransform(0, 0, 0));
 	//tempObject.AddToScene();
 
 	//SceneGameObject.push_back(tempObject);
+
+	tempObject.Name = "carWheelLeft";
+	tempObject.AddRigidbody(false);
+	tempObject.AddModel(_carWheelLeft);
+	//tempObject.AddBoxCollider(5.38f, 2.87f, 2.95f, PxTransform(0, 0, 0));
+	tempObject.SetTransform(PxTransform(5, 0, 5));
+	tempObject.AddToScene();
+
+	SceneGameObject.push_back(tempObject);
+
+	tempObject.Name = "carWheelRight";
+	tempObject.AddRigidbody(false);
+	tempObject.AddModel(_carWheelRight);
+	//tempObject.AddBoxCollider(5.38f, 2.87f, 2.95f, PxTransform(0, 0, 0));
+	tempObject.SetTransform(PxTransform(5, 1, 5));
+	tempObject.AddToScene();
+
+	SceneGameObject.push_back(tempObject);
 }
 
 

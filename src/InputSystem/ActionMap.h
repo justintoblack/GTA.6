@@ -11,12 +11,12 @@ class ActionMap
 {
 private:
 	//bool _qKeyDown;
-	bool isEscKeyDown;
+	bool isMKeyDown=false;
 	int lastX; int lastY;
 	bool needToPass = false;
 public:
 	ActionMap();
-	void(*EscKeyEvent)();
+	void(*MKeyEvent)();
 	virtual void InputAction();
 };
 

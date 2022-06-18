@@ -33,6 +33,9 @@ public:
 	Model  stationModel;
 	Model  stationModel_01;
 	Model  road;
+	Model  _carBody;
+	Model  _carWheelLeft;
+	Model  _carWheelRight;
 
 	//≥ı ºªØ
 	void Init(PxPhysics* physics,PxScene* gScene);

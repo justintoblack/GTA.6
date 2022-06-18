@@ -220,32 +220,6 @@ namespace
 		//============================
 	}
 
-	//鼠标移动
-	//void OnMouseMove(int x,int y)
-	//{
-	//	//motionCallback(x, y);
-	//}
-
-	//鼠标事件监听
-	//void MouseEventCallBack()
-	//{
-	//	//获取当前鼠标位置
-	//	GetCursorPos(&p);
-	//	//未移动
-	//	if (lastX == p.x && lastY == p.y)
-	//	{
-
-	//	}
-	//	//移动
-	//	else
-	//	{
-	//		std::cout << "移动" << std::endl;
-	//		OnMouseMove(p.x,p.y);
-	//		lastX = p.x;
-	//		lastY = p.y;
-	//	}
-	//}
-
 	glm::mat4 getViewMat() {
 		PxVec3 cameraPos = sCamera->getEye();
 		PxVec3 cameraDir = sCamera->getDir();
@@ -378,20 +352,22 @@ namespace
 			gameObject.transform = gameObject.g_rigidBody->getGlobalPose();
 		}
 
-		gModelShader.use();
-		glm::mat4 modelMat = glm::mat4(1.0f);
-		modelMat = glm::translate(modelMat, Mathf::P3ToV3(gameObject.transform.p));
-		modelMat *= glm::mat4_cast(Mathf::Toquat(gameObject.transform.q));
-		modelMat = glm::scale(modelMat, gameObject.g_model->getScale());
-		glm::mat4 viewMat = getViewMat();
-		glm::mat4 projectionMat = glm::perspective(45.0f, (float)glutGet(GLUT_WINDOW_WIDTH) / (float)glutGet(GLUT_WINDOW_HEIGHT), 0.1f, 1000.0f);
-		glUniformMatrix4fv(glGetUniformLocation(gModelShader.ID, "projection"), 1, GL_FALSE, glm::value_ptr(projectionMat));
-		glUniformMatrix4fv(glGetUniformLocation(gModelShader.ID, "view"), 1, GL_FALSE, glm::value_ptr(viewMat));
-		glUniformMatrix4fv(glGetUniformLocation(gModelShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(modelMat));
-		gameObject.g_model->Draw(gModelShader);
+		if (gameObject.g_model != nullptr)
+		{
+			gModelShader.use();
+			glm::mat4 modelMat = glm::mat4(1.0f);
+			modelMat = glm::translate(modelMat, Mathf::P3ToV3(gameObject.transform.p));
+			modelMat *= glm::mat4_cast(Mathf::Toquat(gameObject.transform.q));
+			modelMat = glm::scale(modelMat, gameObject.g_model->getScale());
+			glm::mat4 viewMat = getViewMat();
+			glm::mat4 projectionMat = glm::perspective(45.0f, (float)glutGet(GLUT_WINDOW_WIDTH) / (float)glutGet(GLUT_WINDOW_HEIGHT), 0.1f, 1000.0f);
+			glUniformMatrix4fv(glGetUniformLocation(gModelShader.ID, "projection"), 1, GL_FALSE, glm::value_ptr(projectionMat));
+			glUniformMatrix4fv(glGetUniformLocation(gModelShader.ID, "view"), 1, GL_FALSE, glm::value_ptr(viewMat));
+			glUniformMatrix4fv(glGetUniformLocation(gModelShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(modelMat));
+			gameObject.g_model->Draw(gModelShader);
 
-		glUseProgram(0);
-
+			glUseProgram(0);
+		}
 	}
 
 	
