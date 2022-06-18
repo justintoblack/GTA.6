@@ -52,11 +52,8 @@
 #include "../GameDemo/TheCreator.h"
 #include "../Utils/Mathf.h"
 
-<<<<<<< HEAD
 #include"../DemoTest/CarGameObject.h"
-=======
 #include <GL/glut.h>
->>>>>>> bfa33d91eb6ff3eb8106cbf3b3e9895cf38ef059
 #include<time.h>
 #include <ctype.h>
 #include<iostream>
@@ -146,12 +143,9 @@ PxVec3 characterPos;
 PxVec3 vehiclePos;
 PxVec3* CameraFollowTarget;
 
-<<<<<<< HEAD
 //GameObject
 GameObject testObject;
 CarGameObject carObject;
-=======
->>>>>>> bfa33d91eb6ff3eb8106cbf3b3e9895cf38ef059
 
 #pragma region 角色属性
 PxController* m_player;
@@ -1092,10 +1086,6 @@ void MyCode()
 	CreateChain(PxTransform(PxVec3(0.0f, 20.0f, -10.0f)), 5, PxCapsuleGeometry(1.0f, 1.0f), 4.0f, createBreakableFixed);
 	CreateChain(PxTransform(PxVec3(0.0f, 25.0f, -20.0f)), 5, PxBoxGeometry(2.0f, 0.5f, 0.5f), 4.0f, createDampedD6);
 
-<<<<<<< HEAD
-	m_player = CreateCharacterController(PxExtendedVec3(20, 100, 20));
-	
-=======
 	m_player = CreateCharacterController(PxExtendedVec3(5,100,5));
 	PxRigidDynamic* playerActor = m_player->getActor();
 	PxShape* playerShape;
@@ -1103,7 +1093,6 @@ void MyCode()
 	playerShape->setFlag(PxShapeFlag::eSIMULATION_SHAPE, false);
 	playerShape->setFlag(PxShapeFlag::eTRIGGER_SHAPE, true);
 	gScene->addActor(*playerActor);
->>>>>>> bfa33d91eb6ff3eb8106cbf3b3e9895cf38ef059
 	//角色Input函数注册
 	characterMap.SetActionMap(m_player, sCamera, 5.0f);
 	characterMap.SpaceKeyEvent = Jump;
@@ -1128,25 +1117,6 @@ void MyCode()
 
 	//创建物体
 	//theCreator.CreateBanister(PxVec3(-50, 0.0f, -50), PxVec3(1, 1, 1), gMaterial, 3, 5, 1, 100000, 50000);
-<<<<<<< HEAD
-	theCreator.CreateBanisters(PxVec3(60, 0.0f, 20), PxVec3(1, 0, 1), gMaterial, 1, 20, 0.5f, 1.0f, 10, 10000, 1000);
-	theCreator.CreateBanisters(PxVec3(50, 0.0f, 20), PxVec3(1, 0, 2), gMaterial, 1, 20, 0.5f, 1.0f, 10, 10000, 1000);
-	theCreator.CreateBanisters(PxVec3(10, 0.0f, 20), PxVec3(0, 0, 1), gMaterial, 1, 20, 0.5f, 1.0f, 10, 10000, 1000);
-	theCreator.CreateBanisters(PxVec3(10, 0.0f, 300), PxVec3(1, 0, 0), gMaterial, 1, 20, 0.5f, 1.0f, 10, 10000, 1000);
-	theCreator.CreatePoles(PxVec3(5, 0, 20), PxVec3(0, 0, 1), 10, 10, gMaterial, 0.15f, 3.5f, 10, 10000, 10000);
-	theCreator.CreatePoles(PxVec3(55, 0, 20), PxVec3(0, 0, 1), 50, 10, gMaterial, 0.15f, 3.5f, 10, 10000, 10000);
-	theCreator.createSlowArea(PxVec3(30, 0, 70), PxF32(0.01), PxF32(0.2), 30, gMaterial);
-	//垃圾桶
-	theCreator.CreatePoles(PxVec3(50, 0.0f, 50), PxVec3(0, 0, 1), 20, 10, gMaterial, 0.3f, 0.7f, 10, 10000, 10000);
-
-	//GameObject
-	testObject.Name ="house";
-	testObject.AddRigidbody(true);
-	testObject.AddModel(gModel2);
-	testObject.AddBoxCollider(4.35f,4.25f,4.6f, PxTransform(0, 4.29f, 0));
-	testObject.SetTransform(PxTransform(10,10,10));
-	testObject.AddToScene();
-=======
 	theCreator.CreateBanisters(PxVec3(60, 0.0f, 20), PxVec3(1,0,1),gMaterial,1, 20, 0.5f, 1.0f, 10, 10000, 1000);
 	theCreator.CreateBanisters(PxVec3(50, 0.0f, 20), PxVec3(1,0,2),gMaterial, 1, 20, 0.5f, 1.0f, 10, 10000, 1000);
 	theCreator.CreateBanisters(PxVec3(10, 0.0f, 20), PxVec3(0,0,1),gMaterial, 1, 20, 0.5f, 1.0f, 10, 10000, 1000);
@@ -1158,7 +1128,6 @@ void MyCode()
 	theCreator.CreatePoles(PxVec3(50, 0.0f, 50), PxVec3(0, 0, 1), 20, 10, gMaterial, 0.3f, 0.7f, 10, 10000, 10000);
 	
 	theCreator.CreateGameObject();
->>>>>>> bfa33d91eb6ff3eb8106cbf3b3e9895cf38ef059
 
 	carObject.Name = "car";
 	carObject.SetRigidbody(gVehicle4W->getRigidDynamicActor());

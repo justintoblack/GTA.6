@@ -433,10 +433,11 @@ namespace
 		modelMat = glm::mat4(1.0f);
 		modelMat = glm::translate(modelMat, Mathf::P3ToV3(gameObject.transform.p - PxVec3(0, 0.5, 0)));
 
-		//增加风火轮特性 
-		modelMat *= glm::mat4_cast(Mathf::Toquat(pose.q));
+
 
 		modelMat *= glm::mat4_cast(Mathf::Toquat(gameObject.transform.q));
+		//增加风火轮特性 
+		modelMat *= glm::mat4_cast(Mathf::Toquat(pose.q));
 		modelMat = glm::scale(modelMat, gameObject.g_body->getScale());
 		viewMat = getViewMat();
 		projectionMat = glm::perspective(45.0f, (float)glutGet(GLUT_WINDOW_WIDTH) / (float)glutGet(GLUT_WINDOW_HEIGHT), 0.1f, 1000.0f);
@@ -497,8 +498,6 @@ namespace
 
 
 		/////////////////////角色渲染//////////////////////////
-
-		RenderGameObject(testObject);
 		RenderCarObject(carObject);
 
 		for (int i = 0; i < theCreator.SceneGameObject.size(); i++)
@@ -587,19 +586,15 @@ namespace
 
 
 
-<<<<<<< HEAD
+
+		//----------Render Model----------
 		gBodyModel = Model("../../assets/objects/car/body.obj");
 		gWheelModel_fl = Model("../../assets/objects/car/wheel_fl.obj");
 		gWheelModel_fr = Model("../../assets/objects/car/wheel_fr.obj");
 		gWheelModel_bl = Model("../../assets/objects/car/wheel_bl.obj");
 		gWheelModel_br= Model("../../assets/objects/car/wheel_br.obj");
-		//gModel = Model("../../assets/objects/nanosuit/nanosuit.obj");
-=======
 
-		//----------Render Model----------
 		gModel = Model("../../assets/objects/nanosuit/nanosuit.obj");
->>>>>>> bfa33d91eb6ff3eb8106cbf3b3e9895cf38ef059
-		//gModel2 = Model("../../assets/objects/backpack/backpack.obj");
 		gModel2 = Model("../../assets/objects/Models/house.fbx");
 		gModelShader = Shader("../../src/ModelLoading/model_loading.vs",
 								"../../src/ModelLoading/model_loading.fs");
@@ -609,12 +604,8 @@ namespace
 
 
 
-<<<<<<< HEAD
-=======
-
 
 		//这个idle函数意为空闲函数，将在事件队列的最后（即完成鼠标键盘事件响应，准备下一个渲染帧，渲染当前帧）进行，具有最低的优先级
->>>>>>> bfa33d91eb6ff3eb8106cbf3b3e9895cf38ef059
 		glutIdleFunc(idleCallback);
 
 		
