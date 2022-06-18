@@ -4,8 +4,10 @@
 #include "InputSystem.h"
 
 physx::PxVec3 up(0, 1, 0);
+POINT p;
 extern InputSyetem inputSystem;
 extern float deltaTime;
+extern bool isInGameMode;
 
 extern void SwitchMode();
 
@@ -16,7 +18,34 @@ ActionMap::ActionMap()
 
 void ActionMap::InputAction()
 {
-	if (GetAsyncKeyState(VK_ESCAPE))
+	//鼠标
+	GetCursorPos(&p);
+	int dx = lastX - p.x;
+	int dy = lastY - p.y;
+
+	if (needToPass)
+	{
+		needToPass = false;
+	}
+	else 
+	{
+		if (isInGameMode)
+		{
+			sCamera->handleMotion(dx, dy);
+		}
+	}
+	//到达窗口边界
+	if (p.x <= 0 || p.x >= GetSystemMetrics(SM_CXSCREEN)-1 || p.y <= 0 || p.y >= GetSystemMetrics(SM_CYSCREEN)-1)
+	{
+		SetCursorPos(GetSystemMetrics(SM_CXSCREEN)/2, GetSystemMetrics(SM_CYSCREEN)/2);
+		needToPass = true;
+	}
+
+	lastX = p.x;
+	lastY = p.y;
+
+	//键盘
+	if (GetAsyncKeyState('M'))
 	{
 		if (!isEscKeyDown)
 		{
@@ -27,6 +56,11 @@ void ActionMap::InputAction()
 	else
 	{
 		isEscKeyDown = false;
+	}
+
+	if (GetAsyncKeyState(VK_ESCAPE))
+	{
+		exit(0);
 	}
 }
 

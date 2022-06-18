@@ -17,12 +17,6 @@
     <ClCompile Include="Dependencies\imgui\imgui_draw.cpp">
       <Filter>imgui</Filter>
     </ClCompile>
-    <ClCompile Include="Dependencies\imgui\imgui_impl_glfw.cpp">
-      <Filter>imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="Dependencies\imgui\imgui_impl_opengl3.cpp">
-      <Filter>imgui</Filter>
-    </ClCompile>
     <ClCompile Include="Dependencies\imgui\imgui_tables.cpp">
       <Filter>imgui</Filter>
     </ClCompile>
@@ -54,15 +48,6 @@
       <Filter>imgui</Filter>
     </ClInclude>
     <ClInclude Include="Dependencies\imgui\imgui.h">
-      <Filter>imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="Dependencies\imgui\imgui_impl_glfw.h">
-      <Filter>imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="Dependencies\imgui\imgui_impl_opengl3.h">
-      <Filter>imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="Dependencies\imgui\imgui_impl_opengl3_loader.h">
       <Filter>imgui</Filter>
     </ClInclude>
     <ClInclude Include="Dependencies\imgui\imgui_internal.h">

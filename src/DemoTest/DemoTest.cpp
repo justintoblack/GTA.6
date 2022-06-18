@@ -124,6 +124,8 @@ const char* PigName = "pig";
 
 
 extern Snippets::Camera* sCamera;
+extern bool main_window;
+
 
 //输入
 InputSyetem inputSystem;
@@ -137,17 +139,6 @@ TheCreator theCreator;
 PxVec3 characterPos;
 PxVec3 vehiclePos;
 PxVec3* CameraFollowTarget;
-
-
-#pragma region Models
-//Model model_00;
-#pragma endregion
-
-#pragma region GameObject
-//GameObject gameObject_00;
-
-#pragma endregion
-
 
 
 #pragma region 角色属性
@@ -256,12 +247,12 @@ void SwitchMode()
 	isInGameMode = !isInGameMode;
 	if (isInGameMode)
 	{
-		cout << "game" << endl;
+		main_window = false;
 		glutSetCursor(GLUT_CURSOR_NONE);
 	}
 	else
 	{
-		cout << "edit" << endl;
+		main_window = true;
 		glutSetCursor(GLUT_CURSOR_LEFT_ARROW);
 	} 
 };
@@ -455,15 +446,9 @@ class MusicEvent
 public:
 	MusicEvent() {
 		this->isPlay = false;
-		this->volume = 0.5f;
-	}
-	MusicEvent(float volume) {
-		this->isPlay = false;
-		this->volume = volume;
 	}
 	ISoundEngine* PlayEngine = nullptr;
 	bool isPlay;
-	float volume;
 	void create()
 	{
 		ISoundEngine* PlayEngine = createIrrKlangDevice();
@@ -471,10 +456,16 @@ public:
 	}
 	void play(char path [])
 	{
+		extern bool soundEffect;
+		extern float volume1;
+		if (soundEffect == false)
+		{
+			volume1 = 0.0f;
+		}
 		//PlayEngine->play2D(path, true);
 		ISound* snd = PlayEngine->play2D(path, true, false, true);
 		if (snd)
-			snd->setVolume(volume);
+			snd->setVolume(volume1);
 		this->isPlay = true;
 	}
 	void stop()
@@ -483,8 +474,8 @@ public:
 		this->isPlay = false;
 	}
 };
-MusicEvent carEngine(1.0f);
-MusicEvent bell(1.0f);
+MusicEvent carEngine;
+MusicEvent bell;
 
 class ContactReportCallback : public PxSimulationEventCallback
 {
@@ -1082,12 +1073,12 @@ void MyCode()
 	//初始化造物者
 	theCreator.Init(gPhysics, gScene);
 
-	CreateCoordinateAxis(PxTransform(-100,0,-100),100,200,300);
+	CreateCoordinateAxis(PxTransform(0,0,0),100,200,300);
 	createTriggerBox();
 	CreateChain(PxTransform(PxVec3(0.0f, 20.0f, -10.0f)), 5, PxCapsuleGeometry(1.0f,1.0f), 4.0f, createBreakableFixed);
 	CreateChain(PxTransform(PxVec3(0.0f, 25.0f, -20.0f)), 5, PxBoxGeometry(2.0f, 0.5f, 0.5f), 4.0f, createDampedD6);
 
-	m_player = CreateCharacterController(PxExtendedVec3(20,100,20));
+	m_player = CreateCharacterController(PxExtendedVec3(5,100,5));
 	PxRigidDynamic* playerActor = m_player->getActor();
 	PxShape* playerShape;
 	playerActor->getShapes(&playerShape, 1);
@@ -1128,16 +1119,17 @@ void MyCode()
 	//垃圾桶
 	theCreator.CreatePoles(PxVec3(50, 0.0f, 50), PxVec3(0, 0, 1), 20, 10, gMaterial, 0.3f, 0.7f, 10, 10000, 10000);
 	
-
-
 	theCreator.CreateGameObject();
-	//model_00=Model("../../assets/objects/Models/SM_Bld_Station_01.fbx");
-	//gameObject_00.Name = "SM_Bld_Station_01";
-	//gameObject_00.AddRigidbody(false);
-	//gameObject_00.AddModel(model_00);
-	//gameObject_00.AddBoxCollider(4.35f, 4.25f, 4.6f, PxTransform(0, 4.29f, 0));
-	//gameObject_00.SetTransform(PxTransform(20, 10, 20));
-	//gameObject_00.AddToScene();
+
+	///////////////////////////////Test////////////////////////////////
+	PxTransform test(PxVec3(1,0,0),PxQuat(Mathf::DegToRad(90),PxVec3(1,0,0)));
+	PxTransform test2(PxVec3(0,0,1),PxQuat(Mathf::DegToRad(90),PxVec3(0,-1,0)));
+	PxTransform result;
+	result = test2.transformInv(test);
+	Mathf::Debug(result.p);
+	Mathf::Debug(result.q);
+	theCreator.CreateAnchorBall(result, gMaterial, 1);
+
 }
 
 
@@ -1357,7 +1349,10 @@ void stepPhysics(bool interactive)
 	characterPos= m_player->getPosition() - PxExtendedVec3(0, 0, 0);
 	vehiclePos = gVehicle4W->getRigidDynamicActor()->getGlobalPose().p;
 
-	sCamera->Update(*CameraFollowTarget);
+	if (isInGameMode)
+	{
+		sCamera->Update(*CameraFollowTarget);
+	}
 
 
 	gScene->simulate(1.0f/60.0f);

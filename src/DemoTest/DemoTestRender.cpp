@@ -129,52 +129,53 @@ extern InputSyetem inputSystem;
 Snippets::Camera*	sCamera;
 
 
-/////////////////////////audio//////////////////////////////////
+/////////////////////////Imgui//////////////////////////////////
 
 extern bool backgroundMusic;
-extern float volume;
+extern float volume0;
 
 
-// /////////////////////////audio//////////////////////////////////
+
+// /////////////////////////Imgui//////////////////////////////////
  
 
 
 
 //鼠标
-POINT p;
-int lastX; int lastY;
+//POINT p;
+//int lastX; int lastY;
 
-bool needToPass=false;
+//bool needToPass=false;
 
 namespace 
 {
 	
-	void motionCallback(int x, int y)
-	{
+	//void motionCallback(int x, int y)
+	//{
 
-		int dx=lastX - x;
-		int dy= lastY - y;
+	//	int dx=lastX - x;
+	//	int dy= lastY - y;
 
-		if (needToPass)
-		{
-			needToPass = false;
-		}
-		else
-		{
-			sCamera->handleMotion(dx, dy);
-		}
+	//	if (needToPass)
+	//	{
+	//		needToPass = false;
+	//	}
+	//	else
+	//	{
+	//		sCamera->handleMotion(dx, dy);
+	//	}
 
-		lastX = x;
-		lastY = y;
-		//std::cout << x << " " << GetSystemMetrics(SM_CXSCREEN) << std::endl;
+	//	lastX = x;
+	//	lastY = y;
+	//	//std::cout << x << " " << GetSystemMetrics(SM_CXSCREEN) << std::endl;
 
-		//到达窗口边界
-		if (x <= 0 || x >= GetSystemMetrics(SM_CXSCREEN)-1 || y <= 0 || y >= GetSystemMetrics(SM_CYSCREEN)-1)
-		{
-			SetCursorPos(GetSystemMetrics(SM_CXSCREEN)/2, GetSystemMetrics(SM_CYSCREEN)/2);
-			needToPass = true;
-		}
-	}
+	//	//到达窗口边界
+	//	if (x <= 0 || x >= GetSystemMetrics(SM_CXSCREEN)-1 || y <= 0 || y >= GetSystemMetrics(SM_CYSCREEN)-1)
+	//	{
+	//		SetCursorPos(GetSystemMetrics(SM_CXSCREEN)/2, GetSystemMetrics(SM_CYSCREEN)/2);
+	//		needToPass = true;
+	//	}
+	//}
 
 	void keyboardCallback(unsigned char key, int x, int y)
 	{
@@ -220,30 +221,30 @@ namespace
 	}
 
 	//鼠标移动
-	void OnMouseMove(int x,int y)
-	{
-		motionCallback(x, y);
-	}
+	//void OnMouseMove(int x,int y)
+	//{
+	//	//motionCallback(x, y);
+	//}
 
 	//鼠标事件监听
-	void MouseEventCallBack()
-	{
-		//获取当前鼠标位置
-		GetCursorPos(&p);
-		//未移动
-		if (lastX == p.x && lastY == p.y)
-		{
+	//void MouseEventCallBack()
+	//{
+	//	//获取当前鼠标位置
+	//	GetCursorPos(&p);
+	//	//未移动
+	//	if (lastX == p.x && lastY == p.y)
+	//	{
 
-		}
-		//移动
-		else
-		{
-			std::cout << "移动" << std::endl;
-			OnMouseMove(p.x,p.y);
-			lastX = p.x;
-			lastY = p.y;
-		}
-	}
+	//	}
+	//	//移动
+	//	else
+	//	{
+	//		std::cout << "移动" << std::endl;
+	//		OnMouseMove(p.x,p.y);
+	//		lastX = p.x;
+	//		lastY = p.y;
+	//	}
+	//}
 
 	glm::mat4 getViewMat() {
 		PxVec3 cameraPos = sCamera->getEye();
@@ -390,6 +391,7 @@ namespace
 		gameObject.g_model->Draw(gModelShader);
 
 		glUseProgram(0);
+
 	}
 
 	
@@ -408,12 +410,12 @@ namespace
 			char path[] = "../../assets/audio/owu12-u5eaj.wav";
 			snd = backgroundMusicEngine->play2D(path, true, false, true);
 			if (snd)
-				snd->setVolume(volume);
+				snd->setVolume(volume0);
 			engineState = true;
 			}
 			else
 			{
-				snd->setVolume(volume);
+				snd->setVolume(volume0);
 			}
 		}
 		else
@@ -448,6 +450,7 @@ namespace
 			RenderGameObject(theCreator.SceneGameObject[i]);
 		}
 
+		
 		float rotateSpeed = 5;
 		//表示正在移动
 		PxExtendedVec3 haha= m_player->getFootPosition();
@@ -511,9 +514,9 @@ namespace
 		sCamera->SetConfig(4,PxVec3(0,0,0));
 
 		//初始化鼠标位置;
-		GetCursorPos(&p);
-		lastX = p.x;
-		lastY = p.y;
+		//GetCursorPos(&p);
+		//lastX = p.x;
+		//lastY = p.y;
 
 		//Snippets::setupDefaultGLFWWindows();
 
@@ -559,12 +562,13 @@ namespace
 		//键盘事件回调函数
 		//glutKeyboardFunc(keyboardCallback);
 
-		//glutSetCursor(GLUT_CURSOR_NONE);
+		glutSetCursor(GLUT_CURSOR_NONE);
 
 		//glutMouseFunc(mouseCallback);
 
-		glutMotionFunc(motionCallback);
-		glutPassiveMotionFunc(motionCallback);
+		//glutMotionFunc(motionCallback);
+
+		//glutPassiveMotionFunc(motionCallback);
 	
 		//motionCallback(0,0);
 
