@@ -416,10 +416,9 @@ namespace
 		//渲染车体
 		gModelShader.use();
 		glm::mat4 modelMat = glm::mat4(1.0f);
-		modelMat = glm::translate(modelMat, Mathf::P3ToV3(gameObject.transform.p-PxVec3(0,0.5,0.1)));
+		modelMat = glm::translate(modelMat, Mathf::P3ToV3(gameObject.transform.p));
 		modelMat *= glm::mat4_cast(Mathf::Toquat(gameObject.transform.q));
 		modelMat = glm::scale(modelMat, gameObject.g_body->getScale());
-	
 		glm::mat4 viewMat = getViewMat();
 		glm::mat4 projectionMat = glm::perspective(45.0f, (float)glutGet(GLUT_WINDOW_WIDTH) / (float)glutGet(GLUT_WINDOW_HEIGHT), 0.1f, 1000.0f);
 		glUniformMatrix4fv(glGetUniformLocation(gModelShader.ID, "projection"), 1, GL_FALSE, glm::value_ptr(projectionMat));
@@ -428,13 +427,13 @@ namespace
 		gameObject.g_body->Draw(gModelShader);
 		//渲染车轮
 		Model* wheels[4] = { gameObject.g_wheel_fl,gameObject.g_wheel_fr,gameObject.g_wheel_bl,gameObject.g_wheel_br};
-		PxVec3 offset[4] = { PxVec3(0.88467, -0.23312, 1.6328) , PxVec3(-0.88467, -0.23312, 1.6328) ,PxVec3(0.88467, -0.23312, -1.2502),PxVec3(-0.88467, -0.23312, -1.2502)};
+		PxVec3 offset[4] = { PxVec3(0.88467, -0.7733, 1.6328) , PxVec3(-0.88467, -0.7733, 1.6328) ,PxVec3(0.88467, -0.7733, -1.2502),PxVec3(-0.88467, -0.7733, -1.2502)};
 
 		//应该对每个车轮应用不同转换矩阵
 		for (size_t i = 0; i < 4; i++)
 		{
 			modelMat = glm::mat4(1.0f);
-			modelMat = glm::translate(modelMat, Mathf::P3ToV3(gameObject.transform.p - PxVec3(0, 0.5, 0)));
+			modelMat = glm::translate(modelMat, Mathf::P3ToV3(gameObject.transform.p));
 			modelMat *= glm::mat4_cast(Mathf::Toquat(gameObject.transform.q));
 			modelMat = glm::translate(modelMat, Mathf::P3ToV3(offset[i]));
 			modelMat *= glm::mat4_cast(Mathf::Toquat(vehicleshapes[i]->getLocalPose().q));
@@ -593,8 +592,8 @@ namespace
 		gWheelModel_bl = Model("../../assets/objects/car/wheel_bl.obj");
 		gWheelModel_br= Model("../../assets/objects/car/wheel_br.obj");
 
-		gModel = Model("../../assets/objects/nanosuit/nanosuit.obj");
-		gModel2 = Model("../../assets/objects/Models/house.fbx");
+		//gModel = Model("../../assets/objects/nanosuit/nanosuit.obj");
+		//gModel2 = Model("../../assets/objects/Models/house.fbx");
 		gModelShader = Shader("../../src/ModelLoading/model_loading.vs",
 								"../../src/ModelLoading/model_loading.fs");
 		//----------Render Model----------
