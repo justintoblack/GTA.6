@@ -1078,7 +1078,6 @@ void stopBell()
 };
 
 
-extern Model gModel2;
 extern Model gBodyModel, gWheelModel_fl, gWheelModel_fr, gWheelModel_bl, gWheelModel_br;
 //自定义
 void MyCode()

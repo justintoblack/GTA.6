@@ -59,7 +59,7 @@ using namespace physx;
 GLuint              gCubeTexture;
 Shader				gSkyboxShader;
 unsigned int		gSkyboxVAO, gSkyboxVBO;
-Model				gModel, gModel2;
+Model				gModel;
 Model               gBodyModel, gWheelModel_fl, gWheelModel_fr, gWheelModel_bl, gWheelModel_br;
 Shader				gModelShader;
 
@@ -350,8 +350,13 @@ namespace
 	//渲染GameObject
 	void RenderGameObject(GameObject &gameObject)
 	{
+		//是否有父物体
+		if (gameObject.parent != nullptr)
+		{
+
+		}
 		//需要跟踪物理模拟
-		if (gameObject.g_rigidBody&&gameObject.g_rigidBody->getType()==
+		else if (gameObject.g_rigidBody&&gameObject.g_rigidBody->getType()==
 			PxActorType::eRIGID_DYNAMIC)
 		{
 			gameObject.transform = gameObject.g_rigidBody->getGlobalPose();
@@ -571,7 +576,6 @@ namespace
 		gWheelModel_br= Model("../../assets/objects/car/wheel_br.obj");
 
 		gModel = Model("../../assets/objects/nanosuit/nanosuit.obj");
-		gModel2 = Model("../../assets/objects/Models/house.fbx");
 		gModelShader = Shader("../../src/ModelLoading/model_loading.vs",
 								"../../src/ModelLoading/model_loading.fs");
 		//----------Render Model----------

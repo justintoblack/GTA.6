@@ -15,7 +15,9 @@ class GameObject
 private:
 public:
 	string Name;
+	PxTransform worldTransform;
 	PxTransform transform;
+	GameObject* parent;
 	//PxVec3 scale;
 
 	Model*  g_model;
@@ -32,7 +34,10 @@ public:
 	void SetTransform(PxTransform trans)
 	{
 		transform = trans;
-		g_rigidBody->setGlobalPose(trans);
+		if (g_rigidBody != nullptr)
+		{
+			g_rigidBody->setGlobalPose(trans);
+		}
 	}
 
 	void SetTransform(float gameObjectPosition[3])
