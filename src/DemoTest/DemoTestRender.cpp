@@ -499,10 +499,10 @@ namespace
 		/////////////////////╫ги╚Джх╬//////////////////////////
 		RenderCarObject(carObject);
 
-		//for (int i = 0; i < theCreator.SceneGameObject.size(); i++)
-		//{
-		//	RenderGameObject(theCreator.SceneGameObject[i]);
-		//}
+		for (int i = 0; i < theCreator.SceneGameObject.size(); i++)
+		{
+			RenderGameObject(theCreator.SceneGameObject[i]);
+		}
 
 		
 		float rotateSpeed = 5;
@@ -593,8 +593,8 @@ namespace
 		gWheelModel_bl = Model("../../assets/objects/car/wheel_bl.obj");
 		gWheelModel_br= Model("../../assets/objects/car/wheel_br.obj");
 
-		//gModel = Model("../../assets/objects/nanosuit/nanosuit.obj");
-		//gModel2 = Model("../../assets/objects/Models/house.fbx");
+		gModel = Model("../../assets/objects/nanosuit/nanosuit.obj");
+		gModel2 = Model("../../assets/objects/Models/house.fbx");
 		gModelShader = Shader("../../src/ModelLoading/model_loading.vs",
 								"../../src/ModelLoading/model_loading.fs");
 		//----------Render Model----------
