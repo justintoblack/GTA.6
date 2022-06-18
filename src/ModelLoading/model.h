@@ -30,6 +30,7 @@ public:
     vector<Texture> textures_loaded;	// stores all the textures loaded so far, optimization to make sure textures aren't loaded more than once.
     vector<Mesh>    meshes;
     vector<aiString> meshNames;
+    int nMesh;
     string directory;
     bool gammaCorrection;
     Model(){}
@@ -44,6 +45,7 @@ public:
     {
         for(unsigned int i = 0; i < meshes.size(); i++)
             meshes[i].Draw(shader);
+        
     }
     
     void setPos(glm::vec3 newPos)
@@ -51,11 +53,26 @@ public:
         this->pos = newPos;
     }
 
+    //void setQuat(glm::quat q)
+    //{
+    //    this->q = q;
+    //}
+    void setScale(glm::vec3 s)
+    {
+        this->scale = s;
+    }
     glm::vec3 getPos()
     {
         return this->pos;
     }
-
+    //glm::quat getQuat()
+    //{
+    //    return this->q;
+    //}
+    glm::vec3 getScale()
+    {
+        return this->scale;
+    }
 private:
     // loads a model with supported ASSIMP extensions from file and stores the resulting meshes in the meshes vector.
     void loadModel(string const &path)
@@ -81,6 +98,7 @@ private:
     void processNode(aiNode *node, const aiScene *scene)
     {
         // process each mesh located at the current node
+        nMesh = node->mNumMeshes;
         for(unsigned int i = 0; i < node->mNumMeshes; i++)
         {
             // the node object only contains indices to index the actual objects in the scene. 
@@ -220,6 +238,8 @@ private:
 
     //used in model matrix
     glm::vec3 pos = glm::vec3(0.0f, 0.0f, 0.0f);
+    //glm::quat q=glm::quat(0,0,0,0);
+    glm::vec3 scale = glm::vec3(1, 1, 1);
 };
 
 

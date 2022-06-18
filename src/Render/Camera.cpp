@@ -34,9 +34,12 @@
 #include<iostream>
 #include "foundation/PxMat33.h"
 #include <PxPhysicsAPI.h>
+#include "../Utils/Mathf.h"
 
 using namespace physx;
 using namespace std;
+
+extern float deltaTime;
 
 namespace Snippets
 {
@@ -49,9 +52,27 @@ Camera::Camera(const PxVec3& eye, const PxVec3& dir)/*定义眼睛位置、视线方向*/
 	mMouseY = 0;
 }
 
+//target表示跟随的对象
 void Camera::Update(physx::PxVec3 targetPos)
 {
-	mEye = targetPos+m_offset -mDir*mDistanceToTarget;
+	float temp = (mEye - (targetPos + m_offset)).magnitude();
+
+	if (temp > mMaxDistance)
+	{
+		temp = mMaxDistance-0.01f;
+		mEye = targetPos + m_offset - mDir * temp;
+		return;
+	}
+	else if(temp <mMinDistance)
+	{
+		temp = mMinDistance+0.01f;
+		mEye = targetPos + m_offset - mDir * temp;
+		return;
+	}
+
+	float curDistance = Mathf::Lerp(temp, mDistanceToTarget, deltaTime * mDamp);
+	
+	mEye = targetPos + m_offset - mDir * curDistance;
 }
 
 void Camera::SetConfig(float dis,physx::PxVec3 offset)

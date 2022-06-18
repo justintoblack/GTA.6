@@ -30,6 +30,9 @@ w = cos(RotationAngle / 2)*/
 	public:
 		static float DegToRad(float deg);
 		static float RadToDeg(float rad);
+		static glm::vec3 P3ToV3(PxVec3 a);
+		static PxVec3 V3ToP3(glm::vec3 a);
+		static glm::quat Toquat(PxQuat q);
 
 		//·ÏÆú
 		static PxVec3 QuatToEuler(PxQuat q)=delete;
@@ -41,7 +44,6 @@ w = cos(RotationAngle / 2)*/
 		static void Debug(PxQuat q);
 
 		static float Angle(PxVec3 from, PxVec3 to);
-		static float Distance(PxVec3 vec);
 
 		static float Lerp(float a, float b, float t);
 		static PxVec3 Lerp(PxVec3 a, PxVec3 b, float t);

@@ -41,13 +41,14 @@
 #include "../Render/Camera.h"
 #include<iostream>
 #include "../ModelLoading/model.h"
-
+#include"../DemoTest/CarGameObject.h"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include "../InputSystem/InputSystem.h"
 #include "../Utils/Mathf.h"
 #include "../Utils/Mathf.cpp"
+#include "../DemoTest/GameObject.h"
 
 #include "irrKlang/irrKlang.h"  //audio
 
@@ -62,7 +63,8 @@ ISoundEngine* BackgroundSoundEngine = createIrrKlangDevice();
 GLuint              gCubeTexture;
 Shader				gSkyboxShader;
 unsigned int		gSkyboxVAO, gSkyboxVBO;
-Model				gModel, gModel2,gCarModel;
+Model				gModel, gModel2;
+Model               gBodyModel, gWheelModel_fl, gWheelModel_fr, gWheelModel_bl, gWheelModel_br;
 Shader				gModelShader;
 
 //天空盒六个面的纹理图片
@@ -122,6 +124,8 @@ __int64 freq;
 static __int64 gTime, gLastTime;
 
 ///////////////////////DemoTest///////////////////////////////
+extern GameObject testObject;
+extern CarGameObject carObject;
 extern PxVec3 moveDir;
 glm::vec3 forwardDir(0,0,1);
 extern PxController* m_player;
@@ -137,7 +141,7 @@ bool needToPass=false;
 
 namespace
 {
-
+	
 	void motionCallback(int x, int y)
 	{
 
@@ -317,7 +321,7 @@ namespace
 		//modelMat = glm::rotate(modelMat, 1.0f, glm::vec3(0, -1, 0));
 		modelMat *= glm::mat4_cast(glm::quatLookAt(dir, glm::vec3(0, 1, 0)));
 
-		modelMat = glm::scale(modelMat, glm::vec3(0.1f, 0.1f, 0.1f));
+		modelMat = glm::scale(modelMat, glm::vec3(.1f, .1f, .1f));
 		
 		
 
@@ -328,73 +332,128 @@ namespace
 		glUniformMatrix4fv(glGetUniformLocation(gModelShader.ID, "view"), 1, GL_FALSE, glm::value_ptr(viewMat));
 		glUniformMatrix4fv(glGetUniformLocation(gModelShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(modelMat));
 		model.Draw(shader);
+
+		glUseProgram(0);
+	}
+
+
+
+	//渲染GameObject
+	void RenderGameObject(GameObject &gameObject)
+	{
+		//需要跟踪物理模拟
+		if (gameObject.g_rigidBody&&gameObject.g_rigidBody->getType()==
+			PxActorType::eRIGID_DYNAMIC)
+		{
+			gameObject.transform = gameObject.g_rigidBody->getGlobalPose();
+		}
+
+		gModelShader.use();
+		glm::mat4 modelMat = glm::mat4(1.0f);
+		modelMat = glm::translate(modelMat, Mathf::P3ToV3(gameObject.transform.p));
+		modelMat *= glm::mat4_cast(Mathf::Toquat(gameObject.transform.q));
+		modelMat = glm::scale(modelMat, gameObject.g_model->getScale());
+		glm::mat4 viewMat = getViewMat();
+		glm::mat4 projectionMat = glm::perspective(45.0f, (float)glutGet(GLUT_WINDOW_WIDTH) / (float)glutGet(GLUT_WINDOW_HEIGHT), 0.1f, 1000.0f);
+		glUniformMatrix4fv(glGetUniformLocation(gModelShader.ID, "projection"), 1, GL_FALSE, glm::value_ptr(projectionMat));
+		glUniformMatrix4fv(glGetUniformLocation(gModelShader.ID, "view"), 1, GL_FALSE, glm::value_ptr(viewMat));
+		glUniformMatrix4fv(glGetUniformLocation(gModelShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(modelMat));
+		gameObject.g_model->Draw(gModelShader);
 
 		glUseProgram(0);
 	}
 
 	//渲染车辆
-	void RenderCar(Model& model, glm::vec3 pos, glm::vec3 dir, Shader& shader)
+	void RenderCarObject(CarGameObject& gameObject)
 	{
-		//glEnable(GL_DEPTH_TEST);
-		model.setPos(pos);
-		shader.use();
+		//需要跟踪物理模拟
+		if (gameObject.g_rigidBody && gameObject.g_rigidBody->getType() ==
+			PxActorType::eRIGID_DYNAMIC)
+		{
+			gameObject.transform = gameObject.g_rigidBody->getGlobalPose();
+		}
+
+		PxShape* vehicleshapes[5];  //4个车轮，1个车体的shape
+		gVehicle4W->getRigidDynamicActor()->getShapes(vehicleshapes, 5);
+		PxTransform pose = vehicleshapes[0]->getLocalPose(); //获取左前轮
+
+
+		//渲染车体
+		gModelShader.use();
 		glm::mat4 modelMat = glm::mat4(1.0f);
-		modelMat = glm::translate(modelMat, model.getPos());
+		modelMat = glm::translate(modelMat, Mathf::P3ToV3(gameObject.transform.p-PxVec3(0,0.5,0)));
+		modelMat *= glm::mat4_cast(Mathf::Toquat(gameObject.transform.q));
 
-		//modelMat = glm::rotate(modelMat, 1.0f, glm::vec3(0, -1, 0));
-		modelMat *= glm::mat4_cast(glm::quatLookAt(dir, glm::vec3(0, 1, 0)));
-
-		modelMat = glm::scale(modelMat, glm::vec3(0.1f, 0.1f, 0.1f));
-
-
-
-
+		modelMat = glm::scale(modelMat, gameObject.g_body->getScale());
 		glm::mat4 viewMat = getViewMat();
 		glm::mat4 projectionMat = glm::perspective(45.0f, (float)glutGet(GLUT_WINDOW_WIDTH) / (float)glutGet(GLUT_WINDOW_HEIGHT), 0.1f, 1000.0f);
 		glUniformMatrix4fv(glGetUniformLocation(gModelShader.ID, "projection"), 1, GL_FALSE, glm::value_ptr(projectionMat));
 		glUniformMatrix4fv(glGetUniformLocation(gModelShader.ID, "view"), 1, GL_FALSE, glm::value_ptr(viewMat));
 		glUniformMatrix4fv(glGetUniformLocation(gModelShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(modelMat));
-		model.Draw(shader);
+		gameObject.g_body->Draw(gModelShader);
 
+		//渲染车轮
+		//应该对每个车轮应用不同转换矩阵，目前测试，只使用一个转换矩阵
+		modelMat = glm::mat4(1.0f);
+		modelMat = glm::translate(modelMat, Mathf::P3ToV3(gameObject.transform.p - PxVec3(0, 0.5, 0)));
+
+		//增加风火轮特性 
+		modelMat *= glm::mat4_cast(Mathf::Toquat(pose.q));
+
+		modelMat *= glm::mat4_cast(Mathf::Toquat(gameObject.transform.q));
+		modelMat = glm::scale(modelMat, gameObject.g_body->getScale());
+		viewMat = getViewMat();
+		projectionMat = glm::perspective(45.0f, (float)glutGet(GLUT_WINDOW_WIDTH) / (float)glutGet(GLUT_WINDOW_HEIGHT), 0.1f, 1000.0f);
+		glUniformMatrix4fv(glGetUniformLocation(gModelShader.ID, "projection"), 1, GL_FALSE, glm::value_ptr(projectionMat));
+		glUniformMatrix4fv(glGetUniformLocation(gModelShader.ID, "view"), 1, GL_FALSE, glm::value_ptr(viewMat));
+		glUniformMatrix4fv(glGetUniformLocation(gModelShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(modelMat));
+		gameObject.g_wheel_fl->Draw(gModelShader);
+		gameObject.g_wheel_fr->Draw(gModelShader);
+		gameObject.g_wheel_bl->Draw(gModelShader);
+		gameObject.g_wheel_br->Draw(gModelShader);
 		glUseProgram(0);
 	}
+
+
 	//显示窗口
 	void renderCallback()
 	{
+		
+		Snippets::glut_display_func();
+		
 		//物理模拟
 		stepPhysics(true);
 
 		//渲染相机场景
 		Snippets::startRender(sCamera->getEye(), sCamera->getDir(),0.1f);
+
 		RenderSkybox();
 
 
 		/////////////////////Test//////////////////////////
 
-
-		float rotateSpeed = 10;
-		//表示正在移动
+		RenderGameObject(testObject);
+		RenderCarObject(carObject);
+		//float rotateSpeed = 5;
+		////表示正在移动
 		//PxExtendedVec3 haha = m_player->getFootPosition();
-		PxVec3 haha = gVehicle4W->getRigidDynamicActor()->getGlobalPose().p;
-		if (!moveDir.isZero())
-		{
-			glm::vec3 targetDir = glm::vec3(moveDir.x, 0, moveDir.z);
-			forwardDir = glm::normalize( Mathf::Slerp(forwardDir, targetDir, deltaTime * rotateSpeed));
-		}
-			RenderModel(gCarModel, glm::vec3(haha.x, haha.y, haha.z),-forwardDir, gModelShader); 
+		//PxVec3 lala = gVehicle4W->getRigidDynamicActor()->getGlobalPose().p;
+		//if (!moveDir.isZero())
+		//{
+		//	glm::vec3 targetDir = glm::vec3(moveDir.x, 0, moveDir.z);
+		//	forwardDir = glm::normalize( Mathf::Slerp(forwardDir, targetDir, deltaTime * rotateSpeed));
+		//}
+		//RenderModel(gBodyModel, glm::vec3(lala.x, lala.y, lala.z), glm::vec3(0, 0, 1), gModelShader);
+		//RenderModel(gModel, glm::vec3(haha.x, haha.y, haha.z),-forwardDir, gModelShader);
 			//RenderModel(gModel, glm::vec3(-20.0f, 10.0f, -45.0f), gModelShader);
-		//RenderModel(gModel2, glm::vec3(-28.0f, 15.0f, -47.0f), gModelShader);
+		//RenderModel(gModel2, glm::vec3(10.0, 1.0f, 10.0f),glm::vec3(0,0,1),
+		//	gModelShader);
 
-		PxShape* vehicleshapes[5];
-		gVehicle4W->getRigidDynamicActor()->getShapes(vehicleshapes, 5);
-		for (size_t i = 0; i < 5; i++)
-		{
-			
-			Mathf::Debug(vehicleshapes[i]->getLocalPose().q);
-		}
+
+
 		
 
-		///////////////EndTest////////////////////////////
+		/////////////////////EndTest////////////////////////////
 
 
 
@@ -443,24 +502,57 @@ namespace
 		lastX = p.x;
 		lastY = p.y;
 
+		//Snippets::setupDefaultGLFWWindows();
 
-		Snippets::setupDefaultWindow("PhysX Demo");
+		Snippets::setupDefaultWindow("Nayeon Studio");
 		Snippets::setupDefaultRenderState();
 		glewInit();
 
 
-		//----------Render Model----------
+
+
+		gBodyModel = Model("../../assets/objects/car/body.obj");
+		gWheelModel_fl = Model("../../assets/objects/car/wheel_fl.obj");
+		gWheelModel_fr = Model("../../assets/objects/car/wheel_fr.obj");
+		gWheelModel_bl = Model("../../assets/objects/car/wheel_bl.obj");
+		gWheelModel_br= Model("../../assets/objects/car/wheel_br.obj");
+
 		//gModel = Model("../../assets/objects/nanosuit/nanosuit.obj");
 		//gModel2 = Model("../../assets/objects/backpack/backpack.obj");
-		gCarModel= Model("../../assets/objects/car/car.obj");
+		gModel2 = Model("../../assets/objects/Models/house.fbx");
 		gModelShader = Shader("../../src/ModelLoading/model_loading.vs",
 								"../../src/ModelLoading/model_loading.fs");
 		//----------Render Model----------
 		SetupSkybox();
 
+
+
 		glutIdleFunc(idleCallback);
 		//注册好回调函数后
 		glutDisplayFunc(renderCallback);
+		//glutDisplayFunc(Snippets::glut_display_func);
+
+
+		//=======================
+		// Setup Dear ImGui context
+		IMGUI_CHECKVERSION();
+		ImGui::CreateContext();
+		ImGuiIO& io = ImGui::GetIO(); (void)io;
+		//io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+
+		// Setup Dear ImGui style
+		ImGui::StyleColorsDark();
+		//ImGui::StyleColorsClassic();
+
+		// Setup Platform/Renderer backends
+		// FIXME: Consider reworking this example to install our own GLUT funcs + forward calls ImGui_ImplGLUT_XXX ones, instead of using ImGui_ImplGLUT_InstallFuncs().
+		ImGui_ImplGLUT_Init();
+		ImGui_ImplGLUT_InstallFuncs();
+		ImGui_ImplOpenGL2_Init();
+		//============================
+		
+
+
 
 		//键盘事件回调函数
 		//glutKeyboardFunc(keyboardCallback);
@@ -495,5 +587,11 @@ namespace
 		glutMainLoop();
 
 
+
+		//===========================================
+		ImGui_ImplOpenGL2_Shutdown();
+		ImGui_ImplGLUT_Shutdown();
+		ImGui::DestroyContext();
+		//===========================================
 	}
 #endif

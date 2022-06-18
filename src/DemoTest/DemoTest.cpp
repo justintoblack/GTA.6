@@ -42,7 +42,7 @@
 #include "../Common/Print.h"
 #include "../Common/PVD.h"
 #include "../Utils/Utils.h"
-
+#include"CarGameObject.h"
 #include<iostream>
 #include<string>
 #include<vector>
@@ -52,7 +52,7 @@
 #include "../GameDemo/TheCreator.h"
 #include "../Utils/Mathf.h"
 
-
+#include"../DemoTest/CarGameObject.h"
 #include<time.h>
 #include <ctype.h>
 #include<iostream>
@@ -65,8 +65,10 @@
 #include "../SnippetVehicleCommon/SnippetVehicleTireFriction.h"
 #include "../SnippetVehicleCommon/SnippetVehicleCreate.h"
 #include "irrKlang/irrKlang.h"  //audio
+#include <GL\glut.h>
 
 //#include "model.h"
+
 
 using namespace irrklang;
 using namespace physx;
@@ -85,6 +87,7 @@ PxScene* gScene = NULL;
 PxMaterial* gMaterial = NULL;
 PxCooking* gCooking = NULL;
 PxPvd* gPvd = NULL;
+
 
 #define NUM_VEHICLES 1
 #define BLOCKING_SWEEPS 0
@@ -138,14 +141,19 @@ PxVec3 characterPos;
 PxVec3 vehiclePos;
 PxVec3* CameraFollowTarget;
 
+//GameObject
+GameObject testObject;
+CarGameObject carObject;
 
 #pragma region 角色属性
-PxVec3 velocity = PxVec3(0, 0, 0);
-PxVec3 gravity = PxVec3(0, -9.8f * 2.0f, 0);
+PxController* m_player;
+
+PxVec3 velocity=PxVec3(0,0,0);
+PxVec3 gravity = PxVec3(0, -9.8f*2.0f, 0);
 PxVec3 moveDir;
 PxVec3 characterForward;
 PxVec3 characterRight;
-
+PxVec3 fireOffset(0, 0, 1);
 
 PxTransform checkSphereTrans;
 float jumpHeight = 1.0f;
@@ -158,6 +166,7 @@ float walkSpeed = 3.0f;
 float sprintSpeed = 7.0f;
 
 bool isGrounded;
+bool isAiming;
 
 ///跳跃
 void Jump()
@@ -166,6 +175,29 @@ void Jump()
 	{
 		velocity.y = PxSqrt(jumpHeight * gravity.y * -2);
 	}
+}
+
+//左键
+void FireFirst()
+{
+	cout << "fireFirst" << endl;
+	PxRaycastBuffer hit;
+	PxVec3 firePoint = m_player->getActor()->getGlobalPose().p;
+	if (gScene->raycast(firePoint, sCamera->getDir(), 100, hit))
+	{
+		if (hit.block.actor->getType() == PxActorType::eRIGID_DYNAMIC)
+		{
+			float force = 100;
+			cout <<((GameObject*) testObject.g_rigidBody->userData)->Name<<endl;
+			((PxRigidDynamic*)hit.block.actor)->addForce(sCamera->getDir()*force,PxForceMode::eIMPULSE);
+			//cout << testObject.Name<<endl;
+		}
+	}
+}
+
+void Fire()
+{
+	cout << "fire "<< endl;
 }
 
 //冲刺
@@ -188,6 +220,7 @@ extern float deltaTime;
 extern float gameTime;
 
 #pragma region 全局按键事件
+bool isInGameMode=true;
 bool isQKeyDown;
 void GlobalKeyEvent()
 {
@@ -216,6 +249,21 @@ void GlobalKeyEvent()
 	}
 }
 
+//切换游戏模式
+void SwitchMode()
+{
+	isInGameMode = !isInGameMode;
+	if (isInGameMode)
+	{
+		cout << "game" << endl;
+		glutSetCursor(GLUT_CURSOR_NONE);
+	}
+	else
+	{
+		cout << "edit" << endl;
+		glutSetCursor(GLUT_CURSOR_LEFT_ARROW);
+	} 
+};
 #pragma endregion
 
 
@@ -705,7 +753,6 @@ void CreateChain(const PxTransform& t, PxU32 length, const PxGeometry& g, PxReal
 }
 
 
-PxController* m_player;
 
 //创建角色控制器
 PxController* CreateCharacterController(PxExtendedVec3 initPos)
@@ -727,10 +774,12 @@ PxController* CreateCharacterController(PxExtendedVec3 initPos)
 	desc.stepOffset = 0.3f;
 
 	PxController* ctrl = manager->createController(desc);
-	ctrl->getActor()->setActorFlag(PxActorFlag::eVISUALIZATION, true);
+
+	PxShape* haha;
+	ctrl->getActor()->getShapes(&haha, 1);
+	haha->setFlag(PxShapeFlag::eSCENE_QUERY_SHAPE, false);
 
 	return ctrl;
-
 }
 
 //车辆相关的函数
@@ -1015,7 +1064,8 @@ void stopBell()
 };
 
 
-
+extern Model gModel2;
+extern Model gBodyModel, gWheelModel_fl, gWheelModel_fr, gWheelModel_bl, gWheelModel_br;
 //自定义
 void MyCode()
 {
@@ -1033,6 +1083,10 @@ void MyCode()
 	characterMap.SetActionMap(m_player, sCamera, 5.0f);
 	characterMap.SpaceKeyEvent = Jump;
 	characterMap.ShiftKeyEvent = Sprint;
+
+
+	characterMap.LeftButtonDownEvent = FireFirst;
+	characterMap.LeftButtonEvent = Fire;
 
 	//载具Input函数注册
 	vehicleMap.release = releaseAllControls;
@@ -1059,9 +1113,17 @@ void MyCode()
 	//垃圾桶
 	theCreator.CreatePoles(PxVec3(50, 0.0f, 50), PxVec3(0, 0, 1), 20, 10, gMaterial, 0.3f, 0.7f, 10, 10000, 10000);
 
+	//GameObject
+	testObject.Name ="house";
+	testObject.AddRigidbody(true);
+	testObject.AddModel(gModel2);
+	testObject.AddBoxCollider(4.35f,4.25f,4.6f, PxTransform(0, 4.29f, 0));
+	testObject.SetTransform(PxTransform(10,10,10));
+	testObject.AddToScene();
 
-
-
+	carObject.Name = "car";
+	carObject.SetRigidbody(gVehicle4W->getRigidDynamicActor());
+	carObject.AddModel(gBodyModel, gWheelModel_fl, gWheelModel_fr, gWheelModel_bl, gWheelModel_br);
 
 }
 
@@ -1089,7 +1151,6 @@ void initPhysics(bool interactive)
 	sceneDesc.filterShader = contactReportFilterShader;
 	sceneDesc.simulationEventCallback = &gContactReportCallback;
 	gScene = gPhysics->createScene(sceneDesc);
-
 
 
 	PxPvdSceneClient* pvdClient = gScene->getScenePvdClient();
@@ -1174,6 +1235,8 @@ void stepPhysics(bool interactive)
 {
 	PX_UNUSED(interactive);
 	//时间
+
+
 	GlobalKeyEvent();
 	inputSystem.InputAction();
 
@@ -1237,10 +1300,50 @@ void stepPhysics(bool interactive)
 	m_player->move(moveDir * curSpeed * deltaTime, 0.001f, 0.01f, NULL);
 	m_player->move(velocity * deltaTime, 0.001f, 0.01f, NULL);
 
+	////////////////////////////移动结束////////////////////////////////
+
+
+
+	/////////////////////////////射线////////////////////////////////
+
+	//PxVec3 origin = m_player->getActor()->getGlobalPose().p+PxVec3(0,0,3);
+	//PxVec3 unitDir = PxVec3(0, 0, 1);
+	//PxReal maxDistance = 10.0f;
+	//PxRaycastBuffer raycasthit;
+
+	//if (gScene->raycast(origin, unitDir, maxDistance, raycasthit))
+	//{
+	//	if (raycasthit.block.actor)
+	//	{
+	//		cout << raycasthit.block.actor->getType()<<endl;
+	//		if (raycasthit.block.actor->getType() == PxActorType::eRIGID_DYNAMIC)
+	//		{
+	//			cout << "dy" << endl;
+	//		}
+	//		else
+	//		{
+	//			cout << "noDy" << endl;
+	//		}
+	//		if (raycasthit.block.actor->getType() == PxActorType::eRIGID_STATIC)
+	//		{
+	//			cout << "static" << endl;
+	//		}
+	//		else
+	//		{
+	//			cout << "noStatic" << endl;
+	//		}
+	//		cout<< raycasthit.block.actor->getType()<<endl;
+	//	}
+	//}
+
+	////////////////////////////射线结束////////////////////////////////
+
+
 
 	//相机跟随
 	characterPos = m_player->getPosition() - PxExtendedVec3(0, 0, 0);
 	vehiclePos = gVehicle4W->getRigidDynamicActor()->getGlobalPose().p;
+
 	sCamera->Update(*CameraFollowTarget);
 
 

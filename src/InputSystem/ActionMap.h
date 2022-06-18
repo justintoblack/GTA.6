@@ -10,7 +10,10 @@ class ActionMap
 {
 private:
 	//bool _qKeyDown;
+	bool isEscKeyDown;
 public:
+	ActionMap();
+	void(*EscKeyEvent)();
 	virtual void InputAction();
 };
 
@@ -22,9 +25,15 @@ private:
 	physx::PxVec2 arrowKey;
 	float moveSpeed;
 	bool isSpaceKeyDown;
+	bool isLeftButtonDown;
 public:
 	void(*SpaceKeyEvent)();
 	void(*ShiftKeyEvent)(bool isPress);
+
+	void (*LeftButtonDownEvent)();
+	void (*LeftButtonEvent)();
+
+
 	void InputAction();
 	void SetActionMap(physx::PxController* newController, Snippets::Camera* camera, float speed);
 	physx::PxVec2 GetArrowKeyValue();
@@ -43,6 +52,7 @@ public:
 	void (*EKeyEvent)();
 	void (*ReleaseWKeyEvent)();
 	void (*ReleaseEKeyEvent)();
+
 
 
 	void InputAction();

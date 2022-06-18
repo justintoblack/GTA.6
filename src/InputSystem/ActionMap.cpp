@@ -7,11 +7,26 @@ physx::PxVec3 up(0, 1, 0);
 extern InputSyetem inputSystem;
 extern float deltaTime;
 
+extern void SwitchMode();
+
+ActionMap::ActionMap()
+{
+	EscKeyEvent = SwitchMode;
+}
+
 void ActionMap::InputAction()
 {
 	if (GetAsyncKeyState(VK_ESCAPE))
 	{
-		exit(0);
+		if (!isEscKeyDown)
+		{
+			EscKeyEvent();
+			isEscKeyDown = true;
+		}
+	}
+	else
+	{
+		isEscKeyDown = false;
 	}
 }
 
@@ -63,6 +78,25 @@ void CharacterActionMap::InputAction()
 	else
 	{
 		ShiftKeyEvent(false);
+	}
+
+	if (GetAsyncKeyState(VK_LBUTTON))
+	{
+		if (!isLeftButtonDown)
+		{
+			isLeftButtonDown = true;
+			LeftButtonDownEvent();
+		}
+		LeftButtonEvent();
+	}
+	else
+	{
+		isLeftButtonDown = false;
+	}
+
+	if (GetAsyncKeyState(VK_RBUTTON))
+	{
+		std::cout << "youjian" << std::endl;
 	}
 	arrowKey = arrow;
 }

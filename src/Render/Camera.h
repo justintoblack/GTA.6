@@ -53,10 +53,13 @@ public:
 private:
 	physx::PxVec3	mEye;
 	physx::PxVec3	mDir;
-	physx::PxVec3 m_offset;
+	physx::PxVec3 m_offset; 
 	int				mMouseX;
 	int				mMouseY;
 	float				mDistanceToTarget;
+	float				mMinDistance=3;
+	float				mMaxDistance=6;
+	float				mDamp=3.0f;
 };
 
 

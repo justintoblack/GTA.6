@@ -291,7 +291,7 @@ PxVehicleDrive4W* createVehicle4W(const VehicleDesc& vehicle4WDesc, PxPhysics* p
 		clutch.mStrength=10.0f;
 		driveSimData.setClutchData(clutch);
 
-		//Ackermann steer accuracy
+		//Ackermann 
 		PxVehicleAckermannGeometryData ackermann;
 		ackermann.mAccuracy=1.0f;
 		ackermann.mAxleSeparation=
