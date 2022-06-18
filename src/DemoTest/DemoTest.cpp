@@ -10,7 +10,6 @@
 //  * Neither the name of NVIDIA CORPORATION nor the names of its
 //    contributors may be used to endorse or promote products derived
 //    from this software without specific prior written permission.
-//
 // THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS ``AS IS'' AND ANY
 // EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 // IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -911,7 +910,7 @@ VehicleDesc initVehicleDesc()
 	//The moment of inertia is just the moment of inertia of a cuboid but modified for easier steering.
 	//Center of mass offset is 0.65m above the base of the chassis and 0.25m towards the front.
 	const PxF32 chassisMass = 1500.f;
-	const PxVec3 chassisDims(1.6, 1, 5); //w,h,l
+	const PxVec3 chassisDims(2, 1, 5.4); //w,h,l
 	const PxVec3 chassisMOI
 	((chassisDims.y * chassisDims.y + chassisDims.z * chassisDims.z) * chassisMass / 12.0f,
 		(chassisDims.x * chassisDims.x + chassisDims.z * chassisDims.z) * 0.8f * chassisMass / 12.0f,
@@ -921,7 +920,7 @@ VehicleDesc initVehicleDesc()
 	//Set up the wheel mass, radius, width, moment of inertia, and number of wheels.
 	//Moment of inertia is just the moment of inertia of a cylinder.
 	const PxF32 wheelMass = 200.0f;
-	const PxF32 wheelRadius = 0.5f;
+	const PxF32 wheelRadius = 0.3f;
 	const PxF32 wheelWidth = 0.3f;
 	const PxF32 wheelMOI = 0.5f * wheelMass * wheelRadius * wheelRadius;
 	const PxU32 nbWheels = 4;

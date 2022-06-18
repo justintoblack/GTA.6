@@ -408,43 +408,42 @@ namespace
 
 		PxShape* vehicleshapes[5];  //4个车轮，1个车体的shape
 		gVehicle4W->getRigidDynamicActor()->getShapes(vehicleshapes, 5);
-		PxTransform pose = vehicleshapes[0]->getLocalPose(); //获取左前轮
 
 
 		//渲染车体
 		gModelShader.use();
 		glm::mat4 modelMat = glm::mat4(1.0f);
-		modelMat = glm::translate(modelMat, Mathf::P3ToV3(gameObject.transform.p-PxVec3(0,0.5,0)));
+		modelMat = glm::translate(modelMat, Mathf::P3ToV3(gameObject.transform.p-PxVec3(0,0.5,0.1)));
 		modelMat *= glm::mat4_cast(Mathf::Toquat(gameObject.transform.q));
-
 		modelMat = glm::scale(modelMat, gameObject.g_body->getScale());
+	
 		glm::mat4 viewMat = getViewMat();
 		glm::mat4 projectionMat = glm::perspective(45.0f, (float)glutGet(GLUT_WINDOW_WIDTH) / (float)glutGet(GLUT_WINDOW_HEIGHT), 0.1f, 1000.0f);
 		glUniformMatrix4fv(glGetUniformLocation(gModelShader.ID, "projection"), 1, GL_FALSE, glm::value_ptr(projectionMat));
 		glUniformMatrix4fv(glGetUniformLocation(gModelShader.ID, "view"), 1, GL_FALSE, glm::value_ptr(viewMat));
 		glUniformMatrix4fv(glGetUniformLocation(gModelShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(modelMat));
 		gameObject.g_body->Draw(gModelShader);
-
 		//渲染车轮
-		//应该对每个车轮应用不同转换矩阵，目前测试，只使用一个转换矩阵
-		modelMat = glm::mat4(1.0f);
-		modelMat = glm::translate(modelMat, Mathf::P3ToV3(gameObject.transform.p - PxVec3(0, 0.5, 0)));
+		Model* wheels[4] = { gameObject.g_wheel_fl,gameObject.g_wheel_fr,gameObject.g_wheel_bl,gameObject.g_wheel_br};
+		PxVec3 offset[4] = { PxVec3(0.88467, -0.23312, 1.6328) , PxVec3(-0.88467, -0.23312, 1.6328) ,PxVec3(0.88467, -0.23312, -1.2502),PxVec3(-0.88467, -0.23312, -1.2502)};
 
-
-
-		modelMat *= glm::mat4_cast(Mathf::Toquat(gameObject.transform.q));
-		//增加风火轮特性 
-		modelMat *= glm::mat4_cast(Mathf::Toquat(pose.q));
-		modelMat = glm::scale(modelMat, gameObject.g_body->getScale());
-		viewMat = getViewMat();
-		projectionMat = glm::perspective(45.0f, (float)glutGet(GLUT_WINDOW_WIDTH) / (float)glutGet(GLUT_WINDOW_HEIGHT), 0.1f, 1000.0f);
-		glUniformMatrix4fv(glGetUniformLocation(gModelShader.ID, "projection"), 1, GL_FALSE, glm::value_ptr(projectionMat));
-		glUniformMatrix4fv(glGetUniformLocation(gModelShader.ID, "view"), 1, GL_FALSE, glm::value_ptr(viewMat));
-		glUniformMatrix4fv(glGetUniformLocation(gModelShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(modelMat));
-		gameObject.g_wheel_fl->Draw(gModelShader);
-		gameObject.g_wheel_fr->Draw(gModelShader);
-		gameObject.g_wheel_bl->Draw(gModelShader);
-		gameObject.g_wheel_br->Draw(gModelShader);
+		//应该对每个车轮应用不同转换矩阵
+		for (size_t i = 0; i < 4; i++)
+		{
+			modelMat = glm::mat4(1.0f);
+			modelMat = glm::translate(modelMat, Mathf::P3ToV3(gameObject.transform.p - PxVec3(0, 0.5, 0)));
+			modelMat *= glm::mat4_cast(Mathf::Toquat(gameObject.transform.q));
+			modelMat = glm::translate(modelMat, Mathf::P3ToV3(offset[i]));
+			modelMat *= glm::mat4_cast(Mathf::Toquat(vehicleshapes[i]->getLocalPose().q));
+			modelMat = glm::translate(modelMat, Mathf::P3ToV3(-offset[i]));
+			modelMat = glm::scale(modelMat, gameObject.g_body->getScale());
+			viewMat = getViewMat();
+			projectionMat = glm::perspective(45.0f, (float)glutGet(GLUT_WINDOW_WIDTH) / (float)glutGet(GLUT_WINDOW_HEIGHT), 0.1f, 1000.0f);
+			glUniformMatrix4fv(glGetUniformLocation(gModelShader.ID, "projection"), 1, GL_FALSE, glm::value_ptr(projectionMat));
+			glUniformMatrix4fv(glGetUniformLocation(gModelShader.ID, "view"), 1, GL_FALSE, glm::value_ptr(viewMat));
+			glUniformMatrix4fv(glGetUniformLocation(gModelShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(modelMat));
+			wheels[i]->Draw(gModelShader);
+		}
 		glUseProgram(0);
 	}
 
