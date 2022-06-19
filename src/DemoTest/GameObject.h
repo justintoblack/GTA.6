@@ -14,9 +14,10 @@ class GameObject
 {
 private:
 public:
-	char Name[32]="gameObject";
+	char Name[16]="gameObject";
 	PxTransform transform;
 	PxTransform localTransform;
+	
 	GameObject* parent=nullptr;
 	//PxVec3 scale;
 

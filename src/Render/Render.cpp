@@ -59,8 +59,10 @@ bool editState;
 
 //////////////////////////ImGUI-Content//////////////////////////////
 static GameObject* curGameObject=nullptr;
-static float positionArr[3] = { 0,0,0 };
-static char  _objName[32];
+static PxVec3 _position=PxVec3(0,0,0);
+static PxVec3 _rotation=PxVec3(0,0,0);
+static PxQuat _quaternion = PxQuat(0, 0, 0, 1);
+static char  _objName[16];
 
 //////////////////////////////ImGUI////////////////////////////////
 
@@ -311,13 +313,8 @@ void my_display_code()
 				curGameObject = &theCreator.SceneGameObject[i];
 
 				//Name
-				const char* tempName = curGameObject->Name;
+				char* tempName = curGameObject->Name;
 				strcpy(_objName, tempName);
-
-				//Position
-				positionArr[0] = curGameObject->transform.p.x;
-				positionArr[1] = curGameObject->transform.p.y;
-				positionArr[2] = curGameObject->transform.p.z;
 
 			}
 			ImGui::PopID();
@@ -339,18 +336,41 @@ void my_display_code()
 
 		if (curGameObject != nullptr)
 		{
+			//更新数据
+
+			//Position
+			_position= curGameObject->transform.p;
+
+			//Rotation
+			_rotation = Mathf::QuatToEuler(curGameObject->transform.q);
+			//_quaternion = curGameObject->transform.q;
+
+			//UI
 			ImGui::Text("Name");
 			ImGui::InputTextWithHint(" ", "input GameObject name", _objName,
 				IM_ARRAYSIZE(_objName));
+
 			ImGui::Text("Position");
 			ImGui::PushItemWidth((ImGui::GetContentRegionAvail().x)/3-33);
-			ImGui::DragFloat("x", &positionArr[0], 0.01);
+			ImGui::PushID(1);
+			ImGui::DragFloat("x", &_position.x, 0.01);
 			ImGui::SameLine();
-			ImGui::DragFloat("y", &positionArr[1], 0.01);
+			ImGui::DragFloat("y", &_position.y, 0.01);
 			ImGui::SameLine();
-			ImGui::DragFloat("z", &positionArr[2], 0.01);
+			ImGui::DragFloat("z", &_position.z, 0.01);
+			ImGui::PopID();
 
-			curGameObject->SetTransform(PxTransform(positionArr[0], positionArr[1], positionArr[2]));
+			ImGui::Text("Rotation");
+			ImGui::PushItemWidth((ImGui::GetContentRegionAvail().x) / 3 - 33);
+			ImGui::PushID(2);
+			ImGui::DragFloat("x", &_rotation.x, 0.1);
+			ImGui::SameLine();
+			ImGui::DragFloat("y", &_rotation.y, 0.1);
+			ImGui::SameLine();
+			ImGui::DragFloat("z", &_rotation.z, 0.1);
+			ImGui::PopID();
+
+			curGameObject->SetTransform(PxTransform(_position,Mathf::EulerToQuat(_rotation)));
 
 			char* str = _objName;
 			strcpy(curGameObject->Name, str);

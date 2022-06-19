@@ -2,7 +2,6 @@
 
 using namespace snippetvehicle;
 
-
 //可行使
 void makeObjectDrivable(PxShape*& shape)
 {
@@ -141,7 +140,8 @@ void TheCreator::CreatePole(PxVec3 pos, PxMaterial* gMaterial,float radius,
 	float halfHeight,float density,float force,float torque)
 {
 	GameObject gameObject;
-	//gameObject.Name = "Pole";
+	char objectName[] = "Pole";
+	strcpy(gameObject.Name,objectName);
 	gameObject.AddRigidbody(true);
 	gameObject.AddBoxCollider(radius, halfHeight, radius, PxTransform(0, 0, 0));
 	gameObject.AddModel(poleModel);
@@ -178,7 +178,8 @@ extern  float gameObjectPosition[3];
 void TheCreator::CreateGameObject()
 {
 	GameObject tempObject;
-	//tempObject.Name = "station_00";
+	char objectName[] = "station_00";
+	strcpy(tempObject.Name, objectName);
 	tempObject.AddRigidbody(false);
 	tempObject.AddModel(stationModel);
 	tempObject.AddBoxCollider(4.35f, 4.25f, 4.6f, PxTransform(0, 4.29f, 0));
@@ -187,7 +188,8 @@ void TheCreator::CreateGameObject()
 
 	SceneGameObject.push_back(tempObject);
 
-	//tempObject.Name = "station_01";
+	char objectName1[] = "station_01";
+	strcpy(tempObject.Name, objectName1);
 	tempObject.AddRigidbody(false);
 	tempObject.AddModel(stationModel_01);
 	tempObject.AddBoxCollider(5.38f, 2.87f, 2.95f, PxTransform(0, 2.87f, 0));
@@ -196,7 +198,8 @@ void TheCreator::CreateGameObject()
 
 	SceneGameObject.push_back(tempObject);
 
-	//tempObject.Name = "station_02";
+	char objectName2[] = "station_02";
+	strcpy(tempObject.Name, objectName2);
 	tempObject.AddRigidbody(false);
 	tempObject.AddModel(stationModel_01);
 	tempObject.AddBoxCollider(5.38f, 2.87f, 2.95f, PxTransform(0, 2.87f, 0));
@@ -205,15 +208,11 @@ void TheCreator::CreateGameObject()
 
 	SceneGameObject.push_back(tempObject);
 
-	//tempObject.Name = "name";
-	//tempObject.AddRigidbody(false);
-	//tempObject.AddModel(_carBody);
-	//tempObject.AddBoxCollider(5.38f, 2.87f, 2.95f, PxTransform(0, 0, 0));
-	//tempObject.SetTransform(PxTransform(0, 0, 0));
-	//tempObject.AddToScene();
-
-	//SceneGameObject.push_back(tempObject);
-
+	PxVec3 euler(0, 90, 0);
+	PxQuat q = Mathf::EulerToQuat(euler);
+	Mathf::Debug(q);
+	euler = Mathf::QuatToEuler(q);
+	Mathf::Debug(euler);
 }
 
 
