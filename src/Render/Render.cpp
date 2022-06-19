@@ -62,6 +62,7 @@ static GameObject* curGameObject=nullptr;
 static PxVec3 _position=PxVec3(0,0,0);
 static PxVec3 _rotation=PxVec3(0,0,0);
 static PxQuat _quaternion = PxQuat(0, 0, 0, 1);
+static bool _isAddRigidbodyDynamic=false;
 static char  _objName[16];
 
 //////////////////////////////ImGUI////////////////////////////////
@@ -307,7 +308,8 @@ void my_display_code()
 		for (int i = 0; i < theCreator.SceneGameObject.size(); i++)
 		{
 			ImGui::PushID(i);
-			if (ImGui::Button(theCreator.SceneGameObject[i].Name))
+			if (ImGui::Button(theCreator.SceneGameObject[i].Name,
+				ImVec2(ImGui::GetContentRegionAvail().x,20)))
 			{
 				//GameObject
 				curGameObject = &theCreator.SceneGameObject[i];
@@ -334,6 +336,7 @@ void my_display_code()
 	{
 		ImGui::Begin("Inspector", &inspector_window);
 
+
 		if (curGameObject != nullptr)
 		{
 			//更新数据
@@ -345,7 +348,7 @@ void my_display_code()
 			_rotation = Mathf::QuatToEuler(curGameObject->transform.q);
 			//_quaternion = curGameObject->transform.q;
 
-			//UI
+			//UI-Begin
 			ImGui::Text("Name");
 			ImGui::InputTextWithHint(" ", "input GameObject name", _objName,
 				IM_ARRAYSIZE(_objName));
@@ -369,7 +372,51 @@ void my_display_code()
 			ImGui::SameLine();
 			ImGui::DragFloat("z", &_rotation.z, 0.1);
 			ImGui::PopID();
+			
+			if (curGameObject->g_rigidBody != nullptr)
+			{
+				ImGui::Text("Rigidbody:");
+				ImGui::SameLine();
+				if (curGameObject->isStatic)
+				{
+					ImGui::Text("isStatic");
+				}
+				else
+				{
+					ImGui::Text("isDynamic");
+				}
+			}
 
+			//空行
+			for (int i = 0; i < 10; i++)
+			{
+				ImGui::Spacing();
+			}
+
+			//组件UI
+			for (int i = 0; i < curGameObject->components.size(); i++)
+			{
+				curGameObject->components[i]->ShowParameter();
+			}
+
+			//创建GameObject
+			if (ImGui::Button("CreateNewGameObject",
+				ImVec2(ImGui::GetContentRegionAvail().x, 20)))
+			{
+				theCreator.CreateNewGameObject();
+				ImGui::Button("test");
+			}
+
+			//添加刚体
+			if (ImGui::Button("SetRigidbody",
+				ImVec2(ImGui::GetContentRegionAvail().x-100, 20)))
+			{
+				curGameObject->AddRigidbody(_isAddRigidbodyDynamic);
+			}
+			ImGui::SameLine();
+			ImGui::Checkbox("isDynamic", &_isAddRigidbodyDynamic);
+
+			//UI-End
 			curGameObject->SetTransform(PxTransform(_position,Mathf::EulerToQuat(_rotation)));
 
 			char* str = _objName;

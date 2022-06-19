@@ -16,7 +16,7 @@ private:
 	bool needToPass = false;
 public:
 	ActionMap();
-	void(*MKeyEvent)();
+	void(*EditKeyEvent)();
 	virtual void InputAction();
 };
 

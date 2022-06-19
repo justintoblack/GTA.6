@@ -71,6 +71,9 @@ public:
 
 	//创建GameObject
 	void CreateGameObject();
+
+	//UI创建GameObject
+	GameObject CreateNewGameObject();
 };
 
 #endif // !_THECREATOR_H

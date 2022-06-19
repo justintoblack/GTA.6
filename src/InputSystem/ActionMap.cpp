@@ -13,7 +13,7 @@ extern void SwitchMode();
 
 ActionMap::ActionMap()
 {
-	MKeyEvent = SwitchMode;
+	EditKeyEvent = SwitchMode;
 }
 
 void ActionMap::InputAction()
@@ -55,11 +55,11 @@ void ActionMap::InputAction()
 	lastY = p.y;
 
 	//¼üÅÌ
-	if (GetAsyncKeyState('M'))
+	if (GetAsyncKeyState(VK_CONTROL))
 	{
 		if (!isMKeyDown)
 		{
-			MKeyEvent();
+			EditKeyEvent();
 			isMKeyDown = true;
 		}
 	}

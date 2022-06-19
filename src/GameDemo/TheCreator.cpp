@@ -208,11 +208,23 @@ void TheCreator::CreateGameObject()
 
 	SceneGameObject.push_back(tempObject);
 
-	PxVec3 euler(0, 90, 0);
-	PxQuat q = Mathf::EulerToQuat(euler);
-	Mathf::Debug(q);
-	euler = Mathf::QuatToEuler(q);
-	Mathf::Debug(euler);
+	//////////////////////////Test/////////////////////////////
+	GameObject* test = new GameObject();
+	RigidBody* rigidbody = new RigidBody(test);
+	BoxCollider* boxCollider = new BoxCollider(test);
+	test->SetName("123");
+	test->AddToScene();
+	ModelComponent* modelComponent = new ModelComponent(test);
+	modelComponent->SetModel(stationModel_01);
+	SceneGameObject.push_back(*test);
+	//////////////////////////Test-End/////////////////////////////
+}
+
+GameObject TheCreator::CreateNewGameObject()
+{
+	GameObject gameObject;
+	SceneGameObject.push_back(gameObject);
+	return gameObject;
 }
 
 
