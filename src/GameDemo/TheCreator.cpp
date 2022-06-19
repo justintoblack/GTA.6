@@ -44,6 +44,24 @@ void TheCreator::Init(PxPhysics* physics, PxScene* gScene)
 	_carBody=Model("../../assets/objects/Models/carBody.fbx");
 	_carWheelLeft=Model("../../assets/objects/Models/wheel_left.fbx");
 	_carWheelRight=Model("../../assets/objects/Models/wheel_right.fbx");
+
+	string filePath = "../../assets/objects/Models";
+	string format = ".fbx";
+	GetAllFormatFiles(filePath, ModelPath, format);
+
+	for (int i = 0; i < ModelPath.size(); i++)
+	{
+		Model temp = Model(ModelPath[i]);
+		Models.push_back(temp);
+	}
+	for (int i = 0; i < ModelPath.size(); i++)
+	{
+		int end = ModelPath[i].find_last_of('.');
+		cout << end<<endl;
+		string name = ModelPath[i].substr(ModelPath[i].find_last_of("/") + 1, ModelPath[i].find_last_of('.') );
+		name = name.substr(0, name.find_last_of('.'));
+		cout << name << endl;
+	}
 }
 
 void TheCreator::CreateAnchorBall(PxTransform pos, PxMaterial* gMaterial,float radius)
@@ -213,6 +231,7 @@ void TheCreator::CreateGameObject()
 	RigidBody* rigidbody = new RigidBody(test);
 	BoxCollider* boxCollider = new BoxCollider(test);
 	test->SetName("123");
+
 	test->AddToScene();
 	ModelComponent* modelComponent = new ModelComponent(test);
 	modelComponent->SetModel(stationModel_01);
@@ -220,12 +239,12 @@ void TheCreator::CreateGameObject()
 	//////////////////////////Test-End/////////////////////////////
 }
 
-GameObject TheCreator::CreateNewGameObject()
+void TheCreator::CreateNewGameObject()
 {
-	GameObject gameObject;
-	SceneGameObject.push_back(gameObject);
-	return gameObject;
+	GameObject* gameObject=new GameObject();
+	SceneGameObject.push_back(*gameObject);
 }
+
 
 
 

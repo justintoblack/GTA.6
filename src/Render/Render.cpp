@@ -42,6 +42,7 @@ extern	TheCreator theCreator;
 bool main_window = false;  //之所以不设置为静态全局变量，是因为在DemoTestRender.cpp中会使用到这个变量
 bool show_another_window = false;
 bool inspector_window = false;
+bool isSimulation = true;
 static bool show_demo_window = false;
 
 //ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
@@ -62,7 +63,7 @@ static GameObject* curGameObject=nullptr;
 static PxVec3 _position=PxVec3(0,0,0);
 static PxVec3 _rotation=PxVec3(0,0,0);
 static PxQuat _quaternion = PxQuat(0, 0, 0, 1);
-static bool _isAddRigidbodyDynamic=false;
+static bool _isAddRigidbodyStatic=false;
 static char  _objName[16];
 
 //////////////////////////////ImGUI////////////////////////////////
@@ -296,6 +297,8 @@ void my_display_code()
 		ImGui::Text("counter = %d", counter);
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 
+		ImGui::Checkbox("IsSimulation", &isSimulation);
+
 		ImGui::End();
 	}
 	if (show_another_window)
@@ -373,20 +376,6 @@ void my_display_code()
 			ImGui::DragFloat("z", &_rotation.z, 0.1);
 			ImGui::PopID();
 			
-			if (curGameObject->g_rigidBody != nullptr)
-			{
-				ImGui::Text("Rigidbody:");
-				ImGui::SameLine();
-				if (curGameObject->isStatic)
-				{
-					ImGui::Text("isStatic");
-				}
-				else
-				{
-					ImGui::Text("isDynamic");
-				}
-			}
-
 			//空行
 			for (int i = 0; i < 10; i++)
 			{
@@ -404,17 +393,22 @@ void my_display_code()
 				ImVec2(ImGui::GetContentRegionAvail().x, 20)))
 			{
 				theCreator.CreateNewGameObject();
-				ImGui::Button("test");
 			}
 
 			//添加刚体
-			if (ImGui::Button("SetRigidbody",
+			if (ImGui::Button("AddRigidbody",
 				ImVec2(ImGui::GetContentRegionAvail().x-100, 20)))
 			{
-				curGameObject->AddRigidbody(_isAddRigidbodyDynamic);
+				RigidBody* newRigidBody = new RigidBody(curGameObject,_isAddRigidbodyStatic);
 			}
 			ImGui::SameLine();
-			ImGui::Checkbox("isDynamic", &_isAddRigidbodyDynamic);
+			ImGui::Checkbox("isStatic", &_isAddRigidbodyStatic);
+
+			//添加Collider
+			if (ImGui::Button("AddBoxCollider", ImVec2(ImGui::GetContentRegionAvail().x - 100, 20)))
+			{
+				BoxCollider* newBoxCollider = new BoxCollider(curGameObject);
+			}
 
 			//UI-End
 			curGameObject->SetTransform(PxTransform(_position,Mathf::EulerToQuat(_rotation)));

@@ -17,8 +17,8 @@ private:
 public:
 	char Name[16]="gameObject";
 	bool isStatic;
-	PxTransform transform;
-	PxTransform localTransform;
+	PxTransform transform=PxTransform(0,0,0);
+	PxTransform localTransform=PxTransform(0,0,0);
 	
 	GameObject* parent=nullptr;
 	//PxVec3 scale;
@@ -156,7 +156,7 @@ class Component
 {
 private:
 public:
-	GameObject* _parent;
+	GameObject* _parent=nullptr;
 	virtual void ShowParameter()
 	{
 	};
@@ -173,21 +173,48 @@ public:
 	{
 		_parent = parent;
 		SetRigidBodyStatic();
+		IsStatic = true;
 		_parent->AddComponent(this);
+	}
+	RigidBody(GameObject* parent, bool isStatic)
+	{
+		_parent = parent;
+		_parent->AddComponent(this);
+		if (isStatic)
+		{
+			SetRigidBodyStatic();
+		}
+		else
+		{
+			SetRigidBodyDynamic();
+		}
 	}
 
 	void SetRigidBodyStatic()
 	{
 		_parent->g_rigidBody = gPhysics->createRigidStatic(_parent->transform);
+		gScene->addActor(*_parent->g_rigidBody);
+		IsStatic = true;
 	}
 	void SetRigidBodyDynamic()
 	{
 		_parent->g_rigidBody = gPhysics->createRigidDynamic(_parent->transform);
+		gScene->addActor(*_parent->g_rigidBody);
+		IsStatic = false;
 	}
 	void ShowParameter()
 	{
-		//ImGui::Spacing();
-		//ImGui::Text("RigidBody:");
+		ImGui::Spacing();
+		ImGui::Text("RigidBody:");
+		ImGui::SameLine();
+		if (IsStatic)
+		{
+			ImGui::Text("isStatic");
+		}
+		else
+		{
+			ImGui::Text("isDynamic");
+		}
 	}
 };
 
@@ -226,19 +253,19 @@ public:
 		ImGui::Text("BoxCollider");
 		ImGui::PushID(3);
 		ImGui::Text("LocalTransform");
-		ImGui::DragFloat("x", &Transform.p.x,0.1);
+		ImGui::DragFloat("x", &Transform.p.x,0.01);
 		ImGui::SameLine();
-		ImGui::DragFloat("y", &Transform.p.y,0.1);
+		ImGui::DragFloat("y", &Transform.p.y,0.01);
 		ImGui::SameLine();
-		ImGui::DragFloat("z", &Transform.p.z,0.1);
+		ImGui::DragFloat("z", &Transform.p.z,0.01);
 		ImGui::Text("BoxSize");
 		ImGui::PopID();
 		ImGui::PushID(4);
-		ImGui::DragFloat("x", &Size.x,0.1);
+		ImGui::DragFloat("x", &Size.x,0.01);
 		ImGui::SameLine();
-		ImGui::DragFloat("y", &Size.y,0.1);
+		ImGui::DragFloat("y", &Size.y,0.01);
 		ImGui::SameLine();
-		ImGui::DragFloat("z", &Size.z,0.1);
+		ImGui::DragFloat("z", &Size.z,0.01);
 		ImGui::PopID();
 
 		SetShape();

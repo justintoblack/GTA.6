@@ -10,6 +10,7 @@
 #include "../SnippetVehicleCommon/SnippetVehicleSceneQuery.h"
 #include "../DemoTest/GameObject.h"
 #include <list>
+#include<io.h>
 
 using namespace physx;
 
@@ -25,9 +26,13 @@ private:
 	PxPhysics* m_gPhysics;
 	PxScene* m_gScene;
 
+
 public:
 
-	vector<GameObject> SceneGameObject;
+	vector<GameObject> SceneGameObject;		//场景中的GameObject
+	vector<string> ModelPath;	//模型路径
+	vector<char[16]> ModelName;	//文件名
+	vector<Model> Models;			//模型
 
 	Model  poleModel;
 	Model  stationModel;
@@ -73,7 +78,39 @@ public:
 	void CreateGameObject();
 
 	//UI创建GameObject
-	GameObject CreateNewGameObject();
+	void CreateNewGameObject();
+
+	//获取特定格式的文件名
+	void GetAllFormatFiles(string path, vector<string>& files, string format)
+	{
+		//文件句柄  
+		intptr_t hFile = 0;
+		//文件信息  
+		struct _finddata_t fileinfo;
+		string p;
+		if ((hFile = _findfirst(p.assign(path).append("\\*" + format).c_str(), &fileinfo)) != -1)  //有该文件就进入
+		{
+			do
+			{
+				if ((fileinfo.attrib & _A_SUBDIR)) // /*比较文件类型是否是文件夹 attrib，
+				//就是所查找文件的属性：__A_ARCH（存档）、_A_HIDDEN（隐藏）、_A_NORMAL（正常）、_A_RDONLY（只读）、 _A_SUBDIR（文件夹）、_A_SYSTEM（系统）。**/
+				{
+					if (strcmp(fileinfo.name, ".") != 0 && strcmp(fileinfo.name, "..") != 0)
+					{
+						//files.push_back(p.assign(path).append("\\").append(fileinfo.name) );
+						GetAllFormatFiles(p.assign(path).append("\\").append(fileinfo.name), files, format);
+					}
+				}
+				else
+				{
+					files.push_back(p.assign(path).append("/").append(fileinfo.name));
+				}
+			} while (_findnext(hFile, &fileinfo) == 0);
+
+			_findclose(hFile);
+		}
+	}
+
 };
 
 #endif // !_THECREATOR_H

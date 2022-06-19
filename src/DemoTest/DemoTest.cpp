@@ -128,6 +128,7 @@ extern Snippets::Camera* sCamera;
 extern bool main_window;
 extern bool show_another_window;
 extern bool inspector_window;
+extern bool isSimulation;
 
 //输入
 InputSyetem inputSystem;
@@ -256,6 +257,7 @@ void SwitchMode()
 		main_window = false;
 		show_another_window = false;
 		inspector_window = false;
+		isSimulation = true;
 		inputSystem.SetCharacterMap(characterMap);
 		glutSetCursor(GLUT_CURSOR_NONE);
 	}
@@ -264,6 +266,7 @@ void SwitchMode()
 		main_window = true;
 		show_another_window = true;
 		inspector_window = true;
+		isSimulation = false;
 		inputSystem.SetEditMap(editMap);
 		glutSetCursor(GLUT_CURSOR_LEFT_ARROW);
 	} 
@@ -1375,9 +1378,11 @@ void stepPhysics(bool interactive)
 		sCamera->goFront(editMap.GetArrowKeyValue());
 	}
 
-
-	gScene->simulate(1.0f / 60.0f);
-	gScene->fetchResults(true);
+	if (isSimulation)
+	{
+		gScene->simulate(1.0f / 60.0f);
+		gScene->fetchResults(true);
+	}
 
 }
 
