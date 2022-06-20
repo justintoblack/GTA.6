@@ -2,6 +2,7 @@
 
 using namespace snippetvehicle;
 extern const char** _allModelsName;
+extern void FileToString(string& path);
 vector<Model> Models;			//模型
 
 //可行使
@@ -47,6 +48,7 @@ void TheCreator::Init(PxPhysics* physics, PxScene* gScene)
 	_carWheelLeft=Model("../../assets/objects/Models/wheel_left.fbx");
 	_carWheelRight=Model("../../assets/objects/Models/wheel_right.fbx");
 
+	//加载模型
 	string filePath = "../../assets/objects/Models";
 	string format = ".fbx";
 	GetAllFormatFiles(filePath, ModelPath, format);
@@ -66,6 +68,10 @@ void TheCreator::Init(PxPhysics* physics, PxScene* gScene)
 		 _allModelsName[i] = ModelName[i].data();
 		 cout << ModelName[i]<< endl;
 	 }
+
+	 //初始化场景
+	 string scenePath = "../../assets/Scene/Scene.Data";
+	 FileToString(scenePath);
 }
 
 void TheCreator::CreateAnchorBall(PxTransform pos, PxMaterial* gMaterial,float radius)

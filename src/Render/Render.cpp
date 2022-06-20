@@ -28,6 +28,7 @@
 // Copyright (c) 2001-2004 NovodeX AG. All rights reserved.  
 #define _CRT_SECURE_NO_WARNINGS
 #include "../GameDemo/TheCreator.h"
+#include "../GameDemo/JsonData.h"
 #include "Render.h"
 #include <iostream>
 
@@ -69,6 +70,11 @@ const char** _allModelsName;
 
 
 //////////////////////////////ImGUI////////////////////////////////
+
+///////////////////////////////Data///////////////////////////
+static string _json;
+static string _scenepath = "../../assets/Scene/Scene.Data";
+///////////////////////////////Data-End///////////////////////////
 
 static float gCylinderData[]={
 	1.0f,0.0f,1.0f,1.0f,0.0f,1.0f,1.0f,0.0f,0.0f,1.0f,0.0f,0.0f,
@@ -307,6 +313,14 @@ void my_display_code()
 		{
 			curGameObject = nullptr;
 			theCreator.CreateNewGameObject();
+		}
+
+		//±£´æ³¡¾°
+		if (ImGui::Button("Save",
+			ImVec2(ImGui::GetContentRegionAvail().x, 20)))
+		{
+			CreateJson(_json);
+			StringToFile(_scenepath, _json);
 		}
 
 		ImGui::End();

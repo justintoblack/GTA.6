@@ -65,7 +65,7 @@
 #include "../SnippetVehicleCommon/SnippetVehicleTireFriction.h"
 #include "../SnippetVehicleCommon/SnippetVehicleCreate.h"
 #include "irrKlang/irrKlang.h"
-#include"../GameDemo/JsonData.h"
+//#include"../GameDemo/JsonData.h"
 
 
 
@@ -1180,10 +1180,10 @@ void MyCode()
 	//cout<< typeid(*(asdsad->components[0])).name()<<endl;
 
 	////////////////////////////JsonTest/////////////////////////
-	string testJson;
-	CreateJson(testJson);
-	string path = "../../assets/Scene/Scene.Data";
-	StringToFile(path, testJson);
+	//string testJson;
+	//CreateJson(testJson);
+	//string path = "../../assets/Scene/Scene.Data";
+	//StringToFile(path, testJson);
 	//FileToString(path);
 }
 

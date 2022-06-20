@@ -2,9 +2,10 @@
 #ifndef _JSONDATA_H
 #define _JSONDATA_H
 #include "json\json.h"
+#include "TheCreator.h"
 
 extern TheCreator theCreator;
-
+extern vector<Model> Models;			//模型
 
 //创建jsonff
 void CreateJson(string& json)
@@ -140,28 +141,101 @@ void FileToString(string &path)
 	}
 
 	Json::CharReaderBuilder reader;
-	Json::Value root, fruit, mail;
+	Json::Value SceneGameObjects, GameObjectValue, TransformValue,
+		RigidbodyValue, BoxColliderValue, ModelValue;
 
-	int iage = 0;
+	//int iage = 0;
 	JSONCPP_STRING errs;
 
-	bool res = Json::parseFromStream(reader, ifs, &root, &errs);
+	bool res = Json::parseFromStream(reader, ifs, &SceneGameObjects, &errs);
 	if (!res || !errs.empty())
 	{
 		cout << "parseJson error!" << errs << endl;
 		return;
 	}
 
-	iage = root["Age"].asInt();
-	string name = root["Name"].asString();
-	fruit = root["fruit"];
-	mail = root["mail"];
-	ifs.close();
+	for (int i = 0; i < SceneGameObjects.size(); i++)
+	{
+		GameObjectValue = SceneGameObjects[i];
+		GameObject* gameObject = new GameObject();
 
-	cout << "age:" << iage <<endl;
-	cout << name << endl;
-	cout << "fruit:" << fruit[0] << " " << fruit[1] << endl;
-	cout << "mail:" << mail["Google"] << " " << mail["QQ"] << endl;
+		//name
+		string name = GameObjectValue["Name"].asString();
+		cout << name << endl;
+		gameObject->SetName(name.data());
+
+		//Transform
+		TransformValue = GameObjectValue["Transform"];
+		PxTransform tm(TransformValue[0].asFloat(), TransformValue[1].asFloat(), TransformValue[2].asFloat());
+		cout << TransformValue[0] << TransformValue[1] << TransformValue[2] << endl;
+		gameObject->SetTransform(tm);	//需要加上旋转
+
+		//Rigidbody
+		bool isnull= GameObjectValue["Rigidbody"].isNull();
+		cout << endl;
+		cout << isnull << endl;
+
+		RigidbodyValue = GameObjectValue["Rigidbody"];
+		if (RigidbodyValue != NULL)
+		{
+			bool hasRig = RigidbodyValue["has"].asBool();
+			bool isStatic = RigidbodyValue["isStatic"].asBool();
+			cout << RigidbodyValue["has"] << " " << RigidbodyValue["isStatic"] << endl;
+			if (hasRig)
+			{
+				if (isStatic)
+				{
+					RigidBody* r = new RigidBody(gameObject, true);
+				}
+				else
+				{
+					RigidBody* r = new RigidBody(gameObject, false);
+				}
+			}
+		}
+		
+		//BoxCollider
+		isnull = GameObjectValue["BoxCollider"].isNull();
+		cout << endl;
+		cout << isnull << endl;
+
+		BoxColliderValue = GameObjectValue["BoxCollider"];
+		if (!isnull)
+		{
+			TransformValue = BoxColliderValue["localTransform"];
+			PxTransform boxTransform(TransformValue[0].asFloat(), TransformValue[1].asFloat(), TransformValue[2].asFloat());
+			cout << TransformValue[0] << " " << TransformValue[1] << " " << TransformValue[2] << endl;
+			TransformValue = BoxColliderValue["size"];
+			PxTransform boxSize(TransformValue[0].asFloat(), TransformValue[1].asFloat(), TransformValue[2].asFloat());
+			cout << TransformValue[0] << " " << TransformValue[1] << " " << TransformValue[2] << endl;
+			BoxCollider* box = new BoxCollider(gameObject);
+			box->Transform = boxTransform;
+			box->Size = boxSize.p;
+			box->SetShape();
+		}
+		
+		//Model
+		ModelValue = GameObjectValue["ModelComponent"];
+		if (ModelValue != NULL)
+		{
+			int idx = ModelValue["idx"].asInt();
+			cout << ModelValue["idx"] << endl;
+			ModelComponent* mod = new ModelComponent(gameObject);
+			mod->SetModel(Models[idx]);
+		}
+
+		theCreator.SceneGameObject.push_back(*gameObject);
+	}
+	//iage = root["Age"].asInt();
+	//string name = root["Name"].asString();
+	//fruit = root["fruit"];
+	//mail = root["mail"];
+	//ifs.close();
+
+	//cout << "age:" << iage <<endl;
+	//cout << name << endl;
+	//cout << "fruit:" << fruit[0] << " " << fruit[1] << endl;
+	//cout << "mail:" << mail["Google"] << " " << mail["QQ"] << endl;
 	
 }
 
