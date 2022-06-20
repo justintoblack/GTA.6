@@ -5,6 +5,8 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
+#include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 class Shader
 {
@@ -82,20 +84,42 @@ public:
 	{
 		glUseProgram(ID);
 	}
-	
-	void setBool(const std::string& name, bool value) const
-	{
-		glUniform1i(glGetUniformLocation(ID, name.c_str()), (int)value);
-	}
 
-	void setInt(const std::string& name, int value) const
+	void SetFloat(const char* name, float value)
 	{
-		glUniform1i(glGetUniformLocation(ID, name.c_str()), value);
+		glUniform1f(glGetUniformLocation(this->ID, name), value);
 	}
-
-	void setFloat(const std::string& name, float value) const
+	void SetInteger(const char* name, int value)
 	{
-		glUniform1f(glGetUniformLocation(ID, name.c_str()), value);
+		glUniform1i(glGetUniformLocation(this->ID, name), value);
+	}
+	void SetVector2f(const char* name, float x, float y)
+	{
+		glUniform2f(glGetUniformLocation(this->ID, name), x, y);
+	}
+	void SetVector2f(const char* name, const glm::vec2& value)
+	{
+		glUniform2f(glGetUniformLocation(this->ID, name), value.x, value.y);
+	}
+	void SetVector3f(const char* name, float x, float y, float z)
+	{
+		glUniform3f(glGetUniformLocation(this->ID, name), x, y, z);
+	}
+	void SetVector3f(const char* name, const glm::vec3& value)
+	{
+		glUniform3f(glGetUniformLocation(this->ID, name), value.x, value.y, value.z);
+	}
+	void SetVector4f(const char* name, float x, float y, float z, float w)
+	{
+		glUniform4f(glGetUniformLocation(this->ID, name), x, y, z, w);
+	}
+	void SetVector4f(const char* name, const glm::vec4& value)
+	{
+		glUniform4f(glGetUniformLocation(this->ID, name), value.x, value.y, value.z, value.w);
+	}
+	void SetMatrix4fv(const char* name, const glm::mat4& matrix)
+	{
+		glUniformMatrix4fv(glGetUniformLocation(this->ID, name), 1, false, glm::value_ptr(matrix));
 	}
 
 private:

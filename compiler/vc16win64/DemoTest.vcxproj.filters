@@ -73,8 +73,11 @@
     <ClInclude Include="..\..\src\DemoTest\CarGameObject.h" />
     <ClInclude Include="Dependencies\imgui\imgui_impl_glut.h" />
     <ClInclude Include="Dependencies\imgui\imgui_impl_opengl2.h" />
+<<<<<<< HEAD
     <ClInclude Include="..\..\src\DemoTest\MisssionManager.h" />
     <ClInclude Include="..\..\src\DemoTest\Mission.h" />
+=======
+>>>>>>> da3de78a008b0a1a3ce943dd62aca0a7d66ff8e8
   </ItemGroup>
   <ItemGroup>
     <Filter Include="imgui">
@@ -86,5 +89,7 @@
     <None Include="..\..\src\Render\SkyBox.vs" />
     <None Include="..\..\src\ModelLoading\model_loading.fs" />
     <None Include="..\..\src\ModelLoading\model_loading.vs" />
+    <None Include="..\..\src\Light\light.vs" />
+    <None Include="..\..\src\Light\light.fs" />
   </ItemGroup>
 </Project>
