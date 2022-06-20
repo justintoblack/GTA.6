@@ -363,6 +363,9 @@ namespace
 
 		glm::mat4 viewMat = getViewMat();
 		glm::mat4 projectionMat = glm::perspective(45.0f, (float)glutGet(GLUT_WINDOW_WIDTH) / (float)glutGet(GLUT_WINDOW_HEIGHT), 0.1f, 1000.0f);
+		/*shader.SetMatrix4fv("projection", projectionMat);
+		shader.SetMatrix4fv("view", viewMat);
+		shader.SetMatrix4fv("model", modelMat);*/
 		glUniformMatrix4fv(glGetUniformLocation(gModelShader.ID, "projection"), 1, GL_FALSE, glm::value_ptr(projectionMat));
 		glUniformMatrix4fv(glGetUniformLocation(gModelShader.ID, "view"), 1, GL_FALSE, glm::value_ptr(viewMat));
 		glUniformMatrix4fv(glGetUniformLocation(gModelShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(modelMat));
@@ -594,8 +597,12 @@ namespace
 
 		//gModel = Model("../../assets/objects/nanosuit/nanosuit.obj");
 		//gModel2 = Model("../../assets/objects/Models/house.fbx");
+		//最初的shader
 		gModelShader = Shader("../../src/ModelLoading/model_loading.vs",
 								"../../src/ModelLoading/model_loading.fs");
+		////使用带光照的shader
+		//gModelShader = Shader("../../src/Light/light.vs", "../../src/Light/light.fs");
+
 		//----------Render Model----------
 		SetupSkybox();
 

@@ -32,6 +32,8 @@
     <ClCompile Include="..\..\src\SnippetVehicleCommon\SnippetVehicle4WCreate.cpp" />
     <ClCompile Include="..\..\src\Render\StbImageImpl.cpp" />
     <ClCompile Include="..\..\src\GameDemo\TheCreator.cpp" />
+    <ClCompile Include="Dependencies\imgui\imgui_impl_glut.cpp" />
+    <ClCompile Include="Dependencies\imgui\imgui_impl_opengl2.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\InputSystem\ActionMap.h" />
@@ -69,6 +71,8 @@
     <ClInclude Include="..\..\src\ModelLoading\model.h" />
     <ClInclude Include="..\..\src\DemoTest\GameObject.h" />
     <ClInclude Include="..\..\src\DemoTest\CarGameObject.h" />
+    <ClInclude Include="Dependencies\imgui\imgui_impl_glut.h" />
+    <ClInclude Include="Dependencies\imgui\imgui_impl_opengl2.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="imgui">
@@ -80,5 +84,7 @@
     <None Include="..\..\src\Render\SkyBox.vs" />
     <None Include="..\..\src\ModelLoading\model_loading.fs" />
     <None Include="..\..\src\ModelLoading\model_loading.vs" />
+    <None Include="..\..\src\Light\light.vs" />
+    <None Include="..\..\src\Light\light.fs" />
   </ItemGroup>
 </Project>

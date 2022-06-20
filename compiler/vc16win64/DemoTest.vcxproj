@@ -79,6 +79,8 @@
     <ClInclude Include="Dependencies\imgui\imstb_truetype.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\src\Light\light.fs" />
+    <None Include="..\..\src\Light\light.vs" />
     <None Include="..\..\src\ModelLoading\model_loading.fs" />
     <None Include="..\..\src\ModelLoading\model_loading.vs" />
     <None Include="..\..\src\Render\SkyBox.fs" />
