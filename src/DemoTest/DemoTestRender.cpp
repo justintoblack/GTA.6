@@ -362,7 +362,7 @@ namespace
 		
 		{//--------------------render anim------------------------
 			//cout << "DemotestRender::render anim:: totalTime:" << totalTime << endl;
-			gAnimator->UpdateAnimation(deltaTime);
+			gAnimator->UpdateAnimation(0.0f);
 			gModelAnimShader.use();
 			glm::mat4 modelMat = glm::mat4(1.0f);
 			modelMat = glm::translate(modelMat, glm::vec3(5.0f, 2.0f, 5.0f));

@@ -50,8 +50,8 @@ public :
 		cout << "TicksPerSecond:" << mTicksPerSecond << endl;
 		mGlobalTransformation = scene->mRootNode->mTransformation;
 		mGlobalTransformation = mGlobalTransformation.Inverse();
-		ReadBones(animation, *model);
 		ReadHierarchyNode(mRootNode, scene->mRootNode);
+		ReadBones(animation, *model);
 	}
 
 	//查找名为boneName的骨骼
@@ -111,7 +111,7 @@ private:
 	}
 
 	//递归读取所有aiNode，将srcNode的属性值赋给root，再对所有子节点也执行相同操作
-	void ReadHierarchyNode(AssimpNode& root, aiNode* srcNode)
+	void ReadHierarchyNode(AssimpNode& root, const aiNode* srcNode)
 	{
 		root.name = srcNode->mName.data;
 		root.numChildren = srcNode->mNumChildren;

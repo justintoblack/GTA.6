@@ -34,7 +34,7 @@ struct KeyScale {
 class Bone {
 public:
 	//从动画通道中提取关键帧信息
-	Bone(const string name, int ID, const aiNodeAnim* channel)
+	Bone(const string& name, int ID, const aiNodeAnim* channel)
 	{
 		this->mName = name;
 		this->mID = ID;
@@ -127,7 +127,7 @@ public:
 	{
 		return mLocalTransform;
 	}
-	string getName()
+	string getName() const
 	{
 		return mName;
 	}

@@ -23,8 +23,7 @@
 #include <vector>
 using namespace std;
 
-//static unsigned int TextureFromFile(const char* path, const string& directory, bool gamma = false);
-
+//支持骨骼动画的模型
 class ModelAnimation
 {
 public:
@@ -77,7 +76,7 @@ private:
         std::cout << "loadModel(), path: " << path << std::endl;
         // read file via ASSIMP
         Assimp::Importer importer;
-        const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
+        const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_CalcTangentSpace);
         // check for errors
         if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) // if is Not Zero
         {
@@ -245,7 +244,7 @@ private:
             }
             else
                 boneID = mBoneInfoMap[boneName].id;
-            //遍历该骨骼的权重数组,对于数组里的每个aiVertexWeight里面还有vertexId和mWeight
+            //遍历该骨骼的权重数组,对于数组里的每个aiVertexWeight,里面还有vertexId和mWeight
             //即该骨骼对vertexID顶点有着mWeight的影响权重
             int numWeights = pNowBone->mNumWeights;
             aiVertexWeight* weightsArray = pNowBone->mWeights;

@@ -5,7 +5,7 @@
 #include <glm/gtx/quaternion.hpp>
 class AssimpGlmUtil {
 public:
-	static glm::mat4 ConvertAiMatrix44ToGlmMat4(aiMatrix4x4 mat)
+	static glm::mat4 ConvertAiMatrix44ToGlmMat4(const aiMatrix4x4& mat)
 	{
 		glm::mat4 res;
 		res[0][0] = mat.a1; res[1][0] = mat.a2; res[2][0] = mat.a3; res[3][0] = mat.a4;
@@ -14,11 +14,11 @@ public:
 		res[0][3] = mat.d1; res[1][3] = mat.d2; res[2][3] = mat.d3; res[3][3] = mat.d4;
 		return res;
 	}
-	static glm::vec3 ConvertAiVec3DToGlmVec3(aiVector3D v)
+	static glm::vec3 ConvertAiVec3DToGlmVec3(const aiVector3D& v)
 	{
 		return glm::vec3(v.x, v.y, v.z);
 	}
-	static glm::quat ConvertAiQuaternionToGlmQuat(aiQuaternion q) {
+	static glm::quat ConvertAiQuaternionToGlmQuat(const aiQuaternion& q) {
 		return glm::quat(q.w, q.x, q.y, q.z);
 	}
 };
