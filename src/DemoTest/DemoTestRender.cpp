@@ -493,9 +493,16 @@ namespace
 		/////////////////////角色渲染//////////////////////////
 		//RenderCarObject(carObject);
 
+		//渲染场景物体
 		for (int i = 0; i < theCreator.SceneGameObject.size(); i++)
 		{
 			RenderGameObject(theCreator.SceneGameObject[i]);
+		}
+
+		//渲染特殊物体
+		for (int i = 0; i < theCreator.SpecialGameObject.size(); i++)
+		{
+			RenderGameObject(theCreator.SpecialGameObject[i]);
 		}
 
 		RenderGameObject(carObject);

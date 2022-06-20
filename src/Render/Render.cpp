@@ -301,6 +301,14 @@ void my_display_code()
 
 		ImGui::Checkbox("IsSimulation", &isSimulation);
 
+		//创建GameObject
+		if (ImGui::Button("CreateNewGameObject",
+			ImVec2(ImGui::GetContentRegionAvail().x, 20)))
+		{
+			curGameObject = nullptr;
+			theCreator.CreateNewGameObject();
+		}
+
 		ImGui::End();
 	}
 	if (show_another_window)
@@ -391,13 +399,6 @@ void my_display_code()
 				curGameObject->components[i]->ShowParameter();
 			}
 
-			//创建GameObject
-			if (ImGui::Button("CreateNewGameObject",
-				ImVec2(ImGui::GetContentRegionAvail().x, 20)))
-			{
-				curGameObject = nullptr;
-				theCreator.CreateNewGameObject();
-			}
 
 			//添加刚体
 			if (ImGui::Button("AddRigidbody",

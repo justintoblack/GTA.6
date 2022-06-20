@@ -161,14 +161,15 @@ void TheCreator::CreateBanisters(physx::PxVec3 pos, physx:: PxVec3 dir, PxMateri
 void TheCreator::CreatePole(PxVec3 pos, PxMaterial* gMaterial,float radius,
 	float halfHeight,float density,float force,float torque)
 {
-	GameObject gameObject;
-	char objectName[] = "Pole";
-	strcpy(gameObject.Name,objectName);
-	gameObject.AddRigidbody(true);
-	gameObject.AddBoxCollider(radius, halfHeight, radius, PxTransform(0, 0, 0));
-	gameObject.AddModel(poleModel);
-	gameObject.SetTransform(PxTransform(PxVec3(pos)+PxVec3(0,halfHeight,0)));
-	gameObject.AddToScene();
+	GameObject* gameObject=new GameObject();
+	gameObject->SetName("Pole");
+	RigidBody* rig = new RigidBody(gameObject,false);
+	BoxCollider* box = new BoxCollider(gameObject);
+	box->Size = PxVec3(radius, halfHeight, radius);
+	box->SetShape();
+	ModelComponent* model = new ModelComponent(gameObject);
+	model->SetModel(poleModel);
+	gameObject->SetTransform(PxTransform(PxVec3(pos)+PxVec3(0,halfHeight,0)));
 
 
 	//PxRigidDynamic* link = PxCreateDynamic(*m_gPhysics,
@@ -176,13 +177,13 @@ void TheCreator::CreatePole(PxVec3 pos, PxMaterial* gMaterial,float radius,
 	//	PxBoxGeometry(radius, halfHeight, radius),
 	//	*gMaterial, density);
 
-	PxFixedJoint* j = PxFixedJointCreate(*m_gPhysics, NULL, PxTransform(pos), gameObject.g_rigidBody,
+	PxFixedJoint* j = PxFixedJointCreate(*m_gPhysics, NULL, PxTransform(pos), gameObject->g_rigidBody,
 		PxTransform(PxVec3(0,-halfHeight, 0)));
 
 	j->setBreakForce(force, torque);
 
 	////gScene->addActor(*link);
-	SceneGameObject.push_back(gameObject);
+	SpecialGameObject.push_back(*gameObject);
 }
 
 void TheCreator::CreatePoles(PxVec3 pos, PxVec3 dir, float separate, PxU32 num, PxMaterial* gMaterial, float halfXZ, float halfHeight, float density, float force, float torque)
@@ -199,47 +200,47 @@ void TheCreator::CreatePoles(PxVec3 pos, PxVec3 dir, float separate, PxU32 num, 
 extern  float gameObjectPosition[3];
 void TheCreator::CreateGameObject()
 {
-	GameObject tempObject;
-	char objectName[] = "station_00";
-	strcpy(tempObject.Name, objectName);
-	tempObject.AddRigidbody(false);
-	tempObject.AddModel(stationModel);
-	tempObject.AddBoxCollider(4.35f, 4.25f, 4.6f, PxTransform(0, 4.29f, 0));
-	tempObject.SetTransform(PxTransform(20, 0, 10));
-	tempObject.AddToScene();
+	//GameObject tempObject;
+	//char objectName[] = "station_00";
+	//strcpy(tempObject.Name, objectName);
+	//tempObject.AddRigidbody(false);
+	//tempObject.AddModel(stationModel);
+	//tempObject.AddBoxCollider(4.35f, 4.25f, 4.6f, PxTransform(0, 4.29f, 0));
+	//tempObject.SetTransform(PxTransform(20, 0, 10));
+	//tempObject.AddToScene();
 
-	SceneGameObject.push_back(tempObject);
+	//SceneGameObject.push_back(tempObject);
 
-	char objectName1[] = "station_01";
-	strcpy(tempObject.Name, objectName1);
-	tempObject.AddRigidbody(false);
-	tempObject.AddModel(stationModel_01);
-	tempObject.AddBoxCollider(5.38f, 2.87f, 2.95f, PxTransform(0, 2.87f, 0));
-	tempObject.SetTransform(PxTransform(29, 0, 10));
-	tempObject.AddToScene();
+	//char objectName1[] = "station_01";
+	//strcpy(tempObject.Name, objectName1);
+	//tempObject.AddRigidbody(false);
+	//tempObject.AddModel(stationModel_01);
+	//tempObject.AddBoxCollider(5.38f, 2.87f, 2.95f, PxTransform(0, 2.87f, 0));
+	//tempObject.SetTransform(PxTransform(29, 0, 10));
+	//tempObject.AddToScene();
 
-	SceneGameObject.push_back(tempObject);
+	//SceneGameObject.push_back(tempObject);
 
-	char objectName2[] = "station_02";
-	strcpy(tempObject.Name, objectName2);
-	tempObject.AddRigidbody(false);
-	tempObject.AddModel(stationModel_01);
-	tempObject.AddBoxCollider(5.38f, 2.87f, 2.95f, PxTransform(0, 2.87f, 0));
-	tempObject.SetTransform(PxTransform(11, 0, 10));
-	tempObject.AddToScene();
+	//char objectName2[] = "station_02";
+	//strcpy(tempObject.Name, objectName2);
+	//tempObject.AddRigidbody(false);
+	//tempObject.AddModel(stationModel_01);
+	//tempObject.AddBoxCollider(5.38f, 2.87f, 2.95f, PxTransform(0, 2.87f, 0));
+	//tempObject.SetTransform(PxTransform(11, 0, 10));
+	//tempObject.AddToScene();
 
-	SceneGameObject.push_back(tempObject);
+	//SceneGameObject.push_back(tempObject);
 
-	//////////////////////////Test/////////////////////////////
-	GameObject* test = new GameObject();
-	RigidBody* rigidbody = new RigidBody(test);
-	BoxCollider* boxCollider = new BoxCollider(test);
-	test->SetName("123");
+	////////////////////////////Test/////////////////////////////
+	//GameObject* test = new GameObject();
+	//RigidBody* rigidbody = new RigidBody(test);
+	//BoxCollider* boxCollider = new BoxCollider(test);
+	//test->SetName("123");
 
-	test->AddToScene();
-	ModelComponent* modelComponent = new ModelComponent(test);
-	modelComponent->SetModel(stationModel_01);
-	SceneGameObject.push_back(*test);
+	//test->AddToScene();
+	//ModelComponent* modelComponent = new ModelComponent(test);
+	//modelComponent->SetModel(stationModel_01);
+	//SceneGameObject.push_back(*test);
 	//////////////////////////Test-End/////////////////////////////
 }
 

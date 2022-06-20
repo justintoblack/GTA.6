@@ -30,6 +30,7 @@ private:
 public:
 
 	vector<GameObject> SceneGameObject;		//场景中的GameObject
+	vector<GameObject> SpecialGameObject;	//需要代码生成的物件
 	vector<string> ModelPath;	//模型路径
 	vector<string> ModelName;	//文件名
 	//const char** models;

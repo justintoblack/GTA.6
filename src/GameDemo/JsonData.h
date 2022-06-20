@@ -14,7 +14,7 @@ void CreateJson(string& json)
 	//Value相当于一个结构体
 	//Json::Value/* root, fruit, mail,*/ 
 	Json::Value SceneGameObjects, GameObjectValue, TransformValue,
-		RigidbodyValue,BoxColliderValue;
+		RigidbodyValue,BoxColliderValue,ModelValue;
 
 	Json::StreamWriterBuilder writerBuilder;
 	std::ostringstream os;
@@ -87,12 +87,15 @@ void CreateJson(string& json)
 		GameObjectValue["BoxCollider"] = BoxColliderValue;
 
 		//Model
-		//if (cur.hasComponent("ModelComponent"))
-		//{
-		//	ModelComponent* modelP = (ModelComponent*)cur.
-		//		GetComponent("ModelComponent");
+		if (cur.hasComponent("ModelComponent"))
+		{
+			ModelComponent* modelP = (ModelComponent*)cur.
+				GetComponent("ModelComponent");
 
-		//}
+			ModelValue["idx"] = modelP->item_current;
+		}
+		GameObjectValue["ModelComponent"] = ModelValue;
+
 
 
 		SceneGameObjects[i] = GameObjectValue;
