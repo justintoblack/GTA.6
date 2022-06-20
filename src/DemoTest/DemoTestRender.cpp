@@ -454,7 +454,7 @@ void renderLoop()
 	//----------Model Anim-----------------------------
 	gModelAnimShader = Shader("../../src/Bone/ModelAnim.vs",
 		"../../src/Bone/ModelAnim.fs");
-	string modelAnimPath("F:/Learning/mypt2/PhysX-Tutorial-master/PhysX_3.4/SCUT2022_Nayeon/assets/objects/FastRun.fbx");
+	string modelAnimPath("F:/Learning/mypt2/PhysX-Tutorial-master/PhysX_3.4/SCUT2022_Nayeon/assets/objects/Jogging.fbx");
 	//string modelAnimPath("F:/Learning/mypt2/PhysX-Tutorial-master/PhysX_3.4/SCUT2022_Nayeon/assets/objects/walk/Walk.dae");
 	gModelAnim = new ModelAnimation(modelAnimPath);
 	gAnimation = new Animation(modelAnimPath, gModelAnim);
