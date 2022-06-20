@@ -62,6 +62,10 @@ unsigned int		gSkyboxVAO, gSkyboxVBO;
 Model				gModel, gModel2;
 Model               gBodyModel, gWheelModel_fl, gWheelModel_fr, gWheelModel_bl, gWheelModel_br;
 Shader				gModelShader;
+glm::vec3			gLightPos = glm::vec3(10.0f, 50.0f, 50.0f);
+glm::vec3			gLightAmbient = glm::vec3(0.3f, 0.3f, 0.3f);
+glm::vec3			gLightDiffuse = glm::vec3(0.8f, 0.8f, 0.8f);
+glm::vec3			gLightSpecular = glm::vec3(1.0f, 1.0f, 1.0f);
 
 //天空盒六个面的纹理图片
 const char* gSkyboxFaces[6] = {
@@ -350,25 +354,25 @@ namespace
 		//glEnable(GL_DEPTH_TEST);
 		model.setPos(pos);
 		shader.use();
+		//设置光源位置，光源的属性：环境光强度、漫反射强度、镜面反射强度
+		shader.SetVector3f("lightPos", gLightPos);
+		shader.SetVector3f("light.ambient", gLightAmbient);
+		shader.SetVector3f("light.diffuse", gLightDiffuse);
+		shader.SetVector3f("light.specular", gLightSpecular);
+		shader.SetFloat("material.shininess", 32.0f);
+
 		glm::mat4 modelMat = glm::mat4(1.0f);
 		modelMat = glm::translate(modelMat, model.getPos());
-
 		//modelMat = glm::rotate(modelMat, 1.0f, glm::vec3(0, -1, 0));
 		modelMat *= glm::mat4_cast(glm::quatLookAt(dir, glm::vec3(0, 1, 0)));
-
 		modelMat = glm::scale(modelMat, glm::vec3(.1f, .1f, .1f));
-		
-		
-
-
 		glm::mat4 viewMat = getViewMat();
 		glm::mat4 projectionMat = glm::perspective(45.0f, (float)glutGet(GLUT_WINDOW_WIDTH) / (float)glutGet(GLUT_WINDOW_HEIGHT), 0.1f, 1000.0f);
-		/*shader.SetMatrix4fv("projection", projectionMat);
+		shader.SetMatrix4fv("projection", projectionMat);
 		shader.SetMatrix4fv("view", viewMat);
-		shader.SetMatrix4fv("model", modelMat);*/
-		glUniformMatrix4fv(glGetUniformLocation(gModelShader.ID, "projection"), 1, GL_FALSE, glm::value_ptr(projectionMat));
-		glUniformMatrix4fv(glGetUniformLocation(gModelShader.ID, "view"), 1, GL_FALSE, glm::value_ptr(viewMat));
-		glUniformMatrix4fv(glGetUniformLocation(gModelShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(modelMat));
+		shader.SetMatrix4fv("model", modelMat);
+		
+
 		model.Draw(shader);
 
 		glUseProgram(0);
@@ -595,7 +599,7 @@ namespace
 		gWheelModel_bl = Model("../../assets/objects/car/wheel_bl.obj");
 		gWheelModel_br= Model("../../assets/objects/car/wheel_br.obj");
 
-		//gModel = Model("../../assets/objects/nanosuit/nanosuit.obj");
+		gModel = Model("../../assets/objects/nanosuit/nanosuit.obj");
 		//gModel2 = Model("../../assets/objects/Models/house.fbx");
 		//最初的shader
 		gModelShader = Shader("../../src/ModelLoading/model_loading.vs",
