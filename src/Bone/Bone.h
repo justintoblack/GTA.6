@@ -92,34 +92,32 @@ public:
 		float totalTime = time2 - time1;
 		return (float)(period1 / totalTime);
 	}
-
+	//添加了默认return 0
 	//找出参数animationTime处于哪两个index的时间段内，返回二者中的前者
 	int getPositionIndex(float animationTime)
 	{
-		int numPosition = mNumPosition;
-		for (int posIndex = 0; posIndex < numPosition - 1; posIndex++)
-		{
+		for (int posIndex = 0; posIndex < mNumPosition - 1; posIndex++)
 			if (animationTime < mPositionKeys[posIndex + 1].mTime)
 				return posIndex;
-		}
+		return 0;
 	}
 
 	//找出参数animationTime处于哪两个index的时间段内，返回二者中的前者
 	int getRotationIndex(float animationTime)
 	{
-		int numRotation = mNumRotation;
-		for (int rotIndex = 0; rotIndex < numRotation - 1; rotIndex++)
+		for (int rotIndex = 0; rotIndex < mNumRotation - 1; rotIndex++)
 			if (animationTime < mRotationKeys[rotIndex + 1].mTime)
 				return rotIndex;
+		return 0;
 	}
 
 	//找出参数animationTime处于哪两个index的时间段内，返回二者中的前者
 	int getScaleIndex(float animationTime)
 	{
-		int numScale = mNumScale;
-		for (int scaleIndex = 0; scaleIndex < numScale - 1; scaleIndex++)
+		for (int scaleIndex = 0; scaleIndex < mNumScale - 1; scaleIndex++)
 			if (animationTime < mScaleKeys[scaleIndex + 1].mTime)
 				return scaleIndex;
+		return 0;
 	}
 
 	//TRS
