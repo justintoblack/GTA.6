@@ -592,8 +592,8 @@ namespace
 		gWheelModel_bl = Model("../../assets/objects/car/wheel_bl.obj");
 		gWheelModel_br= Model("../../assets/objects/car/wheel_br.obj");
 
-		//gModel = Model("../../assets/objects/nanosuit/nanosuit.obj");
-		//gModel2 = Model("../../assets/objects/Models/house.fbx");
+		gModel = Model("../../assets/objects/nanosuit/nanosuit.obj");
+		gModel2 = Model("../../assets/objects/Models/house.fbx");
 		gModelShader = Shader("../../src/ModelLoading/model_loading.vs",
 								"../../src/ModelLoading/model_loading.fs");
 		//----------Render Model----------

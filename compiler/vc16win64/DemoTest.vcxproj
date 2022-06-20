@@ -54,6 +54,8 @@
   <ItemGroup>
     <ClInclude Include="..\..\src\DemoTest\CarGameObject.h" />
     <ClInclude Include="..\..\src\DemoTest\GameObject.h" />
+    <ClInclude Include="..\..\src\DemoTest\Mission.h" />
+    <ClInclude Include="..\..\src\DemoTest\MisssionManager.h" />
     <ClInclude Include="..\..\src\GameDemo\TheCreator.h" />
     <ClInclude Include="..\..\src\InputSystem\ActionMap.h" />
     <ClInclude Include="..\..\src\InputSystem\InputSystem.h" />

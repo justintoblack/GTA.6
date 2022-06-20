@@ -46,7 +46,7 @@
 #include<string>
 #include<vector>
 #include<windows.h>
-
+#include<typeinfo>
 #include "../InputSystem/InputSystem.h"
 #include "../GameDemo/TheCreator.h"
 #include "../Utils/Mathf.h"
@@ -65,7 +65,7 @@
 #include "../SnippetVehicleCommon/SnippetVehicleTireFriction.h"
 #include "../SnippetVehicleCommon/SnippetVehicleCreate.h"
 #include "irrKlang/irrKlang.h"
-
+#include"MisssionManager.h"
 
 
 using namespace irrklang;
@@ -282,9 +282,7 @@ struct FilterGroup
 
 //PxVec3 triggerPos = PxVec3(30, 1, 100);
 PxVec3 triggerPos[] = { PxVec3(30, 1, 70) , PxVec3(30, 1, 110) , PxVec3(30, 1, 150) , PxVec3(30, 1, 170) , PxVec3(70, 1, 190) , PxVec3(70, 1, 220) , PxVec3(100, 1, 220) , PxVec3(130, 1, 170) , PxVec3(150, 1, 160) , PxVec3(130, 1, 160) , PxVec3(90, 1,120), PxVec3(60, 1, 100), PxVec3(50, 1, 50), PxVec3(30, 1, 20) };
-int triggerBoxNum = sizeof(triggerPos) / sizeof(triggerPos[0]);
-bool isTouchTriggerBox = false;
-int currentTriggerIndex = -1;
+
 
 //车辆相关的全局变量
 VehicleSceneQueryData* gVehicleSceneQueryData = NULL;
@@ -294,7 +292,6 @@ PxVehicleDrivableSurfaceToTireFrictionPairs* gFrictionPairs = NULL;
 
 PxRigidStatic* gGroundPlane = NULL;
 PxVehicleDrive4W* gVehicle4W = NULL;
-PxRigidDynamic* gTreasureActor = NULL;
 bool					gIsVehicleInAir = true;
 PxVec3 vehicleUp = PxVec3(0, 1, 0);
 PxVec3 vehicleForward = PxVec3(0, 0, 1);
@@ -386,29 +383,7 @@ bool					gVehicleOrderComplete = false;
 bool					gMimicKeyInputs = false;
 
 
-//创建新的目标触发器
-void createTriggerBox()
-{
-	currentTriggerIndex += 1;
-	if (currentTriggerIndex >= triggerBoxNum)
-	{
-		currentTriggerIndex = 0;
-	}
-	PxVec3 pos = triggerPos[currentTriggerIndex];
-	if (gTreasureActor != NULL)
-	{
-		gScene->removeActor(*gTreasureActor);
-	}
 
-	gTreasureActor = PxCreateDynamic(*gPhysics, PxTransform(pos),
-		PxBoxGeometry(PxVec3(1, 1, 1)), *gMaterial, 1.0f);
-	gTreasureActor->setActorFlag(PxActorFlag::eDISABLE_GRAVITY, true);
-	PxShape* treasureShape;
-	gTreasureActor->getShapes(&treasureShape, 1);
-	treasureShape->setFlag(PxShapeFlag::eSIMULATION_SHAPE, false);
-	treasureShape->setFlag(PxShapeFlag::eTRIGGER_SHAPE, true);
-	gScene->addActor(*gTreasureActor);
-}
 
 
 void setupFiltering(PxShape* shape, PxU32 filterGroup, PxU32 filterMask)
@@ -497,10 +472,13 @@ class ContactReportCallback : public PxSimulationEventCallback
 			// ignore pairs when shapes have been deleted
 			if (pairs[i].flags & (PxTriggerPairFlag::eREMOVED_SHAPE_TRIGGER | PxTriggerPairFlag::eREMOVED_SHAPE_OTHER))
 				continue;
+			
 
-			if ((pairs[i].otherActor == gVehicle4W->getRigidDynamicActor()) && (pairs[i].triggerActor == gTreasureActor))
+
+			if ((pairs[i].otherActor == m_player->getActor() && ((Mission*)pairs[i].triggerActor->userData!=NULL)))
 			{
-				isTouchTriggerBox = true;
+				Mission* m = (Mission*)pairs[i].triggerActor->userData;
+			    cout << m->MissionDescription<< endl;
 			}
 		}
 	}
@@ -1084,7 +1062,6 @@ void MyCode()
 	theCreator.Init(gPhysics, gScene);
 
 	CreateCoordinateAxis(PxTransform(0, 0, 0), 100, 200, 300);
-	createTriggerBox();
 	CreateChain(PxTransform(PxVec3(0.0f, 20.0f, -10.0f)), 5, PxCapsuleGeometry(1.0f, 1.0f), 4.0f, createBreakableFixed);
 	CreateChain(PxTransform(PxVec3(0.0f, 25.0f, -20.0f)), 5, PxBoxGeometry(2.0f, 0.5f, 0.5f), 4.0f, createDampedD6);
 
@@ -1092,8 +1069,8 @@ void MyCode()
 	PxRigidDynamic* playerActor = m_player->getActor();
 	PxShape* playerShape;
 	playerActor->getShapes(&playerShape, 1);
-	playerShape->setFlag(PxShapeFlag::eSIMULATION_SHAPE, false);
-	playerShape->setFlag(PxShapeFlag::eTRIGGER_SHAPE, true);
+
+
 	gScene->addActor(*playerActor);
 	//角色Input函数注册
 	characterMap.SetActionMap(m_player, sCamera, 5.0f);
@@ -1135,10 +1112,10 @@ void MyCode()
 	carObject.SetRigidbody(gVehicle4W->getRigidDynamicActor());
 	carObject.AddModel(gBodyModel, gWheelModel_fl, gWheelModel_fr, gWheelModel_bl, gWheelModel_br);
 
-
-
-
-
+	MissionManager missionManager;
+	missionManager.AddMission(triggerPos[0], std::string("mission1"));
+	missionManager.AddMission(triggerPos[1], std::string("mission2"));
+	missionManager.AddMission(triggerPos[2], std::string("mission3"));
 }
 
 
@@ -1254,11 +1231,7 @@ void stepPhysics(bool interactive)
 	GlobalKeyEvent();
 	inputSystem.InputAction();
 
-	if (isTouchTriggerBox)
-	{
-		isTouchTriggerBox = false;
-		createTriggerBox();
-	}
+
 
 	const PxF32 timestep = 1.0f / 60.0f;
 	if (gMimicKeyInputs)

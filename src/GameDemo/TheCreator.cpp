@@ -210,6 +210,10 @@ void TheCreator::CreateGameObject()
 	//SceneGameObject.push_back(tempObject);
 }
 
+void TheCreator::CreatePaticle(PxVec3 pos)
+{
+}
+
 
 
 
