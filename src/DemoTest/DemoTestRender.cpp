@@ -63,8 +63,8 @@ Model				gModel, gModel2;
 Model               gBodyModel, gWheelModel_fl, gWheelModel_fr, gWheelModel_bl, gWheelModel_br;
 Shader				gModelShader;
 glm::vec3			gLightPos = glm::vec3(10.0f, 50.0f, 50.0f);
-glm::vec3			gLightAmbient = glm::vec3(0.3f, 0.3f, 0.3f);
-glm::vec3			gLightDiffuse = glm::vec3(0.8f, 0.8f, 0.8f);
+glm::vec3			gLightAmbient = glm::vec3(0.2f, 0.2f, 0.2f);
+glm::vec3			gLightDiffuse = glm::vec3(0.5f, 0.5f, 0.5f);
 glm::vec3			gLightSpecular = glm::vec3(1.0f, 1.0f, 1.0f);
 
 //天空盒六个面的纹理图片

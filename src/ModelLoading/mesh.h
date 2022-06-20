@@ -78,6 +78,12 @@ public:
                 number = std::to_string(normalNr++); // transfer unsigned int to stream
              else if(name == "texture_height")
                 number = std::to_string(heightNr++); // transfer unsigned int to stream
+           /* cout << "-------------------------" << endl;
+            cout << "texture_diffuse" + to_string(diffuseNr) << endl;
+            cout << "texture_specular" + to_string(specularNr) << endl;
+            cout << "texture_normal" + to_string(normalNr) << endl;
+            cout << "texture_height" + to_string(heightNr) << endl;
+            cout << "-------------------------" << endl;*/
             // now set the sampler to the correct texture unit
             glUniform1i(glGetUniformLocation(shader.ID, ("material." + name + number).c_str()), i);
             // and finally bind the texture
