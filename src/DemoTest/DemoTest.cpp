@@ -1170,11 +1170,13 @@ void MyCode()
 	wheelBRObj.AddModel(gWheelModel_fr);
 
 	///////////////////////////Normal-Test////////////////////////////
-	cout << endl<<endl;
-	GameObject* asdsad = new GameObject();
-	RigidBody* saffwq = new RigidBody(asdsad);
-	BoxCollider* box = new BoxCollider(asdsad);
-	asdsad->hasComponent("Rigidbos");
+	//cout << endl<<endl;
+	//GameObject* asdsad = new GameObject();
+	//RigidBody* saffwq = new RigidBody(asdsad);
+	//BoxCollider* box = new BoxCollider(asdsad);
+	//asdsad->hasComponent("RigidBody");
+	//asdsad->hasComponent("BoxCollider");
+	//asdsad->hasComponent("Models");
 	//cout<< typeid(*(asdsad->components[0])).name()<<endl;
 
 	////////////////////////////JsonTest/////////////////////////

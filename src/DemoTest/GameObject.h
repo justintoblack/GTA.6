@@ -11,7 +11,18 @@ extern	PxScene* gScene;
 extern const char** _allModelsName;
 extern vector<Model> Models;			//模型
 
-class Component;
+class GameObject;
+
+class Component
+{
+private:
+public:
+	GameObject* _parent = nullptr;
+	virtual void ShowParameter()
+	{
+		return;
+	};
+};
 
 class GameObject
 {
@@ -140,44 +151,38 @@ public:
 		components.push_back(component);
 	}
 
-	bool hasComponent(string componentName)
+	//查询是否存在Component
+	bool hasComponent(string typeName)
 	{
+		string a = "class " + typeName;
 		for (int i = 0; i < components.size(); i++)
 		{
-			//cout << typeid(*(components[i])).name() << endl;
-			//if (typeid(components[i]).name() == componentName)
-			//{
-			//	cout << "yes" << endl;
-			//	return true;
-			//}
+			if (typeid(*(components[i])).name() == a)
+			{
+				return true;
+			}
 		}
-		//cout << "no" << endl;
 		return false;
 	}
-	//Component* GetComponent(Component* component)
-	//{
-	//	for (int i = 0; i < components.size(); i++)
-	//	{
-	//		if (typeid(components[i]) == typeid(component))
-	//		{
-	//			return components[i];
-	//		}
-	//	}
-	//	return nullptr;
-	//}
-};
 
-
-class Component
-{
-private:
-public:
-	GameObject* _parent=nullptr;
-	virtual void ShowParameter()
+	//获取组件
+	Component* GetComponent(string typeName)
 	{
-		return;
-	};
+		string a = "class " + typeName;
+
+		for (int i = 0; i < components.size(); i++)
+		{
+			if (typeid(*(components[i])).name() == a)
+			{
+				return components[i];
+			}
+		}
+		return nullptr;
+	}
 };
+
+
+
 
 class RigidBody:public Component
 {
@@ -210,12 +215,14 @@ public:
 	void SetRigidBodyStatic()
 	{
 		_parent->g_rigidBody = gPhysics->createRigidStatic(_parent->transform);
+		_parent->g_rigidBody->userData = _parent;
 		gScene->addActor(*_parent->g_rigidBody);
 		IsStatic = true;
 	}
 	void SetRigidBodyDynamic()
 	{
 		_parent->g_rigidBody = gPhysics->createRigidDynamic(_parent->transform);
+		_parent->g_rigidBody->userData = _parent;
 		gScene->addActor(*_parent->g_rigidBody);
 		IsStatic = false;
 	}
@@ -292,8 +299,8 @@ public:
 class ModelComponent :public Component
 {
 private:
-	int item_current =0;
 public:
+	int item_current =0;
 	Model* MyModel;
 	ModelComponent(GameObject* parent)
 	{
@@ -311,8 +318,7 @@ public:
 	{
 		ImGui::Spacing();
 		ImGui::Text("Model");
-		if (ImGui::Combo("Models", &item_current, _allModelsName,
-			IM_ARRAYSIZE(*_allModelsName)))
+		if (ImGui::Combo("Models", &item_current, _allModelsName,Models.size()))
 		{
 			SetModel(Models[item_current]);
 		}

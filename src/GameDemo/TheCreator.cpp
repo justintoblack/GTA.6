@@ -64,6 +64,7 @@ void TheCreator::Init(PxPhysics* physics, PxScene* gScene)
 	 for (int i = 0; i < _modelsCount; i++)
 	 {
 		 _allModelsName[i] = ModelName[i].data();
+		 cout << ModelName[i]<< endl;
 	 }
 }
 
