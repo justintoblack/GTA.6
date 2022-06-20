@@ -63,9 +63,10 @@ Model				gModel, gModel2;
 Model               gBodyModel, gWheelModel_fl, gWheelModel_fr, gWheelModel_bl, gWheelModel_br;
 Shader				gModelShader;
 glm::vec3			gLightPos = glm::vec3(10.0f, 50.0f, 50.0f);
-glm::vec3			gLightAmbient = glm::vec3(0.2f, 0.2f, 0.2f);
+glm::vec3			gLightDir = glm::vec3(2.0f, -1.0f, 1.0f);
+glm::vec3			gLightAmbient = glm::vec3(0.6f, 0.6f, 0.6f);
 glm::vec3			gLightDiffuse = glm::vec3(0.5f, 0.5f, 0.5f);
-glm::vec3			gLightSpecular = glm::vec3(1.0f, 1.0f, 1.0f);
+glm::vec3			gLightSpecular = glm::vec3(0.8f, 0.8f, 0.8f);
 
 //天空盒六个面的纹理图片
 const char* gSkyboxFaces[6] = {
@@ -356,6 +357,7 @@ namespace
 		shader.use();
 		//设置光源位置，光源的属性：环境光强度、漫反射强度、镜面反射强度
 		shader.SetVector3f("lightPos", gLightPos);
+		shader.SetVector3f("light.direction", gLightDir);
 		shader.SetVector3f("light.ambient", gLightAmbient);
 		shader.SetVector3f("light.diffuse", gLightDiffuse);
 		shader.SetVector3f("light.specular", gLightSpecular);

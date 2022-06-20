@@ -22,6 +22,7 @@ uniform Material material;
 
 struct Light{
     vec3 position;
+    vec3 direction;
     vec3 ambient;
     vec3 diffuse;
     vec3 specular;
@@ -35,7 +36,9 @@ void main()
 
     //漫反射分量
     vec3 norm = normalize(Normal);
-    vec3 lightDir = normalize(lightPos - FragPos);
+    //lightDir指的是：从片段指向光源
+    //vec3 lightDir = normalize(lightPos - FragPos);
+    vec3 lightDir = normalize(-light.direction);
     float diff = max(dot(lightDir,norm), 0.0);
     vec3 diffuse = light.diffuse * diff * texture(material.texture_diffuse1, TexCoords).rgb;
     diffuse += light.diffuse * diff * texture(material.texture_diffuse2, TexCoords).rgb;

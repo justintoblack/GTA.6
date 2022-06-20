@@ -29,7 +29,7 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include "Render.h"
 #include <iostream>
-
+#include <glm/glm.hpp>
 
 using namespace physx;
 
@@ -47,7 +47,7 @@ float volume0;
 float volume1;
 float gameObjectPosition[3] = { 0.10f, 0.20f, 0.30f };
 bool editState;
-
+extern glm::vec3 gLightDir;
 
 //==================================================================ImGUI state
 
@@ -476,7 +476,9 @@ void renderActors(PxRigidActor** actors, const PxU32 numActors, bool shadows, co
 
 			if(shadows)/*阴影，，，效果表现上有瑕疵但不知道怎么优化*/
 			{
-				const PxVec3 shadowDir(0.0f, -0.7071067f, -0.7071067f);
+				//const PxVec3 shadowDir(0.0f, -0.7071067f, -0.7071067f);
+				PxVec3 shadowDir(gLightDir.x, gLightDir.y, gLightDir.z);
+				shadowDir = shadowDir.getNormalized();
 				const PxReal shadowMat[]={ 1,0,0,0, -shadowDir.x/shadowDir.y,0,-shadowDir.z/shadowDir.y,0, 0,0,1,0, 0,0,0,1 };
 				glPushMatrix();						
 				glMultMatrixf(shadowMat);
