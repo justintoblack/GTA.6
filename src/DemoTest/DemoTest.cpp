@@ -65,6 +65,7 @@
 #include "../SnippetVehicleCommon/SnippetVehicleTireFriction.h"
 #include "../SnippetVehicleCommon/SnippetVehicleCreate.h"
 #include "irrKlang/irrKlang.h"
+#include"../GameDemo/JsonData.h"
 
 
 
@@ -1168,10 +1169,20 @@ void MyCode()
 	wheelBLObj.AddModel(gWheelModel_fl);
 	wheelBRObj.AddModel(gWheelModel_fr);
 
-	/*carObject.Name = "car";
-	carObject.SetRigidbody(gVehicle4W->getRigidDynamicActor());
-	carObject.AddModel(gBodyModel, gWheelModel_fl, gWheelModel_fr, gWheelModel_bl, gWheelModel_br);*/
+	///////////////////////////Normal-Test////////////////////////////
+	cout << endl<<endl;
+	GameObject* asdsad = new GameObject();
+	RigidBody* saffwq = new RigidBody(asdsad);
+	BoxCollider* box = new BoxCollider(asdsad);
+	asdsad->hasComponent("Rigidbos");
+	//cout<< typeid(*(asdsad->components[0])).name()<<endl;
 
+	////////////////////////////JsonTest/////////////////////////
+	string testJson;
+	CreateJson(testJson);
+	string path = "../../assets/Scene/Scene.Data";
+	StringToFile(path, testJson);
+	//FileToString(path);
 }
 
 

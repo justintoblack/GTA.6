@@ -8,6 +8,8 @@ using namespace physx;
 extern	PxPhysics* gPhysics;
 extern	PxMaterial* gMaterial;
 extern	PxScene* gScene;
+extern const char** _allModelsName;
+extern vector<Model> Models;			//Ä£ÐÍ
 
 class Component;
 
@@ -138,6 +140,20 @@ public:
 		components.push_back(component);
 	}
 
+	bool hasComponent(string componentName)
+	{
+		for (int i = 0; i < components.size(); i++)
+		{
+			//cout << typeid(*(components[i])).name() << endl;
+			//if (typeid(components[i]).name() == componentName)
+			//{
+			//	cout << "yes" << endl;
+			//	return true;
+			//}
+		}
+		//cout << "no" << endl;
+		return false;
+	}
 	//Component* GetComponent(Component* component)
 	//{
 	//	for (int i = 0; i < components.size(); i++)
@@ -159,6 +175,7 @@ public:
 	GameObject* _parent=nullptr;
 	virtual void ShowParameter()
 	{
+		return;
 	};
 };
 
@@ -275,6 +292,7 @@ public:
 class ModelComponent :public Component
 {
 private:
+	int item_current =0;
 public:
 	Model* MyModel;
 	ModelComponent(GameObject* parent)
@@ -291,7 +309,13 @@ public:
 
 	void ShowParameter()
 	{
-		ImGui::Button("Modle");
+		ImGui::Spacing();
+		ImGui::Text("Model");
+		if (ImGui::Combo("Models", &item_current, _allModelsName,
+			IM_ARRAYSIZE(*_allModelsName)))
+		{
+			SetModel(Models[item_current]);
+		}
 	}
 };
 #endif // !GameObject

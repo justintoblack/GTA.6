@@ -65,6 +65,8 @@ static PxVec3 _rotation=PxVec3(0,0,0);
 static PxQuat _quaternion = PxQuat(0, 0, 0, 1);
 static bool _isAddRigidbodyStatic=false;
 static char  _objName[16];
+const char** _allModelsName;
+
 
 //////////////////////////////ImGUI////////////////////////////////
 
@@ -325,8 +327,10 @@ void my_display_code()
 			ImGui::PopID();
 		}
 		//const char* items[] = { "AAAA", "BBBB", "CCCC", "DDDD", "EEEE", "FFFF", "GGGG", "HHHH", "IIIIIII", "JJJJ", "KKKKKKK" };
+		//const char** point = items;
 		//static int item_current = 0;
-		//ImGui::Combo("combo", &item_current, items, IM_ARRAYSIZE(items));
+
+		//ImGui::Combo("combo", &item_current, point, IM_ARRAYSIZE(items));
 
 		
 		//ImGui::InputFloat3("position(x, y, z)", gameObjectPosition);
@@ -376,11 +380,10 @@ void my_display_code()
 			ImGui::DragFloat("z", &_rotation.z, 0.1);
 			ImGui::PopID();
 			
-			//空行
-			for (int i = 0; i < 10; i++)
-			{
-				ImGui::Spacing();
-			}
+			ImGui::Spacing();
+			ImGui::Text("Components");
+			ImGui::Spacing();
+
 
 			//组件UI
 			for (int i = 0; i < curGameObject->components.size(); i++)
@@ -392,6 +395,7 @@ void my_display_code()
 			if (ImGui::Button("CreateNewGameObject",
 				ImVec2(ImGui::GetContentRegionAvail().x, 20)))
 			{
+				curGameObject = nullptr;
 				theCreator.CreateNewGameObject();
 			}
 
@@ -410,11 +414,20 @@ void my_display_code()
 				BoxCollider* newBoxCollider = new BoxCollider(curGameObject);
 			}
 
-			//UI-End
-			curGameObject->SetTransform(PxTransform(_position,Mathf::EulerToQuat(_rotation)));
+			//添加Model
+			if (ImGui::Button("AddModel", ImVec2(ImGui::GetContentRegionAvail().x - 100, 20)))
+			{
+				ModelComponent* newModelComponent = new ModelComponent(curGameObject);
+			}
 
-			char* str = _objName;
-			strcpy(curGameObject->Name, str);
+			//UI-End
+			if (curGameObject != nullptr)
+			{
+				curGameObject->SetTransform(PxTransform(_position,Mathf::EulerToQuat(_rotation)));
+				char* str = _objName;
+				strcpy(curGameObject->Name, str);
+			}
+
 
 			ImGui::PopItemWidth();
 		}

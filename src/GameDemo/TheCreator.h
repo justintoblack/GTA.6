@@ -25,14 +25,14 @@ class TheCreator
 private:
 	PxPhysics* m_gPhysics;
 	PxScene* m_gScene;
-
+	int _modelsCount;
 
 public:
 
 	vector<GameObject> SceneGameObject;		//场景中的GameObject
 	vector<string> ModelPath;	//模型路径
-	vector<char[16]> ModelName;	//文件名
-	vector<Model> Models;			//模型
+	vector<string> ModelName;	//文件名
+	//const char** models;
 
 	Model  poleModel;
 	Model  stationModel;

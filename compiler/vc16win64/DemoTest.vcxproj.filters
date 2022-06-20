@@ -73,6 +73,7 @@
     <ClInclude Include="..\..\src\DemoTest\CarGameObject.h" />
     <ClInclude Include="Dependencies\imgui\imgui_impl_glut.h" />
     <ClInclude Include="Dependencies\imgui\imgui_impl_opengl2.h" />
+    <ClInclude Include="..\..\src\GameDemo\JsonData.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="imgui">

@@ -1,6 +1,8 @@
 #include "TheCreator.h"
 
 using namespace snippetvehicle;
+extern const char** _allModelsName;
+vector<Model> Models;			//模型
 
 //可行使
 void makeObjectDrivable(PxShape*& shape)
@@ -53,15 +55,16 @@ void TheCreator::Init(PxPhysics* physics, PxScene* gScene)
 	{
 		Model temp = Model(ModelPath[i]);
 		Models.push_back(temp);
+		string name = ModelPath[i].substr(ModelPath[i].find_last_of('/')+1);
+		ModelName.push_back(name);
 	}
-	for (int i = 0; i < ModelPath.size(); i++)
-	{
-		int end = ModelPath[i].find_last_of('.');
-		cout << end<<endl;
-		string name = ModelPath[i].substr(ModelPath[i].find_last_of("/") + 1, ModelPath[i].find_last_of('.') );
-		name = name.substr(0, name.find_last_of('.'));
-		cout << name << endl;
-	}
+	 _modelsCount = ModelName.size();
+	_allModelsName = new const char* [_modelsCount];
+
+	 for (int i = 0; i < _modelsCount; i++)
+	 {
+		 _allModelsName[i] = ModelName[i].data();
+	 }
 }
 
 void TheCreator::CreateAnchorBall(PxTransform pos, PxMaterial* gMaterial,float radius)

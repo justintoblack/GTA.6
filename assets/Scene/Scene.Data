@@ -1,0 +1,478 @@
+[
+	{
+		"Name" : "Pole",
+		"Rigidbody" : 
+		{
+			"has" : true,
+			"isStatic" : false
+		},
+		"Transform" : 
+		[
+			5.0,
+			2.5,
+			20.0
+		]
+	},
+	{
+		"Name" : "Pole",
+		"Rigidbody" : 
+		{
+			"has" : true,
+			"isStatic" : false
+		},
+		"Transform" : 
+		[
+			5.0,
+			2.5,
+			30.0
+		]
+	},
+	{
+		"Name" : "Pole",
+		"Rigidbody" : 
+		{
+			"has" : true,
+			"isStatic" : false
+		},
+		"Transform" : 
+		[
+			5.0,
+			2.5,
+			40.0
+		]
+	},
+	{
+		"Name" : "Pole",
+		"Rigidbody" : 
+		{
+			"has" : true,
+			"isStatic" : false
+		},
+		"Transform" : 
+		[
+			5.0,
+			2.5,
+			50.0
+		]
+	},
+	{
+		"Name" : "Pole",
+		"Rigidbody" : 
+		{
+			"has" : true,
+			"isStatic" : false
+		},
+		"Transform" : 
+		[
+			5.0,
+			2.5,
+			60.0
+		]
+	},
+	{
+		"Name" : "Pole",
+		"Rigidbody" : 
+		{
+			"has" : true,
+			"isStatic" : false
+		},
+		"Transform" : 
+		[
+			5.0,
+			2.5,
+			70.0
+		]
+	},
+	{
+		"Name" : "Pole",
+		"Rigidbody" : 
+		{
+			"has" : true,
+			"isStatic" : false
+		},
+		"Transform" : 
+		[
+			5.0,
+			2.5,
+			80.0
+		]
+	},
+	{
+		"Name" : "Pole",
+		"Rigidbody" : 
+		{
+			"has" : true,
+			"isStatic" : false
+		},
+		"Transform" : 
+		[
+			5.0,
+			2.5,
+			90.0
+		]
+	},
+	{
+		"Name" : "Pole",
+		"Rigidbody" : 
+		{
+			"has" : true,
+			"isStatic" : false
+		},
+		"Transform" : 
+		[
+			5.0,
+			2.5,
+			100.0
+		]
+	},
+	{
+		"Name" : "Pole",
+		"Rigidbody" : 
+		{
+			"has" : true,
+			"isStatic" : false
+		},
+		"Transform" : 
+		[
+			5.0,
+			2.5,
+			110.0
+		]
+	},
+	{
+		"Name" : "Pole",
+		"Rigidbody" : 
+		{
+			"has" : true,
+			"isStatic" : false
+		},
+		"Transform" : 
+		[
+			55.0,
+			2.5,
+			20.0
+		]
+	},
+	{
+		"Name" : "Pole",
+		"Rigidbody" : 
+		{
+			"has" : true,
+			"isStatic" : false
+		},
+		"Transform" : 
+		[
+			55.0,
+			2.5,
+			70.0
+		]
+	},
+	{
+		"Name" : "Pole",
+		"Rigidbody" : 
+		{
+			"has" : true,
+			"isStatic" : false
+		},
+		"Transform" : 
+		[
+			55.0,
+			2.5,
+			120.0
+		]
+	},
+	{
+		"Name" : "Pole",
+		"Rigidbody" : 
+		{
+			"has" : true,
+			"isStatic" : false
+		},
+		"Transform" : 
+		[
+			55.0,
+			2.5,
+			170.0
+		]
+	},
+	{
+		"Name" : "Pole",
+		"Rigidbody" : 
+		{
+			"has" : true,
+			"isStatic" : false
+		},
+		"Transform" : 
+		[
+			55.0,
+			2.5,
+			220.0
+		]
+	},
+	{
+		"Name" : "Pole",
+		"Rigidbody" : 
+		{
+			"has" : true,
+			"isStatic" : false
+		},
+		"Transform" : 
+		[
+			55.0,
+			2.5,
+			270.0
+		]
+	},
+	{
+		"Name" : "Pole",
+		"Rigidbody" : 
+		{
+			"has" : true,
+			"isStatic" : false
+		},
+		"Transform" : 
+		[
+			55.0,
+			2.5,
+			320.0
+		]
+	},
+	{
+		"Name" : "Pole",
+		"Rigidbody" : 
+		{
+			"has" : true,
+			"isStatic" : false
+		},
+		"Transform" : 
+		[
+			55.0,
+			2.5,
+			370.0
+		]
+	},
+	{
+		"Name" : "Pole",
+		"Rigidbody" : 
+		{
+			"has" : true,
+			"isStatic" : false
+		},
+		"Transform" : 
+		[
+			55.0,
+			2.5,
+			420.0
+		]
+	},
+	{
+		"Name" : "Pole",
+		"Rigidbody" : 
+		{
+			"has" : true,
+			"isStatic" : false
+		},
+		"Transform" : 
+		[
+			55.0,
+			2.5,
+			470.0
+		]
+	},
+	{
+		"Name" : "Pole",
+		"Rigidbody" : 
+		{
+			"has" : true,
+			"isStatic" : false
+		},
+		"Transform" : 
+		[
+			50.0,
+			0.69999998807907104,
+			50.0
+		]
+	},
+	{
+		"Name" : "Pole",
+		"Rigidbody" : 
+		{
+			"has" : true,
+			"isStatic" : false
+		},
+		"Transform" : 
+		[
+			50.0,
+			0.69999998807907104,
+			70.0
+		]
+	},
+	{
+		"Name" : "Pole",
+		"Rigidbody" : 
+		{
+			"has" : true,
+			"isStatic" : false
+		},
+		"Transform" : 
+		[
+			50.0,
+			0.69999998807907104,
+			90.0
+		]
+	},
+	{
+		"Name" : "Pole",
+		"Rigidbody" : 
+		{
+			"has" : true,
+			"isStatic" : false
+		},
+		"Transform" : 
+		[
+			50.0,
+			0.69999998807907104,
+			110.0
+		]
+	},
+	{
+		"Name" : "Pole",
+		"Rigidbody" : 
+		{
+			"has" : true,
+			"isStatic" : false
+		},
+		"Transform" : 
+		[
+			50.0,
+			0.69999998807907104,
+			130.0
+		]
+	},
+	{
+		"Name" : "Pole",
+		"Rigidbody" : 
+		{
+			"has" : true,
+			"isStatic" : false
+		},
+		"Transform" : 
+		[
+			50.0,
+			0.69999998807907104,
+			150.0
+		]
+	},
+	{
+		"Name" : "Pole",
+		"Rigidbody" : 
+		{
+			"has" : true,
+			"isStatic" : false
+		},
+		"Transform" : 
+		[
+			50.0,
+			0.69999998807907104,
+			170.0
+		]
+	},
+	{
+		"Name" : "Pole",
+		"Rigidbody" : 
+		{
+			"has" : true,
+			"isStatic" : false
+		},
+		"Transform" : 
+		[
+			50.0,
+			0.69999998807907104,
+			190.0
+		]
+	},
+	{
+		"Name" : "Pole",
+		"Rigidbody" : 
+		{
+			"has" : true,
+			"isStatic" : false
+		},
+		"Transform" : 
+		[
+			50.0,
+			0.69999998807907104,
+			210.0
+		]
+	},
+	{
+		"Name" : "Pole",
+		"Rigidbody" : 
+		{
+			"has" : true,
+			"isStatic" : false
+		},
+		"Transform" : 
+		[
+			50.0,
+			0.69999998807907104,
+			230.0
+		]
+	},
+	{
+		"Name" : "station_00",
+		"Rigidbody" : 
+		{
+			"has" : true,
+			"isStatic" : true
+		},
+		"Transform" : 
+		[
+			20.0,
+			0.0,
+			10.0
+		]
+	},
+	{
+		"Name" : "station_01",
+		"Rigidbody" : 
+		{
+			"has" : true,
+			"isStatic" : true
+		},
+		"Transform" : 
+		[
+			29.0,
+			0.0,
+			10.0
+		]
+	},
+	{
+		"Name" : "station_02",
+		"Rigidbody" : 
+		{
+			"has" : true,
+			"isStatic" : true
+		},
+		"Transform" : 
+		[
+			11.0,
+			0.0,
+			10.0
+		]
+	},
+	{
+		"Name" : "123",
+		"Rigidbody" : 
+		{
+			"has" : true,
+			"isStatic" : true
+		},
+		"Transform" : 
+		[
+			0.0,
+			0.0,
+			0.0
+		]
+	}
+]
