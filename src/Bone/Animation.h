@@ -55,7 +55,7 @@ public :
 	}
 
 	//查找名为boneName的骨骼
-	Bone* FindBone(const string boneName) {
+	Bone* FindBone(const string& boneName) {
 		vector<Bone>::iterator it = mBones.begin();
 		for (; it != mBones.end(); it++)
 		{
