@@ -186,7 +186,7 @@ private:
         // diffuse: texture_diffuseN
         // specular: texture_specularN
         // normal: texture_normalN
-
+        
         // 1. diffuse maps
         vector<Texture> diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse", scene);
         textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
@@ -199,7 +199,10 @@ private:
         // 4. height maps
         std::vector<Texture> heightMaps = loadMaterialTextures(material, aiTextureType_AMBIENT, "texture_height",scene);
         textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
-        
+        //// 5. emission maps
+        //std::vector<Texture> emissiveMaps = loadMaterialTextures(material, aiTextureType_EMISSIVE, "texture_emissive", scene);
+        //textures.insert(textures.end(), emissiveMaps.begin(), emissiveMaps.end());
+
         // return a mesh object created from the extracted mesh data
         return Mesh(vertices, indices, textures);
     }

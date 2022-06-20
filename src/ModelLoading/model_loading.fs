@@ -16,6 +16,7 @@ struct Material
     sampler2D texture_diffuse2;
     sampler2D texture_specular1;
     sampler2D texture_specular2;
+    sampler2D texture_emissive;
 };
 uniform Material material;
 
@@ -46,6 +47,8 @@ void main()
     vec3 specular = light.specular * spec * texture(material.texture_specular1, TexCoords).rgb;
     specular += light.specular * spec * texture(material.texture_specular2, TexCoords).rgb;
 
+    //emission
+    //vec3 emission = texture(material.texture_emissive, TexCoords).rgb;
     vec3 result = ambient + diffuse + specular;
 
     FragColor = vec4(result, 1.0f);
