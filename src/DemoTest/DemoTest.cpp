@@ -146,8 +146,8 @@ PxVec3 vehiclePos;
 PxVec3* CameraFollowTarget;
 
 //GameObject
-GameObject testObject;
-//CarGameObject carObject;
+//GameObject testObject;
+CarGameObject carObject;
 
 #pragma region 角色属性
 PxController* m_player;
@@ -296,18 +296,18 @@ bool isTouchTriggerBox = false;
 int currentTriggerIndex = -1;
 
 //车辆相关的全局变量
-GameObject carObject;
-GameObject wheelFLObj;
-GameObject wheelFRObj;
-GameObject wheelBLObj;
-GameObject wheelBRObj;
-PxTransform wheelLF;
-PxTransform wheelRF;
-PxTransform wheelLB;
-PxTransform wheelRB;
-PxShape* wheels[5];
+//GameObject carObject;
+//GameObject wheelFLObj;
+//GameObject wheelFRObj;
+//GameObject wheelBLObj;
+//GameObject wheelBRObj;
+//PxTransform wheelLF;
+//PxTransform wheelRF;
+//PxTransform wheelLB;
+//PxTransform wheelRB;
+//PxShape* wheels[5];
 
-PxRigidDynamic* carBody;
+//PxRigidDynamic* carBody;
 
 
 VehicleSceneQueryData* gVehicleSceneQueryData = NULL;
@@ -319,6 +319,8 @@ PxRigidStatic* gGroundPlane = NULL;
 PxVehicleDrive4W* gVehicle4W = NULL;
 PxRigidDynamic* gTreasureActor = NULL;
 bool					gIsVehicleInAir = true;
+PxVec3 vehicleUp = PxVec3(0, 1, 0);
+PxVec3 vehicleForward = PxVec3(0, 0, 1);
 
 PxF32 gSteerVsForwardSpeedData[2 * 8] =
 {
@@ -958,6 +960,7 @@ void startAccelerateForwardsMode()
 		carEngine.play(path);
 	}
 
+
 	if (gVehicle4W->mDriveDynData.getCurrentGear() == PxVehicleGearsData::eREVERSE)
 	{
 		gVehicle4W->mDriveDynData.forceGearChange(PxVehicleGearsData::eFIRST);
@@ -1150,41 +1153,13 @@ void MyCode()
 	
 	theCreator.CreateGameObject();
 
+	carObject.Name = "car";
+	carObject.SetRigidbody(gVehicle4W->getRigidDynamicActor());
+	carObject.AddModel(gBodyModel, gWheelModel_fl, gWheelModel_fr, gWheelModel_bl, gWheelModel_br);
 
-	carBody = gVehicle4W->getRigidDynamicActor();
-	//carObject.Name = "carBody";
-	carObject.AddRigidbody(carBody);
-	carObject.AddModel(gBodyModel);
-	carObject.AddToScene();
 
-	carBody->getShapes(wheels, 5);
 
-	wheelFLObj.parent = &carObject;
-	wheelFRObj.parent = &carObject;
-	wheelBLObj.parent = &carObject;
-	wheelBRObj.parent = &carObject;
 
-	wheelFLObj.AddModel(gWheelModel_fl);
-	wheelFRObj.AddModel(gWheelModel_fr);
-	wheelBLObj.AddModel(gWheelModel_fl);
-	wheelBRObj.AddModel(gWheelModel_fr);
-
-	///////////////////////////Normal-Test////////////////////////////
-	//cout << endl<<endl;
-	//GameObject* asdsad = new GameObject();
-	//RigidBody* saffwq = new RigidBody(asdsad);
-	//BoxCollider* box = new BoxCollider(asdsad);
-	//asdsad->hasComponent("RigidBody");
-	//asdsad->hasComponent("BoxCollider");
-	//asdsad->hasComponent("Models");
-	//cout<< typeid(*(asdsad->components[0])).name()<<endl;
-
-	////////////////////////////JsonTest/////////////////////////
-	//string testJson;
-	//CreateJson(testJson);
-	//string path = "../../assets/Scene/Scene.Data";
-	//StringToFile(path, testJson);
-	//FileToString(path);
 }
 
 
@@ -1233,7 +1208,7 @@ void initPhysics(bool interactive)
 
 
 	PxInitVehicleSDK(*gPhysics);
-	PxVehicleSetBasisVectors(PxVec3(0, 1, 0), PxVec3(0, 0, 1));
+	PxVehicleSetBasisVectors(vehicleUp,vehicleForward);
 	PxVehicleSetUpdateMode(PxVehicleUpdateMode::eVELOCITY_CHANGE);
 	PxVehicleSetSweepHitRejectionAngles(POINT_REJECT_ANGLE, NORMAL_REJECT_ANGLE);
 	PxVehicleSetMaxHitActorAcceleration(MAX_ACCELERATION);
@@ -1365,16 +1340,16 @@ void stepPhysics(bool interactive)
 
 	/////////////////////////////载具更新////////////////////////////////////
 
-	wheelLF = wheels[0]->getLocalPose();
-	wheelRF = wheels[1]->getLocalPose();
-	wheelLB = wheels[2]->getLocalPose();
-	wheelRB = wheels[3]->getLocalPose();
+	//wheelLF = wheels[0]->getLocalPose();
+	//wheelRF = wheels[1]->getLocalPose();
+	//wheelLB = wheels[2]->getLocalPose();
+	//wheelRB = wheels[3]->getLocalPose();
 
 
-	wheelFLObj.SetLocalTransform(wheelLF);
-	wheelFRObj.SetLocalTransform(wheelRF);
-	wheelBLObj.SetLocalTransform(wheelLB);
-	wheelBRObj.SetLocalTransform(wheelRB);
+	//wheelFLObj.SetLocalTransform(wheelLF);
+	//wheelFRObj.SetLocalTransform(wheelRF);
+	//wheelBLObj.SetLocalTransform(wheelLB);
+	//wheelBRObj.SetLocalTransform(wheelRB);
 
 
 	////////////////////////////////////////////////////////////

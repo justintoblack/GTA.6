@@ -34,7 +34,7 @@ public:
 	PxTransform localTransform=PxTransform(0,0,0);
 	
 	GameObject* parent=nullptr;
-	//PxVec3 scale;
+	PxVec3 scale;
 
 	Model*  g_model=nullptr;
 	PxRigidActor*  g_rigidBody=nullptr;
@@ -45,7 +45,7 @@ public:
 	GameObject()
 	{
 		transform = PxTransform(0,0,0);
-		//scale = PxVec3(1, 1, 1);
+		scale = PxVec3(1, 1, 1);
 	}
 
 	void SetName(const char name[])

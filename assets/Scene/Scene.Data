@@ -1,1 +1,76 @@
-null
+[
+	{
+		"BoxCollider" : 
+		{
+			"localTransform" : 
+			[
+				0.0,
+				4.0300002098083496,
+				0.0
+			],
+			"size" : 
+			[
+				3.8399999141693115,
+				4.7800002098083496,
+				4.0199999809265137
+			]
+		},
+		"ModelComponent" : 
+		{
+			"idx" : 0
+		},
+		"Name" : "Station_00",
+		"Rigidbody" : 
+		{
+			"has" : true,
+			"isStatic" : true
+		},
+		"Transform" : 
+		[
+			20.0,
+			0.0,
+			10.0,
+			0.0,
+			0.0,
+			0.0,
+			1.0
+		]
+	},
+	{
+		"BoxCollider" : 
+		{
+			"localTransform" : 
+			[
+				0.0,
+				2.869999885559082,
+				0.0
+			],
+			"size" : 
+			[
+				5.059999942779541,
+				3.0,
+				2.7799999713897705
+			]
+		},
+		"ModelComponent" : 
+		{
+			"idx" : 1
+		},
+		"Name" : "station_01",
+		"Rigidbody" : 
+		{
+			"has" : true,
+			"isStatic" : true
+		},
+		"Transform" : 
+		[
+			10.710000038146973,
+			0.0,
+			10.0,
+			0.0,
+			0.0,
+			0.0,
+			1.0
+		]
+	}
+]

@@ -62,8 +62,13 @@ unsigned int		gSkyboxVAO, gSkyboxVBO;
 Model				gModel;
 Model               gBodyModel, gWheelModel_fl, gWheelModel_fr, gWheelModel_bl, gWheelModel_br;
 Shader				gModelShader;
+glm::vec3			gLightPos = glm::vec3(10.0f, 50.0f, 50.0f);
+glm::vec3			gLightDir = glm::vec3(2.0f, -3.0f, 1.0f);
+glm::vec3			gLightAmbient = glm::vec3(0.6f, 0.6f, 0.6f);
+glm::vec3			gLightDiffuse = glm::vec3(0.5f, 0.5f, 0.5f);
+glm::vec3			gLightSpecular = glm::vec3(1.0f, 1.0f, 1.0f);
 
-//Ìì¿ÕºĞÁù¸öÃæµÄÎÆÀíÍ¼Æ¬
+//å¤©ç©ºç›’å…­ä¸ªé¢çš„çº¹ç†å›¾ç‰‡
 const char* gSkyboxFaces[6] = {
 	"../../assets/SkyboxImages/right.jpg",
 	"../../assets/SkyboxImages/left.jpg",
@@ -73,7 +78,7 @@ const char* gSkyboxFaces[6] = {
 	"../../assets/SkyboxImages/back.jpg"
 };
 
-//Ìì¿ÕºĞÁù¸ö·½Ïò
+//å¤©ç©ºç›’å…­ä¸ªæ–¹å‘
 const GLenum  CUBEMAP_DIRECTION[6] = {
 	GL_TEXTURE_CUBE_MAP_POSITIVE_X,
 	GL_TEXTURE_CUBE_MAP_NEGATIVE_X,
@@ -83,7 +88,7 @@ const GLenum  CUBEMAP_DIRECTION[6] = {
 	GL_TEXTURE_CUBE_MAP_NEGATIVE_Z
 };
 
-//Ìì¿ÕºĞÁù¸öÃæµÄ¶¥µã
+//å¤©ç©ºç›’å…­ä¸ªé¢çš„é¡¶ç‚¹
 float gSkyboxVertices[] = {
 	//right
 	1.0f, -1.0f, -1.0f,		1.0f, -1.0f, 1.0f,		1.0f,  1.0f,  1.0f,
@@ -111,23 +116,23 @@ extern void stepPhysics(bool interactive);
 extern void cleanupPhysics(bool interactive);
 //extern void keyPress(unsigned char key, const PxTransform& camera);
 
-//Ê±¼ä
-float deltaTime;		//Ê±¼ä²åÖµ
-float gameTime;		//µ±Ç°³ÌĞòÖ´ĞĞÊ±¼ä
+//æ—¶é—´
+float deltaTime;		//æ—¶é—´æ’å€¼
+float gameTime;		//å½“å‰ç¨‹åºæ‰§è¡Œæ—¶é—´
 __int64 firstCount;
 __int64 freq;
 static __int64 gTime, gLastTime;
 
 ///////////////////////DemoTest///////////////////////////////
 
-extern GameObject carObject;
-extern GameObject wheelFLObj;
-extern GameObject wheelFRObj;
-extern GameObject wheelBLObj;
-extern GameObject wheelBRObj;
+//extern GameObject carObject;
+//extern GameObject wheelFLObj;
+//extern GameObject wheelFRObj;
+//extern GameObject wheelBLObj;
+//extern GameObject wheelBRObj;
 
-extern GameObject testObject;
-//extern CarGameObject carObject;
+//extern GameObject testObject;
+extern CarGameObject carObject;
 extern TheCreator theCreator;
 extern GameObject gameObject_00;
 
@@ -151,7 +156,7 @@ extern float volume0;
 
 
 
-//Êó±ê
+//é¼ æ ‡
 //POINT p;
 //int lastX; int lastY;
 
@@ -179,7 +184,7 @@ namespace
 	//	lastY = y;
 	//	//std::cout << x << " " << GetSystemMetrics(SM_CXSCREEN) << std::endl;
 
-	//	//µ½´ï´°¿Ú±ß½ç
+	//	//åˆ°è¾¾çª—å£è¾¹ç•Œ
 	//	if (x <= 0 || x >= GetSystemMetrics(SM_CXSCREEN)-1 || y <= 0 || y >= GetSystemMetrics(SM_CYSCREEN)-1)
 	//	{
 	//		SetCursorPos(GetSystemMetrics(SM_CXSCREEN)/2, GetSystemMetrics(SM_CYSCREEN)/2);
@@ -203,7 +208,7 @@ namespace
 
 	void idleCallback()
 	{
-		//±ØÒªµÄ
+		//å¿…è¦çš„
 		glutPostRedisplay();
 
 		
@@ -243,15 +248,15 @@ namespace
 
 	void SetupSkybox()
 	{
-		//¿ªÆôÉî¶È²âÊÔ
+		//å¼€å¯æ·±åº¦æµ‹è¯•
 		glEnable(GL_DEPTH_TEST);
 		//glDepthFunc(GL_LEQUAL);
 
-		//¼ÓÔØSHADER
+		//åŠ è½½SHADER
 		gSkyboxShader = Shader("../../src/Render/SkyBox.vs",
 								"../../src/Render/SkyBox.fs");
 
-		// Ìì¿ÕºĞ VAO
+		// å¤©ç©ºç›’ VAO
 		glGenVertexArrays(1, &gSkyboxVAO);
 		glGenBuffers(1, &gSkyboxVBO);
 		glBindVertexArray(gSkyboxVAO);
@@ -263,27 +268,27 @@ namespace
 
 		int width, height, nrChannels;
 
-		// ½ûÓÃ¶à±ßĞÎ±³ÃæÉÏµÄ¹âÕÕ¡¢ÒõÓ°ºÍÑÕÉ«¼ÆËã¼°²Ù×÷
+		// ç¦ç”¨å¤šè¾¹å½¢èƒŒé¢ä¸Šçš„å…‰ç…§ã€é˜´å½±å’Œé¢œè‰²è®¡ç®—åŠæ“ä½œ
 		glCullFace(GL_BACK);
-		//GL_CCW ±íÊ¾´°¿Ú×ø±êÉÏÍ¶Ó°¶à±ßĞÎµÄ¶¥µãË³ĞòÎªÄæÊ±Õë·½ÏòµÄ±íÃæÎªÕıÃæ
+		//GL_CCW è¡¨ç¤ºçª—å£åæ ‡ä¸ŠæŠ•å½±å¤šè¾¹å½¢çš„é¡¶ç‚¹é¡ºåºä¸ºé€†æ—¶é’ˆæ–¹å‘çš„è¡¨é¢ä¸ºæ­£é¢
 		glFrontFace(GL_CCW);
-		//¿ªÆôÉî¶È²âÊÔ
+		//å¼€å¯æ·±åº¦æµ‹è¯•
 		glEnable(GL_DEPTH_TEST);
-		// ´´½¨ÎÆÀí¶ÔÏó
+		// åˆ›å»ºçº¹ç†å¯¹è±¡
 		glGenTextures(1, &gCubeTexture);
 		glBindTexture(GL_TEXTURE_CUBE_MAP, gCubeTexture);
 
-		// ÉèÖÃÎÆÀí¹ıÂËÄ£Ê½
+		// è®¾ç½®çº¹ç†è¿‡æ»¤æ¨¡å¼
 		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-		//ÉèÖÃÎÆÀíäÖÈ¾Ä£Ê½
+		//è®¾ç½®çº¹ç†æ¸²æŸ“æ¨¡å¼
 		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-		//ÉèÖÃÊı¾İÄÚ´æ¶ÔÆë·½Ê½
+		//è®¾ç½®æ•°æ®å†…å­˜å¯¹é½æ–¹å¼
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
-		//¼ÓÔØÎÆÀíÍ¼Æ¬
+		//åŠ è½½çº¹ç†å›¾ç‰‡
 		for (GLuint i = 0; i < 6; i++)
 		{
 			unsigned char* data = stbi_load(gSkyboxFaces[i], &width, &height, &nrChannels, 0);
@@ -299,7 +304,7 @@ namespace
 			stbi_image_free(data);
 		}
 
-		//¿ªÆômipÌùÍ¼
+		//å¼€å¯mipè´´å›¾
 		glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
 	}
 	void RenderSkybox(void)
@@ -319,34 +324,41 @@ namespace
 		glBindTexture(GL_TEXTURE_CUBE_MAP, gCubeTexture);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 		glBindVertexArray(0);
-		/*Â©µôÕâ¾äºó£¬½ºÄÒÌå±äÎªÁ½¿ÅĞ¡Çò£¬½ºÄÒÌåÖĞ¼äµÄÔ²ÖùÌå²»¼ûÁË*/
+		/*æ¼æ‰è¿™å¥åï¼Œèƒ¶å›Šä½“å˜ä¸ºä¸¤é¢—å°çƒï¼Œèƒ¶å›Šä½“ä¸­é—´çš„åœ†æŸ±ä½“ä¸è§äº†*/
 		glDeleteBuffers(1, &gSkyboxVBO);
 		glDepthMask(GL_TRUE);
 		glUseProgram(0);
 	}
 
-	//´«ÈëÄ£ĞÍ¶ÔÏómodel£¬ÒÔ¼°Ä£ĞÍµÄÎ»ÖÃpos
+	//ä¼ å…¥æ¨¡å‹å¯¹è±¡modelï¼Œä»¥åŠæ¨¡å‹çš„ä½ç½®pos
 	void RenderModel(Model& model, glm::vec3 pos, glm::vec3 dir , Shader& shader)
 	{
 		//glEnable(GL_DEPTH_TEST);
 		model.setPos(pos);
 		shader.use();
+		//è®¾ç½®å…‰æºä½ç½®ï¼Œå…‰æºçš„å±æ€§ï¼šç¯å¢ƒå…‰å¼ºåº¦ã€æ¼«åå°„å¼ºåº¦ã€é•œé¢åå°„å¼ºåº¦
+		shader.SetVector3f("lightPos", gLightPos);
+		PxVec3 viewPos = sCamera->getEye();
+		shader.SetVector3f("viewPos", viewPos.x, viewPos.y, viewPos.z);
+		shader.SetVector3f("light.direction", gLightDir);
+		shader.SetVector3f("light.ambient", gLightAmbient);
+		shader.SetVector3f("light.diffuse", gLightDiffuse);
+		shader.SetVector3f("light.specular", gLightSpecular);
+		//shininesså‘å…‰å€¼ï¼Œå‘å…‰å€¼è¶Šé«˜ï¼Œåå°„èƒ½åŠ›è¶Šå¼ºï¼Œæ•£å°„è¶Šå°‘ï¼Œé«˜å…‰ç‚¹è¶Šå°
+		shader.SetFloat("material.shininess", 128.0f);
+
 		glm::mat4 modelMat = glm::mat4(1.0f);
 		modelMat = glm::translate(modelMat, model.getPos());
-
 		//modelMat = glm::rotate(modelMat, 1.0f, glm::vec3(0, -1, 0));
 		modelMat *= glm::mat4_cast(glm::quatLookAt(dir, glm::vec3(0, 1, 0)));
-
 		modelMat = glm::scale(modelMat, glm::vec3(.1f, .1f, .1f));
-		
-		
-
-
 		glm::mat4 viewMat = getViewMat();
 		glm::mat4 projectionMat = glm::perspective(45.0f, (float)glutGet(GLUT_WINDOW_WIDTH) / (float)glutGet(GLUT_WINDOW_HEIGHT), 0.1f, 1000.0f);
-		glUniformMatrix4fv(glGetUniformLocation(gModelShader.ID, "projection"), 1, GL_FALSE, glm::value_ptr(projectionMat));
-		glUniformMatrix4fv(glGetUniformLocation(gModelShader.ID, "view"), 1, GL_FALSE, glm::value_ptr(viewMat));
-		glUniformMatrix4fv(glGetUniformLocation(gModelShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(modelMat));
+		shader.SetMatrix4fv("projection", projectionMat);
+		shader.SetMatrix4fv("view", viewMat);
+		shader.SetMatrix4fv("model", modelMat);
+		
+
 		model.Draw(shader);
 
 		glUseProgram(0);
@@ -354,10 +366,10 @@ namespace
 
 
 
-	//äÖÈ¾GameObject
+	//æ¸²æŸ“GameObject
 	void RenderGameObject(GameObject &gameObject)
 	{
-		//ÊÇ·ñÓĞ¸¸ÎïÌå
+		//æ˜¯å¦æœ‰çˆ¶ç‰©ä½“
 		if (gameObject.parent != nullptr)
 		{
 			gameObject.transform = gameObject.parent->transform.transform(gameObject.localTransform);
@@ -368,7 +380,7 @@ namespace
 
 			//gameObject.transform.q *= gameObject.localTransform.q;
 		}
-		//ĞèÒª¸ú×ÙÎïÀíÄ£Äâ
+		//éœ€è¦è·Ÿè¸ªç‰©ç†æ¨¡æ‹Ÿ
 		else if (gameObject.g_rigidBody&&gameObject.g_rigidBody->getType()==
 			PxActorType::eRIGID_DYNAMIC)
 		{
@@ -399,42 +411,41 @@ namespace
 		}
 	}
 
-	//äÖÈ¾³µÁ¾
+	//æ¸²æŸ“è½¦è¾†
 	void RenderCarObject(CarGameObject& gameObject)
 	{
-		//ĞèÒª¸ú×ÙÎïÀíÄ£Äâ
+		//éœ€è¦è·Ÿè¸ªç‰©ç†æ¨¡æ‹Ÿ
 		if (gameObject.g_rigidBody && gameObject.g_rigidBody->getType() ==
 			PxActorType::eRIGID_DYNAMIC)
 		{
 			gameObject.transform = gameObject.g_rigidBody->getGlobalPose();
 		}
 
-		PxShape* vehicleshapes[5];  //4¸ö³µÂÖ£¬1¸ö³µÌåµÄshape
+		PxShape* vehicleshapes[5];  //4ä¸ªè½¦è½®ï¼Œ1ä¸ªè½¦ä½“çš„shape
 		gVehicle4W->getRigidDynamicActor()->getShapes(vehicleshapes, 5);
 
 
-		//äÖÈ¾³µÌå
+		//æ¸²æŸ“è½¦ä½“
 		gModelShader.use();
 		glm::mat4 modelMat = glm::mat4(1.0f);
-		modelMat = glm::translate(modelMat, Mathf::P3ToV3(gameObject.transform.p-PxVec3(0,0.5,0.1)));
+		modelMat = glm::translate(modelMat, Mathf::P3ToV3(gameObject.transform.p));
 		modelMat *= glm::mat4_cast(Mathf::Toquat(gameObject.transform.q));
 		modelMat = glm::scale(modelMat, gameObject.g_body->getScale());
-	
 		glm::mat4 viewMat = getViewMat();
 		glm::mat4 projectionMat = glm::perspective(45.0f, (float)glutGet(GLUT_WINDOW_WIDTH) / (float)glutGet(GLUT_WINDOW_HEIGHT), 0.1f, 1000.0f);
 		glUniformMatrix4fv(glGetUniformLocation(gModelShader.ID, "projection"), 1, GL_FALSE, glm::value_ptr(projectionMat));
 		glUniformMatrix4fv(glGetUniformLocation(gModelShader.ID, "view"), 1, GL_FALSE, glm::value_ptr(viewMat));
 		glUniformMatrix4fv(glGetUniformLocation(gModelShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(modelMat));
 		gameObject.g_body->Draw(gModelShader);
-		//äÖÈ¾³µÂÖ
+		//æ¸²æŸ“è½¦è½®
 		Model* wheels[4] = { gameObject.g_wheel_fl,gameObject.g_wheel_fr,gameObject.g_wheel_bl,gameObject.g_wheel_br};
-		PxVec3 offset[4] = { PxVec3(0.88467, -0.23312, 1.6328) , PxVec3(-0.88467, -0.23312, 1.6328) ,PxVec3(0.88467, -0.23312, -1.2502),PxVec3(-0.88467, -0.23312, -1.2502)};
+		PxVec3 offset[4] = { PxVec3(0.88467, -0.7733, 1.6328) , PxVec3(-0.88467, -0.7733, 1.6328) ,PxVec3(0.88467, -0.7733, -1.2502),PxVec3(-0.88467, -0.7733, -1.2502)};
 
-		//Ó¦¸Ã¶ÔÃ¿¸ö³µÂÖÓ¦ÓÃ²»Í¬×ª»»¾ØÕó
+		//åº”è¯¥å¯¹æ¯ä¸ªè½¦è½®åº”ç”¨ä¸åŒè½¬æ¢çŸ©é˜µ
 		for (size_t i = 0; i < 4; i++)
 		{
 			modelMat = glm::mat4(1.0f);
-			modelMat = glm::translate(modelMat, Mathf::P3ToV3(gameObject.transform.p - PxVec3(0, 0.5, 0)));
+			modelMat = glm::translate(modelMat, Mathf::P3ToV3(gameObject.transform.p));
 			modelMat *= glm::mat4_cast(Mathf::Toquat(gameObject.transform.q));
 			modelMat = glm::translate(modelMat, Mathf::P3ToV3(offset[i]));
 			modelMat *= glm::mat4_cast(Mathf::Toquat(vehicleshapes[i]->getLocalPose().q));
@@ -455,10 +466,10 @@ namespace
 	bool engineState = false;
 	ISoundEngine* backgroundMusicEngine = nullptr;
 	ISound* snd = nullptr;
-	//ÏÔÊ¾´°¿Ú
+	//æ˜¾ç¤ºçª—å£
 	void renderCallback()
 	{
-		//±³¾°ÒôÀÖ²¥·Å×´Ì¬»ú
+		//èƒŒæ™¯éŸ³ä¹æ’­æ”¾çŠ¶æ€æœº
 		if (backgroundMusic == true)
 		{
 			if (engineState == false)
@@ -484,41 +495,41 @@ namespace
 			}
 		}
 
-		//ImguiÖĞĞèÒª¼ÓÈëäÖÈ¾»Øµ÷µÄº¯Êı
+		//Imguiä¸­éœ€è¦åŠ å…¥æ¸²æŸ“å›è°ƒçš„å‡½æ•°
 		Snippets::glut_display_func();
 		
-		//ÎïÀíÄ£Äâ
+		//ç‰©ç†æ¨¡æ‹Ÿ
 		stepPhysics(true);
 
-		//äÖÈ¾Ïà»ú³¡¾°
+		//æ¸²æŸ“ç›¸æœºåœºæ™¯
 		Snippets::startRender(sCamera->getEye(), sCamera->getDir(),0.1f, 1000.0f);
 
 		RenderSkybox();
 
 
-		/////////////////////½ÇÉ«äÖÈ¾//////////////////////////
-		//RenderCarObject(carObject);
+		/////////////////////è§’è‰²æ¸²æŸ“//////////////////////////
+		RenderCarObject(carObject);
 
-		//äÖÈ¾³¡¾°ÎïÌå
+		//æ¸²æŸ“åœºæ™¯ç‰©ä½“
 		for (int i = 0; i < theCreator.SceneGameObject.size(); i++)
 		{
 			RenderGameObject(theCreator.SceneGameObject[i]);
 		}
 
-		//äÖÈ¾ÌØÊâÎïÌå
+		//æ¸²æŸ“ç‰¹æ®Šç‰©ä½“
 		for (int i = 0; i < theCreator.SpecialGameObject.size(); i++)
 		{
 			RenderGameObject(theCreator.SpecialGameObject[i]);
 		}
 
-		RenderGameObject(carObject);
-		RenderGameObject(wheelFLObj);
-		RenderGameObject(wheelFRObj);
-		RenderGameObject(wheelBLObj);
-		RenderGameObject(wheelBRObj);
+		//RenderGameObject(carObject);
+		//RenderGameObject(wheelFLObj);
+		//RenderGameObject(wheelFRObj);
+		//RenderGameObject(wheelBLObj);
+		//RenderGameObject(wheelBRObj);
 		
 		float rotateSpeed = 5;
-		//±íÊ¾ÕıÔÚÒÆ¶¯
+		//è¡¨ç¤ºæ­£åœ¨ç§»åŠ¨
 		PxExtendedVec3 haha= m_player->getFootPosition();
 		if (!moveDir.isZero())
 		{
@@ -540,7 +551,7 @@ namespace
 		PxScene* scene;
 		PxGetPhysics().getScenes(&scene,1);
 
-		//»ñÈ¡³¡¾°ÖĞµÄActor²¢ÓÃOpenGLäÖÈ¾
+		//è·å–åœºæ™¯ä¸­çš„Actorå¹¶ç”¨OpenGLæ¸²æŸ“
 		PxU32 nbActors = scene->getNbActors(PxActorTypeFlag::eRIGID_DYNAMIC | PxActorTypeFlag::eRIGID_STATIC);
 		if(nbActors)
 		{
@@ -551,7 +562,7 @@ namespace
 
 		Snippets::finishRender();
 
-		//¹ØÓÚÊ±¼ä
+		//å…³äºæ—¶é—´
 		QueryPerformanceCounter((LARGE_INTEGER*)&gTime); //get current count
 		QueryPerformanceFrequency((LARGE_INTEGER*)&freq); //get processor freq
 		deltaTime = (float)(gTime - gLastTime)/ (float)freq;
@@ -575,14 +586,14 @@ namespace
 
 
 
-	//äÖÈ¾Á÷³Ì
+	//æ¸²æŸ“æµç¨‹
 	void renderLoop()
 	{
 
 		sCamera = new Snippets::Camera(PxVec3(50.0f, 50.0f, 50.0f), PxVec3(-0.6f,-0.2f,-0.7f));
 		sCamera->SetConfig(4,PxVec3(0,0,0));
 
-		//³õÊ¼»¯Êó±êÎ»ÖÃ;
+		//åˆå§‹åŒ–é¼ æ ‡ä½ç½®;
 		//GetCursorPos(&p);
 		//lastX = p.x;
 		//lastY = p.y;
@@ -599,19 +610,24 @@ namespace
 
 
 		//----------Render Model----------
-		gBodyModel = Model("../../assets/objects/Models/carBody.fbx");
-		gWheelModel_fl = Model("../../assets/objects/Models/wheel_left.fbx");
-		gWheelModel_fr = Model("../../assets/objects/Models/wheel_right.fbx");
+		gBodyModel = Model("../../assets/objects/car/body.obj");
+		gWheelModel_fl = Model("../../assets/objects/car/wheel_fl.obj");
+		gWheelModel_fr = Model("../../assets/objects/car/wheel_fr.obj");
 		gWheelModel_bl = Model("../../assets/objects/car/wheel_bl.obj");
 		gWheelModel_br= Model("../../assets/objects/car/wheel_br.obj");
 
 		gModel = Model("../../assets/objects/nanosuit/nanosuit.obj");
+		//gModel2 = Model("../../assets/objects/Models/house.fbx");
+		//æœ€åˆçš„shader
 		gModelShader = Shader("../../src/ModelLoading/model_loading.vs",
 								"../../src/ModelLoading/model_loading.fs");
+		////ä½¿ç”¨å¸¦å…‰ç…§çš„shader
+		//gModelShader = Shader("../../src/Light/light.vs", "../../src/Light/light.fs");
+
 		//----------Render Model----------
 		SetupSkybox();
 
-		//Õâ¸öidleº¯ÊıÒâÎª¿ÕÏĞº¯Êı£¬½«ÔÚÊÂ¼ş¶ÓÁĞµÄ×îºó£¨¼´Íê³ÉÊó±ê¼üÅÌÊÂ¼şÏìÓ¦£¬×¼±¸ÏÂÒ»¸öäÖÈ¾Ö¡£¬äÖÈ¾µ±Ç°Ö¡£©½øĞĞ£¬¾ßÓĞ×îµÍµÄÓÅÏÈ¼¶
+		//è¿™ä¸ªidleå‡½æ•°æ„ä¸ºç©ºé—²å‡½æ•°ï¼Œå°†åœ¨äº‹ä»¶é˜Ÿåˆ—çš„æœ€åï¼ˆå³å®Œæˆé¼ æ ‡é”®ç›˜äº‹ä»¶å“åº”ï¼Œå‡†å¤‡ä¸‹ä¸€ä¸ªæ¸²æŸ“å¸§ï¼Œæ¸²æŸ“å½“å‰å¸§ï¼‰è¿›è¡Œï¼Œå…·æœ‰æœ€ä½çš„ä¼˜å…ˆçº§
 		glutIdleFunc(idleCallback);
 
 		glutDisplayFunc(renderCallback);
@@ -619,7 +635,7 @@ namespace
 		initImGUI();
 		
 
-		//¼üÅÌÊÂ¼ş»Øµ÷º¯Êı
+		//é”®ç›˜äº‹ä»¶å›è°ƒå‡½æ•°
 		//glutKeyboardFunc(keyboardCallback);
 
 		glutSetCursor(GLUT_CURSOR_NONE);
@@ -636,7 +652,7 @@ namespace
 
 		initPhysics(true);
 
-		//¼ÇÂ¼ÓÎÏ·µÚÒ»Ö¡Ê±¼ä
+		//è®°å½•æ¸¸æˆç¬¬ä¸€å¸§æ—¶é—´
 
 		QueryPerformanceCounter((LARGE_INTEGER*)&gTime);
 		QueryPerformanceFrequency((LARGE_INTEGER*)&freq);

@@ -40,13 +40,13 @@ void TheCreator::Init(PxPhysics* physics, PxScene* gScene)
 	m_gPhysics = physics;
 	m_gScene = gScene;
 
-	poleModel = Model("../../assets/objects/Models/SM_Prop_LightPole_Base_02.fbx");
-	stationModel = Model("../../assets/objects/Models/SM_Bld_Station_01.fbx");
-	stationModel_01 = Model("../../assets/objects/Models/SM_Bld_Station_03.fbx");
-	road = Model("../../assets/objects/Models/SM_Env_Road_Bare_01.fbx");
-	_carBody=Model("../../assets/objects/Models/carBody.fbx");
-	_carWheelLeft=Model("../../assets/objects/Models/wheel_left.fbx");
-	_carWheelRight=Model("../../assets/objects/Models/wheel_right.fbx");
+	poleModel = Model("../../assets/objects/Models/02_SM_Prop_LightPole_Base_02.fbx");
+	//stationModel = Model("../../assets/objects/Models/SM_Bld_Station_01.fbx");
+	//stationModel_01 = Model("../../assets/objects/Models/SM_Bld_Station_03.fbx");
+	//road = Model("../../assets/objects/Models/SM_Env_Road_Bare_01.fbx");
+	//_carBody=Model("../../assets/objects/Models/carBody.fbx");
+	//_carWheelLeft=Model("../../assets/objects/Models/wheel_left.fbx");
+	//_carWheelRight=Model("../../assets/objects/Models/wheel_right.fbx");
 
 	//加载模型
 	string filePath = "../../assets/objects/Models";
