@@ -80,6 +80,8 @@
   <ItemGroup>
     <None Include="..\..\src\ModelLoading\model_loading.fs" />
     <None Include="..\..\src\ModelLoading\model_loading.vs" />
+    <None Include="..\..\src\ModelLoading\shadow_loading.fs" />
+    <None Include="..\..\src\ModelLoading\shadow_loading.vs" />
     <None Include="..\..\src\Render\SkyBox.fs" />
     <None Include="..\..\src\Render\SkyBox.vs" />
   </ItemGroup>

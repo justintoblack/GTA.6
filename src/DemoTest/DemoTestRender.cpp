@@ -30,6 +30,10 @@
 #ifdef RENDER_SNIPPET
 #define GLEW_STATIC
 
+
+
+
+
 #include<iostream>
 #include <vector>
 
@@ -61,6 +65,7 @@ Shader				gSkyboxShader;
 unsigned int		gSkyboxVAO, gSkyboxVBO;
 Model				gModel, gModel2;
 Shader				gModelShader;
+Shader				gShadowShader;
 
 //天空盒六个面的纹理图片
 const char* gSkyboxFaces[6] = {
@@ -342,11 +347,12 @@ namespace
 	}
 
 	//传入模型对象model，以及模型的位置pos
-	void RenderModel(Model& model, glm::vec3 pos, glm::vec3 dir , Shader& shader)
+	void RenderModel(Model& model, glm::vec3 pos, glm::vec3 dir , Shader& modelShader, Shader& shadowShader)
 	{
+
 		//glEnable(GL_DEPTH_TEST);
 		model.setPos(pos);
-		shader.use();
+		shadowShader.use();
 		glm::mat4 modelMat = glm::mat4(1.0f);
 		modelMat = glm::translate(modelMat, model.getPos());
 
@@ -360,12 +366,19 @@ namespace
 
 		glm::mat4 viewMat = getViewMat();
 		glm::mat4 projectionMat = glm::perspective(45.0f, (float)glutGet(GLUT_WINDOW_WIDTH) / (float)glutGet(GLUT_WINDOW_HEIGHT), 0.1f, 1000.0f);
-		glUniformMatrix4fv(glGetUniformLocation(gModelShader.ID, "projection"), 1, GL_FALSE, glm::value_ptr(projectionMat));
-		glUniformMatrix4fv(glGetUniformLocation(gModelShader.ID, "view"), 1, GL_FALSE, glm::value_ptr(viewMat));
-		glUniformMatrix4fv(glGetUniformLocation(gModelShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(modelMat));
-		model.Draw(shader);
+		glUniformMatrix4fv(glGetUniformLocation(shadowShader.ID, "projection"), 1, GL_FALSE, glm::value_ptr(projectionMat));
+		glUniformMatrix4fv(glGetUniformLocation(shadowShader.ID, "view"), 1, GL_FALSE, glm::value_ptr(viewMat));
+		glUniformMatrix4fv(glGetUniformLocation(shadowShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(modelMat));
+		model.Draw(shadowShader);
+
+		modelShader.use();
+		glUniformMatrix4fv(glGetUniformLocation(shadowShader.ID, "projection"), 1, GL_FALSE, glm::value_ptr(projectionMat));
+		glUniformMatrix4fv(glGetUniformLocation(shadowShader.ID, "view"), 1, GL_FALSE, glm::value_ptr(viewMat));
+		glUniformMatrix4fv(glGetUniformLocation(shadowShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(modelMat));
+		model.Draw(modelShader);
 
 		glUseProgram(0);
+
 	}
 
 	//渲染GameObject
@@ -398,6 +411,10 @@ namespace
 	bool engineState = false;
 	ISoundEngine* backgroundMusicEngine = nullptr;
 	ISound* snd = nullptr;
+
+
+
+
 	//显示窗口
 	void renderCallback()
 	{
@@ -459,7 +476,7 @@ namespace
 			glm::vec3 targetDir = glm::vec3(moveDir.x, 0, moveDir.z);
 			forwardDir = glm::normalize( Mathf::Slerp(forwardDir, targetDir, deltaTime * rotateSpeed));
 		}
-		RenderModel(gModel, glm::vec3(haha.x, haha.y, haha.z),-forwardDir, gModelShader);
+		RenderModel(gModel, glm::vec3(haha.x, haha.y, haha.z),-forwardDir, gModelShader, gShadowShader);
 			//RenderModel(gModel, glm::vec3(-20.0f, 10.0f, -45.0f), gModelShader);
 		//RenderModel(gModel2, glm::vec3(10.0, 1.0f, 10.0f),glm::vec3(0,0,1),
 		//	gModelShader);
@@ -477,7 +494,7 @@ namespace
 		{
 			std::vector<PxRigidActor*> actors(nbActors);
 			scene->getActors(PxActorTypeFlag::eRIGID_DYNAMIC | PxActorTypeFlag::eRIGID_STATIC, reinterpret_cast<PxActor**>(&actors[0]), nbActors);
-			Snippets::renderActors(&actors[0], static_cast<PxU32>(actors.size()), true);
+			Snippets::renderActors(&actors[0], static_cast<PxU32>(actors.size()), false);
 		}
 
 		Snippets::finishRender();
@@ -526,7 +543,7 @@ namespace
 		glewInit();
 
 
-
+		/*Snippets::initShadow();*/
 
 
 		//----------Render Model----------
@@ -535,6 +552,8 @@ namespace
 		gModel2 = Model("../../assets/objects/Models/SM_Bld_Station_01.fbx");
 		gModelShader = Shader("../../src/ModelLoading/model_loading.vs",
 								"../../src/ModelLoading/model_loading.fs");
+		gShadowShader = Shader("../../src/ModelLoading/shadow_loading.vs",
+			"../../src/ModelLoading/shadow_loading.fs");
 		//----------Render Model----------
 		SetupSkybox();
 

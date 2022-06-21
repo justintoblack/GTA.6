@@ -91,5 +91,7 @@
     <None Include="..\..\src\Render\SkyBox.vs" />
     <None Include="..\..\src\ModelLoading\model_loading.fs" />
     <None Include="..\..\src\ModelLoading\model_loading.vs" />
+    <None Include="..\..\src\ModelLoading\shadow_loading.vs" />
+    <None Include="..\..\src\ModelLoading\shadow_loading.fs" />
   </ItemGroup>
 </Project>

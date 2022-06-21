@@ -26,6 +26,14 @@
 // Copyright (c) 2008-2018 NVIDIA Corporation. All rights reserved.
 // Copyright (c) 2004-2008 AGEIA Technologies, Inc. All rights reserved.
 // Copyright (c) 2001-2004 NovodeX AG. All rights reserved.  
+
+
+#define GL_TEXTURE_COMPARE_MODE      GL_TEXTURE_COMPARE_MODE_ARB
+#define GL_TEXTURE_COMPARE_FUNC      GL_TEXTURE_COMPARE_FUNC_ARB
+#define GL_DEPTH_TEXTURE_MODE        GL_DEPTH_TEXTURE_MODE_ARB
+#define GL_COMPARE_R_TO_TEXTURE      GL_COMPARE_R_TO_TEXTURE_ARB
+
+
 #define _CRT_SECURE_NO_WARNINGS
 #include "Render.h"
 #include <iostream>
@@ -246,12 +254,12 @@ void renderGeometry(const PxGeometryHolder& h)
 	case PxGeometryType::eHEIGHTFIELD:
 	case PxGeometryType::eGEOMETRY_COUNT:	
 	case PxGeometryType::ePLANE:/*这里设置了平面，给了几个点让glut画了个正方形，颜色设置为120的绿色（满值是255）*/
-		glBegin(GL_QUADS);
-		glColor4ub(170, 255, 0, 200); glVertex3f(-1.0f, -300.0f, -300.0f);/*这个坐标有点奇怪 后面应该是变换过，不用太在意，反正就当第一个是y轴就可以了*/
-		glColor4ub(170, 255, 0, 200); glVertex3f(-1.0f, -300.0f, 300.0f);
-		glColor4ub(170, 255, 0, 200); glVertex3f(-1.0f, 300.0f, 300.0f);
-		glColor4ub(170, 255, 0, 200); glVertex3f(-1.0f, 300.0f, -300.0f);
-		glEnd();
+		//glBegin(GL_QUADS);
+		//glColor4ub(0, 0, 10, 200); glVertex3f(10.0f, -30.0f, -30.0f);/*这个坐标有点奇怪 后面应该是变换过，不用太在意，反正就当第一个是y轴就可以了*/
+		//glColor4ub(0, 0, 10, 200); glVertex3f(10.0f, -30.0f, 30.0f);
+		//glColor4ub(0, 0, 10, 200); glVertex3f(10.0f, 30.0f, 30.0f);
+		//glColor4ub(0, 0, 10, 200); glVertex3f(10.0f, 30.0f, -30.0f);
+		//glEnd();
 		break;
 	}
 }
@@ -413,6 +421,52 @@ void setupDefaultRenderState()
 	glEnable(GL_LIGHT0);
 }
 
+//void initShadow()
+//{
+//	GLfloat  white[] = { 1.0, 1.0, 1.0, 1.0 };
+//	GLfloat     lightPos[] = { 25.0, 25.0, 25.0, 1.0 };
+//
+//	//生成深度纹理(阴影图，只关心深度，对图像颜色信息并不关心，所以最后数据参数可以是NULL)
+//	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT,
+//		256, 256, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, NULL);//GL_DEPTH_COMPONENT:深度纹理格式，用于将深度值记录到这张图中
+//
+//	glLightfv(GL_LIGHT0, GL_POSITION, lightPos);
+//	glLightfv(GL_LIGHT0, GL_SPECULAR, white);
+//	glLightfv(GL_LIGHT0, GL_DIFFUSE, white);
+//
+//	//设置阴影图相关过滤方式
+//	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+//	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+//	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+//	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+//	/*深度纹理特有*/
+//	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);//比较规则
+//	glTexParameteri(GL_TEXTURE_2D, GL_DEPTH_TEXTURE_MODE, GL_LUMINANCE);//阴影图亮度
+//	/*分为普通对比模式（GL_NONE）和引用到贴图对比模式（GL_COMPARE_REF_TO_TEXTURE）,后者使用的深度纹理贴图是线性过滤的，而前者是直接填充。*/
+//	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
+//
+//	//自动生成纹理坐标
+//	glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_OBJECT_LINEAR);
+//	glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_OBJECT_LINEAR);
+//	glTexGeni(GL_R, GL_TEXTURE_GEN_MODE, GL_OBJECT_LINEAR);
+//	glTexGeni(GL_Q, GL_TEXTURE_GEN_MODE, GL_OBJECT_LINEAR);
+//
+//	glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+//
+//	glCullFace(GL_BACK);//剔除背面
+//
+//	glEnable(GL_DEPTH_TEST);
+//	glEnable(GL_LIGHT0);
+//	glEnable(GL_LIGHTING);
+//	glEnable(GL_TEXTURE_2D);
+//	glEnable(GL_TEXTURE_GEN_S);
+//	glEnable(GL_TEXTURE_GEN_T);
+//	glEnable(GL_TEXTURE_GEN_R);
+//	glEnable(GL_TEXTURE_GEN_Q);
+//	glEnable(GL_COLOR_MATERIAL);//激活颜色材料模式
+//	glEnable(GL_CULL_FACE);//激活表面剔除
+//}
+
 
 void startRender(const PxVec3& cameraEye, const PxVec3& cameraDir, PxReal clipNear, PxReal clipFar)
 {
@@ -465,11 +519,11 @@ void renderActors(PxRigidActor** actors, const PxU32 numActors, bool shadows, co
 			if(sleeping)/*是否处于sleeping状态*/
 			{
 				PxVec3 darkColor = color * 0.5f;/*sleeping的情况下颜色*0.8*/
-				glColor4f(darkColor.x, darkColor.y, darkColor.z, 1.0f);
+				glColor4f(darkColor.x, darkColor.y, darkColor.z, 0.0f);
 			}
 			else
 				glColor4f(color.x, color.y, color.z, 1.0f);
-			renderGeometry(h);
+			//renderGeometry(h);
 			glPopMatrix();
 
 			glPolygonMode( GL_FRONT_AND_BACK, GL_FILL);
@@ -482,7 +536,7 @@ void renderActors(PxRigidActor** actors, const PxU32 numActors, bool shadows, co
 				glMultMatrixf(shadowMat);
 				glMultMatrixf(reinterpret_cast<const float*>(&shapePose));
 				glDisable(GL_LIGHTING);
-				glColor4f(0.1f, 0.2f, 0.3f, 1.0f);
+				glColor4f(0.1f, 240.2f, 0.3f, 1.0f);
 				renderGeometry(h);
 				glEnable(GL_LIGHTING);
 				glPopMatrix();

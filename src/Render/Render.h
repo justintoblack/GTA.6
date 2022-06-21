@@ -58,7 +58,7 @@ namespace Snippets
 {
 void setupDefaultWindow(const char* name);
 void setupDefaultRenderState();
-
+//void initShadow();
 void startRender(const physx::PxVec3& cameraEye, const physx::PxVec3& cameraDir, physx::PxReal nearClip = 1.f, physx::PxReal farClip = 10000.f);
 void renderActors(physx::PxRigidActor** actors, const physx::PxU32 numActors, bool shadows = false, const physx::PxVec3 & color = clear_color);
 void finishRender();
