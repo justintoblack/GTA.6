@@ -301,7 +301,7 @@ class ModelComponent :public Component
 private:
 public:
 	int item_current =0;
-	Model* MyModel;
+	Model* MyModel=nullptr;
 	ModelComponent(GameObject* parent)
 	{
 		_parent = parent;

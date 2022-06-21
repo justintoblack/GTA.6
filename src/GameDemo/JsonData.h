@@ -15,7 +15,7 @@ void CreateJson(string& json)
 	//Value相当于一个结构体
 	//Json::Value/* root, fruit, mail,*/ 
 	Json::Value SceneGameObjects, GameObjectValue, TransformValue,
-		RigidbodyValue,BoxColliderValue,ModelValue;
+		RigidbodyValue,BoxColliderValue,ModelValue,PxVec3Value;
 
 	Json::StreamWriterBuilder writerBuilder;
 	std::ostringstream os;
@@ -48,6 +48,10 @@ void CreateJson(string& json)
 		TransformValue[0] = cur.transform.p.x;
 		TransformValue[1] = cur.transform.p.y;
 		TransformValue[2] = cur.transform.p.z;
+		TransformValue[3] = cur.transform.q.x;
+		TransformValue[4] = cur.transform.q.y;
+		TransformValue[5] = cur.transform.q.z;
+		TransformValue[6] = cur.transform.q.w;
 		GameObjectValue["Transform"] = TransformValue;
 
 		//Rigidbody
@@ -66,26 +70,26 @@ void CreateJson(string& json)
 			{
 				RigidbodyValue["isStatic"] = false;
 			}
+			GameObjectValue["Rigidbody"] = RigidbodyValue;
 		}
-		GameObjectValue["Rigidbody"] = RigidbodyValue;
 
 		//BoxCollider
 		if (cur.hasComponent("BoxCollider"))
 		{
 			BoxCollider* box = (BoxCollider*)cur.GetComponent("BoxCollider");
-			TransformValue[0] = box->Transform.p.x;
-			TransformValue[1] = box->Transform.p.y;
-			TransformValue[2] = box->Transform.p.z;
+			PxVec3Value[0] = box->Transform.p.x;
+			PxVec3Value[1] = box->Transform.p.y;
+			PxVec3Value[2] = box->Transform.p.z;
 
-			BoxColliderValue["localTransform"] = TransformValue;
+			BoxColliderValue["localTransform"] = PxVec3Value;
 
-			TransformValue[0] = box->Size.x;
-			TransformValue[1] = box->Size.y;
-			TransformValue[2] = box->Size.z;
+			PxVec3Value[0] = box->Size.x;
+			PxVec3Value[1] = box->Size.y;
+			PxVec3Value[2] = box->Size.z;
 
-			BoxColliderValue["size"] = TransformValue;
+			BoxColliderValue["size"] = PxVec3Value;
+			GameObjectValue["BoxCollider"] = BoxColliderValue;
 		}
-		GameObjectValue["BoxCollider"] = BoxColliderValue;
 
 		//Model
 		if (cur.hasComponent("ModelComponent"))
@@ -94,8 +98,8 @@ void CreateJson(string& json)
 				GetComponent("ModelComponent");
 
 			ModelValue["idx"] = modelP->item_current;
+			GameObjectValue["ModelComponent"] = ModelValue;
 		}
-		GameObjectValue["ModelComponent"] = ModelValue;
 
 
 
@@ -142,7 +146,7 @@ void FileToString(string &path)
 
 	Json::CharReaderBuilder reader;
 	Json::Value SceneGameObjects, GameObjectValue, TransformValue,
-		RigidbodyValue, BoxColliderValue, ModelValue;
+		RigidbodyValue, BoxColliderValue, ModelValue, PxVec3Value;
 
 	//int iage = 0;
 	JSONCPP_STRING errs;
@@ -161,26 +165,25 @@ void FileToString(string &path)
 
 		//name
 		string name = GameObjectValue["Name"].asString();
-		cout << name << endl;
+		//cout << name << endl;
 		gameObject->SetName(name.data());
 
 		//Transform
 		TransformValue = GameObjectValue["Transform"];
-		PxTransform tm(TransformValue[0].asFloat(), TransformValue[1].asFloat(), TransformValue[2].asFloat());
-		cout << TransformValue[0] << TransformValue[1] << TransformValue[2] << endl;
+		PxVec3 pos(TransformValue[0].asFloat(), TransformValue[1].asFloat(), TransformValue[2].asFloat());
+		PxQuat q(TransformValue[3].asFloat(), TransformValue[4].asFloat(), TransformValue[5].asFloat(), TransformValue[6].asFloat());
+		PxTransform tm(pos,q);
+		//cout << TransformValue[0] << TransformValue[1] << TransformValue[2] << endl;
 		gameObject->SetTransform(tm);	//需要加上旋转
 
 		//Rigidbody
 		bool isnull= GameObjectValue["Rigidbody"].isNull();
-		cout << endl;
-		cout << isnull << endl;
-
-		RigidbodyValue = GameObjectValue["Rigidbody"];
-		if (RigidbodyValue != NULL)
+		if (!isnull)
 		{
+			RigidbodyValue = GameObjectValue["Rigidbody"];
 			bool hasRig = RigidbodyValue["has"].asBool();
 			bool isStatic = RigidbodyValue["isStatic"].asBool();
-			cout << RigidbodyValue["has"] << " " << RigidbodyValue["isStatic"] << endl;
+			//cout << RigidbodyValue["has"] << " " << RigidbodyValue["isStatic"] << endl;
 			if (hasRig)
 			{
 				if (isStatic)
@@ -195,19 +198,15 @@ void FileToString(string &path)
 		}
 		
 		//BoxCollider
-		isnull = GameObjectValue["BoxCollider"].isNull();
-		cout << endl;
-		cout << isnull << endl;
-
-		BoxColliderValue = GameObjectValue["BoxCollider"];
-		if (!isnull)
+		if (!GameObjectValue["BoxCollider"].isNull())
 		{
-			TransformValue = BoxColliderValue["localTransform"];
-			PxTransform boxTransform(TransformValue[0].asFloat(), TransformValue[1].asFloat(), TransformValue[2].asFloat());
-			cout << TransformValue[0] << " " << TransformValue[1] << " " << TransformValue[2] << endl;
-			TransformValue = BoxColliderValue["size"];
-			PxTransform boxSize(TransformValue[0].asFloat(), TransformValue[1].asFloat(), TransformValue[2].asFloat());
-			cout << TransformValue[0] << " " << TransformValue[1] << " " << TransformValue[2] << endl;
+			BoxColliderValue = GameObjectValue["BoxCollider"];
+			PxVec3Value = BoxColliderValue["localTransform"];
+			PxTransform boxTransform(PxVec3Value[0].asFloat(), PxVec3Value[1].asFloat(), PxVec3Value[2].asFloat());
+			//cout << TransformValue[0] << " " << TransformValue[1] << " " << TransformValue[2] << endl;
+			PxVec3Value = BoxColliderValue["size"];
+			PxTransform boxSize(PxVec3Value[0].asFloat(), PxVec3Value[1].asFloat(), PxVec3Value[2].asFloat());
+			//cout << TransformValue[0] << " " << TransformValue[1] << " " << TransformValue[2] << endl;
 			BoxCollider* box = new BoxCollider(gameObject);
 			box->Transform = boxTransform;
 			box->Size = boxSize.p;
@@ -215,12 +214,12 @@ void FileToString(string &path)
 		}
 		
 		//Model
-		ModelValue = GameObjectValue["ModelComponent"];
-		if (ModelValue != NULL)
+		if (!GameObjectValue["ModelComponent"].isNull())
 		{
+			ModelValue = GameObjectValue["ModelComponent"];
 			int idx = ModelValue["idx"].asInt();
-			cout << ModelValue["idx"] << endl;
 			ModelComponent* mod = new ModelComponent(gameObject);
+			mod->item_current = idx;
 			mod->SetModel(Models[idx]);
 		}
 

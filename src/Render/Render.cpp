@@ -435,6 +435,15 @@ void my_display_code()
 				ModelComponent* newModelComponent = new ModelComponent(curGameObject);
 			}
 
+			ImGui::Spacing();
+			ImGui::Spacing();
+
+			//É¾³ýGameObject
+			//if (ImGui::Button("Delete", ImVec2(ImGui::GetContentRegionAvail().x - 100, 20)))
+			//{
+
+			//}
+
 			//UI-End
 			if (curGameObject != nullptr)
 			{
@@ -442,6 +451,7 @@ void my_display_code()
 				char* str = _objName;
 				strcpy(curGameObject->Name, str);
 			}
+
 
 
 			ImGui::PopItemWidth();

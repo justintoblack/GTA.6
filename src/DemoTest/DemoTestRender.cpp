@@ -375,19 +375,25 @@ namespace
 			gameObject.transform = gameObject.g_rigidBody->getGlobalPose();
 		}
 
-		if (gameObject.g_model != nullptr)
+		if (gameObject.hasComponent("ModelComponent"))
 		{
+			ModelComponent* mod = (ModelComponent*)gameObject.GetComponent("ModelComponent");
+			if (mod->MyModel == nullptr)
+			{
+				return;
+			}
 			gModelShader.use();
 			glm::mat4 modelMat = glm::mat4(1.0f);
 			modelMat = glm::translate(modelMat, Mathf::P3ToV3(gameObject.transform.p));
 			modelMat *= glm::mat4_cast(Mathf::Toquat(gameObject.transform.q));
-			modelMat = glm::scale(modelMat, gameObject.g_model->getScale());
+			//modelMat = glm::scale(modelMat, gameObject.g_model->getScale());
 			glm::mat4 viewMat = getViewMat();
 			glm::mat4 projectionMat = glm::perspective(45.0f, (float)glutGet(GLUT_WINDOW_WIDTH) / (float)glutGet(GLUT_WINDOW_HEIGHT), 0.1f, 1000.0f);
 			glUniformMatrix4fv(glGetUniformLocation(gModelShader.ID, "projection"), 1, GL_FALSE, glm::value_ptr(projectionMat));
 			glUniformMatrix4fv(glGetUniformLocation(gModelShader.ID, "view"), 1, GL_FALSE, glm::value_ptr(viewMat));
 			glUniformMatrix4fv(glGetUniformLocation(gModelShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(modelMat));
-			gameObject.g_model->Draw(gModelShader);
+
+			mod->MyModel->Draw(gModelShader);
 
 			glUseProgram(0);
 		}
