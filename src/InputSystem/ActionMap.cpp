@@ -13,7 +13,7 @@ extern void SwitchMode();
 
 ActionMap::ActionMap()
 {
-	EscKeyEvent = SwitchMode;
+	EditKeyEvent = SwitchMode;
 }
 
 void ActionMap::InputAction()
@@ -42,27 +42,30 @@ void ActionMap::InputAction()
 		}
 	}
 	//到达窗口边界
-	if (p.x <= 0 || p.x >= GetSystemMetrics(SM_CXSCREEN)-1 || p.y <= 0 || p.y >= GetSystemMetrics(SM_CYSCREEN)-1)
+	if (isInGameMode)
 	{
-		SetCursorPos(GetSystemMetrics(SM_CXSCREEN)/2, GetSystemMetrics(SM_CYSCREEN)/2);
-		needToPass = true;
+		if (p.x <= 0 || p.x >= GetSystemMetrics(SM_CXSCREEN) - 1 || p.y <= 0 || p.y >= GetSystemMetrics(SM_CYSCREEN) - 1)
+		{
+			SetCursorPos(GetSystemMetrics(SM_CXSCREEN) / 2, GetSystemMetrics(SM_CYSCREEN) / 2);
+			needToPass = true;
+		}
 	}
 
 	lastX = p.x;
 	lastY = p.y;
 
 	//键盘
-	if (GetAsyncKeyState('M'))
+	if (GetAsyncKeyState(VK_CONTROL))
 	{
-		if (!isEscKeyDown)
+		if (!isMKeyDown)
 		{
-			EscKeyEvent();
-			isEscKeyDown = true;
+			EditKeyEvent();
+			isMKeyDown = true;
 		}
 	}
 	else
 	{
-		isEscKeyDown = false;
+		isMKeyDown = false;
 	}
 
 	if (GetAsyncKeyState(VK_ESCAPE))

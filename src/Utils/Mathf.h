@@ -35,8 +35,8 @@ w = cos(RotationAngle / 2)*/
 		static glm::quat Toquat(PxQuat q);
 
 		//·ÏÆú
-		static PxVec3 QuatToEuler(PxQuat q)=delete;
-		static PxQuat EulerToQuat(PxVec3 vec)=delete;
+		static PxVec3 QuatToEuler(PxQuat q);
+		static PxQuat EulerToQuat(PxVec3 vec);
 
 		static PxQuat VectorToQuat(PxVec3 vec)=delete;
 

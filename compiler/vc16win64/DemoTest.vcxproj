@@ -56,6 +56,7 @@
     <ClInclude Include="..\..\src\DemoTest\GameObject.h" />
     <ClInclude Include="..\..\src\DemoTest\Mission.h" />
     <ClInclude Include="..\..\src\DemoTest\MisssionManager.h" />
+    <ClInclude Include="..\..\src\GameDemo\JsonData.h" />
     <ClInclude Include="..\..\src\GameDemo\TheCreator.h" />
     <ClInclude Include="..\..\src\InputSystem\ActionMap.h" />
     <ClInclude Include="..\..\src\InputSystem\InputSystem.h" />
@@ -223,7 +224,7 @@
     <Link>
       <AdditionalLibraryDirectories>$(SolutionDir)..\..\third_party\libs</AdditionalLibraryDirectories>
       <AdditionalOptions>/LIBPATH:../../../Lib/vc16win64 PhysX3CommonDEBUG_x64.lib PhysX3DEBUG_x64.lib PhysX3CookingDEBUG_x64.lib PhysX3CharacterKinematicDEBUG_x64.lib PhysX3ExtensionsDEBUG.lib PhysX3VehicleDEBUG.lib PxTaskDEBUG_x64.lib PxFoundationDEBUG_x64.lib PsFastXmlDEBUG_x64.lib PxPvdSDKDEBUG_x64.lib /LIBPATH:../../lib/vc16win64 UtilsDEBUG.lib /DEBUG</AdditionalOptions>
-      <AdditionalDependencies>glfw3_mt.lib;openGL32.lib;glew32s.lib;assimp.lib;irrKlang.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>glfw3_mt.lib;openGL32.lib;glew32s.lib;assimp.lib;irrKlang.lib;jsoncpp.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>XCOPY "../../../../PxShared/bin\vc16win64\PxFoundationDEBUG_x64.dll" "$(OutDir)" /D /Y

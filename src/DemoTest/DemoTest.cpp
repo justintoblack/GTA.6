@@ -34,7 +34,7 @@
 // user to create new stacks and fire a ball from the camera position
 // ****************************************************************************
  
- 
+
 
 #include <ctype.h>
 
@@ -68,6 +68,8 @@
 #include "../SnippetVehicleCommon/SnippetVehicleCreate.h"
 #include "irrKlang/irrKlang.h"
 #include"MisssionManager.h"
+//#include"../GameDemo/JsonData.h"
+
 
 
 using namespace irrklang;
@@ -128,7 +130,9 @@ const char* PigName = "pig";
 
 extern Snippets::Camera* sCamera;
 extern bool main_window;
-
+extern bool show_another_window;
+extern bool inspector_window;
+extern bool isSimulation;
 
 //输入
 InputSyetem inputSystem;
@@ -145,7 +149,7 @@ PxVec3 vehiclePos;
 PxVec3* CameraFollowTarget;
 
 //GameObject
-GameObject testObject;
+//GameObject testObject;
 CarGameObject carObject;
 
 #pragma region 角色属性
@@ -255,12 +259,18 @@ void SwitchMode()
 	if (isInGameMode)
 	{
 		main_window = false;
+		show_another_window = false;
+		inspector_window = false;
+		isSimulation = true;
 		inputSystem.SetCharacterMap(characterMap);
 		glutSetCursor(GLUT_CURSOR_NONE);
 	}
 	else
 	{
 		main_window = true;
+		show_another_window = true;
+		inspector_window = true;
+		isSimulation = false;
 		inputSystem.SetEditMap(editMap);
 		glutSetCursor(GLUT_CURSOR_LEFT_ARROW);
 	} 
@@ -287,6 +297,20 @@ PxVec3 triggerPos[] = { PxVec3(30, 1, 70) , PxVec3(30, 1, 110) , PxVec3(30, 1, 1
 
 
 //车辆相关的全局变量
+//GameObject carObject;
+//GameObject wheelFLObj;
+//GameObject wheelFRObj;
+//GameObject wheelBLObj;
+//GameObject wheelBRObj;
+//PxTransform wheelLF;
+//PxTransform wheelRF;
+//PxTransform wheelLB;
+//PxTransform wheelRB;
+//PxShape* wheels[5];
+
+//PxRigidDynamic* carBody;
+
+
 VehicleSceneQueryData* gVehicleSceneQueryData = NULL;
 PxBatchQuery* gBatchQuery = NULL;
 
@@ -1055,7 +1079,6 @@ void stopBell()
 };
 
 
-extern Model gModel2;
 extern Model gBodyModel, gWheelModel_fl, gWheelModel_fr, gWheelModel_bl, gWheelModel_br;
 //自定义
 void MyCode()
@@ -1118,6 +1141,9 @@ void MyCode()
 	missionManager.AddMission(triggerPos[0], std::string("mission1"));
 	missionManager.AddMission(triggerPos[1], std::string("mission2"));
 	missionManager.AddMission(triggerPos[2], std::string("mission3"));
+
+
+
 }
 
 
@@ -1212,6 +1238,7 @@ void initPhysics(bool interactive)
 	gVehicleOrderProgress = 0;
 	startBrakeMode();
 
+
 	/////////////////////////////////////////////
 	///自定义
 	MyCode();
@@ -1291,44 +1318,21 @@ void stepPhysics(bool interactive)
 
 	////////////////////////////移动结束////////////////////////////////
 
+	/////////////////////////////载具更新////////////////////////////////////
+
+	//wheelLF = wheels[0]->getLocalPose();
+	//wheelRF = wheels[1]->getLocalPose();
+	//wheelLB = wheels[2]->getLocalPose();
+	//wheelRB = wheels[3]->getLocalPose();
 
 
-	/////////////////////////////射线////////////////////////////////
-
-	//PxVec3 origin = m_player->getActor()->getGlobalPose().p+PxVec3(0,0,3);
-	//PxVec3 unitDir = PxVec3(0, 0, 1);
-	//PxReal maxDistance = 10.0f;
-	//PxRaycastBuffer raycasthit;
-
-	//if (gScene->raycast(origin, unitDir, maxDistance, raycasthit))
-	//{
-	//	if (raycasthit.block.actor)
-	//	{
-	//		cout << raycasthit.block.actor->getType()<<endl;
-	//		if (raycasthit.block.actor->getType() == PxActorType::eRIGID_DYNAMIC)
-	//		{
-	//			cout << "dy" << endl;
-	//		}
-	//		else
-	//		{
-	//			cout << "noDy" << endl;
-	//		}
-	//		if (raycasthit.block.actor->getType() == PxActorType::eRIGID_STATIC)
-	//		{
-	//			cout << "static" << endl;
-	//		}
-	//		else
-	//		{
-	//			cout << "noStatic" << endl;
-	//		}
-	//		cout<< raycasthit.block.actor->getType()<<endl;
-	//	}
-	//}
-
-	////////////////////////////射线结束////////////////////////////////
+	//wheelFLObj.SetLocalTransform(wheelLF);
+	//wheelFRObj.SetLocalTransform(wheelRF);
+	//wheelBLObj.SetLocalTransform(wheelLB);
+	//wheelBRObj.SetLocalTransform(wheelRB);
 
 
-
+	////////////////////////////////////////////////////////////
 	//相机跟随
 	characterPos = m_player->getPosition() - PxExtendedVec3(0, 0, 0);
 	vehiclePos = gVehicle4W->getRigidDynamicActor()->getGlobalPose().p;
@@ -1342,9 +1346,11 @@ void stepPhysics(bool interactive)
 		sCamera->goFront(editMap.GetArrowKeyValue());
 	}
 
-
-	gScene->simulate(1.0f / 60.0f);
-	gScene->fetchResults(true);
+	if (isSimulation)
+	{
+		gScene->simulate(1.0f / 60.0f);
+		gScene->fetchResults(true);
+	}
 
 }
 

@@ -27,17 +27,24 @@
 // Copyright (c) 2004-2008 AGEIA Technologies, Inc. All rights reserved.
 // Copyright (c) 2001-2004 NovodeX AG. All rights reserved.  
 #define _CRT_SECURE_NO_WARNINGS
+#include "../GameDemo/TheCreator.h"
+#include "../GameDemo/JsonData.h"
 #include "Render.h"
 #include <iostream>
-
+#include <glm/glm.hpp>
 
 using namespace physx;
 
 
+extern	TheCreator theCreator;
+
+
 //==================================================================ImGUI state
 bool main_window = false;  //之所以不设置为静态全局变量，是因为在DemoTestRender.cpp中会使用到这个变量
+bool show_another_window = false;
+bool inspector_window = false;
+bool isSimulation = true;
 static bool show_demo_window = false;
-static bool show_another_window = false;
 
 //ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 physx::PxVec3 clear_color = physx::PxVec3(0.45f, 0.55f, 0.60f);
@@ -47,12 +54,27 @@ float volume0;
 float volume1;
 float gameObjectPosition[3] = { 0.10f, 0.20f, 0.30f };
 bool editState;
-
+extern glm::vec3 gLightDir;
 
 //==================================================================ImGUI state
 
 
+//////////////////////////ImGUI-Content//////////////////////////////
+static GameObject* curGameObject=nullptr;
+static PxVec3 _position=PxVec3(0,0,0);
+static PxVec3 _rotation=PxVec3(0,0,0);
+static PxQuat _quaternion = PxQuat(0, 0, 0, 1);
+static bool _isAddRigidbodyStatic=false;
+static char  _objName[16];
+const char** _allModelsName;
 
+
+//////////////////////////////ImGUI////////////////////////////////
+
+///////////////////////////////Data///////////////////////////
+static string _json;
+static string _scenepath = "../../assets/Scene/Scene.Data";
+///////////////////////////////Data-End///////////////////////////
 
 static float gCylinderData[]={
 	1.0f,0.0f,1.0f,1.0f,0.0f,1.0f,1.0f,0.0f,0.0f,1.0f,0.0f,0.0f,
@@ -267,7 +289,7 @@ void my_display_code()
 		ImGui::Begin("Console",&main_window);                          // Create a window called "Hello, world!" and append into it.
 
 		ImGui::Text("setting:");      
-		//ImGui::Checkbox("Demo Window", &show_demo_window);      // Edit bools storing our window open/close state
+		ImGui::Checkbox("Demo Window", &show_demo_window);      // Edit bools storing our window open/close state
 		ImGui::Checkbox("Game Object Settings Window", &show_another_window);// Display some text (you can use a format strings too)
 		ImGui::Checkbox("backgroundMusic", &backgroundMusic);
 		ImGui::SliderFloat("backgroundMusicVolume", &volume0, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
@@ -281,28 +303,160 @@ void my_display_code()
 		ImGui::Text("counter = %d", counter);
 		ImGui::SameLine();
 		ImGui::Text("counter = %d", counter);
-		ImGui::Checkbox("Demo Window", &show_demo_window);
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 
-		
+		ImGui::Checkbox("IsSimulation", &isSimulation);
 
+		//创建GameObject
+		if (ImGui::Button("CreateNewGameObject",
+			ImVec2(ImGui::GetContentRegionAvail().x, 20)))
+		{
+			curGameObject = nullptr;
+			theCreator.CreateNewGameObject();
+		}
+
+		//保存场景
+		if (ImGui::Button("Save",
+			ImVec2(ImGui::GetContentRegionAvail().x, 20)))
+		{
+			CreateJson(_json);
+			StringToFile(_scenepath, _json);
+		}
 
 		ImGui::End();
 	}
 	if (show_another_window)
 	{
-		ImGui::Begin("Game Object Settings Window", &show_another_window);   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
-		ImGui::Text("Here are some game object settings below:");
+		ImGui::Begin("Hierarchy", &show_another_window);   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
+		//ImGui::Text("Here are some game object settings below:");
 
-		const char* items[] = { "AAAA", "BBBB", "CCCC", "DDDD", "EEEE", "FFFF", "GGGG", "HHHH", "IIIIIII", "JJJJ", "KKKKKKK" };
-		static int item_current = 0;
-		ImGui::Combo("combo", &item_current, items, IM_ARRAYSIZE(items));
+		//GameObject列表
+		
+		for (int i = 0; i < theCreator.SceneGameObject.size(); i++)
+		{
+			ImGui::PushID(i);
+			if (ImGui::Button(theCreator.SceneGameObject[i].Name,
+				ImVec2(ImGui::GetContentRegionAvail().x,20)))
+			{
+				//GameObject
+				curGameObject = &theCreator.SceneGameObject[i];
+
+				//Name
+				char* tempName = curGameObject->Name;
+				strcpy(_objName, tempName);
+
+			}
+			ImGui::PopID();
+		}
+		//const char* items[] = { "AAAA", "BBBB", "CCCC", "DDDD", "EEEE", "FFFF", "GGGG", "HHHH", "IIIIIII", "JJJJ", "KKKKKKK" };
+		//const char** point = items;
+		//static int item_current = 0;
+
+		//ImGui::Combo("combo", &item_current, point, IM_ARRAYSIZE(items));
 
 		
-		ImGui::InputFloat3("position(x, y, z)", gameObjectPosition);
+		//ImGui::InputFloat3("position(x, y, z)", gameObjectPosition);
 
-		if (ImGui::Button("Close the window"))
-			show_another_window = false;
+		//if (ImGui::Button("Close the window"))
+		//	show_another_window = false;
+		ImGui::End();
+	}
+	if (inspector_window)
+	{
+		ImGui::Begin("Inspector", &inspector_window);
+
+
+		if (curGameObject != nullptr)
+		{
+			//更新数据
+
+			//Position
+			_position= curGameObject->transform.p;
+
+			//Rotation
+			_rotation = Mathf::QuatToEuler(curGameObject->transform.q);
+			//_quaternion = curGameObject->transform.q;
+
+			//UI-Begin
+			ImGui::Text("Name");
+			ImGui::InputTextWithHint(" ", "input GameObject name", _objName,
+				IM_ARRAYSIZE(_objName));
+
+			ImGui::Text("Position");
+			ImGui::PushItemWidth((ImGui::GetContentRegionAvail().x)/3-33);
+			ImGui::PushID(1);
+			ImGui::DragFloat("x", &_position.x, 0.01);
+			ImGui::SameLine();
+			ImGui::DragFloat("y", &_position.y, 0.01);
+			ImGui::SameLine();
+			ImGui::DragFloat("z", &_position.z, 0.01);
+			ImGui::PopID();
+
+			ImGui::Text("Rotation");
+			ImGui::PushItemWidth((ImGui::GetContentRegionAvail().x) / 3 - 33);
+			ImGui::PushID(2);
+			ImGui::DragFloat("x", &_rotation.x, 0.1);
+			ImGui::SameLine();
+			ImGui::DragFloat("y", &_rotation.y, 0.1);
+			ImGui::SameLine();
+			ImGui::DragFloat("z", &_rotation.z, 0.1);
+			ImGui::PopID();
+			
+			ImGui::Spacing();
+			ImGui::Text("Components");
+			ImGui::Spacing();
+
+
+			//组件UI
+			for (int i = 0; i < curGameObject->components.size(); i++)
+			{
+				curGameObject->components[i]->ShowParameter();
+			}
+
+
+			//添加刚体
+			if (ImGui::Button("AddRigidbody",
+				ImVec2(ImGui::GetContentRegionAvail().x-100, 20)))
+			{
+				RigidBody* newRigidBody = new RigidBody(curGameObject,_isAddRigidbodyStatic);
+			}
+			ImGui::SameLine();
+			ImGui::Checkbox("isStatic", &_isAddRigidbodyStatic);
+
+			//添加Collider
+			if (ImGui::Button("AddBoxCollider", ImVec2(ImGui::GetContentRegionAvail().x - 100, 20)))
+			{
+				BoxCollider* newBoxCollider = new BoxCollider(curGameObject);
+			}
+
+			//添加Model
+			if (ImGui::Button("AddModel", ImVec2(ImGui::GetContentRegionAvail().x - 100, 20)))
+			{
+				ModelComponent* newModelComponent = new ModelComponent(curGameObject);
+			}
+
+			ImGui::Spacing();
+			ImGui::Spacing();
+
+			//删除GameObject
+			//if (ImGui::Button("Delete", ImVec2(ImGui::GetContentRegionAvail().x - 100, 20)))
+			//{
+
+			//}
+
+			//UI-End
+			if (curGameObject != nullptr)
+			{
+				curGameObject->SetTransform(PxTransform(_position,Mathf::EulerToQuat(_rotation)));
+				char* str = _objName;
+				strcpy(curGameObject->Name, str);
+			}
+
+
+
+			ImGui::PopItemWidth();
+		}
+
 		ImGui::End();
 	}
 	if (show_demo_window)
@@ -476,7 +630,9 @@ void renderActors(PxRigidActor** actors, const PxU32 numActors, bool shadows, co
 
 			if(shadows)/*阴影，，，效果表现上有瑕疵但不知道怎么优化*/
 			{
-				const PxVec3 shadowDir(0.0f, -0.7071067f, -0.7071067f);
+				//const PxVec3 shadowDir(0.0f, -0.7071067f, -0.7071067f);
+				PxVec3 shadowDir(gLightDir.x, gLightDir.y, gLightDir.z);
+				shadowDir = shadowDir.getNormalized();
 				const PxReal shadowMat[]={ 1,0,0,0, -shadowDir.x/shadowDir.y,0,-shadowDir.z/shadowDir.y,0, 0,0,1,0, 0,0,0,1 };
 				glPushMatrix();						
 				glMultMatrixf(shadowMat);

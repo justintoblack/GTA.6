@@ -25,22 +25,55 @@ glm::quat Mathf::Toquat(PxQuat q)
 	return glm::quat(q.w,q.x,q.y,q.z);
 }
 
-//PxVec3 Mathf::QuatToEuler(PxQuat q)
-//{
-//	//PxVec3 result;
-//	//result.x = q.getBasisVector0();
-//	return PxVec3();
-//}
+PxVec3 Mathf::QuatToEuler(PxQuat q)
+{
+	PxVec3 euler;
+	euler.x = Mathf::RadToDeg(atan2(2 * (q.w * q.x + q.y * q.z), 1 - 2 * (q.y * q.y + q.x + q.x)));
 
-//PxQuat Mathf::EulerToQuat(PxVec3 vec)
-//{
-//	PxQuat q;
-//	q.x = PxSin(vec.y / 2) * PxSin(vec.z / 2) * PxCos(vec.x / 2) + PxCos(vec.y / 2) * PxCos(vec.z / 2) * PxSin(vec.x / 2);
-//	q.y = PxSin(vec.y / 2) * PxCos(vec.z / 2) * PxCos(vec.x / 2) + PxCos(vec.y / 2) * PxSin(vec.z / 2) * PxSin(vec.x / 2);
-//	q.z = PxCos(vec.y / 2) * PxSin(vec.z / 2) * PxCos(vec.x / 2) - PxSin(vec.y / 2) * PxCos(vec.z / 2) * PxSin(vec.x / 2);
-//	q.w = PxCos(vec.y / 2) * PxCos(vec.z / 2) * PxCos(vec.x / 2) - PxSin(vec.y / 2) * PxSin(vec.z / 2) * PxSin(vec.x / 2);
-//	return q;
-//}
+	float sinp = 2 * (q.w * q.y - q.z * q.x);
+	if (abs(sinp) >= 1)
+	{
+		euler.y = Mathf::RadToDeg(copysign(PxPi/2,sinp));
+	}
+	else
+	{
+		euler.y = Mathf::RadToDeg(std::asin(sinp));
+	}
+
+	euler.z = Mathf::RadToDeg(atan2(2 * (q.w * q.z + q.x * q.y), 1 - 2 * (q.y * q.y + q.z * q.z)));
+	return euler;
+}
+
+PxQuat Mathf::EulerToQuat(PxVec3 vec)
+{
+	//q *= PxQuat(Mathf::DegToRad(vec.y), PxVec3(0, 1, 0));
+	//q*= PxQuat(Mathf::DegToRad(vec.z), PxVec3(0, 0, 1));
+	PxQuat q;
+
+	vec = PxVec3(Mathf::DegToRad(vec.x), Mathf::DegToRad(vec.y), 
+		Mathf::DegToRad(vec.z));
+	double cy = cos(vec.z * 0.5);
+	double sy = sin(vec.z * 0.5);
+	double cp = cos(vec.y * 0.5);
+	double sp = sin(vec.y * 0.5);
+	double cr = cos(vec.x * 0.5);
+	double sr = sin(vec.x * 0.5);
+
+	////笛卡尔坐标系
+	//q.w = cr * cp * cy + sr * sp * sy;
+	//q.x = sr * cp * cy - cr * sp * sy;
+	//q.y = cr * sp * cy + sr * cp * sy;
+	//q.z = cr * cp * sy - sr * sp * cy;
+
+	////Direct3D
+
+	q.w = cy * cp * cr + sy * sp * sr;
+	q.x = cy * cp * sr - sy * sp * cr;
+	q.y = sy * cp * sr + cy * sp * cr;
+	q.z = sy * cp * cr - cy * sp * sr;
+
+	return q;
+}
 
 
 void Mathf::Debug(PxVec3 vec)
