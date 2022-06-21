@@ -298,3 +298,4 @@ static bool ValueToString(string& jsonString, Json::Value& value)
 	return true;
 }
 #endif // !_JSONDATA_H
+
