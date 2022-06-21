@@ -10,7 +10,6 @@
 //  * Neither the name of NVIDIA CORPORATION nor the names of its
 //    contributors may be used to endorse or promote products derived
 //    from this software without specific prior written permission.
-//
 // THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS ``AS IS'' AND ANY
 // EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 // IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -34,6 +33,7 @@
 // user to create new stacks and fire a ball from the camera position
 // ****************************************************************************
 
+
 #include <ctype.h>
 
 #include "PxPhysicsAPI.h"
@@ -41,7 +41,7 @@
 #include "../Common/Print.h"
 #include "../Common/PVD.h"
 #include "../Utils/Utils.h"
-
+#include"CarGameObject.h"
 #include<iostream>
 #include<string>
 #include<vector>
@@ -51,6 +51,7 @@
 #include "../GameDemo/TheCreator.h"
 #include "../Utils/Mathf.h"
 
+#include"../DemoTest/CarGameObject.h"
 #include <GL/glut.h>
 #include<time.h>
 #include <ctype.h>
@@ -64,6 +65,7 @@
 #include "../SnippetVehicleCommon/SnippetVehicleTireFriction.h"
 #include "../SnippetVehicleCommon/SnippetVehicleCreate.h"
 #include "irrKlang/irrKlang.h"
+//#include"../GameDemo/JsonData.h"
 
 
 
@@ -75,15 +77,15 @@ using namespace snippetvehicle;
 PxDefaultAllocator		gAllocator;
 PxDefaultErrorCallback	gErrorCallback;
 
-PxFoundation*			gFoundation = NULL;
-PxPhysics*				gPhysics	= NULL;
+PxFoundation* gFoundation = NULL;
+PxPhysics* gPhysics = NULL;
 
-PxDefaultCpuDispatcher*	gDispatcher = NULL;
-PxScene*				gScene		= NULL;
+PxDefaultCpuDispatcher* gDispatcher = NULL;
+PxScene* gScene = NULL;
 
-PxMaterial*				gMaterial	= NULL;
+PxMaterial* gMaterial = NULL;
 PxCooking* gCooking = NULL;
-PxPvd*                  gPvd        = NULL;
+PxPvd* gPvd = NULL;
 
 
 #define NUM_VEHICLES 1
@@ -115,8 +117,8 @@ PxReal stackZ = 10.0f;
 std::vector<PxRigidDynamic*>			ballToDispear;
 std::vector<PxRigidDynamic*>			ballBirdList;
 std::vector<PxRigidDynamic*>			ballPigList;
-PxRigidDynamic*                         ballBird;
-PxRigidDynamic*                         ballPig;
+PxRigidDynamic* ballBird;
+PxRigidDynamic* ballPig;
 
 
 const char* BirdName = "bird";
@@ -125,12 +127,15 @@ const char* PigName = "pig";
 
 extern Snippets::Camera* sCamera;
 extern bool main_window;
-
+extern bool show_another_window;
+extern bool inspector_window;
+extern bool isSimulation;
 
 //输入
 InputSyetem inputSystem;
 CharacterActionMap characterMap;
 VehicleActionMap vehicleMap;
+EditActionMap editMap;
 
 //造物者
 TheCreator theCreator;
@@ -140,17 +145,9 @@ PxVec3 characterPos;
 PxVec3 vehiclePos;
 PxVec3* CameraFollowTarget;
 
-
-#pragma region Models
-//Model model_00;
-#pragma endregion
-
-#pragma region GameObject
-//GameObject gameObject_00;
-
-#pragma endregion
-
-
+//GameObject
+//GameObject testObject;
+CarGameObject carObject;
 
 #pragma region 角色属性
 PxController* m_player;
@@ -164,9 +161,9 @@ PxVec3 fireOffset(0, 0, 1);
 
 PxTransform checkSphereTrans;
 float jumpHeight = 1.0f;
-float characterRadius=0.5f;
-float characterHeight=1.0f;
-float checkSphereRadius =0.1f;
+float characterRadius = 0.5f;
+float characterHeight = 1.0f;
+float checkSphereRadius = 0.1f;
 
 float curSpeed;
 float walkSpeed = 3.0f;
@@ -258,15 +255,21 @@ void SwitchMode()
 	isInGameMode = !isInGameMode;
 	if (isInGameMode)
 	{
-		cout << "game" << endl;
-		main_window = true;
-		glutSetCursor(GLUT_CURSOR_LEFT_ARROW);
+		main_window = false;
+		show_another_window = false;
+		inspector_window = false;
+		isSimulation = true;
+		inputSystem.SetCharacterMap(characterMap);
+		glutSetCursor(GLUT_CURSOR_NONE);
 	}
 	else
 	{
-		cout << "edit" << endl;
-		main_window = false;
-		glutSetCursor(GLUT_CURSOR_NONE);
+		main_window = true;
+		show_another_window = true;
+		inspector_window = true;
+		isSimulation = false;
+		inputSystem.SetEditMap(editMap);
+		glutSetCursor(GLUT_CURSOR_LEFT_ARROW);
 	} 
 };
 #pragma endregion
@@ -293,6 +296,20 @@ bool isTouchTriggerBox = false;
 int currentTriggerIndex = -1;
 
 //车辆相关的全局变量
+//GameObject carObject;
+//GameObject wheelFLObj;
+//GameObject wheelFRObj;
+//GameObject wheelBLObj;
+//GameObject wheelBRObj;
+//PxTransform wheelLF;
+//PxTransform wheelRF;
+//PxTransform wheelLB;
+//PxTransform wheelRB;
+//PxShape* wheels[5];
+
+//PxRigidDynamic* carBody;
+
+
 VehicleSceneQueryData* gVehicleSceneQueryData = NULL;
 PxBatchQuery* gBatchQuery = NULL;
 
@@ -302,6 +319,8 @@ PxRigidStatic* gGroundPlane = NULL;
 PxVehicleDrive4W* gVehicle4W = NULL;
 PxRigidDynamic* gTreasureActor = NULL;
 bool					gIsVehicleInAir = true;
+PxVec3 vehicleUp = PxVec3(0, 1, 0);
+PxVec3 vehicleForward = PxVec3(0, 0, 1);
 
 PxF32 gSteerVsForwardSpeedData[2 * 8] =
 {
@@ -508,7 +527,7 @@ class ContactReportCallback : public PxSimulationEventCallback
 			}
 		}
 	}
-	void onAdvance(const PxRigidBody*const*, const PxTransform*, const PxU32) {}
+	void onAdvance(const PxRigidBody* const*, const PxTransform*, const PxU32) {}
 	void onContact(const PxContactPairHeader& pairHeader, const PxContactPair* pairs, PxU32 nbPairs)
 	{
 		//std::vector<PxContactPairPoint> contactPoints;
@@ -599,7 +618,7 @@ ContactReportCallback gContactReportCallback;
 PxBase->PxActor->PxRigidActor->PxRigidBody->PxRigidDynamic
 */
 //创造动态刚体
-PxRigidDynamic* createDynamic( PxReal radius, const PxTransform& t, const PxVec3& velocity=PxVec3(0))
+PxRigidDynamic* createDynamic(PxReal radius, const PxTransform& t, const PxVec3& velocity = PxVec3(0))
 {
 
 
@@ -611,8 +630,8 @@ PxRigidDynamic* createDynamic( PxReal radius, const PxTransform& t, const PxVec3
 	PxRigidDynamic* dynamic = gPhysics->createRigidDynamic(t);
 	dynamic->attachShape(*shape);
 
-	
-	
+
+
 
 	//设置角阻尼系数，还有线性阻尼linearDamping；线性阻尼控制物理形体或约束抵抗平移的量,而角阻尼控制其抵抗旋转的量。如果设置为0，物体会一直旋转/平移
 	dynamic->setAngularDamping(10.0f);
@@ -640,16 +659,16 @@ void createStack(const PxTransform& t, PxU32 size, PxReal halfExtent)
 	*/
 	//createShape构建形状;(halfExtent x,y,z)
 	PxShape* shape = gPhysics->createShape(PxBoxGeometry(halfExtent, halfExtent, halfExtent), *gMaterial);
-	
+
 	setupFiltering(shape, FilterGroup::ePIG, FilterGroup::eBIRD);
 
 
-	for(PxU32 i=0; i<size;i++)
+	for (PxU32 i = 0; i < size; i++)
 	{
-		for(PxU32 j=0;j<size;j++)
+		for (PxU32 j = 0; j < size; j++)
 		{
 			//指定位置(-10/-7..9,1,0)(-7..,3,0)(-4..,5,0)...
-			PxTransform localTm(PxVec3(PxReal(j*2) - PxReal(size), PxReal(i*2+1), 0) * halfExtent);
+			PxTransform localTm(PxVec3(PxReal(j * 2) - PxReal(size), PxReal(i * 2 + 1), 0) * halfExtent);
 			//createRigidDynamic构建刚体
 			PxRigidDynamic* body = gPhysics->createRigidDynamic(t.transform(localTm));
 			//attachShape绑定形状到刚体上;
@@ -691,7 +710,7 @@ PxTransform tm(0, 0, 0);
 ///创建坐标轴
 ///
 ///
-void CreateCoordinateAxis(PxTransform origin,float xLength,float yLength, float zLength)
+void CreateCoordinateAxis(PxTransform origin, float xLength, float yLength, float zLength)
 {
 	shape = gPhysics->createShape(PxSphereGeometry(2), *gMaterial);
 	tm = origin;
@@ -750,7 +769,7 @@ typedef PxJoint* (*JointCreateFunction)(PxRigidActor* a0, const PxTransform& t0,
 
 
 
-void CreateChain(const PxTransform& t,PxU32 length,const PxGeometry& g,PxReal separation,JointCreateFunction createJoint)
+void CreateChain(const PxTransform& t, PxU32 length, const PxGeometry& g, PxReal separation, JointCreateFunction createJoint)
 {
 	PxVec3 offset(separation / 2, 0, 0);
 	PxTransform localTm(offset);
@@ -897,7 +916,7 @@ VehicleDesc initVehicleDesc()
 	//The moment of inertia is just the moment of inertia of a cuboid but modified for easier steering.
 	//Center of mass offset is 0.65m above the base of the chassis and 0.25m towards the front.
 	const PxF32 chassisMass = 1500.f;
-	const PxVec3 chassisDims(1.6,1,5) ; //w,h,l
+	const PxVec3 chassisDims(2, 1, 5.4); //w,h,l
 	const PxVec3 chassisMOI
 	((chassisDims.y * chassisDims.y + chassisDims.z * chassisDims.z) * chassisMass / 12.0f,
 		(chassisDims.x * chassisDims.x + chassisDims.z * chassisDims.z) * 0.8f * chassisMass / 12.0f,
@@ -906,8 +925,8 @@ VehicleDesc initVehicleDesc()
 
 	//Set up the wheel mass, radius, width, moment of inertia, and number of wheels.
 	//Moment of inertia is just the moment of inertia of a cylinder.
-	const PxF32 wheelMass = 200.0f ;
-	const PxF32 wheelRadius = 0.5f ;
+	const PxF32 wheelMass = 200.0f;
+	const PxF32 wheelRadius = 0.3f;
 	const PxF32 wheelWidth = 0.3f;
 	const PxF32 wheelMOI = 0.5f * wheelMass * wheelRadius * wheelRadius;
 	const PxU32 nbWheels = 4;
@@ -940,6 +959,7 @@ void startAccelerateForwardsMode()
 		char path[] = "../../assets/audio/carEngine.wav";
 		carEngine.play(path);
 	}
+
 
 	if (gVehicle4W->mDriveDynData.getCurrentGear() == PxVehicleGearsData::eREVERSE)
 	{
@@ -1078,20 +1098,19 @@ void stopBell()
 };
 
 
-extern Model gModel2;
-
+extern Model gBodyModel, gWheelModel_fl, gWheelModel_fr, gWheelModel_bl, gWheelModel_br;
 //自定义
 void MyCode()
 {
 	//初始化造物者
 	theCreator.Init(gPhysics, gScene);
 
-	CreateCoordinateAxis(PxTransform(-100,0,-100),100,200,300);
+	CreateCoordinateAxis(PxTransform(0, 0, 0), 100, 200, 300);
 	createTriggerBox();
-	CreateChain(PxTransform(PxVec3(0.0f, 20.0f, -10.0f)), 5, PxCapsuleGeometry(1.0f,1.0f), 4.0f, createBreakableFixed);
+	CreateChain(PxTransform(PxVec3(0.0f, 20.0f, -10.0f)), 5, PxCapsuleGeometry(1.0f, 1.0f), 4.0f, createBreakableFixed);
 	CreateChain(PxTransform(PxVec3(0.0f, 25.0f, -20.0f)), 5, PxBoxGeometry(2.0f, 0.5f, 0.5f), 4.0f, createDampedD6);
 
-	m_player = CreateCharacterController(PxExtendedVec3(20,100,20));
+	m_player = CreateCharacterController(PxExtendedVec3(5,100,5));
 	PxRigidDynamic* playerActor = m_player->getActor();
 	PxShape* playerShape;
 	playerActor->getShapes(&playerShape, 1);
@@ -1119,7 +1138,7 @@ void MyCode()
 
 	inputSystem.SetCharacterMap(characterMap);
 	CameraFollowTarget = &characterPos;
-	
+
 	//创建物体
 	//theCreator.CreateBanister(PxVec3(-50, 0.0f, -50), PxVec3(1, 1, 1), gMaterial, 3, 5, 1, 100000, 50000);
 	theCreator.CreateBanisters(PxVec3(60, 0.0f, 20), PxVec3(1,0,1),gMaterial,1, 20, 0.5f, 1.0f, 10, 10000, 1000);
@@ -1132,16 +1151,15 @@ void MyCode()
 	//垃圾桶
 	theCreator.CreatePoles(PxVec3(50, 0.0f, 50), PxVec3(0, 0, 1), 20, 10, gMaterial, 0.3f, 0.7f, 10, 10000, 10000);
 	
-
-
 	theCreator.CreateGameObject();
-	//model_00=Model("../../assets/objects/Models/SM_Bld_Station_01.fbx");
-	//gameObject_00.Name = "SM_Bld_Station_01";
-	//gameObject_00.AddRigidbody(false);
-	//gameObject_00.AddModel(model_00);
-	//gameObject_00.AddBoxCollider(4.35f, 4.25f, 4.6f, PxTransform(0, 4.29f, 0));
-	//gameObject_00.SetTransform(PxTransform(20, 10, 20));
-	//gameObject_00.AddToScene();
+
+	carObject.Name = "car";
+	carObject.SetRigidbody(gVehicle4W->getRigidDynamicActor());
+	carObject.AddModel(gBodyModel, gWheelModel_fl, gWheelModel_fr, gWheelModel_bl, gWheelModel_br);
+
+
+
+
 }
 
 
@@ -1154,24 +1172,24 @@ void initPhysics(bool interactive)
 	//PVD
 	gPvd = PxCreatePvd(*gFoundation);
 	PxPvdTransport* transport = PxDefaultPvdSocketTransportCreate(PVD_HOST, 5425, 10);
-	gPvd->connect(*transport,PxPvdInstrumentationFlag::eALL);
+	gPvd->connect(*transport, PxPvdInstrumentationFlag::eALL);
 	//创建顶级PxPhysics对象
-	gPhysics = PxCreatePhysics(PX_PHYSICS_VERSION, *gFoundation, PxTolerancesScale(),true,gPvd);
+	gPhysics = PxCreatePhysics(PX_PHYSICS_VERSION, *gFoundation, PxTolerancesScale(), true, gPvd);
 
 	//?缩放
 	PxSceneDesc sceneDesc(gPhysics->getTolerancesScale());
 	//重力
 	sceneDesc.gravity = PxVec3(0.0f, -9.8f, 0.0f);
 	gDispatcher = PxDefaultCpuDispatcherCreate(2);
-	sceneDesc.cpuDispatcher	= gDispatcher;
-	sceneDesc.filterShader	= PxDefaultSimulationFilterShader;
+	sceneDesc.cpuDispatcher = gDispatcher;
+	sceneDesc.filterShader = PxDefaultSimulationFilterShader;
 	sceneDesc.filterShader = contactReportFilterShader;
 	sceneDesc.simulationEventCallback = &gContactReportCallback;
 	gScene = gPhysics->createScene(sceneDesc);
 
 
 	PxPvdSceneClient* pvdClient = gScene->getScenePvdClient();
-	if(pvdClient)
+	if (pvdClient)
 	{
 		pvdClient->setScenePvdFlag(PxPvdSceneFlag::eTRANSMIT_CONSTRAINTS, true);
 		pvdClient->setScenePvdFlag(PxPvdSceneFlag::eTRANSMIT_CONTACTS, true);
@@ -1182,15 +1200,15 @@ void initPhysics(bool interactive)
 	gMaterial = gPhysics->createMaterial(0.5f, 0.5f, 0.0f);
 	gCooking = PxCreateCooking(PX_PHYSICS_VERSION, *gFoundation, PxCookingParams(PxTolerancesScale()));
 
-	PxRigidStatic* groundPlane = PxCreatePlane(*gPhysics, PxPlane(0,1,0,0), *gMaterial);
+	PxRigidStatic* groundPlane = PxCreatePlane(*gPhysics, PxPlane(0, 1, 0, 0), *gMaterial);
 	gScene->addActor(*groundPlane);
 
-	
+
 	/////////////////////////////////////////////创建车辆
 
 
 	PxInitVehicleSDK(*gPhysics);
-	PxVehicleSetBasisVectors(PxVec3(0, 1, 0), PxVec3(0, 0, 1));
+	PxVehicleSetBasisVectors(vehicleUp,vehicleForward);
 	PxVehicleSetUpdateMode(PxVehicleUpdateMode::eVELOCITY_CHANGE);
 	PxVehicleSetSweepHitRejectionAngles(POINT_REJECT_ANGLE, NORMAL_REJECT_ANGLE);
 	PxVehicleSetMaxHitActorAcceleration(MAX_ACCELERATION);
@@ -1236,14 +1254,15 @@ void initPhysics(bool interactive)
 	gVehicleOrderProgress = 0;
 	startBrakeMode();
 
+
 	/////////////////////////////////////////////
 	///自定义
 	MyCode();
 
 	//if (不交互)，在render中把交互设成false就有一个默认的球滚过去撞击堆。
-	if(!interactive)
+	if (!interactive)
 		//PxSphereGeometry Transform,geometry,velocity（速度）
-		createDynamic(10,PxTransform(PxVec3(0,40,100)), PxVec3(0,-50,-100));
+		createDynamic(10, PxTransform(PxVec3(0, 40, 100)), PxVec3(0, -50, -100));
 }
 
 
@@ -1288,7 +1307,7 @@ void stepPhysics(bool interactive)
 		{ wheelQueryResults[0], gVehicle4W->mWheelsSimData.getNbWheels() },
 	};
 	PxVehicleUpdates(timestep, grav, *gFrictionPairs, NUM_VEHICLES, vehicles, vehicleQueryResults);
-
+	
 
 	//Work out if the vehicle is in the air.
 	gIsVehicleInAir = gVehicle4W->getRigidDynamicActor()->isSleeping() ? false : PxVehicleIsInAir(vehicleQueryResults[0]);
@@ -1302,71 +1321,57 @@ void stepPhysics(bool interactive)
 	moveDir = moveDir.getNormalized();
 
 	PxOverlapHit hit;
-	checkSphereTrans =PxTransform (m_player->getFootPosition() - 
+	checkSphereTrans = PxTransform(m_player->getFootPosition() -
 		PxExtendedVec3(0, 0, 0));
 	isGrounded = PxSceneQueryExt::overlapAny(*gScene, PxSphereGeometry(checkSphereRadius),
 		checkSphereTrans, hit);
 
-	if (isGrounded&&velocity.y<0)
+	if (isGrounded && velocity.y < 0)
 	{
 		velocity.y = -0.0f;
 	}
 
-	velocity += gravity *deltaTime;
+	velocity += gravity * deltaTime;
 
 	m_player->move(moveDir * curSpeed * deltaTime, 0.001f, 0.01f, NULL);
-	m_player->move(velocity*deltaTime,0.001f,0.01f,NULL);
+	m_player->move(velocity * deltaTime, 0.001f, 0.01f, NULL);
 
 	////////////////////////////移动结束////////////////////////////////
 
+	/////////////////////////////载具更新////////////////////////////////////
+
+	//wheelLF = wheels[0]->getLocalPose();
+	//wheelRF = wheels[1]->getLocalPose();
+	//wheelLB = wheels[2]->getLocalPose();
+	//wheelRB = wheels[3]->getLocalPose();
 
 
-	/////////////////////////////射线////////////////////////////////
-
-	//PxVec3 origin = m_player->getActor()->getGlobalPose().p+PxVec3(0,0,3);
-	//PxVec3 unitDir = PxVec3(0, 0, 1);
-	//PxReal maxDistance = 10.0f;
-	//PxRaycastBuffer raycasthit;
-
-	//if (gScene->raycast(origin, unitDir, maxDistance, raycasthit))
-	//{
-	//	if (raycasthit.block.actor)
-	//	{
-	//		cout << raycasthit.block.actor->getType()<<endl;
-	//		if (raycasthit.block.actor->getType() == PxActorType::eRIGID_DYNAMIC)
-	//		{
-	//			cout << "dy" << endl;
-	//		}
-	//		else
-	//		{
-	//			cout << "noDy" << endl;
-	//		}
-	//		if (raycasthit.block.actor->getType() == PxActorType::eRIGID_STATIC)
-	//		{
-	//			cout << "static" << endl;
-	//		}
-	//		else
-	//		{
-	//			cout << "noStatic" << endl;
-	//		}
-	//		cout<< raycasthit.block.actor->getType()<<endl;
-	//	}
-	//}
-
-	////////////////////////////射线结束////////////////////////////////
+	//wheelFLObj.SetLocalTransform(wheelLF);
+	//wheelFRObj.SetLocalTransform(wheelRF);
+	//wheelBLObj.SetLocalTransform(wheelLB);
+	//wheelBRObj.SetLocalTransform(wheelRB);
 
 
-
+	////////////////////////////////////////////////////////////
 	//相机跟随
-	characterPos= m_player->getPosition() - PxExtendedVec3(0, 0, 0);
+	characterPos = m_player->getPosition() - PxExtendedVec3(0, 0, 0);
 	vehiclePos = gVehicle4W->getRigidDynamicActor()->getGlobalPose().p;
 
-	sCamera->Update(*CameraFollowTarget);
+	if (isInGameMode)
+	{
+		sCamera->Update(*CameraFollowTarget);
+	}
+	else
+	{
+		sCamera->goFront(editMap.GetArrowKeyValue());
+	}
 
+	if (isSimulation)
+	{
+		gScene->simulate(1.0f / 60.0f);
+		gScene->fetchResults(true);
+	}
 
-	gScene->simulate(1.0f/60.0f);
-	gScene->fetchResults(true);
-	
 }
 
 //清空物理（在render中调用）
@@ -1376,13 +1381,13 @@ void cleanupPhysics(bool interactive)
 	PX_UNUSED(interactive);
 	gScene->release();
 	gDispatcher->release();
-	gPhysics->release();	
+	gPhysics->release();
 	PxPvdTransport* transport = gPvd->getTransport();
 	gPvd->release();
 	transport->release();
-	
+
 	gFoundation->release();
-	
+
 	printf("HelloWorld done.\n");
 }
 
@@ -1402,7 +1407,7 @@ void cleanupPhysics(bool interactive)
 
 #define RENDER_SNIPPET 1
 //main
-int snippetMain(int, const char*const*)
+int snippetMain(int, const char* const*)
 {
 	
 #ifdef RENDER_SNIPPET
@@ -1411,7 +1416,7 @@ int snippetMain(int, const char*const*)
 #else
 	static const PxU32 frameCount = 100;
 	initPhysics(false);
-	for(PxU32 i=0; i<frameCount; i++)
+	for (PxU32 i = 0; i < frameCount; i++)
 		stepPhysics(false);
 	cleanupPhysics(false);
 #endif

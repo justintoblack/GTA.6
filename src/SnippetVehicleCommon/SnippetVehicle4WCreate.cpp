@@ -253,7 +253,7 @@ PxVehicleDrive4W* createVehicle4W(const VehicleDesc& vehicle4WDesc, PxPhysics* p
 		//Compute the wheel center offsets from the origin.
 		PxVec3 wheelCenterActorOffsets[PX_MAX_NB_WHEELS];
 		const PxF32 frontZ = chassisDims.z*0.3f;
-		const PxF32 rearZ = -chassisDims.z*0.3f;
+		const PxF32 rearZ = -chassisDims.z*0.25f;
 		fourwheel::computeWheelCenterActorOffsets4W(frontZ, rearZ, chassisDims, wheelWidth, wheelRadius, numWheels, wheelCenterActorOffsets);
 
 		//Set up the simulation data for all wheels.
@@ -263,6 +263,9 @@ PxVehicleDrive4W* createVehicle4W(const VehicleDesc& vehicle4WDesc, PxPhysics* p
 			 vehicle4WDesc.chassisCMOffset, vehicle4WDesc.chassisMass,
 			 wheelsSimData);
 	}
+
+
+
 
 	//Set up the sim data for the vehicle drive model.
 	PxVehicleDriveSimData4W driveSimData;
@@ -288,7 +291,7 @@ PxVehicleDrive4W* createVehicle4W(const VehicleDesc& vehicle4WDesc, PxPhysics* p
 		clutch.mStrength=10.0f;
 		driveSimData.setClutchData(clutch);
 
-		//Ackermann steer accuracy
+		//Ackermann 
 		PxVehicleAckermannGeometryData ackermann;
 		ackermann.mAccuracy=1.0f;
 		ackermann.mAxleSeparation=
@@ -311,8 +314,7 @@ PxVehicleDrive4W* createVehicle4W(const VehicleDesc& vehicle4WDesc, PxPhysics* p
 	configureUserData(vehDrive4W, vehicle4WDesc.actorUserData, vehicle4WDesc.shapeUserDatas);
 
 	//Free the sim data because we don't need that any more.
-	wheelsSimData->free();
-
+	//wheelsSimData->free();
 	return vehDrive4W;
 }
 

@@ -171,7 +171,12 @@ namespace physx
 		PxReal suspSpringForce;
 
 		/**
-		\brief Forward direction of the wheel/tire accounting for steer/toe/camber angle projected on to the contact plane of the drivable surface.
+		\brief Forward direction of the wheel/tire accounting for 
+		
+		
+		
+		
+		/toe/camber angle projected on to the contact plane of the drivable surface.
 		\note If suspension travel limits forbid the wheel from touching the drivable surface then tireLongitudinalDir is (0,0,0)
 		\note If no raycast or sweep for the corresponding suspension was performed immediately prior to PxVehicleUpdates then the 
 		tire longitudinal direction is computed using the contact plane that was hit by the most recent suspension line raycast or sweep.

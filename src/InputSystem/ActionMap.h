@@ -4,16 +4,19 @@
 
 #include<PxPhysicsAPI.h>
 #include "../Render/Camera.h"
+#include "../Utils/Mathf.h"
 
-
+extern Snippets::Camera* sCamera;
 class ActionMap
 {
 private:
 	//bool _qKeyDown;
-	bool isEscKeyDown;
+	bool isMKeyDown=false;
+	int lastX; int lastY;
+	bool needToPass = false;
 public:
 	ActionMap();
-	void(*EscKeyEvent)();
+	void(*EditKeyEvent)();
 	virtual void InputAction();
 };
 
@@ -57,6 +60,15 @@ public:
 
 	void InputAction();
 	void SetActionMap(physx::PxVehicleDrive4W* newController);
+};
+
+class EditActionMap :public ActionMap
+{
+private:
+	physx::PxVec2 arrowKey;
+public:
+	void InputAction();
+	physx::PxVec2 GetArrowKeyValue();
 };
 
 #endif // !_ACTIONMAP_H

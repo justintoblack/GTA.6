@@ -44,7 +44,7 @@
 #include "../Render/Render.h"
 #include "../Render/Camera.h"
 #include "../ModelLoading/model.h"
-
+#include"../DemoTest/CarGameObject.h"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -63,8 +63,14 @@ using namespace physx;
 GLuint              gCubeTexture;
 Shader				gSkyboxShader;
 unsigned int		gSkyboxVAO, gSkyboxVBO;
-Model				gModel, gModel2;
+Model				gModel;
+Model               gBodyModel, gWheelModel_fl, gWheelModel_fr, gWheelModel_bl, gWheelModel_br;
 Shader				gModelShader;
+glm::vec3			gLightPos = glm::vec3(10.0f, 50.0f, 50.0f);
+glm::vec3			gLightDir = glm::vec3(2.0f, -3.0f, 1.0f);
+glm::vec3			gLightAmbient = glm::vec3(0.6f, 0.6f, 0.6f);
+glm::vec3			gLightDiffuse = glm::vec3(0.5f, 0.5f, 0.5f);
+glm::vec3			gLightSpecular = glm::vec3(1.0f, 1.0f, 1.0f);
 Shader				gShadowShader;
 
 //天空盒六个面的纹理图片
@@ -123,6 +129,15 @@ __int64 freq;
 static __int64 gTime, gLastTime;
 
 ///////////////////////DemoTest///////////////////////////////
+
+//extern GameObject carObject;
+//extern GameObject wheelFLObj;
+//extern GameObject wheelFRObj;
+//extern GameObject wheelBLObj;
+//extern GameObject wheelBRObj;
+
+//extern GameObject testObject;
+extern CarGameObject carObject;
 extern TheCreator theCreator;
 extern GameObject gameObject_00;
 
@@ -130,7 +145,7 @@ extern PxVec3 moveDir;
 glm::vec3 forwardDir(0,0,1);
 extern PxController* m_player;
 extern InputSyetem inputSystem;
-
+extern PxVehicleDrive4W* gVehicle4W;
 Snippets::Camera*	sCamera;
 
 
@@ -147,40 +162,40 @@ extern float volume0;
 
 
 //鼠标
-POINT p;
-int lastX; int lastY;
+//POINT p;
+//int lastX; int lastY;
 
-bool needToPass=false;
+//bool needToPass=false;
 
 namespace 
 {
 	
-	void motionCallback(int x, int y)
-	{
+	//void motionCallback(int x, int y)
+	//{
 
-		int dx=lastX - x;
-		int dy= lastY - y;
+	//	int dx=lastX - x;
+	//	int dy= lastY - y;
 
-		if (needToPass)
-		{
-			needToPass = false;
-		}
-		else
-		{
-			sCamera->handleMotion(dx, dy);
-		}
+	//	if (needToPass)
+	//	{
+	//		needToPass = false;
+	//	}
+	//	else
+	//	{
+	//		sCamera->handleMotion(dx, dy);
+	//	}
 
-		lastX = x;
-		lastY = y;
-		//std::cout << x << " " << GetSystemMetrics(SM_CXSCREEN) << std::endl;
+	//	lastX = x;
+	//	lastY = y;
+	//	//std::cout << x << " " << GetSystemMetrics(SM_CXSCREEN) << std::endl;
 
-		//到达窗口边界
-		if (x <= 0 || x >= GetSystemMetrics(SM_CXSCREEN)-1 || y <= 0 || y >= GetSystemMetrics(SM_CYSCREEN)-1)
-		{
-			SetCursorPos(GetSystemMetrics(SM_CXSCREEN)/2, GetSystemMetrics(SM_CYSCREEN)/2);
-			needToPass = true;
-		}
-	}
+	//	//到达窗口边界
+	//	if (x <= 0 || x >= GetSystemMetrics(SM_CXSCREEN)-1 || y <= 0 || y >= GetSystemMetrics(SM_CYSCREEN)-1)
+	//	{
+	//		SetCursorPos(GetSystemMetrics(SM_CXSCREEN)/2, GetSystemMetrics(SM_CYSCREEN)/2);
+	//		needToPass = true;
+	//	}
+	//}
 
 	void keyboardCallback(unsigned char key, int x, int y)
 	{
@@ -223,32 +238,6 @@ namespace
 		ImGui_ImplGLUT_InstallFuncs();
 		ImGui_ImplOpenGL2_Init();
 		//============================
-	}
-
-	//鼠标移动
-	void OnMouseMove(int x,int y)
-	{
-		motionCallback(x, y);
-	}
-
-	//鼠标事件监听
-	void MouseEventCallBack()
-	{
-		//获取当前鼠标位置
-		GetCursorPos(&p);
-		//未移动
-		if (lastX == p.x && lastY == p.y)
-		{
-
-		}
-		//移动
-		else
-		{
-			std::cout << "移动" << std::endl;
-			OnMouseMove(p.x,p.y);
-			lastX = p.x;
-			lastY = p.y;
-		}
 	}
 
 	glm::mat4 getViewMat() {
@@ -352,60 +341,132 @@ namespace
 
 		//glEnable(GL_DEPTH_TEST);
 		model.setPos(pos);
-		shadowShader.use();
+		shader.use();
+		//设置光源位置，光源的属性：环境光强度、漫反射强度、镜面反射强度
+		shader.SetVector3f("lightPos", gLightPos);
+		PxVec3 viewPos = sCamera->getEye();
+		shader.SetVector3f("viewPos", viewPos.x, viewPos.y, viewPos.z);
+		shader.SetVector3f("light.direction", gLightDir);
+		shader.SetVector3f("light.ambient", gLightAmbient);
+		shader.SetVector3f("light.diffuse", gLightDiffuse);
+		shader.SetVector3f("light.specular", gLightSpecular);
+		//shininess发光值，发光值越高，反射能力越强，散射越少，高光点越小
+		shader.SetFloat("material.shininess", 128.0f);
+
 		glm::mat4 modelMat = glm::mat4(1.0f);
 		modelMat = glm::translate(modelMat, model.getPos());
-
 		//modelMat = glm::rotate(modelMat, 1.0f, glm::vec3(0, -1, 0));
 		modelMat *= glm::mat4_cast(glm::quatLookAt(dir, glm::vec3(0, 1, 0)));
-
 		modelMat = glm::scale(modelMat, glm::vec3(.1f, .1f, .1f));
-		
-		
-
-
 		glm::mat4 viewMat = getViewMat();
 		glm::mat4 projectionMat = glm::perspective(45.0f, (float)glutGet(GLUT_WINDOW_WIDTH) / (float)glutGet(GLUT_WINDOW_HEIGHT), 0.1f, 1000.0f);
-		glUniformMatrix4fv(glGetUniformLocation(shadowShader.ID, "projection"), 1, GL_FALSE, glm::value_ptr(projectionMat));
-		glUniformMatrix4fv(glGetUniformLocation(shadowShader.ID, "view"), 1, GL_FALSE, glm::value_ptr(viewMat));
-		glUniformMatrix4fv(glGetUniformLocation(shadowShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(modelMat));
-		model.Draw(shadowShader);
+		shader.SetMatrix4fv("projection", projectionMat);
+		shader.SetMatrix4fv("view", viewMat);
+		shader.SetMatrix4fv("model", modelMat);
+		
 
-		modelShader.use();
-		glUniformMatrix4fv(glGetUniformLocation(shadowShader.ID, "projection"), 1, GL_FALSE, glm::value_ptr(projectionMat));
-		glUniformMatrix4fv(glGetUniformLocation(shadowShader.ID, "view"), 1, GL_FALSE, glm::value_ptr(viewMat));
-		glUniformMatrix4fv(glGetUniformLocation(shadowShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(modelMat));
-		model.Draw(modelShader);
+		model.Draw(shader);
 
 		glUseProgram(0);
-
 	}
+
+
 
 	//渲染GameObject
 	void RenderGameObject(GameObject &gameObject)
 	{
+		//是否有父物体
+		if (gameObject.parent != nullptr)
+		{
+			gameObject.transform = gameObject.parent->transform.transform(gameObject.localTransform);
+			gameObject.transform.q= gameObject.parent->transform.q;
+			gameObject.transform.q *=gameObject.localTransform.q;
+			//gameObject.transform = gameObject.parent->transform.transform
+			//(gameObject.localTransform);
+
+			//gameObject.transform.q *= gameObject.localTransform.q;
+		}
 		//需要跟踪物理模拟
-		if (gameObject.g_rigidBody&&gameObject.g_rigidBody->getType()==
+		else if (gameObject.g_rigidBody&&gameObject.g_rigidBody->getType()==
 			PxActorType::eRIGID_DYNAMIC)
 		{
 			gameObject.transform = gameObject.g_rigidBody->getGlobalPose();
 		}
 
+		if (gameObject.hasComponent("ModelComponent"))
+		{
+			ModelComponent* mod = (ModelComponent*)gameObject.GetComponent("ModelComponent");
+			if (mod->MyModel == nullptr)
+			{
+				return;
+			}
+			gModelShader.use();
+			glm::mat4 modelMat = glm::mat4(1.0f);
+			modelMat = glm::translate(modelMat, Mathf::P3ToV3(gameObject.transform.p));
+			modelMat *= glm::mat4_cast(Mathf::Toquat(gameObject.transform.q));
+			//modelMat = glm::scale(modelMat, gameObject.g_model->getScale());
+			glm::mat4 viewMat = getViewMat();
+			glm::mat4 projectionMat = glm::perspective(45.0f, (float)glutGet(GLUT_WINDOW_WIDTH) / (float)glutGet(GLUT_WINDOW_HEIGHT), 0.1f, 1000.0f);
+			glUniformMatrix4fv(glGetUniformLocation(gModelShader.ID, "projection"), 1, GL_FALSE, glm::value_ptr(projectionMat));
+			glUniformMatrix4fv(glGetUniformLocation(gModelShader.ID, "view"), 1, GL_FALSE, glm::value_ptr(viewMat));
+			glUniformMatrix4fv(glGetUniformLocation(gModelShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(modelMat));
+
+			mod->MyModel->Draw(gModelShader);
+
+			glUseProgram(0);
+		}
+	}
+
+	//渲染车辆
+	void RenderCarObject(CarGameObject& gameObject)
+	{
+		//需要跟踪物理模拟
+		if (gameObject.g_rigidBody && gameObject.g_rigidBody->getType() ==
+			PxActorType::eRIGID_DYNAMIC)
+		{
+			gameObject.transform = gameObject.g_rigidBody->getGlobalPose();
+		}
+
+		PxShape* vehicleshapes[5];  //4个车轮，1个车体的shape
+		gVehicle4W->getRigidDynamicActor()->getShapes(vehicleshapes, 5);
+
+
+		//渲染车体
 		gModelShader.use();
 		glm::mat4 modelMat = glm::mat4(1.0f);
 		modelMat = glm::translate(modelMat, Mathf::P3ToV3(gameObject.transform.p));
 		modelMat *= glm::mat4_cast(Mathf::Toquat(gameObject.transform.q));
-		modelMat = glm::scale(modelMat, gameObject.g_model->getScale());
+		modelMat = glm::scale(modelMat, gameObject.g_body->getScale());
 		glm::mat4 viewMat = getViewMat();
 		glm::mat4 projectionMat = glm::perspective(45.0f, (float)glutGet(GLUT_WINDOW_WIDTH) / (float)glutGet(GLUT_WINDOW_HEIGHT), 0.1f, 1000.0f);
 		glUniformMatrix4fv(glGetUniformLocation(gModelShader.ID, "projection"), 1, GL_FALSE, glm::value_ptr(projectionMat));
 		glUniformMatrix4fv(glGetUniformLocation(gModelShader.ID, "view"), 1, GL_FALSE, glm::value_ptr(viewMat));
 		glUniformMatrix4fv(glGetUniformLocation(gModelShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(modelMat));
-		gameObject.g_model->Draw(gModelShader);
+		gameObject.g_body->Draw(gModelShader);
+		//渲染车轮
+		Model* wheels[4] = { gameObject.g_wheel_fl,gameObject.g_wheel_fr,gameObject.g_wheel_bl,gameObject.g_wheel_br};
+		PxVec3 offset[4] = { PxVec3(0.88467, -0.7733, 1.6328) , PxVec3(-0.88467, -0.7733, 1.6328) ,PxVec3(0.88467, -0.7733, -1.2502),PxVec3(-0.88467, -0.7733, -1.2502)};
 
+		//应该对每个车轮应用不同转换矩阵
+		for (size_t i = 0; i < 4; i++)
+		{
+			modelMat = glm::mat4(1.0f);
+			modelMat = glm::translate(modelMat, Mathf::P3ToV3(gameObject.transform.p));
+			modelMat *= glm::mat4_cast(Mathf::Toquat(gameObject.transform.q));
+			modelMat = glm::translate(modelMat, Mathf::P3ToV3(offset[i]));
+			modelMat *= glm::mat4_cast(Mathf::Toquat(vehicleshapes[i]->getLocalPose().q));
+			modelMat = glm::translate(modelMat, Mathf::P3ToV3(-offset[i]));
+			modelMat = glm::scale(modelMat, gameObject.g_body->getScale());
+			viewMat = getViewMat();
+			projectionMat = glm::perspective(45.0f, (float)glutGet(GLUT_WINDOW_WIDTH) / (float)glutGet(GLUT_WINDOW_HEIGHT), 0.1f, 1000.0f);
+			glUniformMatrix4fv(glGetUniformLocation(gModelShader.ID, "projection"), 1, GL_FALSE, glm::value_ptr(projectionMat));
+			glUniformMatrix4fv(glGetUniformLocation(gModelShader.ID, "view"), 1, GL_FALSE, glm::value_ptr(viewMat));
+			glUniformMatrix4fv(glGetUniformLocation(gModelShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(modelMat));
+			wheels[i]->Draw(gModelShader);
+		}
 		glUseProgram(0);
-
 	}
+
 
 	
 	bool engineState = false;
@@ -453,20 +514,29 @@ namespace
 		//渲染相机场景
 		Snippets::startRender(sCamera->getEye(), sCamera->getDir(),0.1f, 1000.0f);
 
-		
-
-
-
 		RenderSkybox();
 
 
 		/////////////////////角色渲染//////////////////////////
+		RenderCarObject(carObject);
 
+		//渲染场景物体
 		for (int i = 0; i < theCreator.SceneGameObject.size(); i++)
 		{
 			RenderGameObject(theCreator.SceneGameObject[i]);
 		}
 
+		//渲染特殊物体
+		for (int i = 0; i < theCreator.SpecialGameObject.size(); i++)
+		{
+			RenderGameObject(theCreator.SpecialGameObject[i]);
+		}
+
+		//RenderGameObject(carObject);
+		//RenderGameObject(wheelFLObj);
+		//RenderGameObject(wheelFRObj);
+		//RenderGameObject(wheelBLObj);
+		//RenderGameObject(wheelBRObj);
 		
 		float rotateSpeed = 5;
 		//表示正在移动
@@ -481,6 +551,9 @@ namespace
 		//RenderModel(gModel2, glm::vec3(10.0, 1.0f, 10.0f),glm::vec3(0,0,1),
 		//	gModelShader);
 
+
+
+		
 
 		/////////////////////EndTest////////////////////////////
 
@@ -531,9 +604,9 @@ namespace
 		sCamera->SetConfig(4,PxVec3(0,0,0));
 
 		//初始化鼠标位置;
-		GetCursorPos(&p);
-		lastX = p.x;
-		lastY = p.y;
+		//GetCursorPos(&p);
+		//lastX = p.x;
+		//lastY = p.y;
 
 		//Snippets::setupDefaultGLFWWindows();
 
@@ -547,46 +620,43 @@ namespace
 
 
 		//----------Render Model----------
+		gBodyModel = Model("../../assets/objects/car/body.obj");
+		gWheelModel_fl = Model("../../assets/objects/car/wheel_fl.obj");
+		gWheelModel_fr = Model("../../assets/objects/car/wheel_fr.obj");
+		gWheelModel_bl = Model("../../assets/objects/car/wheel_bl.obj");
+		gWheelModel_br= Model("../../assets/objects/car/wheel_br.obj");
+
 		gModel = Model("../../assets/objects/nanosuit/nanosuit.obj");
-		//gModel2 = Model("../../assets/objects/backpack/backpack.obj");
-		gModel2 = Model("../../assets/objects/Models/SM_Bld_Station_01.fbx");
+		//gModel2 = Model("../../assets/objects/Models/house.fbx");
+		//最初的shader
 		gModelShader = Shader("../../src/ModelLoading/model_loading.vs",
 								"../../src/ModelLoading/model_loading.fs");
 		gShadowShader = Shader("../../src/ModelLoading/shadow_loading.vs",
 			"../../src/ModelLoading/shadow_loading.fs");
+		////使用带光照的shader
+		//gModelShader = Shader("../../src/Light/light.vs", "../../src/Light/light.fs");
+
 		//----------Render Model----------
 		SetupSkybox();
-
-
-
-
-
 
 		//这个idle函数意为空闲函数，将在事件队列的最后（即完成鼠标键盘事件响应，准备下一个渲染帧，渲染当前帧）进行，具有最低的优先级
 		glutIdleFunc(idleCallback);
 
-		
-
 		glutDisplayFunc(renderCallback);
-
-
-
 
 		initImGUI();
 		
-		
-
-
 
 		//键盘事件回调函数
 		//glutKeyboardFunc(keyboardCallback);
 
-		//glutSetCursor(GLUT_CURSOR_NONE);
+		glutSetCursor(GLUT_CURSOR_NONE);
 
 		//glutMouseFunc(mouseCallback);
 
-		glutMotionFunc(motionCallback);
-		glutPassiveMotionFunc(motionCallback);
+		//glutMotionFunc(motionCallback);
+
+		//glutPassiveMotionFunc(motionCallback);
 	
 		//motionCallback(0,0);
 

@@ -15,3 +15,8 @@ void InputSyetem::SetVehicleMap(VehicleActionMap& newMap)
 	m_actionMap = &newMap;
 }
 
+void InputSyetem::SetEditMap(EditActionMap& newMap)
+{
+	m_actionMap = &newMap;
+}
+

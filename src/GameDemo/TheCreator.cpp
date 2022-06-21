@@ -1,9 +1,11 @@
 #include "TheCreator.h"
 
 using namespace snippetvehicle;
+extern const char** _allModelsName;
+extern void FileToString(string& path);
+vector<Model> Models;			//æ¨¡åž‹
 
-
-//Ê¹ÎïÌå±íÃæ¿ÉÐÐÊ»
+//å¯è¡Œä½¿
 void makeObjectDrivable(PxShape*& shape)
 {
 
@@ -26,7 +28,7 @@ void TheCreator::createSlowArea(PxVec3 startPosition, PxF32 capsuleRadii, PxF32 
 		PxF32 zPosition = startPosition.z + i * interval;
 		PxTransform t(PxVec3(startPosition.x, capsuleRadii, zPosition), PxQuat(PxIdentity));
 		PxRigidStatic* rd = m_gPhysics->createRigidStatic(t);
-		PxCapsuleGeometry capsuleGeom(capsuleRadii, 3.0f);
+		PxCapsuleGeometry capsuleGeom(capsuleRadii, 3.0f); 
 		PxShape* shape = PxRigidActorExt::createExclusiveShape(*rd, capsuleGeom, *gMaterial);
 		makeObjectDrivable(shape);
 		m_gScene->addActor(*rd);
@@ -38,10 +40,38 @@ void TheCreator::Init(PxPhysics* physics, PxScene* gScene)
 	m_gPhysics = physics;
 	m_gScene = gScene;
 
-	poleModel = Model("../../assets/objects/Models/SM_Prop_LightPole_Base_02.fbx");
-	stationModel = Model("../../assets/objects/Models/SM_Bld_Station_01.fbx");
-	stationModel_01 = Model("../../assets/objects/Models/SM_Bld_Station_03.fbx");
-	road = Model("../../assets/objects/Models/SM_Env_Road_Bare_01.fbx");
+	poleModel = Model("../../assets/objects/Models/02_SM_Prop_LightPole_Base_02.fbx");
+	//stationModel = Model("../../assets/objects/Models/SM_Bld_Station_01.fbx");
+	//stationModel_01 = Model("../../assets/objects/Models/SM_Bld_Station_03.fbx");
+	//road = Model("../../assets/objects/Models/SM_Env_Road_Bare_01.fbx");
+	//_carBody=Model("../../assets/objects/Models/carBody.fbx");
+	//_carWheelLeft=Model("../../assets/objects/Models/wheel_left.fbx");
+	//_carWheelRight=Model("../../assets/objects/Models/wheel_right.fbx");
+
+	//åŠ è½½æ¨¡åž‹
+	string filePath = "../../assets/objects/Models";
+	string format = ".fbx";
+	GetAllFormatFiles(filePath, ModelPath, format);
+
+	for (int i = 0; i < ModelPath.size(); i++)
+	{
+		Model temp = Model(ModelPath[i]);
+		Models.push_back(temp);
+		string name = ModelPath[i].substr(ModelPath[i].find_last_of('/')+1);
+		ModelName.push_back(name);
+	}
+	 _modelsCount = ModelName.size();
+	_allModelsName = new const char* [_modelsCount];
+
+	 for (int i = 0; i < _modelsCount; i++)
+	 {
+		 _allModelsName[i] = ModelName[i].data();
+		 cout << ModelName[i]<< endl;
+	 }
+
+	 //åˆå§‹åŒ–åœºæ™¯
+	 string scenePath = "../../assets/Scene/Scene.Data";
+	 FileToString(scenePath);
 }
 
 void TheCreator::CreateAnchorBall(PxTransform pos, PxMaterial* gMaterial,float radius)
@@ -69,16 +99,16 @@ void TheCreator::CreateDynamicSphere(PxTransform pos, PxMaterial* gMaterial, flo
 void TheCreator::CreateBanister(PxVec3 pos,PxVec3 dir,  PxMaterial* gMaterial,float halfHeight, 
 	float halfLength, float density, float force, float torque,BreakType type)
 {
-	//µ¥Î»»¯
+	//å•ä½åŒ–
 	dir = dir.getNormalized();
 
-	//Ðý×ªÖá
+	//æ—‹è½¬è½´
 	PxVec3 rotate = PxVec3(0, 0, 1).cross(dir).getNormalized();
 
-	//Ðý×ª½Ç¶È(»¡¶È)
+	//æ—‹è½¬è§’åº¦
 	float angle = Mathf::Angle(PxVec3(0, 0, 1), dir);
 
-	//Ðý×ªËÄÔªÊý
+	//æ—‹è½¬å››å…ƒæ•°
 	//PxQuat q = PxQuat(Mathf::DegToRad( angle), rotate);
 	
 	PxRigidDynamic* link1 = PxCreateDynamic(*m_gPhysics,PxTransform(PxVec3(0,halfHeight,0)+pos), PxBoxGeometry(0.15f, halfHeight, 0.15f), *gMaterial, density);
@@ -110,7 +140,7 @@ void TheCreator::CreateBanister(PxVec3 pos,PxVec3 dir,  PxMaterial* gMaterial,fl
 	m_gScene->addActor(*link3);
 }
 
-//¼ÓÈëËæ»ú
+//åŠ å…¥éšæœº
 void TheCreator::CreateBanisters(physx::PxVec3 pos, physx:: PxVec3 dir, PxMaterial* gMaterial,
 	float separate, physx::PxU32 num, float halfHeight, float halfLength, float density, float force, 
 	float torque)
@@ -123,7 +153,7 @@ void TheCreator::CreateBanisters(physx::PxVec3 pos, physx:: PxVec3 dir, PxMateri
 	{
 		BreakType type=SomeInPiece;
 
-		//1/2µÄ¼¸ÂÊÈ«Ëéµô
+		//1/2æ¦‚çŽ‡
 		int r= rand() %2 ;
 		if (r == 0)
 		{
@@ -137,27 +167,29 @@ void TheCreator::CreateBanisters(physx::PxVec3 pos, physx:: PxVec3 dir, PxMateri
 void TheCreator::CreatePole(PxVec3 pos, PxMaterial* gMaterial,float radius,
 	float halfHeight,float density,float force,float torque)
 {
-	//GameObject gameObject;
-	//gameObject.Name = "Pole";
-	//gameObject.AddRigidbody(true);
-	//gameObject.AddBoxCollider(radius, halfHeight, radius, PxTransform(0, halfHeight, 0));
-	//gameObject.AddModel(poleModel);
-	//gameObject.SetTransform(PxTransform(pos));
-	//gameObject.AddToScene();
+	GameObject* gameObject=new GameObject();
+	gameObject->SetName("Pole");
+	RigidBody* rig = new RigidBody(gameObject,false);
+	BoxCollider* box = new BoxCollider(gameObject);
+	box->Size = PxVec3(radius, halfHeight, radius);
+	box->SetShape();
+	ModelComponent* model = new ModelComponent(gameObject);
+	model->SetModel(poleModel);
+	gameObject->SetTransform(PxTransform(PxVec3(pos)+PxVec3(0,halfHeight,0)));
 
 
-	PxRigidDynamic* link = PxCreateDynamic(*m_gPhysics,
-		PxTransform(pos + PxVec3(0, halfHeight, 0)),
-		PxBoxGeometry(radius, halfHeight, radius),
-		*gMaterial, density);
+	//PxRigidDynamic* link = PxCreateDynamic(*m_gPhysics,
+	//	PxTransform(pos + PxVec3(0, halfHeight, 0)),
+	//	PxBoxGeometry(radius, halfHeight, radius),
+	//	*gMaterial, density);
 
-	PxFixedJoint* j = PxFixedJointCreate(*m_gPhysics, NULL, PxTransform(pos), link,
-		PxTransform(PxVec3(0, 0, 0)));
+	PxFixedJoint* j = PxFixedJointCreate(*m_gPhysics, NULL, PxTransform(pos), gameObject->g_rigidBody,
+		PxTransform(PxVec3(0,-halfHeight, 0)));
 
 	j->setBreakForce(force, torque);
 
-	gScene->addActor(*link);
-	//SceneGameObject.push_back(gameObject);
+	////gScene->addActor(*link);
+	SpecialGameObject.push_back(*gameObject);
 }
 
 void TheCreator::CreatePoles(PxVec3 pos, PxVec3 dir, float separate, PxU32 num, PxMaterial* gMaterial, float halfXZ, float halfHeight, float density, float force, float torque)
@@ -174,38 +206,125 @@ void TheCreator::CreatePoles(PxVec3 pos, PxVec3 dir, float separate, PxU32 num, 
 extern  float gameObjectPosition[3];
 void TheCreator::CreateGameObject()
 {
-	GameObject tempObject;
-	tempObject.Name = "name";
-	tempObject.AddRigidbody(false);
-	tempObject.AddModel(stationModel);
-	tempObject.AddBoxCollider(4.35f, 4.25f, 4.6f, PxTransform(0, 4.29f, 0));
-	tempObject.SetTransform(PxTransform(20, 0, 10));
-	tempObject.AddToScene();
-
-	SceneGameObject.push_back(tempObject);
-
-	tempObject.Name = "name";
-	tempObject.AddRigidbody(false);
-	tempObject.AddModel(stationModel_01);
-	tempObject.AddBoxCollider(5.38f, 2.87f, 2.95f, PxTransform(0, 2.87f, 0));
-	tempObject.SetTransform(PxTransform(29, 0, 10));
-	tempObject.AddToScene();
-
-	SceneGameObject.push_back(tempObject);
-
-	tempObject.Name = "name";
-	tempObject.AddRigidbody(false);
-	tempObject.AddModel(stationModel_01);
-	tempObject.AddBoxCollider(5.38f, 2.87f, 2.95f, PxTransform(0, 2.87f, 0));
-	tempObject.SetTransform(PxTransform(11, 0, 10));
-	tempObject.AddToScene();
-
-	SceneGameObject.push_back(tempObject);
-
-	//tempObject.Name = "name";
-	//tempObject.AddModel(road);
-	//tempObject.SetTransform(PxTransform(20, 1, 20));
+	//GameObject tempObject;
+	//char objectName[] = "station_00";
+	//strcpy(tempObject.Name, objectName);
+	//tempObject.AddRigidbody(false);
+	//tempObject.AddModel(stationModel);
+	//tempObject.AddBoxCollider(4.35f, 4.25f, 4.6f, PxTransform(0, 4.29f, 0));
+	//tempObject.SetTransform(PxTransform(20, 0, 10));
 	//tempObject.AddToScene();
 
 	//SceneGameObject.push_back(tempObject);
+
+	//char objectName1[] = "station_01";
+	//strcpy(tempObject.Name, objectName1);
+	//tempObject.AddRigidbody(false);
+	//tempObject.AddModel(stationModel_01);
+	//tempObject.AddBoxCollider(5.38f, 2.87f, 2.95f, PxTransform(0, 2.87f, 0));
+	//tempObject.SetTransform(PxTransform(29, 0, 10));
+	//tempObject.AddToScene();
+
+	//SceneGameObject.push_back(tempObject);
+
+	//char objectName2[] = "station_02";
+	//strcpy(tempObject.Name, objectName2);
+	//tempObject.AddRigidbody(false);
+	//tempObject.AddModel(stationModel_01);
+	//tempObject.AddBoxCollider(5.38f, 2.87f, 2.95f, PxTransform(0, 2.87f, 0));
+	//tempObject.SetTransform(PxTransform(11, 0, 10));
+	//tempObject.AddToScene();
+
+	//SceneGameObject.push_back(tempObject);
+
+	////////////////////////////Test/////////////////////////////
+	//GameObject* test = new GameObject();
+	//RigidBody* rigidbody = new RigidBody(test);
+	//BoxCollider* boxCollider = new BoxCollider(test);
+	//test->SetName("123");
+
+	//test->AddToScene();
+	//ModelComponent* modelComponent = new ModelComponent(test);
+	//modelComponent->SetModel(stationModel_01);
+	//SceneGameObject.push_back(*test);
+	//////////////////////////Test-End/////////////////////////////
 }
+
+void TheCreator::CreateNewGameObject()
+{
+	GameObject* gameObject=new GameObject();
+	SceneGameObject.push_back(*gameObject);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -31,6 +31,8 @@ public:
     // model data 
     vector<Texture> textures_loaded;	// stores all the textures loaded so far, optimization to make sure textures aren't loaded more than once.
     vector<Mesh>    meshes;
+    vector<aiString> meshNames;
+    int nMesh;
     string directory;
     bool gammaCorrection;
     Model(){}
@@ -45,6 +47,7 @@ public:
     {
         for(unsigned int i = 0; i < meshes.size(); i++)
             meshes[i].Draw(shader);
+        
     }
     
     void setPos(glm::vec3 newPos)
@@ -97,12 +100,17 @@ private:
     void processNode(aiNode *node, const aiScene *scene)
     {
         // process each mesh located at the current node
+        nMesh = node->mNumMeshes;
         for(unsigned int i = 0; i < node->mNumMeshes; i++)
         {
             // the node object only contains indices to index the actual objects in the scene. 
             // the scene contains all the data, node is just to keep stuff organized (like relations between nodes).
+
             aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
             meshes.push_back(processMesh(mesh, scene));
+            aiString name = mesh->mName;
+            meshNames.push_back(name);
+
         }
         // after we've processed all of the meshes (if any) we then recursively process each of the children nodes
         for(unsigned int i = 0; i < node->mNumChildren; i++)
@@ -178,7 +186,7 @@ private:
         // diffuse: texture_diffuseN
         // specular: texture_specularN
         // normal: texture_normalN
-
+        
         // 1. diffuse maps
         vector<Texture> diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse", scene);
         textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
@@ -191,7 +199,10 @@ private:
         // 4. height maps
         std::vector<Texture> heightMaps = loadMaterialTextures(material, aiTextureType_AMBIENT, "texture_height",scene);
         textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
-        
+        //// 5. emission maps
+        //std::vector<Texture> emissiveMaps = loadMaterialTextures(material, aiTextureType_EMISSIVE, "texture_emissive", scene);
+        //textures.insert(textures.end(), emissiveMaps.begin(), emissiveMaps.end());
+
         // return a mesh object created from the extracted mesh data
         return Mesh(vertices, indices, textures);
     }
