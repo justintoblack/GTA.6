@@ -1,4 +1,4 @@
-//
+ï»¿//
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions
 // are met:
@@ -67,7 +67,7 @@ Model				gModel, gModel2;
 Shader				gModelShader;
 Shader				gShadowShader;
 
-//Ìì¿ÕºĞÁù¸öÃæµÄÎÆÀíÍ¼Æ¬
+//å¤©ç©ºç›’å…­ä¸ªé¢çš„çº¹ç†å›¾ç‰‡
 const char* gSkyboxFaces[6] = {
 	"../../assets/SkyboxImages/right.jpg",
 	"../../assets/SkyboxImages/left.jpg",
@@ -77,7 +77,7 @@ const char* gSkyboxFaces[6] = {
 	"../../assets/SkyboxImages/back.jpg"
 };
 
-//Ìì¿ÕºĞÁù¸ö·½Ïò
+//å¤©ç©ºç›’å…­ä¸ªæ–¹å‘
 const GLenum  CUBEMAP_DIRECTION[6] = {
 	GL_TEXTURE_CUBE_MAP_POSITIVE_X,
 	GL_TEXTURE_CUBE_MAP_NEGATIVE_X,
@@ -87,7 +87,7 @@ const GLenum  CUBEMAP_DIRECTION[6] = {
 	GL_TEXTURE_CUBE_MAP_NEGATIVE_Z
 };
 
-//Ìì¿ÕºĞÁù¸öÃæµÄ¶¥µã
+//å¤©ç©ºç›’å…­ä¸ªé¢çš„é¡¶ç‚¹
 float gSkyboxVertices[] = {
 	//right
 	1.0f, -1.0f, -1.0f,		1.0f, -1.0f, 1.0f,		1.0f,  1.0f,  1.0f,
@@ -115,9 +115,9 @@ extern void stepPhysics(bool interactive);
 extern void cleanupPhysics(bool interactive);
 //extern void keyPress(unsigned char key, const PxTransform& camera);
 
-//Ê±¼ä
-float deltaTime;		//Ê±¼ä²åÖµ
-float gameTime;		//µ±Ç°³ÌĞòÖ´ĞĞÊ±¼ä
+//æ—¶é—´
+float deltaTime;		//æ—¶é—´æ’å€¼
+float gameTime;		//å½“å‰ç¨‹åºæ‰§è¡Œæ—¶é—´
 __int64 firstCount;
 __int64 freq;
 static __int64 gTime, gLastTime;
@@ -146,7 +146,7 @@ extern float volume0;
 
 
 
-//Êó±ê
+//é¼ æ ‡
 POINT p;
 int lastX; int lastY;
 
@@ -174,7 +174,7 @@ namespace
 		lastY = y;
 		//std::cout << x << " " << GetSystemMetrics(SM_CXSCREEN) << std::endl;
 
-		//µ½´ï´°¿Ú±ß½ç
+		//åˆ°è¾¾çª—å£è¾¹ç•Œ
 		if (x <= 0 || x >= GetSystemMetrics(SM_CXSCREEN)-1 || y <= 0 || y >= GetSystemMetrics(SM_CYSCREEN)-1)
 		{
 			SetCursorPos(GetSystemMetrics(SM_CXSCREEN)/2, GetSystemMetrics(SM_CYSCREEN)/2);
@@ -198,7 +198,7 @@ namespace
 
 	void idleCallback()
 	{
-		//±ØÒªµÄ
+		//å¿…è¦çš„
 		glutPostRedisplay();
 
 		
@@ -225,26 +225,26 @@ namespace
 		//============================
 	}
 
-	//Êó±êÒÆ¶¯
+	//é¼ æ ‡ç§»åŠ¨
 	void OnMouseMove(int x,int y)
 	{
 		motionCallback(x, y);
 	}
 
-	//Êó±êÊÂ¼ş¼àÌı
+	//é¼ æ ‡äº‹ä»¶ç›‘å¬
 	void MouseEventCallBack()
 	{
-		//»ñÈ¡µ±Ç°Êó±êÎ»ÖÃ
+		//è·å–å½“å‰é¼ æ ‡ä½ç½®
 		GetCursorPos(&p);
-		//Î´ÒÆ¶¯
+		//æœªç§»åŠ¨
 		if (lastX == p.x && lastY == p.y)
 		{
 
 		}
-		//ÒÆ¶¯
+		//ç§»åŠ¨
 		else
 		{
-			std::cout << "ÒÆ¶¯" << std::endl;
+			std::cout << "ç§»åŠ¨" << std::endl;
 			OnMouseMove(p.x,p.y);
 			lastX = p.x;
 			lastY = p.y;
@@ -264,15 +264,15 @@ namespace
 
 	void SetupSkybox()
 	{
-		//¿ªÆôÉî¶È²âÊÔ
+		//å¼€å¯æ·±åº¦æµ‹è¯•
 		glEnable(GL_DEPTH_TEST);
 		//glDepthFunc(GL_LEQUAL);
 
-		//¼ÓÔØSHADER
+		//åŠ è½½SHADER
 		gSkyboxShader = Shader("../../src/Render/SkyBox.vs",
 								"../../src/Render/SkyBox.fs");
 
-		// Ìì¿ÕºĞ VAO
+		// å¤©ç©ºç›’ VAO
 		glGenVertexArrays(1, &gSkyboxVAO);
 		glGenBuffers(1, &gSkyboxVBO);
 		glBindVertexArray(gSkyboxVAO);
@@ -284,27 +284,27 @@ namespace
 
 		int width, height, nrChannels;
 
-		// ½ûÓÃ¶à±ßĞÎ±³ÃæÉÏµÄ¹âÕÕ¡¢ÒõÓ°ºÍÑÕÉ«¼ÆËã¼°²Ù×÷
+		// ç¦ç”¨å¤šè¾¹å½¢èƒŒé¢ä¸Šçš„å…‰ç…§ã€é˜´å½±å’Œé¢œè‰²è®¡ç®—åŠæ“ä½œ
 		glCullFace(GL_BACK);
-		//GL_CCW ±íÊ¾´°¿Ú×ø±êÉÏÍ¶Ó°¶à±ßĞÎµÄ¶¥µãË³ĞòÎªÄæÊ±Õë·½ÏòµÄ±íÃæÎªÕıÃæ
+		//GL_CCW è¡¨ç¤ºçª—å£åæ ‡ä¸ŠæŠ•å½±å¤šè¾¹å½¢çš„é¡¶ç‚¹é¡ºåºä¸ºé€†æ—¶é’ˆæ–¹å‘çš„è¡¨é¢ä¸ºæ­£é¢
 		glFrontFace(GL_CCW);
-		//¿ªÆôÉî¶È²âÊÔ
+		//å¼€å¯æ·±åº¦æµ‹è¯•
 		glEnable(GL_DEPTH_TEST);
-		// ´´½¨ÎÆÀí¶ÔÏó
+		// åˆ›å»ºçº¹ç†å¯¹è±¡
 		glGenTextures(1, &gCubeTexture);
 		glBindTexture(GL_TEXTURE_CUBE_MAP, gCubeTexture);
 
-		// ÉèÖÃÎÆÀí¹ıÂËÄ£Ê½
+		// è®¾ç½®çº¹ç†è¿‡æ»¤æ¨¡å¼
 		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-		//ÉèÖÃÎÆÀíäÖÈ¾Ä£Ê½
+		//è®¾ç½®çº¹ç†æ¸²æŸ“æ¨¡å¼
 		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-		//ÉèÖÃÊı¾İÄÚ´æ¶ÔÆë·½Ê½
+		//è®¾ç½®æ•°æ®å†…å­˜å¯¹é½æ–¹å¼
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
-		//¼ÓÔØÎÆÀíÍ¼Æ¬
+		//åŠ è½½çº¹ç†å›¾ç‰‡
 		for (GLuint i = 0; i < 6; i++)
 		{
 			unsigned char* data = stbi_load(gSkyboxFaces[i], &width, &height, &nrChannels, 0);
@@ -320,7 +320,7 @@ namespace
 			stbi_image_free(data);
 		}
 
-		//¿ªÆômipÌùÍ¼
+		//å¼€å¯mipè´´å›¾
 		glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
 	}
 	void RenderSkybox(void)
@@ -340,13 +340,13 @@ namespace
 		glBindTexture(GL_TEXTURE_CUBE_MAP, gCubeTexture);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 		glBindVertexArray(0);
-		/*Â©µôÕâ¾äºó£¬½ºÄÒÌå±äÎªÁ½¿ÅĞ¡Çò£¬½ºÄÒÌåÖĞ¼äµÄÔ²ÖùÌå²»¼ûÁË*/
+		/*æ¼æ‰è¿™å¥åï¼Œèƒ¶å›Šä½“å˜ä¸ºä¸¤é¢—å°çƒï¼Œèƒ¶å›Šä½“ä¸­é—´çš„åœ†æŸ±ä½“ä¸è§äº†*/
 		glDeleteBuffers(1, &gSkyboxVBO);
 		glDepthMask(GL_TRUE);
 		glUseProgram(0);
 	}
 
-	//´«ÈëÄ£ĞÍ¶ÔÏómodel£¬ÒÔ¼°Ä£ĞÍµÄÎ»ÖÃpos
+	//ä¼ å…¥æ¨¡å‹å¯¹è±¡modelï¼Œä»¥åŠæ¨¡å‹çš„ä½ç½®pos
 	void RenderModel(Model& model, glm::vec3 pos, glm::vec3 dir , Shader& modelShader, Shader& shadowShader)
 	{
 
@@ -381,10 +381,10 @@ namespace
 
 	}
 
-	//äÖÈ¾GameObject
+	//æ¸²æŸ“GameObject
 	void RenderGameObject(GameObject &gameObject)
 	{
-		//ĞèÒª¸ú×ÙÎïÀíÄ£Äâ
+		//éœ€è¦è·Ÿè¸ªç‰©ç†æ¨¡æ‹Ÿ
 		if (gameObject.g_rigidBody&&gameObject.g_rigidBody->getType()==
 			PxActorType::eRIGID_DYNAMIC)
 		{
@@ -415,10 +415,10 @@ namespace
 
 
 
-	//ÏÔÊ¾´°¿Ú
+	//æ˜¾ç¤ºçª—å£
 	void renderCallback()
 	{
-		//±³¾°ÒôÀÖ²¥·Å×´Ì¬»ú
+		//èƒŒæ™¯éŸ³ä¹æ’­æ”¾çŠ¶æ€æœº
 		if (backgroundMusic == true)
 		{
 			if (engineState == false)
@@ -444,13 +444,13 @@ namespace
 			}
 		}
 
-		//ImguiÖĞĞèÒª¼ÓÈëäÖÈ¾»Øµ÷µÄº¯Êı
+		//Imguiä¸­éœ€è¦åŠ å…¥æ¸²æŸ“å›è°ƒçš„å‡½æ•°
 		Snippets::glut_display_func();
 		
-		//ÎïÀíÄ£Äâ
+		//ç‰©ç†æ¨¡æ‹Ÿ
 		stepPhysics(true);
 
-		//äÖÈ¾Ïà»ú³¡¾°
+		//æ¸²æŸ“ç›¸æœºåœºæ™¯
 		Snippets::startRender(sCamera->getEye(), sCamera->getDir(),0.1f, 1000.0f);
 
 		
@@ -460,7 +460,7 @@ namespace
 		RenderSkybox();
 
 
-		/////////////////////½ÇÉ«äÖÈ¾//////////////////////////
+		/////////////////////è§’è‰²æ¸²æŸ“//////////////////////////
 
 		for (int i = 0; i < theCreator.SceneGameObject.size(); i++)
 		{
@@ -469,7 +469,7 @@ namespace
 
 		
 		float rotateSpeed = 5;
-		//±íÊ¾ÕıÔÚÒÆ¶¯
+		//è¡¨ç¤ºæ­£åœ¨ç§»åŠ¨
 		PxExtendedVec3 haha= m_player->getFootPosition();
 		if (!moveDir.isZero())
 		{
@@ -488,7 +488,7 @@ namespace
 		PxScene* scene;
 		PxGetPhysics().getScenes(&scene,1);
 
-		//»ñÈ¡³¡¾°ÖĞµÄActor²¢ÓÃOpenGLäÖÈ¾
+		//è·å–åœºæ™¯ä¸­çš„Actorå¹¶ç”¨OpenGLæ¸²æŸ“
 		PxU32 nbActors = scene->getNbActors(PxActorTypeFlag::eRIGID_DYNAMIC | PxActorTypeFlag::eRIGID_STATIC);
 		if(nbActors)
 		{
@@ -499,7 +499,7 @@ namespace
 
 		Snippets::finishRender();
 
-		//¹ØÓÚÊ±¼ä
+		//å…³äºæ—¶é—´
 		QueryPerformanceCounter((LARGE_INTEGER*)&gTime); //get current count
 		QueryPerformanceFrequency((LARGE_INTEGER*)&freq); //get processor freq
 		deltaTime = (float)(gTime - gLastTime)/ (float)freq;
@@ -523,14 +523,14 @@ namespace
 
 
 
-	//äÖÈ¾Á÷³Ì
+	//æ¸²æŸ“æµç¨‹
 	void renderLoop()
 	{
 
 		sCamera = new Snippets::Camera(PxVec3(50.0f, 50.0f, 50.0f), PxVec3(-0.6f,-0.2f,-0.7f));
 		sCamera->SetConfig(4,PxVec3(0,0,0));
 
-		//³õÊ¼»¯Êó±êÎ»ÖÃ;
+		//åˆå§‹åŒ–é¼ æ ‡ä½ç½®;
 		GetCursorPos(&p);
 		lastX = p.x;
 		lastY = p.y;
@@ -562,7 +562,7 @@ namespace
 
 
 
-		//Õâ¸öidleº¯ÊıÒâÎª¿ÕÏĞº¯Êı£¬½«ÔÚÊÂ¼ş¶ÓÁĞµÄ×îºó£¨¼´Íê³ÉÊó±ê¼üÅÌÊÂ¼şÏìÓ¦£¬×¼±¸ÏÂÒ»¸öäÖÈ¾Ö¡£¬äÖÈ¾µ±Ç°Ö¡£©½øĞĞ£¬¾ßÓĞ×îµÍµÄÓÅÏÈ¼¶
+		//è¿™ä¸ªidleå‡½æ•°æ„ä¸ºç©ºé—²å‡½æ•°ï¼Œå°†åœ¨äº‹ä»¶é˜Ÿåˆ—çš„æœ€åï¼ˆå³å®Œæˆé¼ æ ‡é”®ç›˜äº‹ä»¶å“åº”ï¼Œå‡†å¤‡ä¸‹ä¸€ä¸ªæ¸²æŸ“å¸§ï¼Œæ¸²æŸ“å½“å‰å¸§ï¼‰è¿›è¡Œï¼Œå…·æœ‰æœ€ä½çš„ä¼˜å…ˆçº§
 		glutIdleFunc(idleCallback);
 
 		
@@ -578,7 +578,7 @@ namespace
 
 
 
-		//¼üÅÌÊÂ¼ş»Øµ÷º¯Êı
+		//é”®ç›˜äº‹ä»¶å›è°ƒå‡½æ•°
 		//glutKeyboardFunc(keyboardCallback);
 
 		//glutSetCursor(GLUT_CURSOR_NONE);
@@ -594,7 +594,7 @@ namespace
 
 		initPhysics(true);
 
-		//¼ÇÂ¼ÓÎÏ·µÚÒ»Ö¡Ê±¼ä
+		//è®°å½•æ¸¸æˆç¬¬ä¸€å¸§æ—¶é—´
 
 		QueryPerformanceCounter((LARGE_INTEGER*)&gTime);
 		QueryPerformanceFrequency((LARGE_INTEGER*)&freq);
