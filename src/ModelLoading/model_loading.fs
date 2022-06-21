@@ -45,8 +45,14 @@ void main()
 
      //镜面反射分量
     vec3 viewDir = normalize(viewPos - FragPos);
+    // 半程向量
+    vec3 halfwayDir = normalize(lightDir + viewDir);
+
     vec3 reflectDir = reflect(-lightDir, norm);
-    float spec = pow( max(dot(viewDir, reflectDir), 0.0), material.shininess);
+    //原来是视线方向和反射方向的点乘计算夹角
+    //float spec = pow( max(dot(viewDir, reflectDir), 0.0), material.shininess);
+    //现在改为表面法线和半程向量计算夹角
+    float spec = pow( max(dot(norm, halfwayDir), 0.0), material.shininess);
     vec3 specular = light.specular * spec * texture(material.texture_specular1, TexCoords).rgb;
     specular += light.specular * spec * texture(material.texture_specular2, TexCoords).rgb;
 

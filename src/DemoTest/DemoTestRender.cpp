@@ -63,7 +63,7 @@ Model				gModel, gModel2;
 Model               gBodyModel, gWheelModel_fl, gWheelModel_fr, gWheelModel_bl, gWheelModel_br;
 Shader				gModelShader;
 glm::vec3			gLightPos = glm::vec3(10.0f, 50.0f, 50.0f);
-glm::vec3			gLightDir = glm::vec3(2.0f, -1.0f, 1.0f);
+glm::vec3			gLightDir = glm::vec3(2.0f, -3.0f, 1.0f);
 glm::vec3			gLightAmbient = glm::vec3(0.6f, 0.6f, 0.6f);
 glm::vec3			gLightDiffuse = glm::vec3(0.5f, 0.5f, 0.5f);
 glm::vec3			gLightSpecular = glm::vec3(1.0f, 1.0f, 1.0f);
@@ -363,7 +363,8 @@ namespace
 		shader.SetVector3f("light.ambient", gLightAmbient);
 		shader.SetVector3f("light.diffuse", gLightDiffuse);
 		shader.SetVector3f("light.specular", gLightSpecular);
-		shader.SetFloat("material.shininess", 64.0f);
+		//shininess发光值，发光值越高，反射能力越强，散射越少，高光点越小
+		shader.SetFloat("material.shininess", 128.0f);
 
 		glm::mat4 modelMat = glm::mat4(1.0f);
 		modelMat = glm::translate(modelMat, model.getPos());
