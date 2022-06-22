@@ -17,6 +17,8 @@ struct Material
     sampler2D texture_specular1;
     sampler2D texture_specular2;
     sampler2D texture_emissive;
+    int diffuseCount;
+    int specularCount;
 };
 uniform Material material;
 
@@ -53,9 +55,18 @@ void main()
     //float spec = pow( max(dot(viewDir, reflectDir), 0.0), material.shininess);
     //现在改为表面法线和半程向量计算夹角
     float spec = pow( max(dot(norm, halfwayDir), 0.0), material.shininess);
-    vec3 specular = light.specular * spec * texture(material.texture_specular1, TexCoords).rgb;
-    specular += light.specular * spec * texture(material.texture_specular2, TexCoords).rgb;
-
+    vec3 specular = vec3(0.0f);
+    if (material.specularCount >= 1)
+    {
+        specular = light.specular * spec * texture(material.texture_specular1, TexCoords).rgb;
+        if (material.specularCount >= 2)
+        specular += light.specular * spec * texture(material.texture_specular2, TexCoords).rgb;
+    }
+    else
+    {
+        specular = light.specular * spec * vec3(1.0f);
+    }
+    
     //emission
     //vec3 emission = texture(material.texture_emissive, TexCoords).rgb;
     vec3 result = ambient + diffuse + specular;

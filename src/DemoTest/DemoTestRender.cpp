@@ -345,7 +345,7 @@ namespace
 		shader.SetVector3f("light.diffuse", gLightDiffuse);
 		shader.SetVector3f("light.specular", gLightSpecular);
 		//shininess发光值，发光值越高，反射能力越强，散射越少，高光点越小
-		shader.SetFloat("material.shininess", 128.0f);
+		shader.SetFloat("material.shininess", 1024.0f);
 
 		glm::mat4 modelMat = glm::mat4(1.0f);
 		modelMat = glm::translate(modelMat, model.getPos());
