@@ -1,4 +1,5 @@
 ﻿  DemoTest.cpp
+<<<<<<< HEAD
 E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\DemoTest\DemoTest.cpp(1,1): warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
 E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\ModelLoading\mesh.h(99,1): warning C4267: “参数”: 从“size_t”转换到“GLsizei”，可能丢失数据
 E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\DemoTest\GameObject.h(55,1): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
@@ -27,6 +28,19 @@ E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\GameDemo\JsonDa
   imgui_impl_opengl2.cpp
   正在生成代码...
   DemoTest.vcxproj -> E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\compiler\vc16win64\./../../../bin/vc16win64\DemoTestDEBUG.exe
+=======
+F:\Learning\mypt2\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\DemoTest\DemoTest.cpp(1,1): warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+F:\Learning\mypt2\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\ModelLoading\mesh.h(108,1): warning C4267: “参数”: 从“size_t”转换到“GLsizei”，可能丢失数据
+F:\Learning\mypt2\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\DemoTest\GameObject.h(54,3): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+F:\Learning\mypt2\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\DemoTest\GameObject.h(330,1): warning C4267: “参数”: 从“size_t”转换到“int”，可能丢失数据
+F:\Learning\mypt2\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\DemoTest\DemoTest.cpp(969,1): warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+  Render.cpp
+F:\Learning\mypt2\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\ModelLoading\mesh.h(108,1): warning C4267: “参数”: 从“size_t”转换到“GLsizei”，可能丢失数据
+F:\Learning\mypt2\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\DemoTest\GameObject.h(330,1): warning C4267: “参数”: 从“size_t”转换到“int”，可能丢失数据
+F:\Learning\mypt2\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\GameDemo\JsonData.h(161,20): warning C4018: “<”: 有符号/无符号不匹配
+  正在生成代码...
+  DemoTest.vcxproj -> F:\Learning\mypt2\PhysX-Tutorial-master\PhysX_3.4\bin\vc16win64\DemoTestDEBUG.exe
+>>>>>>> 84601f3d0027e11495c7f0d88b2a87179c1bc058
   复制了 0 个文件
   复制了 0 个文件
   复制了 0 个文件

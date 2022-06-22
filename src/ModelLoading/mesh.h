@@ -59,6 +59,9 @@ public:
     // render the mesh
     void Draw(Shader &shader) 
     {
+        shader.SetInteger("material.diffuseCount", 0);
+        shader.SetInteger("material.specularCount", 0);
+
         // bind appropriate textures
         unsigned int diffuseNr  = 1;
         unsigned int specularNr = 1;
@@ -70,10 +73,14 @@ public:
             // retrieve texture number (the N in diffuse_textureN)
             string number;
             string name = textures[i].type;
-            if (name == "texture_diffuse")
+            if (name == "texture_diffuse") {
+                shader.SetInteger("material.diffuseCount", diffuseNr);
                 number = std::to_string(diffuseNr++);
-            else if (name == "texture_specular")
+            }
+            else if (name == "texture_specular") {
+                shader.SetInteger("material.specularCount", specularNr);
                 number = std::to_string(specularNr++); // transfer unsigned int to stream
+            }
             else if (name == "texture_normal")
                 number = std::to_string(normalNr++); // transfer unsigned int to stream
             else if (name == "texture_height")
@@ -82,7 +89,7 @@ public:
                 number = "";
                 cout << "texture_emissive";
             }
-           /* cout << "-------------------------" << endl;
+            /*cout << "-------------------------" << endl;
             cout << "texture_diffuse" + to_string(diffuseNr) << endl;
             cout << "texture_specular" + to_string(specularNr) << endl;
             cout << "texture_normal" + to_string(normalNr) << endl;
@@ -96,6 +103,8 @@ public:
         
         // draw mesh
         glBindVertexArray(VAO);
+        GLfloat ks[3] = { 0.5,0.5,0.5 };
+        glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, ks);
         glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
         glBindVertexArray(0);
 
