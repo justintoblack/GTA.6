@@ -45,6 +45,7 @@ bool show_another_window = false;
 bool inspector_window = false;
 bool isSimulation = true;
 static bool show_demo_window = false;
+extern bool isWireframe;
 
 //ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 physx::PxVec3 clear_color = physx::PxVec3(0.45f, 0.55f, 0.60f);
@@ -64,6 +65,7 @@ static GameObject* curGameObject=nullptr;
 static PxVec3 _position=PxVec3(0,0,0);
 static PxVec3 _rotation=PxVec3(0,0,0);
 static PxQuat _quaternion = PxQuat(0, 0, 0, 1);
+static int _gameObjectIdx=0;
 static bool _isAddRigidbodyStatic=false;
 static char  _objName[16];
 const char** _allModelsName;
@@ -268,12 +270,12 @@ void renderGeometry(const PxGeometryHolder& h)
 	case PxGeometryType::eHEIGHTFIELD:
 	case PxGeometryType::eGEOMETRY_COUNT:	
 	case PxGeometryType::ePLANE:/*这里设置了平面，给了几个点让glut画了个正方形，颜色设置为120的绿色（满值是255）*/
-		glBegin(GL_QUADS);
-		glColor4ub(170, 255, 0, 200); glVertex3f(-1.0f, -300.0f, -300.0f);/*这个坐标有点奇怪 后面应该是变换过，不用太在意，反正就当第一个是y轴就可以了*/
-		glColor4ub(170, 255, 0, 200); glVertex3f(-1.0f, -300.0f, 300.0f);
-		glColor4ub(170, 255, 0, 200); glVertex3f(-1.0f, 300.0f, 300.0f);
-		glColor4ub(170, 255, 0, 200); glVertex3f(-1.0f, 300.0f, -300.0f);
-		glEnd();
+		//glBegin(GL_QUADS);
+		//glColor4ub(170, 255, 0, 200); glVertex3f(-1.0f, -300.0f, -300.0f);/*这个坐标有点奇怪 后面应该是变换过，不用太在意，反正就当第一个是y轴就可以了*/
+		//glColor4ub(170, 255, 0, 200); glVertex3f(-1.0f, -300.0f, 300.0f);
+		//glColor4ub(170, 255, 0, 200); glVertex3f(-1.0f, 300.0f, 300.0f);
+		//glColor4ub(170, 255, 0, 200); glVertex3f(-1.0f, 300.0f, -300.0f);
+		//glEnd();
 		break;
 	}
 }
@@ -306,6 +308,7 @@ void my_display_code()
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 
 		ImGui::Checkbox("IsSimulation", &isSimulation);
+		ImGui::Checkbox("IsWireframe",&isWireframe);
 
 		//创建GameObject
 		if (ImGui::Button("CreateNewGameObject",
@@ -340,7 +343,7 @@ void my_display_code()
 			{
 				//GameObject
 				curGameObject = &theCreator.SceneGameObject[i];
-
+				_gameObjectIdx = i;
 				//Name
 				char* tempName = curGameObject->Name;
 				strcpy(_objName, tempName);
@@ -435,14 +438,12 @@ void my_display_code()
 				ModelComponent* newModelComponent = new ModelComponent(curGameObject);
 			}
 
-			ImGui::Spacing();
-			ImGui::Spacing();
-
 			//删除GameObject
-			//if (ImGui::Button("Delete", ImVec2(ImGui::GetContentRegionAvail().x - 100, 20)))
-			//{
-
-			//}
+			if (ImGui::Button("Delete", ImVec2(ImGui::GetContentRegionAvail().x - 100, 20)))
+			{
+				theCreator.SceneGameObject.erase(theCreator.SceneGameObject.begin()+_gameObjectIdx);
+				curGameObject = nullptr;
+			}
 
 			//UI-End
 			if (curGameObject != nullptr)
@@ -451,8 +452,6 @@ void my_display_code()
 				char* str = _objName;
 				strcpy(curGameObject->Name, str);
 			}
-
-
 
 			ImGui::PopItemWidth();
 		}
@@ -594,7 +593,7 @@ void renderGameOver(const char text[], int len)
 
 
 //渲染Actors
-void renderActors(PxRigidActor** actors, const PxU32 numActors, bool shadows, const PxVec3 & color)/*渲染actor*/
+void renderActors(PxRigidActor** actors, const PxU32 numActors, bool shadows, bool isWireframe, const PxVec3 & color)/*渲染actor*/
 {
 	PxShape* shapes[MAX_NUM_ACTOR_SHAPES];
 	for(PxU32 i=0;i<numActors;i++)
@@ -623,7 +622,11 @@ void renderActors(PxRigidActor** actors, const PxU32 numActors, bool shadows, co
 			}
 			else
 				glColor4f(color.x, color.y, color.z, 1.0f);
-			renderGeometry(h);
+
+			if (isWireframe)
+			{
+				renderGeometry(h);
+			}
 			glPopMatrix();
 
 			glPolygonMode( GL_FRONT_AND_BACK, GL_FILL);

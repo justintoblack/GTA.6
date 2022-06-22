@@ -148,7 +148,7 @@ Snippets::Camera*	sCamera;
 
 extern bool backgroundMusic;
 extern float volume0;
-
+bool isWireframe=false;
 
 
 // /////////////////////////Imgui//////////////////////////////////
@@ -557,7 +557,7 @@ namespace
 		{
 			std::vector<PxRigidActor*> actors(nbActors);
 			scene->getActors(PxActorTypeFlag::eRIGID_DYNAMIC | PxActorTypeFlag::eRIGID_STATIC, reinterpret_cast<PxActor**>(&actors[0]), nbActors);
-			Snippets::renderActors(&actors[0], static_cast<PxU32>(actors.size()), true);
+			Snippets::renderActors(&actors[0], static_cast<PxU32>(actors.size()), false, isWireframe);
 		}
 
 		Snippets::finishRender();

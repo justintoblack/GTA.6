@@ -40,12 +40,13 @@ public:
 	PxRigidActor*  g_rigidBody=nullptr;
 
 	//×é¼þ
-	vector<Component*> components ;
+	vector<Component*> components;
 
 	GameObject()
 	{
 		transform = PxTransform(0,0,0);
 		scale = PxVec3(1, 1, 1);
+		components.clear();
 	}
 
 	void SetName(const char name[])
@@ -179,6 +180,13 @@ public:
 		}
 		return nullptr;
 	}
+
+	////É¾³ýGameObject
+	//void Delete()
+	//{
+	//	cout << "Delete" << endl;
+	//	delete this;
+	//}
 };
 
 
@@ -318,6 +326,7 @@ public:
 	{
 		ImGui::Spacing();
 		ImGui::Text("Model");
+		ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x - 100);
 		if (ImGui::Combo("Models", &item_current, _allModelsName,Models.size()))
 		{
 			SetModel(Models[item_current]);

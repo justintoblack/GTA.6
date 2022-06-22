@@ -72,5 +72,79 @@
 			0.0,
 			1.0
 		]
+	},
+	{
+		"BoxCollider" : 
+		{
+			"localTransform" : 
+			[
+				0.0,
+				2.869999885559082,
+				0.0
+			],
+			"size" : 
+			[
+				5.059999942779541,
+				3.0,
+				2.7799999713897705
+			]
+		},
+		"ModelComponent" : 
+		{
+			"idx" : 3
+		},
+		"Name" : "building",
+		"Rigidbody" : 
+		{
+			"has" : true,
+			"isStatic" : true
+		},
+		"Transform" : 
+		[
+			20.0,
+			10.119999885559082,
+			40.0,
+			0.0,
+			0.0,
+			0.0,
+			1.0
+		]
+	},
+	{
+		"BoxCollider" : 
+		{
+			"localTransform" : 
+			[
+				0.0,
+				2.869999885559082,
+				0.0
+			],
+			"size" : 
+			[
+				5.059999942779541,
+				3.0,
+				2.7799999713897705
+			]
+		},
+		"ModelComponent" : 
+		{
+			"idx" : 4
+		},
+		"Name" : "road",
+		"Rigidbody" : 
+		{
+			"has" : true,
+			"isStatic" : true
+		},
+		"Transform" : 
+		[
+			0.0,
+			0.0,
+			0.0,
+			0.0,
+			0.0,
+			0.0,
+			1.0
+		]
 	}
 ]
