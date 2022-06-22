@@ -32,12 +32,13 @@
 #include "Render.h"
 #include <iostream>
 #include <glm/glm.hpp>
+#include "Camera.h"
 
 using namespace physx;
 
 
 extern	TheCreator theCreator;
-
+extern Snippets::Camera* sCamera;
 
 //==================================================================ImGUI state
 bool main_window = false;  //之所以不设置为静态全局变量，是因为在DemoTestRender.cpp中会使用到这个变量
@@ -62,6 +63,7 @@ extern glm::vec3 gLightDir;
 
 //////////////////////////ImGUI-Content//////////////////////////////
 static GameObject* curGameObject=nullptr;
+static PxVec3 _sCameraPos = PxVec3(0, 0, 0);
 static PxVec3 _position=PxVec3(0,0,0);
 static PxVec3 _rotation=PxVec3(0,0,0);
 static PxQuat _quaternion = PxQuat(0, 0, 0, 1);
@@ -285,7 +287,7 @@ void my_display_code()
 {
 	if (main_window)
 	{
-
+		
 		static int counter = 0;
 
 		ImGui::Begin("Console",&main_window);                          // Create a window called "Hello, world!" and append into it.
@@ -299,13 +301,19 @@ void my_display_code()
 		ImGui::SliderFloat("soundEffectVolume", &volume1, 0.0f, 1.0f);
 		ImGui::ColorEdit3("set color", (float*)&clear_color); // Edit 3 floats representing a color
 
-		if (ImGui::Button("Button"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
-			editState = true;
-		ImGui::SameLine();
-		ImGui::Text("counter = %d", counter);
-		ImGui::SameLine();
-		ImGui::Text("counter = %d", counter);
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+
+		//Camera.
+		_sCameraPos = sCamera->getEye();
+		ImGui::Text("Camera Position");
+		ImGui::PushItemWidth((ImGui::GetContentRegionAvail().x) / 3 - 16);
+		ImGui::DragFloat("x", &_sCameraPos.x, 1);
+		ImGui::SameLine();
+		ImGui::DragFloat("y", &_sCameraPos.y, 1);
+		ImGui::SameLine();
+		ImGui::DragFloat("z", &_sCameraPos.z, 1);
+		ImGui::PopItemWidth();
+		sCamera->SetEye(_sCameraPos);
 
 		ImGui::Checkbox("IsSimulation", &isSimulation);
 		ImGui::Checkbox("IsWireframe",&isWireframe);
@@ -388,11 +396,11 @@ void my_display_code()
 			ImGui::Text("Position");
 			ImGui::PushItemWidth((ImGui::GetContentRegionAvail().x)/3-33);
 			ImGui::PushID(1);
-			ImGui::DragFloat("x", &_position.x, 0.01);
+			ImGui::DragFloat("x", &_position.x, 0.1);
 			ImGui::SameLine();
-			ImGui::DragFloat("y", &_position.y, 0.01);
+			ImGui::DragFloat("y", &_position.y, 0.1);
 			ImGui::SameLine();
-			ImGui::DragFloat("z", &_position.z, 0.01);
+			ImGui::DragFloat("z", &_position.z, 0.1);
 			ImGui::PopID();
 
 			ImGui::Text("Rotation");

@@ -29,7 +29,8 @@ void TheCreator::createSlowArea(PxVec3 startPosition, PxF32 capsuleRadii, PxF32 
 		PxTransform t(PxVec3(startPosition.x, capsuleRadii, zPosition), PxQuat(PxIdentity));
 		PxRigidStatic* rd = m_gPhysics->createRigidStatic(t);
 		PxCapsuleGeometry capsuleGeom(capsuleRadii, 3.0f); 
-		PxShape* shape = PxRigidActorExt::createExclusiveShape(*rd, capsuleGeom, *gMaterial);
+		PxBoxGeometry box(10, 0.1, capsuleRadii);
+		PxShape* shape = PxRigidActorExt::createExclusiveShape(*rd, box, *gMaterial);
 		makeObjectDrivable(shape);
 		m_gScene->addActor(*rd);
 	}
@@ -40,7 +41,7 @@ void TheCreator::Init(PxPhysics* physics, PxScene* gScene)
 	m_gPhysics = physics;
 	m_gScene = gScene;
 
-	poleModel = Model("../../assets/objects/Models/02_SM_Prop_LightPole_Base_02.fbx");
+	poleModel = Model("../../assets/objects/Models/01_SM_Prop_LightPole_Base_02.fbx");
 	//stationModel = Model("../../assets/objects/Models/SM_Bld_Station_01.fbx");
 	//stationModel_01 = Model("../../assets/objects/Models/SM_Bld_Station_03.fbx");
 	//road = Model("../../assets/objects/Models/SM_Env_Road_Bare_01.fbx");
