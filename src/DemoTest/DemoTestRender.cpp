@@ -70,6 +70,7 @@ glm::vec3			gLightSpecular = glm::vec3(1.0f, 1.0f, 1.0f);
 glm::vec3			gSpotLightAmbient = glm::vec3(0.2f, 0.2f, 0.2f);
 glm::vec3			gSpotLightDiffuse = glm::vec3(0.5f, 0.5f, 0.5f);
 glm::vec3			gSpotLightSpecular = glm::vec3(0.8f, 0.8f, 0.8f);
+extern	bool		vehicleUseSpotLight;
 
 //天空盒六个面的纹理图片
 const char* gSkyboxFaces[6] = {
@@ -446,6 +447,8 @@ namespace
 		glUniformMatrix4fv(glGetUniformLocation(gModelShader.ID, "projection"), 1, GL_FALSE, glm::value_ptr(projectionMat));
 		glUniformMatrix4fv(glGetUniformLocation(gModelShader.ID, "view"), 1, GL_FALSE, glm::value_ptr(viewMat));
 		glUniformMatrix4fv(glGetUniformLocation(gModelShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(modelMat));
+		//gameObject.g_body->EnableSpotLight();
+		gameObject.g_body->switchSpotLightStatus(vehicleUseSpotLight);
 		gameObject.g_body->Draw(gModelShader);
 		//渲染车轮
 		Model* wheels[4] = { gameObject.g_wheel_fl,gameObject.g_wheel_fr,gameObject.g_wheel_bl,gameObject.g_wheel_br};

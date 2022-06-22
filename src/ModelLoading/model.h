@@ -55,6 +55,11 @@ public:
             meshes[i].Draw(shader);
         
     }
+    void switchSpotLightStatus(bool status)
+    {
+        useSpotLight = status;
+    }
+
     //在绘制时开启聚光灯（默认是禁用），只需设置一次
     void EnableSpotLight()
     {

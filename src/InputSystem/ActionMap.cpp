@@ -190,6 +190,20 @@ void VehicleActionMap::InputAction()
 		ReleaseEKeyEvent();
 	}
 
+	if (GetAsyncKeyState('V'))
+	{
+		if (!isVKeyDown)
+		{
+			cout << "vv" << endl;
+			VKeyEvent();
+			isVKeyDown = true;
+		}
+	}
+	else
+	{
+		isVKeyDown = false;
+	}
+
 }
 
 void VehicleActionMap::SetActionMap(physx::PxVehicleDrive4W* newController)
