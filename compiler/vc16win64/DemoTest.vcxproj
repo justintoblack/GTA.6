@@ -53,6 +53,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\DemoTest\CarGameObject.h" />
+    <ClInclude Include="..\..\src\DemoTest\DemoTestRender.h" />
     <ClInclude Include="..\..\src\DemoTest\GameObject.h" />
     <ClInclude Include="..\..\src\GameDemo\JsonData.h" />
     <ClInclude Include="..\..\src\GameDemo\TheCreator.h" />

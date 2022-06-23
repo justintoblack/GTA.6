@@ -50,6 +50,7 @@ extern	TheCreator theCreator;
 //==================================================================ImGUI state
 bool main_window = false;  //之所以不设置为静态全局变量，是因为在DemoTestRender.cpp中会使用到这个变量
 bool show_another_window = false;
+bool show_calendar_window = false;
 bool inspector_window = false;
 bool isSimulation = true;
 static bool show_demo_window = false;
@@ -60,8 +61,10 @@ bool backgroundMusic = false;
 bool soundEffect = false;
 float volume0;
 float volume1;
+float timeSpeed = 1.0f;
 float gameObjectPosition[3] = { 0.10f, 0.20f, 0.30f };
-bool editState;
+bool scenario = true;
+bool scenarioChange = true;
 extern glm::vec3 gLightDir;
 
 //==================================================================ImGUI state
@@ -285,32 +288,63 @@ void renderGeometry(const PxGeometryHolder& h)
 		break;
 	}
 }
-
 //Imgui渲染具体内容
 void my_display_code()
 {
 	if (main_window)
 	{
-
-		static int counter = 0;
-
 		ImGui::Begin("Console",&main_window);                          // Create a window called "Hello, world!" and append into it.
 
 		ImGui::Text("setting:");      
 		ImGui::Checkbox("Demo Window", &show_demo_window);      // Edit bools storing our window open/close state
 		ImGui::Checkbox("Game Object Settings Window", &show_another_window);// Display some text (you can use a format strings too)
+		ImGui::Checkbox("Calendar Window", &show_calendar_window);
 		ImGui::Checkbox("backgroundMusic", &backgroundMusic);
 		ImGui::SliderFloat("backgroundMusicVolume", &volume0, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
 		ImGui::Checkbox("soundEffect", &soundEffect);
 		ImGui::SliderFloat("soundEffectVolume", &volume1, 0.0f, 1.0f);
+
+		enum TimeSpeed {Speed_01, Speed_02, Speed_03, Speed_04, Speed_05, Speed_06, Speed_07, Speed_count};
+		static int elem = Speed_04;
+
+		const char* elems_names[Speed_count] = { "Extremely Slow", "Very Slow", "Slow", "Normal", "Fast", "Very Fast", "Extremely Fast"};
+		const char* elem_name = (elem >= 0 && elem < Speed_count) ? elems_names[elem] : "Stop";
+		ImGui::SliderInt("time speed ", &elem, 0, Speed_count, elem_name);
+
+		switch (elem) {
+		case Speed_01 :
+			timeSpeed = 0.166666;
+			break;
+		case Speed_02:
+			timeSpeed = 0.333333;
+			break;
+		case Speed_03:
+			timeSpeed = 0.5;
+			break;
+		case Speed_04:
+			timeSpeed = 1.0;
+			break;
+		case Speed_05:
+			timeSpeed = 2.0;
+			break;
+		case Speed_06:
+			timeSpeed = 3.0;
+			break;
+		case Speed_07:
+			timeSpeed = 6.0;
+			break;
+		case Speed_count:
+			timeSpeed = 0.0;
+			break;
+		}
+
+
 		ImGui::ColorEdit3("set color", (float*)&clear_color); // Edit 3 floats representing a color
 
-		if (ImGui::Button("Button"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
-			editState = true;
-		ImGui::SameLine();
-		ImGui::Text("counter = %d", counter);
-		ImGui::SameLine();
-		ImGui::Text("counter = %d", counter);
+		//if (ImGui::Button("Change the scenario")) {
+		//	scenario = !scenario;
+		//	scenarioChange = true;
+		//}// Buttons return true when clicked (most widgets return true when edited/activated)
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 
 		ImGui::Checkbox("IsSimulation", &isSimulation);
@@ -333,6 +367,8 @@ void my_display_code()
 
 		ImGui::End();
 	}
+
+
 	if (show_another_window)
 	{
 		ImGui::Begin("Hierarchy", &show_another_window);   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
@@ -356,19 +392,36 @@ void my_display_code()
 			}
 			ImGui::PopID();
 		}
-		//const char* items[] = { "AAAA", "BBBB", "CCCC", "DDDD", "EEEE", "FFFF", "GGGG", "HHHH", "IIIIIII", "JJJJ", "KKKKKKK" };
-		//const char** point = items;
-		//static int item_current = 0;
-
-		//ImGui::Combo("combo", &item_current, point, IM_ARRAYSIZE(items));
-
-		
-		//ImGui::InputFloat3("position(x, y, z)", gameObjectPosition);
-
-		//if (ImGui::Button("Close the window"))
-		//	show_another_window = false;
 		ImGui::End();
 	}
+	if (show_calendar_window)
+	{
+		ImGui::Begin("Calendar", &show_calendar_window);
+		bool no_titlebar = false;
+		bool no_move = false;
+		bool no_close = false;
+		bool no_background = false;
+
+
+		ImGuiWindowFlags window_flags = 0;
+		if (no_titlebar)        window_flags |= ImGuiWindowFlags_NoTitleBar;
+
+		if (ImGui::CollapsingHeader("Window options")) {
+
+			if (ImGui::BeginTable("split", 3))
+			{
+				ImGui::TableNextColumn(); ImGui::Checkbox("No titlebar", &no_titlebar);
+				ImGui::TableNextColumn(); ImGui::Checkbox("No move", &no_move);
+				ImGui::TableNextColumn(); ImGui::Checkbox("No close", &no_close);
+				ImGui::TableNextColumn(); ImGui::Checkbox("No background", &no_background);
+				ImGui::EndTable();
+			}
+		}
+
+		ImGui::End();
+	}
+
+
 	if (inspector_window)
 	{
 		ImGui::Begin("Inspector", &inspector_window);

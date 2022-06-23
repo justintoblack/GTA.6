@@ -80,6 +80,9 @@
     <ClInclude Include="Dependencies\imgui\imgui_impl_opengl2.h">
       <Filter>imgui</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\DemoTest\CarGameObject.h" />
+    <ClInclude Include="..\..\src\GameDemo\JsonData.h" />
+    <ClInclude Include="..\..\src\DemoTest\DemoTestRender.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="imgui">
@@ -93,5 +96,7 @@
     <None Include="..\..\src\ModelLoading\model_loading.vs" />
     <None Include="..\..\src\ModelLoading\shadow_loading.vs" />
     <None Include="..\..\src\ModelLoading\shadow_loading.fs" />
+    <None Include="..\..\src\Light\light.fs" />
+    <None Include="..\..\src\Light\light.vs" />
   </ItemGroup>
 </Project>

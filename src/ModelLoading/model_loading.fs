@@ -4,9 +4,6 @@ in vec2 TexCoords;
 in vec3 Normal;
 in vec3 FragPos;
 
-uniform sampler2D texture_diffuse1;
-
-uniform vec3 lightPos;
 uniform vec3 viewPos;
 
 struct Material
@@ -21,7 +18,6 @@ struct Material
 uniform Material material;
 
 struct Light{
-    vec3 position;
     vec3 direction;
     vec3 ambient;
     vec3 diffuse;
