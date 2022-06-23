@@ -46,29 +46,30 @@ public:
     // draws the model, and thus all its meshes
     void Draw(Shader &shader)
     {
+        for(unsigned int i = 0; i < meshes.size(); i++)
+            meshes[i].Draw(shader);
+        
+    }
+    //把灯光开启状态useSpotLight设置为参数status,根据状态设置该shader是否受车辆光照影响
+    void switchSpotLightStatus(bool status, Shader& shader)
+    {
+        useSpotLight = status;
         if (useSpotLight)
             shader.SetInteger("useSpotLight", 1);
         else
             shader.SetInteger("useSpotLight", 0);
 
-        for(unsigned int i = 0; i < meshes.size(); i++)
-            meshes[i].Draw(shader);
-        
-    }
-    void switchSpotLightStatus(bool status)
-    {
-        useSpotLight = status;
     }
 
     //在绘制时开启聚光灯（默认是禁用），只需设置一次
-    void EnableSpotLight()
+    void EnableSpotLight(Shader& shader)
     {
-        useSpotLight = true;
+        switchSpotLightStatus(true, shader);
     }
     //在绘制时关闭聚光灯，只需设置一次
-    void DisableSpotLight()
+    void DisableSpotLight(Shader& shader)
     {
-        useSpotLight = false;
+        switchSpotLightStatus(false, shader);
     }
     void setPos(glm::vec3 newPos)
     {

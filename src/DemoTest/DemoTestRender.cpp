@@ -70,6 +70,7 @@ glm::vec3			gLightSpecular = glm::vec3(1.0f, 1.0f, 1.0f);
 glm::vec3			gSpotLightAmbient = glm::vec3(0.2f, 0.2f, 0.2f);
 glm::vec3			gSpotLightDiffuse = glm::vec3(0.5f, 0.5f, 0.5f);
 glm::vec3			gSpotLightSpecular = glm::vec3(0.8f, 0.8f, 0.8f);
+float				gSpotLightCutOff = 35.0f;
 extern	bool		vehicleUseSpotLight;
 
 //天空盒六个面的纹理图片
@@ -343,21 +344,13 @@ namespace
 		//设置光源位置，光源的属性：环境光强度、漫反射强度、镜面反射强度
 		shader.SetVector3f("lightPos", gLightPos);
 		PxVec3 viewPos = sCamera->getEye();
-		PxVec3 camDir = sCamera->getDir();
 		shader.SetVector3f("viewPos", viewPos.x, viewPos.y, viewPos.z);
 		shader.SetVector3f("light.direction", gLightDir);
 		shader.SetVector3f("light.ambient", gLightAmbient);
 		shader.SetVector3f("light.diffuse", gLightDiffuse);
 		shader.SetVector3f("light.specular", gLightSpecular);
 		//shininess发光值，发光值越高，反射能力越强，散射越少，高光点越小
-		//spotlight
 		shader.SetFloat("material.shininess", 1024.0f);
-		shader.SetVector3f("spotLight.position", viewPos.x, viewPos.y, viewPos.z);
-		shader.SetVector3f("spotLight.direction", camDir.x, camDir.y, camDir.z);
-		shader.SetFloat("spotLight.cutOff", glm::cos(glm::radians(10.0f)));
-		shader.SetVector3f("spotLight.ambient", gSpotLightAmbient);
-		shader.SetVector3f("spotLight.diffuse", gSpotLightDiffuse);
-		shader.SetVector3f("spotLight.specular", gSpotLightSpecular);
 		glm::mat4 modelMat = glm::mat4(1.0f);
 		modelMat = glm::translate(modelMat, model.getPos());
 		//modelMat = glm::rotate(modelMat, 1.0f, glm::vec3(0, -1, 0));
@@ -448,11 +441,28 @@ namespace
 		glUniformMatrix4fv(glGetUniformLocation(gModelShader.ID, "view"), 1, GL_FALSE, glm::value_ptr(viewMat));
 		glUniformMatrix4fv(glGetUniformLocation(gModelShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(modelMat));
 		//gameObject.g_body->EnableSpotLight();
-		gameObject.g_body->switchSpotLightStatus(vehicleUseSpotLight);
+		gameObject.g_body->switchSpotLightStatus(vehicleUseSpotLight, gModelShader);
 		gameObject.g_body->Draw(gModelShader);
 		//渲染车轮
 		Model* wheels[4] = { gameObject.g_wheel_fl,gameObject.g_wheel_fr,gameObject.g_wheel_bl,gameObject.g_wheel_br};
 		PxVec3 offset[4] = { PxVec3(0.88467, -0.7733, 1.6328) , PxVec3(-0.88467, -0.7733, 1.6328) ,PxVec3(0.88467, -0.7733, -1.2502),PxVec3(-0.88467, -0.7733, -1.2502)};
+		//spotlight
+		//车辆中心位置
+		PxVec3 vehiclePos = gameObject.transform.p;
+		//车辆前进方向
+		PxVec3 vehicleForward = gameObject.transform.q.getBasisVector2().getNormalized();
+		//车辆水平方向
+		//PxVec3 vehicleHorizon = gameObject.transform.q.getBasisVector0().getNormalized();
+		//灯位置
+		PxVec3 vehicleLight = vehiclePos + vehicleForward * 5.0f;
+
+		//向shader传入参数
+		gModelShader.SetVector3f("spotLight.position", vehicleLight.x, vehicleLight.y, vehicleLight.z);
+		gModelShader.SetVector3f("spotLight.direction", vehicleForward.x, vehicleForward.y - 0.2f, vehicleForward.z);
+		gModelShader.SetFloat("spotLight.cutOff", glm::cos(glm::radians(gSpotLightCutOff)));
+		gModelShader.SetVector3f("spotLight.ambient", gSpotLightAmbient);
+		gModelShader.SetVector3f("spotLight.diffuse", gSpotLightDiffuse);
+		gModelShader.SetVector3f("spotLight.specular", gSpotLightSpecular);
 
 		//应该对每个车轮应用不同转换矩阵
 		for (size_t i = 0; i < 4; i++)
@@ -470,6 +480,7 @@ namespace
 			glUniformMatrix4fv(glGetUniformLocation(gModelShader.ID, "view"), 1, GL_FALSE, glm::value_ptr(viewMat));
 			glUniformMatrix4fv(glGetUniformLocation(gModelShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(modelMat));
 			wheels[i]->Draw(gModelShader);
+			
 		}
 		glUseProgram(0);
 	}

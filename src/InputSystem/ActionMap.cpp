@@ -194,7 +194,6 @@ void VehicleActionMap::InputAction()
 	{
 		if (!isVKeyDown)
 		{
-			cout << "vv" << endl;
 			VKeyEvent();
 			isVKeyDown = true;
 		}
