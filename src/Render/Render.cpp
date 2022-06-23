@@ -56,6 +56,8 @@ bool inspector_window = false;
 bool isSimulation = true;
 static bool show_demo_window = false;
 extern bool isWireframe;
+bool show_countdown_window = false;
+
 
 //ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 physx::PxVec3 clear_color = physx::PxVec3(0.45f, 0.55f, 0.60f);
@@ -301,7 +303,6 @@ void my_display_code()
 		static int counter = 0;
 
 		ImGui::Begin("Console",&main_window);                          // Create a window called "Hello, world!" and append into it.
-
 		ImGui::Text("setting:");      
 		ImGui::Checkbox("Demo Window", &show_demo_window);      // Edit bools storing our window open/close state
 		ImGui::Checkbox("Game Object Settings Window", &show_another_window);// Display some text (you can use a format strings too)
@@ -535,6 +536,18 @@ void my_display_code()
 	}
 	if (show_demo_window)
 		ImGui::ShowDemoWindow(&show_demo_window);
+
+	if (show_countdown_window)
+	{
+		ImGui::Begin("CountDown",&show_countdown_window);
+		ImGui::SetNextWindowSize(ImVec2(200, 500));
+		ImGuiWindowFlags window_flags = 0;
+		window_flags |= ImGuiWindowFlags_NoCollapse;
+		window_flags |= ImGuiWindowFlags_NoResize;
+
+		
+		ImGui::End();
+	}
 }
 namespace Snippets
 {

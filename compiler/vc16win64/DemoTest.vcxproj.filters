@@ -81,8 +81,22 @@
       <Filter>imgui</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\DemoTest\CarGameObject.h" />
+<<<<<<< HEAD
+    <ClInclude Include="Dependencies\imgui\imgui_impl_glut.h" />
+    <ClInclude Include="Dependencies\imgui\imgui_impl_opengl2.h" />
+<<<<<<< HEAD
+<<<<<<< HEAD
+    <ClInclude Include="..\..\src\DemoTest\MisssionManager.h" />
+    <ClInclude Include="..\..\src\DemoTest\Mission.h" />
+=======
+>>>>>>> da3de78a008b0a1a3ce943dd62aca0a7d66ff8e8
+=======
+    <ClInclude Include="..\..\src\GameDemo\JsonData.h" />
+>>>>>>> c69680c15598af77a863290bd7695e3d8ffe7386
+=======
     <ClInclude Include="..\..\src\GameDemo\JsonData.h" />
     <ClInclude Include="..\..\src\DemoTest\DemoTestRender.h" />
+>>>>>>> baa255ceacdf9965a6a3be6f57f3b289504e7ff5
   </ItemGroup>
   <ItemGroup>
     <Filter Include="imgui">

@@ -251,6 +251,10 @@ void TheCreator::CreateGameObject()
 	//////////////////////////Test-End/////////////////////////////
 }
 
+void TheCreator::CreatePaticle(PxVec3 pos)
+{
+}
+
 void TheCreator::CreateNewGameObject()
 {
 	GameObject* gameObject=new GameObject();

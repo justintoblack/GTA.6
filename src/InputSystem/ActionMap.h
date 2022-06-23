@@ -46,6 +46,7 @@ class VehicleActionMap : public ActionMap
 {
 private:
 	physx::PxVehicleDrive4W* m_controller;
+	bool isVKeyDown;
 public:
 	void (*release)();
 	void (*WKeyEvent)();
@@ -53,6 +54,8 @@ public:
 	void (*AKeyEvent)();
 	void (*DKeyEvent)();
 	void (*EKeyEvent)();
+	void (*RKeyEvent)();
+	void (*VKeyEvent)();
 	void (*ReleaseWKeyEvent)();
 	void (*ReleaseEKeyEvent)();
 
