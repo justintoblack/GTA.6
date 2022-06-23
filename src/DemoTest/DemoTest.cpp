@@ -130,6 +130,8 @@ extern bool main_window;
 extern bool show_another_window;
 extern bool inspector_window;
 extern bool isSimulation;
+extern bool soundEffect;
+extern float volume1;
 
 //输入
 InputSyetem inputSystem;
@@ -476,38 +478,51 @@ PxFilterFlags contactReportFilterShader(PxFilterObjectAttributes attributes0, Px
 class MusicEvent
 {
 public:
-	MusicEvent() {
+	
+	MusicEvent(char path []) {
+		ISoundEngine* PlayEngine = createIrrKlangDevice();
+		ISound* snd = PlayEngine->play2D(path, true, true, false, ESM_AUTO_DETECT);
+		this->PlayEngine = PlayEngine;
+		this->snd = snd;
 		this->isPlay = false;
 	}
-	ISoundEngine* PlayEngine = nullptr;
+
+	ISoundEngine* PlayEngine;
+	ISound* snd;
 	bool isPlay;
-	void create()
+
+	/*void create()
 	{
 		ISoundEngine* PlayEngine = createIrrKlangDevice();
 		this->PlayEngine = PlayEngine;
-	}
-	void play(char path [])
+	}*/
+
+	void play(bool soundEffect, float volume1)
 	{
-		extern bool soundEffect;
-		extern float volume1;
-		if (soundEffect == false)
-		{
-			volume1 = 0.0f;
-		}
-		//PlayEngine->play2D(path, true);
-		ISound* snd = PlayEngine->play2D(path, true, false, true);
-		if (snd)
+		if (soundEffect == true && isPlay == false){
+			snd->setIsPaused(false);
 			snd->setVolume(volume1);
-		this->isPlay = true;
+			this->isPlay = true;
+		}
 	}
+
 	void stop()
 	{
-		PlayEngine->drop();
+		///PlayEngine->drop();
+		snd->setIsPaused(true);
 		this->isPlay = false;
 	}
+
+	~MusicEvent()
+	{
+		snd->drop();
+		PlayEngine->drop();
+	}
 };
-MusicEvent carEngine;
-MusicEvent bell;
+char carEnginePath[] = "../../assets/audio/carEngine.wav";
+MusicEvent carEngine = MusicEvent(carEnginePath);
+char bellPath[] = "../../assets/audio/bell1.wav";
+MusicEvent bell = MusicEvent(bellPath);
 
 class ContactReportCallback : public PxSimulationEventCallback
 {
@@ -953,12 +968,8 @@ VehicleDesc initVehicleDesc()
 
 void startAccelerateForwardsMode()
 {
-	//create engine and then start engine
-	if (carEngine.isPlay == false) {
-		carEngine.create();
-		char path[] = "../../assets/audio/carEngine.wav";
-		carEngine.play(path);
-	}
+	//play music
+	carEngine.play(soundEffect, volume1);
 
 
 	if (gVehicle4W->mDriveDynData.getCurrentGear() == PxVehicleGearsData::eREVERSE)
@@ -1078,23 +1089,15 @@ void releaseAllControls()
 }
 void stopEngine()
 {
-	if (carEngine.isPlay == true) {
-		carEngine.stop();
-	}
+	carEngine.stop();
 };
 void startBell()
 {
-	if (bell.isPlay == false) {
-		bell.create();
-		char path[] = "../../assets/audio/bell1.wav";
-		bell.play(path);
-	}
+	bell.play(soundEffect, volume1);
 };
 void stopBell()
 {
-	if (bell.isPlay == true) {
-		bell.stop();
-	}
+	bell.stop();
 };
 
 
