@@ -18,7 +18,7 @@ void main()
     vec4 mideum = model * vec4(aPos, 1.0);
     float ax = (light.y * mideum.x - light.x * mideum.y) / (light.y - mideum.y);
     float az = (light.y * mideum.z - light.x * mideum.y) / (light.y - mideum.y);
-    vec4 last = vec4(ax, 0.0, az, mideum.w);
+    vec4 last = vec4(ax, 0.1, az, mideum.w);
 
     TexCoords = aTexCoords;    
   

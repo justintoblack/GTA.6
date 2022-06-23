@@ -376,20 +376,20 @@ namespace
 		//设置光源的属性：环境光强度、漫反射强度、镜面反射强度
 		PxVec3 viewPos = sCamera->getEye();
 		PxVec3 camDir = sCamera->getDir();
-		shader.SetVector3f("viewPos", viewPos.x, viewPos.y, viewPos.z);
-		shader.SetVector3f("light.direction", gLightDir);
-		shader.SetVector3f("light.ambient", gLightAmbient);
-		shader.SetVector3f("light.diffuse", gLightDiffuse);
-		shader.SetVector3f("light.specular", gLightSpecular);
+		modelShader.SetVector3f("viewPos", viewPos.x, viewPos.y, viewPos.z);
+		modelShader.SetVector3f("light.direction", gLightDir);
+		modelShader.SetVector3f("light.ambient", gLightAmbient);
+		modelShader.SetVector3f("light.diffuse", gLightDiffuse);
+		modelShader.SetVector3f("light.specular", gLightSpecular);
 		//shininess发光值，发光值越高，反射能力越强，散射越少，高光点越小
 		//spotlight
-		shader.SetFloat("material.shininess", 1024.0f);
-		shader.SetVector3f("spotLight.position", viewPos.x, viewPos.y, viewPos.z);
-		shader.SetVector3f("spotLight.direction", camDir.x, camDir.y, camDir.z);
-		shader.SetFloat("spotLight.cutOff", glm::cos(glm::radians(10.0f)));
-		shader.SetVector3f("spotLight.ambient", gSpotLightAmbient);
-		shader.SetVector3f("spotLight.diffuse", gSpotLightDiffuse);
-		shader.SetVector3f("spotLight.specular", gSpotLightSpecular);
+		modelShader.SetFloat("material.shininess", 1024.0f);
+		modelShader.SetVector3f("spotLight.position", viewPos.x, viewPos.y, viewPos.z);
+		modelShader.SetVector3f("spotLight.direction", camDir.x, camDir.y, camDir.z);
+		modelShader.SetFloat("spotLight.cutOff", glm::cos(glm::radians(10.0f)));
+		modelShader.SetVector3f("spotLight.ambient", gSpotLightAmbient);
+		modelShader.SetVector3f("spotLight.diffuse", gSpotLightDiffuse);
+		modelShader.SetVector3f("spotLight.specular", gSpotLightSpecular);
 		glm::mat4 modelMat = glm::mat4(1.0f);
 		modelMat = glm::translate(modelMat, model.getPos());  //平移操作，在（1.0， 1.0， 1.0， 1.0）的基础上平移model.getPos()， 默认为vec3（0.0， 0.0， 0.0， 0.0），上面有个setPos来传入参数
 		//modelMat = glm::rotate(modelMat, 1.0f, glm::vec3(0, -1, 0));  //旋转操作，第一个参数是原矩阵，第二个参数是选装角度，用弧度制（glm::radians(90.0f)）， 第三个参数表示绕哪个轴旋转
@@ -478,14 +478,14 @@ namespace
 
 			//shadow
 			//================================
-			if (scenario == true) {
+			/*if (scenario == true) {
 			gShadowShader.use();
 			gShadowShader.SetMatrix4fv("projection", projectionMat);
 			gShadowShader.SetMatrix4fv("view", viewMat);
 			gShadowShader.SetMatrix4fv("model", modelMat);
 			gShadowShader.SetVector3f("light", gLightPos);
 			mod->MyModel->Draw(gShadowShader);
-			}
+			}*/
 			//=================================
 
 
@@ -682,8 +682,8 @@ namespace
 		//std::cout << intGmaeTime << std::endl;
 		//std::cout << (int)gameTime << std::endl;
 		//cout << timeSpeed << endl;
-		cout << "您已进入游戏: " << gameTime << "秒				";
-		cout << "游戏进入第" << calendarDayDisplay << "天    " << calendarHourDisplay << "点" << calendarMinuteDisplay << "分" << endl;
+		//cout << "您已进入游戏: " << gameTime << "秒				";
+		//cout << "游戏进入第" << calendarDayDisplay << "天    " << calendarHourDisplay << "点" << calendarMinuteDisplay << "分" << endl;
 
 		
 		
