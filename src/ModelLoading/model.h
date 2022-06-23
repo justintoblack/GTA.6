@@ -35,6 +35,7 @@ public:
     int nMesh;
     string directory;
     bool gammaCorrection;
+    bool useSpotLight = false;
     Model(){}
     // constructor, expects a filepath to a 3D model.
     Model(string const &path, bool gamma = false) : gammaCorrection(gamma)
@@ -45,11 +46,25 @@ public:
     // draws the model, and thus all its meshes
     void Draw(Shader &shader)
     {
+        if (useSpotLight)
+            shader.SetInteger("useSpotLight", 1);
+        else
+            shader.SetInteger("useSpotLight", 0);
+
         for(unsigned int i = 0; i < meshes.size(); i++)
             meshes[i].Draw(shader);
         
     }
-    
+    //在绘制时开启聚光灯（默认是禁用），只需设置一次
+    void EnableSpotLight()
+    {
+        useSpotLight = true;
+    }
+    //在绘制时关闭聚光灯，只需设置一次
+    void DisableSpotLight()
+    {
+        useSpotLight = false;
+    }
     void setPos(glm::vec3 newPos)
     {
         this->pos = newPos;

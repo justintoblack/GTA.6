@@ -72,6 +72,9 @@ glm::vec3			gLightDir = glm::vec3(2.0f, -3.0f, 1.0f);
 glm::vec3			gLightAmbient = glm::vec3(0.6f, 0.6f, 0.6f);
 glm::vec3			gLightDiffuse = glm::vec3(0.5f, 0.5f, 0.5f);
 glm::vec3			gLightSpecular = glm::vec3(1.0f, 1.0f, 1.0f);
+glm::vec3			gSpotLightAmbient = glm::vec3(0.2f, 0.2f, 0.2f);
+glm::vec3			gSpotLightDiffuse = glm::vec3(0.5f, 0.5f, 0.5f);
+glm::vec3			gSpotLightSpecular = glm::vec3(0.8f, 0.8f, 0.8f);
 
 //天空盒六个面的纹理图片
 const char* gSkyboxFaces[6] = {
@@ -165,6 +168,7 @@ extern float volume0;
 extern bool scenario;
 extern bool scenarioChange;
 extern float timeSpeed;
+bool isWireframe=false;
 
 
 // /////////////////////////Imgui//////////////////////////////////
@@ -371,14 +375,21 @@ namespace
 		modelShader.use();
 		//设置光源的属性：环境光强度、漫反射强度、镜面反射强度
 		PxVec3 viewPos = sCamera->getEye();
-		modelShader.SetVector3f("viewPos", viewPos.x, viewPos.y, viewPos.z);
-		modelShader.SetVector3f("light.direction", gLightDir);
-		modelShader.SetVector3f("light.ambient", gLightAmbient);
-		modelShader.SetVector3f("light.diffuse", gLightDiffuse);
-		modelShader.SetVector3f("light.specular", gLightSpecular);
+		PxVec3 camDir = sCamera->getDir();
+		shader.SetVector3f("viewPos", viewPos.x, viewPos.y, viewPos.z);
+		shader.SetVector3f("light.direction", gLightDir);
+		shader.SetVector3f("light.ambient", gLightAmbient);
+		shader.SetVector3f("light.diffuse", gLightDiffuse);
+		shader.SetVector3f("light.specular", gLightSpecular);
 		//shininess发光值，发光值越高，反射能力越强，散射越少，高光点越小
-		modelShader.SetFloat("material.shininess", 128.0f);
-
+		//spotlight
+		shader.SetFloat("material.shininess", 1024.0f);
+		shader.SetVector3f("spotLight.position", viewPos.x, viewPos.y, viewPos.z);
+		shader.SetVector3f("spotLight.direction", camDir.x, camDir.y, camDir.z);
+		shader.SetFloat("spotLight.cutOff", glm::cos(glm::radians(10.0f)));
+		shader.SetVector3f("spotLight.ambient", gSpotLightAmbient);
+		shader.SetVector3f("spotLight.diffuse", gSpotLightDiffuse);
+		shader.SetVector3f("spotLight.specular", gSpotLightSpecular);
 		glm::mat4 modelMat = glm::mat4(1.0f);
 		modelMat = glm::translate(modelMat, model.getPos());  //平移操作，在（1.0， 1.0， 1.0， 1.0）的基础上平移model.getPos()， 默认为vec3（0.0， 0.0， 0.0， 0.0），上面有个setPos来传入参数
 		//modelMat = glm::rotate(modelMat, 1.0f, glm::vec3(0, -1, 0));  //旋转操作，第一个参数是原矩阵，第二个参数是选装角度，用弧度制（glm::radians(90.0f)）， 第三个参数表示绕哪个轴旋转
@@ -748,7 +759,7 @@ namespace
 		{
 			std::vector<PxRigidActor*> actors(nbActors);
 			scene->getActors(PxActorTypeFlag::eRIGID_DYNAMIC | PxActorTypeFlag::eRIGID_STATIC, reinterpret_cast<PxActor**>(&actors[0]), nbActors);
-			Snippets::renderActors(&actors[0], static_cast<PxU32>(actors.size()), false);
+			Snippets::renderActors(&actors[0], static_cast<PxU32>(actors.size()), false, isWireframe);
 		}
 		//////////////////////To be deleted////////////////////////////////
 

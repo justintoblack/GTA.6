@@ -40,12 +40,13 @@
 #include "Render.h"
 #include <iostream>
 #include <glm/glm.hpp>
+#include "Camera.h"
 
 using namespace physx;
 
 
 extern	TheCreator theCreator;
-
+extern Snippets::Camera* sCamera;
 
 //==================================================================ImGUI state
 bool main_window = false;  //之所以不设置为静态全局变量，是因为在DemoTestRender.cpp中会使用到这个变量
@@ -54,6 +55,7 @@ bool show_calendar_window = false;
 bool inspector_window = false;
 bool isSimulation = true;
 static bool show_demo_window = false;
+extern bool isWireframe;
 
 //ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 physx::PxVec3 clear_color = physx::PxVec3(0.45f, 0.55f, 0.60f);
@@ -72,9 +74,11 @@ extern glm::vec3 gLightDir;
 
 //////////////////////////ImGUI-Content//////////////////////////////
 static GameObject* curGameObject=nullptr;
+static PxVec3 _sCameraPos = PxVec3(0, 0, 0);
 static PxVec3 _position=PxVec3(0,0,0);
 static PxVec3 _rotation=PxVec3(0,0,0);
 static PxQuat _quaternion = PxQuat(0, 0, 0, 1);
+static int _gameObjectIdx=0;
 static bool _isAddRigidbodyStatic=false;
 static char  _objName[16];
 const char** _allModelsName;
@@ -293,6 +297,9 @@ void my_display_code()
 {
 	if (main_window)
 	{
+		
+		static int counter = 0;
+
 		ImGui::Begin("Console",&main_window);                          // Create a window called "Hello, world!" and append into it.
 
 		ImGui::Text("setting:");      
@@ -341,13 +348,22 @@ void my_display_code()
 
 		ImGui::ColorEdit3("set color", (float*)&clear_color); // Edit 3 floats representing a color
 
-		//if (ImGui::Button("Change the scenario")) {
-		//	scenario = !scenario;
-		//	scenarioChange = true;
-		//}// Buttons return true when clicked (most widgets return true when edited/activated)
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 
+		//Camera.
+		_sCameraPos = sCamera->getEye();
+		ImGui::Text("Camera Position");
+		ImGui::PushItemWidth((ImGui::GetContentRegionAvail().x) / 3 - 16);
+		ImGui::DragFloat("x", &_sCameraPos.x, 1);
+		ImGui::SameLine();
+		ImGui::DragFloat("y", &_sCameraPos.y, 1);
+		ImGui::SameLine();
+		ImGui::DragFloat("z", &_sCameraPos.z, 1);
+		ImGui::PopItemWidth();
+		sCamera->SetEye(_sCameraPos);
+
 		ImGui::Checkbox("IsSimulation", &isSimulation);
+		ImGui::Checkbox("IsWireframe",&isWireframe);
 
 		//创建GameObject
 		if (ImGui::Button("CreateNewGameObject",
@@ -384,7 +400,7 @@ void my_display_code()
 			{
 				//GameObject
 				curGameObject = &theCreator.SceneGameObject[i];
-
+				_gameObjectIdx = i;
 				//Name
 				char* tempName = curGameObject->Name;
 				strcpy(_objName, tempName);
@@ -446,11 +462,11 @@ void my_display_code()
 			ImGui::Text("Position");
 			ImGui::PushItemWidth((ImGui::GetContentRegionAvail().x)/3-33);
 			ImGui::PushID(1);
-			ImGui::DragFloat("x", &_position.x, 0.01);
+			ImGui::DragFloat("x", &_position.x, 0.1);
 			ImGui::SameLine();
-			ImGui::DragFloat("y", &_position.y, 0.01);
+			ImGui::DragFloat("y", &_position.y, 0.1);
 			ImGui::SameLine();
-			ImGui::DragFloat("z", &_position.z, 0.01);
+			ImGui::DragFloat("z", &_position.z, 0.1);
 			ImGui::PopID();
 
 			ImGui::Text("Rotation");
@@ -496,14 +512,12 @@ void my_display_code()
 				ModelComponent* newModelComponent = new ModelComponent(curGameObject);
 			}
 
-			ImGui::Spacing();
-			ImGui::Spacing();
-
 			//删除GameObject
-			//if (ImGui::Button("Delete", ImVec2(ImGui::GetContentRegionAvail().x - 100, 20)))
-			//{
-
-			//}
+			if (ImGui::Button("Delete", ImVec2(ImGui::GetContentRegionAvail().x - 100, 20)))
+			{
+				theCreator.SceneGameObject.erase(theCreator.SceneGameObject.begin()+_gameObjectIdx);
+				curGameObject = nullptr;
+			}
 
 			//UI-End
 			if (curGameObject != nullptr)
@@ -512,8 +526,6 @@ void my_display_code()
 				char* str = _objName;
 				strcpy(curGameObject->Name, str);
 			}
-
-
 
 			ImGui::PopItemWidth();
 		}
@@ -701,7 +713,7 @@ void renderGameOver(const char text[], int len)
 
 
 //渲染Actors
-void renderActors(PxRigidActor** actors, const PxU32 numActors, bool shadows, const PxVec3 & color)/*渲染actor*/
+void renderActors(PxRigidActor** actors, const PxU32 numActors, bool shadows, bool isWireframe, const PxVec3 & color)/*渲染actor*/
 {
 	PxShape* shapes[MAX_NUM_ACTOR_SHAPES];
 	for(PxU32 i=0;i<numActors;i++)
@@ -730,6 +742,11 @@ void renderActors(PxRigidActor** actors, const PxU32 numActors, bool shadows, co
 			}
 			else
 				glColor4f(color.x, color.y, color.z, 1.0f);
+
+			if (isWireframe)
+			{
+				renderGeometry(h);
+			}
 			//renderGeometry(h);
 			glPopMatrix();
 

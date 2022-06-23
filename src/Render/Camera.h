@@ -47,6 +47,7 @@ public:
 	void				goFront(physx::PxVec2 arrow);
 	void				Update(physx::PxVec3 pos);
 	void				SetConfig(float dis,physx::PxVec3 offset);
+	void				SetEye(physx::PxVec3 pos);
 	physx::PxVec3		getEye()	const;
 	physx::PxVec3		getDir()	const;
 	physx::PxTransform	getTransform() const;
