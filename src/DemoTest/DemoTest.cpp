@@ -334,21 +334,6 @@ bool isTouchTriggerBox = false;
 int currentTriggerIndex = -1;
 
 //车辆相关的全局变量
-//GameObject carObject;
-//GameObject wheelFLObj;
-//GameObject wheelFRObj;
-//GameObject wheelBLObj;
-//GameObject wheelBRObj;
-//PxTransform wheelLF;
-//PxTransform wheelRF;
-//PxTransform wheelLB;
-//PxTransform wheelRB;
-//PxShape* wheels[5];
-
-//PxRigidDynamic* carBody;
-
-
-
 
 PxF32 gSteerVsForwardSpeedData[2 * 8] =
 {
@@ -838,7 +823,7 @@ PxController* CreateCharacterController(PxExtendedVec3 initPos)
 
 	PxShape* haha;
 	ctrl->getActor()->getShapes(&haha, 1);
-	haha->setFlag(PxShapeFlag::eSCENE_QUERY_SHAPE, false);
+	haha->setFlag(PxShapeFlag::eSCENE_QUERY_SHAPE, true);
 
 	return ctrl;
 }
@@ -1370,16 +1355,6 @@ void stepPhysics(bool interactive)
 
 	/////////////////////////////载具更新////////////////////////////////////
 
-	//wheelLF = wheels[0]->getLocalPose();
-	//wheelRF = wheels[1]->getLocalPose();
-	//wheelLB = wheels[2]->getLocalPose();
-	//wheelRB = wheels[3]->getLocalPose();
-
-
-	//wheelFLObj.SetLocalTransform(wheelLF);
-	//wheelFRObj.SetLocalTransform(wheelRF);
-	//wheelBLObj.SetLocalTransform(wheelLB);
-	//wheelBRObj.SetLocalTransform(wheelRB);
 
 
 	////////////////////////////////////////////////////////////
@@ -1390,7 +1365,26 @@ void stepPhysics(bool interactive)
 	if (isInGameMode)
 	{
 		sCamera->Update(*CameraFollowTarget);
-
+		//相机碰撞检测
+		PxRaycastHit hit[2];
+		PxRaycastBuffer buffer(hit, 2);
+		if (gScene->raycast(*CameraFollowTarget + sCamera->getOffset(),
+			-sCamera->getDir(), sCamera->mDistanceToTarget, buffer))
+		{
+			if (buffer.nbTouches > 1)
+			{
+				PxVec3 newPos;
+				if (buffer.getTouch(0).distance < 0.1)
+				{
+					newPos = buffer.getTouch(1).position;
+				}
+				else
+				{
+					newPos = buffer.getTouch(0).position;
+				}
+				sCamera->SetEye(newPos);
+			}
+		}
 	}
 	else
 	{
@@ -1398,24 +1392,24 @@ void stepPhysics(bool interactive)
 	}
 
 	////////////////////////////Test////////////////////////////
-	PxTransform playerTrans = m_player->getActor()->getGlobalPose();
-	PxRaycastBuffer raycastHit;
-	if (gScene->raycast(playerTrans.p, sCamera->getDir().multiply(PxVec3(1,0,1)).getNormalized(), 
-		carRayDis, raycastHit))
-	{
-			if (raycastHit.block.actor == gVehicle4W->getRigidDynamicActor())
-			{
-				hasVehicleToDrive = true;
-			}
-			else
-			{
-				hasVehicleToDrive = false;
-			}
-	}
-	else
-	{
-		hasVehicleToDrive = false;
-	}
+	//PxTransform playerTrans = m_player->getActor()->getGlobalPose();
+	//PxRaycastBuffer raycastHit;
+	//if (gScene->raycast(playerTrans.p, sCamera->getDir().multiply(PxVec3(1,0,1)).getNormalized(), 
+	//	carRayDis, raycastHit))
+	//{
+	//		if (raycastHit.block.actor == gVehicle4W->getRigidDynamicActor())
+	//		{
+	//			hasVehicleToDrive = true;
+	//		}
+	//		else
+	//		{
+	//			hasVehicleToDrive = false;
+	//		}
+	//}
+	//else
+	//{
+	//	hasVehicleToDrive = false;
+	//}
 
 	/////////////////////////////物理模拟////////////////////////////
 	if (isSimulation)

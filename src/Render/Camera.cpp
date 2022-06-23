@@ -71,7 +71,7 @@ void Camera::Update(physx::PxVec3 targetPos)
 	}
 
 	float curDistance = Mathf::Lerp(temp, mDistanceToTarget, deltaTime * mDamp);
-	
+	mDistanceToTarget = curDistance;
 	mEye = targetPos + m_offset - mDir * curDistance;
 }
 
@@ -91,6 +91,11 @@ void Camera::SetEye(physx::PxVec3 pos)
 void Camera::SetDir(physx::PxVec3 dir)
 {
 	mDir = dir.getNormalized();
+}
+
+physx::PxVec3 Camera::getOffset() const
+{
+	return m_offset;
 }
 
 void Camera::handleMouse(int button, int state, int x, int y)
