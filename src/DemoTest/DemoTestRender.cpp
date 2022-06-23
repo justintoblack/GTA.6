@@ -64,7 +64,7 @@ Model               gBodyModel, gWheelModel_fl, gWheelModel_fr, gWheelModel_bl, 
 Shader				gModelShader;
 Shader				gShadowShader;
 glm::vec3			gLightPos = glm::vec3(-1200.0f, 600.0f, -1200.0f);
-glm::vec3			gLightDir = glm::vec3(2.0f, -3.0f, 1.0f);
+glm::vec3			gLightDir;
 glm::vec3			gLightAmbient = glm::vec3(0.6f, 0.6f, 0.6f);
 glm::vec3			gLightDiffuse = glm::vec3(0.5f, 0.5f, 0.5f);
 glm::vec3			gLightSpecular = glm::vec3(1.0f, 1.0f, 1.0f);
@@ -72,6 +72,8 @@ glm::vec3			gSpotLightAmbient = glm::vec3(0.2f, 0.2f, 0.2f);
 glm::vec3			gSpotLightDiffuse = glm::vec3(0.3f, 0.3f, 0.3f);
 glm::vec3			gSpotLightSpecular = glm::vec3(0.8f, 0.8f, 0.8f);
 float				gSpotLightCutOff = 35.0f;
+float				gVehicleShininess = 64.0f;
+float				gOthersShininess = 1024.0f;
 extern	bool		vehicleUseSpotLight;
 
 //天空盒六个面的纹理图片
@@ -372,12 +374,14 @@ namespace
 		//设置光源的属性：环境光强度、漫反射强度、镜面反射强度
 		PxVec3 viewPos = sCamera->getEye();
 		modelShader.SetVector3f("viewPos", viewPos.x, viewPos.y, viewPos.z);
+		//动态改变光的方向
+		gLightDir = -gLightPos;
 		modelShader.SetVector3f("light.direction", gLightDir);
 		modelShader.SetVector3f("light.ambient", gLightAmbient);
 		modelShader.SetVector3f("light.diffuse", gLightDiffuse);
 		modelShader.SetVector3f("light.specular", gLightSpecular);
 		//shininess发光值，发光值越高，反射能力越强，散射越少，高光点越小
-		modelShader.SetFloat("material.shininess", 1024.0f);
+		modelShader.SetFloat("material.shininess", gOthersShininess);
 		glm::mat4 modelMat = glm::mat4(1.0f);
 		modelMat = glm::translate(modelMat, model.getPos());  //平移操作，在（1.0， 1.0， 1.0， 1.0）的基础上平移model.getPos()， 默认为vec3（0.0， 0.0， 0.0， 0.0），上面有个setPos来传入参数
 		//modelMat = glm::rotate(modelMat, 1.0f, glm::vec3(0, -1, 0));  //旋转操作，第一个参数是原矩阵，第二个参数是选装角度，用弧度制（glm::radians(90.0f)）， 第三个参数表示绕哪个轴旋转
@@ -459,7 +463,7 @@ namespace
 			gModelShader.SetMatrix4fv("projection", projectionMat);
 			gModelShader.SetMatrix4fv("view", viewMat);
 			gModelShader.SetMatrix4fv("model", modelMat);
-			
+			gModelShader.SetFloat("material.shininess", gOthersShininess);
 			mod->MyModel->Draw(gModelShader);
 
 
@@ -532,7 +536,7 @@ namespace
 		gModelShader.SetVector3f("spotLight.ambient", gSpotLightAmbient);
 		gModelShader.SetVector3f("spotLight.diffuse", gSpotLightDiffuse);
 		gModelShader.SetVector3f("spotLight.specular", gSpotLightSpecular);
-
+		gModelShader.SetFloat("material.shininess", gVehicleShininess);
 		//应该对每个车轮应用不同转换矩阵
 		for (size_t i = 0; i < 4; i++)
 		{
