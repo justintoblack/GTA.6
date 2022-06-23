@@ -54,11 +54,8 @@ public:
 	void (*AKeyEvent)();
 	void (*DKeyEvent)();
 	void (*EKeyEvent)();
-<<<<<<< HEAD
 	void (*RKeyEvent)();
-=======
 	void (*VKeyEvent)();
->>>>>>> 727f06515719b393657bb42f2d394a87764f9dc0
 	void (*ReleaseWKeyEvent)();
 	void (*ReleaseEKeyEvent)();
 
