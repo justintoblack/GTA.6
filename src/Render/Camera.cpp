@@ -81,6 +81,11 @@ void Camera::SetConfig(float dis,physx::PxVec3 offset)
 	m_offset = offset;
 }
 
+void Camera::SetEye(physx::PxVec3 pos)
+{
+	mEye = pos;
+}
+
 void Camera::handleMouse(int button, int state, int x, int y)
 {
 	PX_UNUSED(state);
