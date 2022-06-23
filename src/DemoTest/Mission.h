@@ -26,10 +26,12 @@ public:
 	void FinishMission();
 	void CancelMission();
 	void UpdateTrigger();
+	void UpdateTimer(double deltatime);
 
 	bool State = false;
 	bool IsActive = false;
 	bool ChangeLock = false;
+	bool TimerLock = false;
 	std::string MissionDescription;
 	int ID;
 	PxRigidDynamic* StartTrigger = NULL;
@@ -82,6 +84,7 @@ inline void Mission::StartMission()
 	{
 		IsActive = true;
 		ChangeLock = true;
+		TimerLock = true;
 		cout << "start mission" << endl;
 	}
 }
@@ -92,7 +95,9 @@ inline void Mission::FinishMission()
 		cout << "finish mission" << endl;
 		IsActive = false;
 		State = true;
+		TimerLock = false;
 		ChangeLock = true;
+
 	}
 
 }
@@ -104,6 +109,8 @@ inline void Mission::CancelMission()
 		cout << "cancel mission" << endl;
 		IsActive = false;
 		ChangeLock = true;
+		TimerLock = false;
+		Timer = 0;
 	}
 }
 
@@ -130,6 +137,15 @@ inline void Mission::UpdateTrigger()
 			gScene->removeActor(*EndTrigger);
 		}
 		ChangeLock = false;
+	}
+}
+
+inline void Mission::UpdateTimer(double deltatime)
+{
+	if (TimerLock)
+	{
+		Timer += deltatime;
+		//cout << MissionDescription << ": " << Timer<<endl;
 	}
 }
 

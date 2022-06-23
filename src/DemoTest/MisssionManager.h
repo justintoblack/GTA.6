@@ -12,7 +12,7 @@ public:
 	~MissionManager();
 	void AddMission(PxVec3 StartPos, PxVec3 EndPos,MissionType _Type, std::string Description);
 	void DeleteMission(int _ID);
-	void UpdateAllMission();
+	void UpdateAllMission(double deltatime);
 
 	std::vector<Mission *> MissionList;
 	int TotalNum=0;
@@ -51,11 +51,12 @@ void MissionManager::DeleteMission(int _ID)
 	}
 }
 
-inline void MissionManager::UpdateAllMission()
+inline void MissionManager::UpdateAllMission(double deltatime)
 {
 	for (vector<Mission*>::iterator iter = MissionList.begin(); iter != MissionList.end(); iter++)
 	{
 		(*iter)->UpdateTrigger();
+		(*iter)->UpdateTimer(deltatime);
 	}
 }
 

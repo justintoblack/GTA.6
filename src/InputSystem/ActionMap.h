@@ -53,6 +53,7 @@ public:
 	void (*AKeyEvent)();
 	void (*DKeyEvent)();
 	void (*EKeyEvent)();
+	void (*RKeyEvent)();
 	void (*ReleaseWKeyEvent)();
 	void (*ReleaseEKeyEvent)();
 

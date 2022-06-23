@@ -143,6 +143,9 @@ EditActionMap editMap;
 //造物者
 TheCreator theCreator;
 
+//任务管理者
+MissionManager missionManager;
+
 //相机跟随位置
 PxVec3 characterPos;
 PxVec3 vehiclePos;
@@ -405,9 +408,9 @@ DriveMode gDriveModeOrder[] =
 
 bool					gVehicleOrderComplete = false;
 bool					gMimicKeyInputs = false;
+PxTransform startTransform;
 
 
-MissionManager missionManager;
 
 
 
@@ -1066,6 +1069,14 @@ void releaseAllControls()
 		gVehicleInputData.setAnalogHandbrake(0.0f);
 	}
 }
+
+void resetVehicle()
+{
+	gVehicle4W->setToRestState();
+	releaseAllControls();
+	gVehicle4W->getRigidDynamicActor()->setGlobalPose(startTransform);
+}
+
 void stopEngine()
 {
 	if (carEngine.isPlay == true) {
@@ -1096,7 +1107,6 @@ void MyCode()
 	theCreator.Init(gPhysics, gScene);
 
 	//CreateCoordinateAxis(PxTransform(0, 0, 0), 100, 200, 300);
-	createTriggerBox();
 	//CreateChain(PxTransform(PxVec3(0.0f, 20.0f, -10.0f)), 5, PxCapsuleGeometry(1.0f, 1.0f), 4.0f, createBreakableFixed);
 	//CreateChain(PxTransform(PxVec3(0.0f, 25.0f, -20.0f)), 5, PxBoxGeometry(2.0f, 0.5f, 0.5f), 4.0f, createDampedD6);
 
@@ -1123,12 +1133,13 @@ void MyCode()
 	vehicleMap.AKeyEvent = startTurnHardRightMode;
 	vehicleMap.DKeyEvent = startTurnHardLeftMode;
 	vehicleMap.EKeyEvent = startBell;
+	vehicleMap.RKeyEvent = resetVehicle;
 	vehicleMap.ReleaseWKeyEvent = stopEngine;
 	vehicleMap.ReleaseEKeyEvent = stopBell;
 
 	inputSystem.SetCharacterMap(characterMap);
 	CameraFollowTarget = &characterPos;
-
+ 
 	//创建物体
 	//theCreator.CreateBanister(PxVec3(-50, 0.0f, -50), PxVec3(1, 1, 1), gMaterial, 3, 5, 1, 100000, 50000);
 	//theCreator.CreateBanisters(PxVec3(60, 0.0f, 20), PxVec3(1,0,1),gMaterial,1, 20, 0.5f, 1.0f, 10, 10000, 1000);
@@ -1232,7 +1243,7 @@ void initPhysics(bool interactive)
 	//Create a vehicle that will drive on the plane.
 	VehicleDesc vehicleDesc = initVehicleDesc();
 	gVehicle4W = createVehicle4W(vehicleDesc, gPhysics, gCooking);
-	PxTransform startTransform(PxVec3(30, (vehicleDesc.chassisDims.y * 0.5f + vehicleDesc.wheelRadius + 1.0f), 30), PxQuat(PxIdentity));
+	startTransform= PxTransform(PxVec3(30, (vehicleDesc.chassisDims.y * 0.5f + vehicleDesc.wheelRadius + 1.0f), 30), PxQuat(PxIdentity));
 	gVehicle4W->getRigidDynamicActor()->setGlobalPose(startTransform);
 	gScene->addActor(*gVehicle4W->getRigidDynamicActor());
 
@@ -1268,7 +1279,7 @@ void stepPhysics(bool interactive)
 
 
 
-	const PxF32 timestep = 1.0f / 60.0f;
+	const PxF32 timestep = 1.0f / 120.0f;
 	if (gMimicKeyInputs)
 	{
 		PxVehicleDrive4WSmoothDigitalRawInputsAndSetAnalogInputs(gKeySmoothingData, gSteerVsForwardSpeedTable, gVehicleInputData, timestep, gIsVehicleInAir, *gVehicle4W);
@@ -1360,7 +1371,7 @@ void stepPhysics(bool interactive)
 
 	/////////////////////////////任务系统更新////////////////////////////////////
 
-	missionManager.UpdateAllMission();
+	missionManager.UpdateAllMission(deltaTime);
 
     /////////////////////////////任务系统更新////////////////////////////////////
 }

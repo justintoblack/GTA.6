@@ -189,7 +189,10 @@ void VehicleActionMap::InputAction()
 	{
 		ReleaseEKeyEvent();
 	}
-
+	if (GetAsyncKeyState('R'))
+	{
+		RKeyEvent();
+	}
 }
 
 void VehicleActionMap::SetActionMap(physx::PxVehicleDrive4W* newController)
