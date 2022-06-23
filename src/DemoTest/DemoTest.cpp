@@ -228,6 +228,7 @@ extern float gameTime;
 #pragma region 全局按键事件
 bool isInGameMode=true;
 bool isQKeyDown;
+bool vehicleUseSpotLight = false;
 void GlobalKeyEvent()
 {
 	if (GetAsyncKeyState('Q'))
@@ -253,6 +254,7 @@ void GlobalKeyEvent()
 	{
 		isQKeyDown = false;
 	}
+
 }
 
 //切换游戏模式
@@ -1098,6 +1100,10 @@ void stopBell()
 	}
 };
 
+void switchSpotlightStatus()
+{
+	vehicleUseSpotLight ^= true;
+}
 
 extern Model gBodyModel, gWheelModel_fl, gWheelModel_fr, gWheelModel_bl, gWheelModel_br;
 //自定义
@@ -1134,6 +1140,7 @@ void MyCode()
 	vehicleMap.DKeyEvent = startTurnHardLeftMode;
 	vehicleMap.EKeyEvent = startBell;
 	vehicleMap.RKeyEvent = resetVehicle;
+	vehicleMap.VKeyEvent = switchSpotlightStatus;
 	vehicleMap.ReleaseWKeyEvent = stopEngine;
 	vehicleMap.ReleaseEKeyEvent = stopBell;
 

@@ -30,10 +30,6 @@
 #ifdef RENDER_SNIPPET
 #define GLEW_STATIC
 
-
-
-
-
 #include<iostream>
 #include <vector>
 
@@ -73,8 +69,10 @@ glm::vec3			gLightAmbient = glm::vec3(0.6f, 0.6f, 0.6f);
 glm::vec3			gLightDiffuse = glm::vec3(0.5f, 0.5f, 0.5f);
 glm::vec3			gLightSpecular = glm::vec3(1.0f, 1.0f, 1.0f);
 glm::vec3			gSpotLightAmbient = glm::vec3(0.2f, 0.2f, 0.2f);
-glm::vec3			gSpotLightDiffuse = glm::vec3(0.5f, 0.5f, 0.5f);
+glm::vec3			gSpotLightDiffuse = glm::vec3(0.3f, 0.3f, 0.3f);
 glm::vec3			gSpotLightSpecular = glm::vec3(0.8f, 0.8f, 0.8f);
+float				gSpotLightCutOff = 35.0f;
+extern	bool		vehicleUseSpotLight;
 
 //天空盒六个面的纹理图片
 const char* gSkyboxFaces[6] = {
@@ -85,7 +83,6 @@ const char* gSkyboxFaces[6] = {
 	"../../assets/SkyboxImages/front1.png",
 	"../../assets/SkyboxImages/back1.png"
 };
-
 
 //天空盒六个方向
 const GLenum  CUBEMAP_DIRECTION[6] = {
@@ -344,7 +341,6 @@ namespace
 	}
 	void RenderSkybox(void)
 	{
-		
 		glDepthMask(GL_FALSE);
 		gSkyboxShader.use();
 
@@ -375,21 +371,13 @@ namespace
 		modelShader.use();
 		//设置光源的属性：环境光强度、漫反射强度、镜面反射强度
 		PxVec3 viewPos = sCamera->getEye();
-		PxVec3 camDir = sCamera->getDir();
 		modelShader.SetVector3f("viewPos", viewPos.x, viewPos.y, viewPos.z);
 		modelShader.SetVector3f("light.direction", gLightDir);
 		modelShader.SetVector3f("light.ambient", gLightAmbient);
 		modelShader.SetVector3f("light.diffuse", gLightDiffuse);
 		modelShader.SetVector3f("light.specular", gLightSpecular);
 		//shininess发光值，发光值越高，反射能力越强，散射越少，高光点越小
-		//spotlight
 		modelShader.SetFloat("material.shininess", 1024.0f);
-		modelShader.SetVector3f("spotLight.position", viewPos.x, viewPos.y, viewPos.z);
-		modelShader.SetVector3f("spotLight.direction", camDir.x, camDir.y, camDir.z);
-		modelShader.SetFloat("spotLight.cutOff", glm::cos(glm::radians(10.0f)));
-		modelShader.SetVector3f("spotLight.ambient", gSpotLightAmbient);
-		modelShader.SetVector3f("spotLight.diffuse", gSpotLightDiffuse);
-		modelShader.SetVector3f("spotLight.specular", gSpotLightSpecular);
 		glm::mat4 modelMat = glm::mat4(1.0f);
 		modelMat = glm::translate(modelMat, model.getPos());  //平移操作，在（1.0， 1.0， 1.0， 1.0）的基础上平移model.getPos()， 默认为vec3（0.0， 0.0， 0.0， 0.0），上面有个setPos来传入参数
 		//modelMat = glm::rotate(modelMat, 1.0f, glm::vec3(0, -1, 0));  //旋转操作，第一个参数是原矩阵，第二个参数是选装角度，用弧度制（glm::radians(90.0f)）， 第三个参数表示绕哪个轴旋转
@@ -472,7 +460,6 @@ namespace
 			gModelShader.SetMatrix4fv("view", viewMat);
 			gModelShader.SetMatrix4fv("model", modelMat);
 			
-
 			mod->MyModel->Draw(gModelShader);
 
 
@@ -518,6 +505,7 @@ namespace
 		gModelShader.SetMatrix4fv("projection", projectionMat);
 		gModelShader.SetMatrix4fv("view", viewMat);
 		gModelShader.SetMatrix4fv("model", modelMat0);
+		gameObject.g_body->switchSpotLightStatus(vehicleUseSpotLight, gModelShader);
 		gameObject.g_body->Draw(gModelShader);
 
 		
@@ -527,6 +515,23 @@ namespace
 		//渲染车轮
 		Model* wheels[4] = { gameObject.g_wheel_fl,gameObject.g_wheel_fr,gameObject.g_wheel_bl,gameObject.g_wheel_br};
 		PxVec3 offset[4] = { PxVec3(0.88467, -0.7733, 1.6328) , PxVec3(-0.88467, -0.7733, 1.6328) ,PxVec3(0.88467, -0.7733, -1.2502),PxVec3(-0.88467, -0.7733, -1.2502)};
+		//spotlight
+		//车辆中心位置
+		PxVec3 vehiclePos = gameObject.transform.p;
+		//车辆前进方向
+		PxVec3 vehicleForward = gameObject.transform.q.getBasisVector2().getNormalized();
+		//车辆水平方向
+		//PxVec3 vehicleHorizon = gameObject.transform.q.getBasisVector0().getNormalized();
+		//灯位置
+		PxVec3 vehicleLight = vehiclePos + vehicleForward * 5.0f;
+
+		//向shader传入参数
+		gModelShader.SetVector3f("spotLight.position", vehicleLight.x, vehicleLight.y, vehicleLight.z);
+		gModelShader.SetVector3f("spotLight.direction", vehicleForward.x, vehicleForward.y - 0.2f, vehicleForward.z);
+		gModelShader.SetFloat("spotLight.cutOff", glm::cos(glm::radians(gSpotLightCutOff)));
+		gModelShader.SetVector3f("spotLight.ambient", gSpotLightAmbient);
+		gModelShader.SetVector3f("spotLight.diffuse", gSpotLightDiffuse);
+		gModelShader.SetVector3f("spotLight.specular", gSpotLightSpecular);
 
 		//应该对每个车轮应用不同转换矩阵
 		for (size_t i = 0; i < 4; i++)
@@ -540,10 +545,11 @@ namespace
 			modelMat1 = glm::scale(modelMat1, gameObject.g_body->getScale());
 			viewMat = getViewMat();
 			projectionMat = glm::perspective(45.0f, (float)glutGet(GLUT_WINDOW_WIDTH) / (float)glutGet(GLUT_WINDOW_HEIGHT), 0.1f, 1000.0f);
-			glUniformMatrix4fv(glGetUniformLocation(gModelShader.ID, "projection"), 1, GL_FALSE, glm::value_ptr(projectionMat));
-			glUniformMatrix4fv(glGetUniformLocation(gModelShader.ID, "view"), 1, GL_FALSE, glm::value_ptr(viewMat));
-			glUniformMatrix4fv(glGetUniformLocation(gModelShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(modelMat1));
+			gModelShader.SetMatrix4fv("projection", projectionMat);
+			gModelShader.SetMatrix4fv("view", viewMat);
+			gModelShader.SetMatrix4fv("model", modelMat1);
 			wheels[i]->Draw(gModelShader);
+			
 		}
 
 		//shadow(just for the body)
