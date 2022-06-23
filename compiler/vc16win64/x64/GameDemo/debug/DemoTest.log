@@ -1,9 +1,4 @@
-﻿  DemoTestRender.cpp
-D:\Homework\实训\PhysX-Tutorial-master\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\ModelLoading\mesh.h(108,1): warning C4267: “参数”: 从“size_t”转换到“GLsizei”，可能丢失数据
-D:\Homework\实训\PhysX-Tutorial-master\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\Utils\Mathf.cpp(1,1): warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
-D:\Homework\实训\PhysX-Tutorial-master\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\DemoTest\GameObject.h(55,3): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-D:\Homework\实训\PhysX-Tutorial-master\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\DemoTest\GameObject.h(333,1): warning C4267: “参数”: 从“size_t”转换到“int”，可能丢失数据
-  DemoTest.vcxproj -> D:\Homework\实训\PhysX-Tutorial-master\PhysX-Tutorial-master\PhysX_3.4\bin\vc16win64\DemoTestDEBUG.exe
+﻿  DemoTest.vcxproj -> F:\Learning\mypt2\PhysX-Tutorial-master\PhysX_3.4\bin\vc16win64\DemoTestDEBUG.exe
   复制了 0 个文件
   复制了 0 个文件
   复制了 0 个文件
