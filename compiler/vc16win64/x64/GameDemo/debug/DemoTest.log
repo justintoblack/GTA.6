@@ -1,19 +1,10 @@
-<<<<<<< HEAD
-﻿  DemoTestRender.cpp
+﻿  DemoTest.cpp
+D:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\DemoTest\DemoTest.cpp(1,1): warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
 D:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\ModelLoading\mesh.h(99,1): warning C4267: “参数”: 从“size_t”转换到“GLsizei”，可能丢失数据
-D:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\Utils\Mathf.cpp(1,1): warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+D:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\DemoTest\GameObject.h(53,3): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\DemoTest\GameObject.h(321,1): warning C4267: “参数”: 从“size_t”转换到“int”，可能丢失数据
+D:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\DemoTest\DemoTest.cpp(995,1): warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
   DemoTest.vcxproj -> D:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\compiler\vc16win64\./../../../bin/vc16win64\DemoTestDEBUG.exe
-=======
-﻿  TheCreator.cpp
-E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\GameDemo\TheCreator.cpp(1,1): warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
-E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\ModelLoading\mesh.h(99,1): warning C4267: “参数”: 从“size_t”转换到“GLsizei”，可能丢失数据
-E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\DemoTest\GameObject.h(53,1): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\ucrt\string.h(133): message : 参见“strcpy”的声明
-E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\DemoTest\GameObject.h(321,1): warning C4267: “参数”: 从“size_t”转换到“int”，可能丢失数据
-E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\GameDemo\TheCreator.cpp(63,34): warning C4267: “=”: 从“size_t”转换到“int”，可能丢失数据
-E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\GameDemo\TheCreator.cpp(200,20): warning C4018: “<”: 有符号/无符号不匹配
-  DemoTest.vcxproj -> E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\compiler\vc16win64\./../../../bin/vc16win64\DemoTestDEBUG.exe
->>>>>>> c69680c15598af77a863290bd7695e3d8ffe7386
   复制了 0 个文件
   复制了 0 个文件
   复制了 0 个文件

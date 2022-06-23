@@ -293,7 +293,7 @@ struct FilterGroup
 //触发器相关变量
 
 //PxVec3 triggerPos = PxVec3(30, 1, 100);
-PxVec3 triggerPos[] = { PxVec3(30, 1, 70) , PxVec3(30, 1, 110) , PxVec3(30, 1, 150) , PxVec3(30, 1, 170) , PxVec3(70, 1, 190) , PxVec3(70, 1, 220) , PxVec3(100, 1, 220) , PxVec3(130, 1, 170) , PxVec3(150, 1, 160) , PxVec3(130, 1, 160) , PxVec3(90, 1,120), PxVec3(60, 1, 100), PxVec3(50, 1, 50), PxVec3(30, 1, 20) };
+PxVec3 triggerPos[] = { PxVec3(30, 1,50) , PxVec3(30, 1,70) , PxVec3(30, 1, 150) , PxVec3(30, 1, 170) , PxVec3(70, 1, 190) , PxVec3(70, 1, 220) , PxVec3(100, 1, 220) , PxVec3(130, 1, 170) , PxVec3(150, 1, 160) , PxVec3(130, 1, 160) , PxVec3(90, 1,120), PxVec3(60, 1, 100), PxVec3(50, 1, 50), PxVec3(30, 1, 20) };
 
 
 //车辆相关的全局变量
@@ -402,13 +402,12 @@ DriveMode gDriveModeOrder[] =
 	eDRIVE_MODE_NONE
 };
 
-PxF32					gVehicleModeLifetime = 4.0f;
-PxF32					gVehicleModeTimer = 0.0f;
-PxU32					gVehicleOrderProgress = 0;
+
 bool					gVehicleOrderComplete = false;
 bool					gMimicKeyInputs = false;
 
 
+MissionManager missionManager;
 
 
 
@@ -499,12 +498,22 @@ class ContactReportCallback : public PxSimulationEventCallback
 			if (pairs[i].flags & (PxTriggerPairFlag::eREMOVED_SHAPE_TRIGGER | PxTriggerPairFlag::eREMOVED_SHAPE_OTHER))
 				continue;
 			
+			
 
-
-			if ((pairs[i].otherActor == m_player->getActor() && ((Mission*)pairs[i].triggerActor->userData!=NULL)))
+			if ((pairs[i].otherActor == gVehicle4W->getRigidDynamicActor() && (Mission*)pairs[i].triggerActor->userData!=NULL))
 			{
-				Mission* m = (Mission*)pairs[i].triggerActor->userData;
-			    cout << m->MissionDescription<< endl;
+				Mission* triggerMission = (Mission*)pairs[i].triggerActor->userData;
+				cout << triggerMission->MissionDescription<<endl;
+				if (pairs[i].triggerActor == triggerMission->StartTrigger)
+				{
+					triggerMission->StartMission();
+					continue;
+				}
+			    if (pairs[i].triggerActor == triggerMission->EndTrigger)
+				{
+					triggerMission->FinishMission();
+					continue;
+				}
 			}
 		}
 	}
@@ -1137,10 +1146,8 @@ void MyCode()
 	carObject.SetRigidbody(gVehicle4W->getRigidDynamicActor());
 	carObject.AddModel(gBodyModel, gWheelModel_fl, gWheelModel_fr, gWheelModel_bl, gWheelModel_br);
 
-	MissionManager missionManager;
-	missionManager.AddMission(triggerPos[0], std::string("mission1"));
-	missionManager.AddMission(triggerPos[1], std::string("mission2"));
-	missionManager.AddMission(triggerPos[2], std::string("mission3"));
+
+	missionManager.AddMission(triggerPos[0], triggerPos[1] ,MissionType::FIND, std::string("mission1"));
 
 
 
@@ -1234,8 +1241,7 @@ void initPhysics(bool interactive)
 	gVehicle4W->mDriveDynData.forceGearChange(PxVehicleGearsData::eFIRST);
 	gVehicle4W->mDriveDynData.setUseAutoGears(true);
 
-	gVehicleModeTimer = 0.0f;
-	gVehicleOrderProgress = 0;
+
 	startBrakeMode();
 
 
@@ -1255,7 +1261,6 @@ void stepPhysics(bool interactive)
 {
 	PX_UNUSED(interactive);
 	//时间
-
 
 	GlobalKeyEvent();
 	inputSystem.InputAction();
@@ -1352,6 +1357,11 @@ void stepPhysics(bool interactive)
 		gScene->fetchResults(true);
 	}
 
+	/////////////////////////////任务系统更新////////////////////////////////////
+
+	missionManager.UpdateAllMission();
+
+    /////////////////////////////任务系统更新////////////////////////////////////
 }
 
 //清空物理（在render中调用）

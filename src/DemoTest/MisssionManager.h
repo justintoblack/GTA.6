@@ -10,9 +10,9 @@ class MissionManager
 public:
 	MissionManager();
 	~MissionManager();
-	void AddMission(PxVec3 StartPos, std::string Description);
+	void AddMission(PxVec3 StartPos, PxVec3 EndPos,MissionType _Type, std::string Description);
 	void DeleteMission(int _ID);
-
+	void UpdateAllMission();
 
 	std::vector<Mission *> MissionList;
 	int TotalNum=0;
@@ -32,9 +32,9 @@ MissionManager::~MissionManager()
 {
 }
 
-void MissionManager::AddMission(PxVec3 StartPos, std::string Description)
+void MissionManager::AddMission(PxVec3 StartPos, PxVec3 EndPos, MissionType _Type, std::string Description)
 {
-	MissionList.push_back(new Mission(StartPos, Description, TotalNum));
+	MissionList.push_back(new Mission(StartPos, EndPos, Description, TotalNum, _Type));
 	TotalNum += 1;
 }
 
@@ -48,6 +48,14 @@ void MissionManager::DeleteMission(int _ID)
 			MissionList.erase(iter);
 			return;
 		}
+	}
+}
+
+inline void MissionManager::UpdateAllMission()
+{
+	for (vector<Mission*>::iterator iter = MissionList.begin(); iter != MissionList.end(); iter++)
+	{
+		(*iter)->UpdateTrigger();
 	}
 }
 
