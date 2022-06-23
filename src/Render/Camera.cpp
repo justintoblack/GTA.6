@@ -75,15 +75,22 @@ void Camera::Update(physx::PxVec3 targetPos)
 	mEye = targetPos + m_offset - mDir * curDistance;
 }
 
-void Camera::SetConfig(float dis,physx::PxVec3 offset)
+void Camera::SetConfig(float dis,float maxDis,float minDis,physx::PxVec3 offset)
 {
 	mDistanceToTarget = dis;
+	mMinDistance = minDis;
+	mMaxDistance = maxDis;
 	m_offset = offset;
 }
 
 void Camera::SetEye(physx::PxVec3 pos)
 {
 	mEye = pos;
+}
+
+void Camera::SetDir(physx::PxVec3 dir)
+{
+	mDir = dir.getNormalized();
 }
 
 void Camera::handleMouse(int button, int state, int x, int y)
@@ -98,7 +105,7 @@ void Camera::handleMouse(int button, int state, int x, int y)
 void Camera::goFront(physx::PxVec2 arrow)
 {
 	PxVec3 distance=mDir* arrow.x + mDir.cross(PxVec3(0, 1, 0)) * arrow.y;
-	mEye = mEye + distance *_editMoveSpeed*deltaTime;
+	mEye = mEye + distance *EditMoveSpeed*deltaTime;
 }
 
 	//控制前进后退

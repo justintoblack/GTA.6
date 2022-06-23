@@ -59,6 +59,7 @@ void ActionMap::InputAction()
 	{
 		if (!isMKeyDown)
 		{
+			cout << "ctrl" << endl;
 			EditKeyEvent();
 			isMKeyDown = true;
 		}
@@ -137,12 +138,24 @@ void CharacterActionMap::InputAction()
 	{
 		isLeftButtonDown = false;
 	}
-
+	if (GetAsyncKeyState('F'))
+	{
+		if (!isFKeyDown)
+		{
+			isFKeyDown = true;
+			FKeyEvent();
+		}
+	}
+	else
+	{
+		isFKeyDown = false;
+	}
 	if (GetAsyncKeyState(VK_RBUTTON))
 	{
-		std::cout << "youjian" << std::endl;
+		//std::cout << "youjian" << std::endl;
 	}
 	arrowKey = arrow;
+	cout << "finish characterMap" << endl;
 }
 
 void CharacterActionMap::SetActionMap(physx::PxController* newController, Snippets::Camera* camera, float speed)
@@ -190,6 +203,18 @@ void VehicleActionMap::InputAction()
 		ReleaseEKeyEvent();
 	}
 
+	if (GetAsyncKeyState('F'))
+	{
+		if (!isFKeyDown)
+		{
+			isFKeyDown = true;
+			FKeyEvent();
+		}
+	}
+	else
+	{
+		isFKeyDown = false;
+	}
 }
 
 void VehicleActionMap::SetActionMap(physx::PxVehicleDrive4W* newController)
@@ -201,7 +226,9 @@ void EditActionMap::InputAction()
 {
 	physx::PxVec2 arrow(0, 0);
 
+	cout << "editMap beging" << endl;
 	ActionMap::InputAction();
+	cout << "editMap ending" << endl;
 
 	if (GetAsyncKeyState('A'))
 	{

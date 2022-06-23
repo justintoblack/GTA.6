@@ -149,6 +149,19 @@ PxVec3* CameraFollowTarget;
 //GameObject testObject;
 CarGameObject carObject;
 
+///载具
+VehicleSceneQueryData* gVehicleSceneQueryData = NULL;
+PxBatchQuery* gBatchQuery = NULL;
+
+PxVehicleDrivableSurfaceToTireFrictionPairs* gFrictionPairs = NULL;
+
+PxRigidStatic* gGroundPlane = NULL;
+PxVehicleDrive4W* gVehicle4W = NULL;
+PxRigidDynamic* gTreasureActor = NULL;
+bool					gIsVehicleInAir = true;
+PxVec3 vehicleUp = PxVec3(0, 1, 0);
+PxVec3 vehicleForward = PxVec3(0, 0, 1);
+
 #pragma region 角色属性
 PxController* m_player;
 
@@ -164,6 +177,7 @@ float jumpHeight = 1.0f;
 float characterRadius = 0.5f;
 float characterHeight = 1.0f;
 float checkSphereRadius = 0.1f;
+float carRayDis = 1.0f;		//载具射线检测距离
 
 float curSpeed;
 float walkSpeed = 3.0f;
@@ -171,6 +185,7 @@ float sprintSpeed = 7.0f;
 
 bool isGrounded;
 bool isAiming;
+bool hasVehicleToDrive = false;
 
 ///跳跃
 void Jump()
@@ -184,22 +199,45 @@ void Jump()
 //左键
 void FireFirst()
 {
-	PxRaycastBuffer hit;
-	PxVec3 firePoint = m_player->getActor()->getGlobalPose().p;
-	if (gScene->raycast(firePoint, sCamera->getDir(), 100, hit))
-	{
-		if (hit.block.actor->getType() == PxActorType::eRIGID_DYNAMIC)
-		{
-			float force = 100;
-			((PxRigidDynamic*)hit.block.actor)->addForce(sCamera->getDir()*force,PxForceMode::eIMPULSE);
-		}
-	}
+	//PxRaycastBuffer hit;
+	//PxVec3 firePoint = m_player->getActor()->getGlobalPose().p;
+	//if (gScene->raycast(firePoint, sCamera->getDir(), 100, hit))
+	//{
+	//	if (hit.block.actor->getType() == PxActorType::eRIGID_DYNAMIC)
+	//	{
+	//		float force = 100;
+	//		((PxRigidDynamic*)hit.block.actor)->addForce(sCamera->getDir()*force,PxForceMode::eIMPULSE);
+	//	}
+	//}
 }
 
 void Fire()
 {
 }
-
+//乘坐载具
+void GetInVehicle()
+{
+	//乘坐载具
+	if (hasVehicleToDrive)
+	{
+		m_player->setPosition(PxExtendedVec3(1000,3,1000));
+		inputSystem.SetVehicleMap(vehicleMap);
+		CameraFollowTarget = &vehiclePos;
+		inputSystem.isVehicle = true;
+		sCamera->SetConfig(4,3 ,6,PxVec3(0, 0, 0));
+	}
+}
+//离开载具
+void GetOutVehicle()
+{
+	PxTransform pos = gVehicle4W->getRigidDynamicActor()->getGlobalPose();
+	PxVec3 p = pos.p + pos.q.getBasisVector0() * 2.0f;
+	m_player->setPosition(PxExtendedVec3(p.x,p.y,p.z));
+	inputSystem.SetCharacterMap(characterMap);
+	CameraFollowTarget = &characterPos;
+	inputSystem.isVehicle = false;
+	sCamera->SetConfig(1,0.5f,2.0f, PxVec3(0, 0, 0));
+}
 //冲刺
 void Sprint(bool isSprint)
 {
@@ -310,17 +348,7 @@ int currentTriggerIndex = -1;
 //PxRigidDynamic* carBody;
 
 
-VehicleSceneQueryData* gVehicleSceneQueryData = NULL;
-PxBatchQuery* gBatchQuery = NULL;
 
-PxVehicleDrivableSurfaceToTireFrictionPairs* gFrictionPairs = NULL;
-
-PxRigidStatic* gGroundPlane = NULL;
-PxVehicleDrive4W* gVehicle4W = NULL;
-PxRigidDynamic* gTreasureActor = NULL;
-bool					gIsVehicleInAir = true;
-PxVec3 vehicleUp = PxVec3(0, 1, 0);
-PxVec3 vehicleForward = PxVec3(0, 0, 1);
 
 PxF32 gSteerVsForwardSpeedData[2 * 8] =
 {
@@ -578,35 +606,35 @@ class ContactReportCallback : public PxSimulationEventCallback
 		//}
 
 		//PxActorFlag
-		for (PxU32 i = 0; i < nbPairs; i++)
-		{
-			const PxContactPair& cp = pairs[i];
+		//for (PxU32 i = 0; i < nbPairs; i++)
+		//{
+		//	const PxContactPair& cp = pairs[i];
 
-			if (cp.events & PxPairFlag::eNOTIFY_TOUCH_FOUND)
-			{
-				if ((pairHeader.actors[0]->getName() == BirdName && pairHeader.actors[1]->getName() == PigName) || (pairHeader.actors[1]->getName() == BirdName && pairHeader.actors[0]->getName() == PigName))
-				{
-					PxActor* otherActor = (pairHeader.actors[0]->getName() == BirdName) ? pairHeader.actors[1] : pairHeader.actors[0];
-					PxRigidDynamic* ballPig1 = (PxRigidDynamic*)(otherActor->userData);
-
-
-					// insert only once
-					if (std::find(ballToDispear.begin(), ballToDispear.end(), ballPig1) == ballToDispear.end())
-						ballToDispear.push_back(ballPig1);
-
-					std::vector<PxRigidDynamic*>::iterator ballIter = std::find(ballPigList.begin(), ballPigList.end(), ballPig1);
-					if (ballIter != ballPigList.end())
-					{
-						//ballPigList.erase(ballIter);
-						//gScene->removeActor(*ballPig1);
-					}
+		//	if (cp.events & PxPairFlag::eNOTIFY_TOUCH_FOUND)
+		//	{
+		//		if ((pairHeader.actors[0]->getName() == BirdName && pairHeader.actors[1]->getName() == PigName) || (pairHeader.actors[1]->getName() == BirdName && pairHeader.actors[0]->getName() == PigName))
+		//		{
+		//			PxActor* otherActor = (pairHeader.actors[0]->getName() == BirdName) ? pairHeader.actors[1] : pairHeader.actors[0];
+		//			PxRigidDynamic* ballPig1 = (PxRigidDynamic*)(otherActor->userData);
 
 
+		//			// insert only once
+		//			if (std::find(ballToDispear.begin(), ballToDispear.end(), ballPig1) == ballToDispear.end())
+		//				ballToDispear.push_back(ballPig1);
 
-					break;
-				}
-			}
-		}
+		//			std::vector<PxRigidDynamic*>::iterator ballIter = std::find(ballPigList.begin(), ballPigList.end(), ballPig1);
+		//			if (ballIter != ballPigList.end())
+		//			{
+		//				//ballPigList.erase(ballIter);
+		//				//gScene->removeActor(*ballPig1);
+		//			}
+
+
+
+		//			break;
+		//		}
+		//	}
+		//}
 	}
 };
 
@@ -1099,6 +1127,8 @@ void stopBell()
 
 
 extern Model gBodyModel, gWheelModel_fl, gWheelModel_fr, gWheelModel_bl, gWheelModel_br;
+PxRigidStatic* ballBody;
+
 //自定义
 void MyCode()
 {
@@ -1110,19 +1140,19 @@ void MyCode()
 	//CreateChain(PxTransform(PxVec3(0.0f, 20.0f, -10.0f)), 5, PxCapsuleGeometry(1.0f, 1.0f), 4.0f, createBreakableFixed);
 	//CreateChain(PxTransform(PxVec3(0.0f, 25.0f, -20.0f)), 5, PxBoxGeometry(2.0f, 0.5f, 0.5f), 4.0f, createDampedD6);
 
-	m_player = CreateCharacterController(PxExtendedVec3(5,100,5));
+	m_player = CreateCharacterController(PxExtendedVec3(25,10,25));
 	PxRigidDynamic* playerActor = m_player->getActor();
 	PxShape* playerShape;
 	playerActor->getShapes(&playerShape, 1);
 	playerShape->setFlag(PxShapeFlag::eSIMULATION_SHAPE, false);
 	playerShape->setFlag(PxShapeFlag::eTRIGGER_SHAPE, true);
 	gScene->addActor(*playerActor);
+
 	//角色Input函数注册
 	characterMap.SetActionMap(m_player, sCamera, 5.0f);
 	characterMap.SpaceKeyEvent = Jump;
 	characterMap.ShiftKeyEvent = Sprint;
-
-
+	characterMap.FKeyEvent = GetInVehicle;
 	characterMap.LeftButtonDownEvent = FireFirst;
 	characterMap.LeftButtonEvent = Fire;
 
@@ -1133,6 +1163,7 @@ void MyCode()
 	vehicleMap.AKeyEvent = startTurnHardRightMode;
 	vehicleMap.DKeyEvent = startTurnHardLeftMode;
 	vehicleMap.EKeyEvent = startBell;
+	vehicleMap.FKeyEvent = GetOutVehicle;
 	vehicleMap.ReleaseWKeyEvent = stopEngine;
 	vehicleMap.ReleaseEKeyEvent = stopBell;
 
@@ -1157,8 +1188,7 @@ void MyCode()
 	carObject.SetRigidbody(gVehicle4W->getRigidDynamicActor());
 	carObject.AddModel(gBodyModel, gWheelModel_fl, gWheelModel_fr, gWheelModel_bl, gWheelModel_br);
 
-
-
+	/////////////////////////////Test///////////////////////
 
 }
 
@@ -1360,12 +1390,34 @@ void stepPhysics(bool interactive)
 	if (isInGameMode)
 	{
 		sCamera->Update(*CameraFollowTarget);
+
 	}
 	else
 	{
 		sCamera->goFront(editMap.GetArrowKeyValue());
 	}
 
+	////////////////////////////Test////////////////////////////
+	PxTransform playerTrans = m_player->getActor()->getGlobalPose();
+	PxRaycastBuffer raycastHit;
+	if (gScene->raycast(playerTrans.p, sCamera->getDir().multiply(PxVec3(1,0,1)).getNormalized(), 
+		carRayDis, raycastHit))
+	{
+			if (raycastHit.block.actor == gVehicle4W->getRigidDynamicActor())
+			{
+				hasVehicleToDrive = true;
+			}
+			else
+			{
+				hasVehicleToDrive = false;
+			}
+	}
+	else
+	{
+		hasVehicleToDrive = false;
+	}
+
+	/////////////////////////////物理模拟////////////////////////////
 	if (isSimulation)
 	{
 		gScene->simulate(1.0f / 60.0f);

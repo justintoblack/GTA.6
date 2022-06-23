@@ -314,6 +314,7 @@ void my_display_code()
 		ImGui::DragFloat("z", &_sCameraPos.z, 1);
 		ImGui::PopItemWidth();
 		sCamera->SetEye(_sCameraPos);
+		ImGui::SliderFloat("Camera Speed", &sCamera->EditMoveSpeed, 5.0f, 20.0f);
 
 		ImGui::Checkbox("IsSimulation", &isSimulation);
 		ImGui::Checkbox("IsWireframe",&isWireframe);
@@ -389,6 +390,11 @@ void my_display_code()
 			//_quaternion = curGameObject->transform.q;
 
 			//UI-Begin
+			if (ImGui::Button("LookAt"))
+			{
+				sCamera->SetDir(-sCamera->getEye()+curGameObject->transform.p);
+			}
+
 			ImGui::Text("Name");
 			ImGui::InputTextWithHint(" ", "input GameObject name", _objName,
 				IM_ARRAYSIZE(_objName));
@@ -535,12 +541,13 @@ void setupDefaultWindow(const char *name)
 	//glutGameModeString("1920x1080");
 	//glutEnterGameMode();
 	//glutInitWindowPosition(960, 0);
-	glutInitWindowSize(1920, 1080);
+	glutInitWindowSize(glutGet(GLUT_SCREEN_WIDTH),
+		glutGet( GLUT_SCREEN_HEIGHT));
 
 
 	int mainHandle = glutCreateWindow(name);
 	glutSetWindow(mainHandle);
-	//glutFullScreen();
+	glutFullScreen();
 
 	//glutCreateWindow(name);
 	//glutFullScreen();
