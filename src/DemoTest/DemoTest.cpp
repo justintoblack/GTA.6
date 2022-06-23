@@ -236,7 +236,7 @@ void GetOutVehicle()
 	inputSystem.SetCharacterMap(characterMap);
 	CameraFollowTarget = &characterPos;
 	inputSystem.isVehicle = false;
-	sCamera->SetConfig(1,0.5f,2.0f, PxVec3(0, 0, 0));
+	sCamera->SetConfig(2.5f, 2.25f, 3.0f, PxVec3(0, 0.5, 0));
 }
 //冲刺
 void Sprint(bool isSprint)

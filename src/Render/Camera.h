@@ -46,13 +46,14 @@ public:
 	void				handleAnalogMove(float x, float y);
 	void				goFront(physx::PxVec2 arrow);
 	void				Update(physx::PxVec3 pos);
-	void				SetConfig(float dis,float maxDis,float minDis, physx::PxVec3 offset);
+	void				SetConfig(float dis,float minDis,float maxDis, physx::PxVec3 offset);
 	void				SetEye(physx::PxVec3 pos);
 	void				SetDir(physx::PxVec3 dir);
 	physx::PxVec3		getEye()	const;
 	physx::PxVec3		getDir()	const;
 	physx::PxTransform	getTransform() const;
 	float				EditMoveSpeed = 10;
+	float				mCameraDistance;
 private:
 	physx::PxVec3	mEye;
 	physx::PxVec3	mDir;

@@ -59,7 +59,6 @@ void ActionMap::InputAction()
 	{
 		if (!isMKeyDown)
 		{
-			cout << "ctrl" << endl;
 			EditKeyEvent();
 			isMKeyDown = true;
 		}
@@ -155,7 +154,6 @@ void CharacterActionMap::InputAction()
 		//std::cout << "youjian" << std::endl;
 	}
 	arrowKey = arrow;
-	cout << "finish characterMap" << endl;
 }
 
 void CharacterActionMap::SetActionMap(physx::PxController* newController, Snippets::Camera* camera, float speed)
@@ -226,9 +224,7 @@ void EditActionMap::InputAction()
 {
 	physx::PxVec2 arrow(0, 0);
 
-	cout << "editMap beging" << endl;
 	ActionMap::InputAction();
-	cout << "editMap ending" << endl;
 
 	if (GetAsyncKeyState('A'))
 	{

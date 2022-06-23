@@ -75,7 +75,7 @@ void Camera::Update(physx::PxVec3 targetPos)
 	mEye = targetPos + m_offset - mDir * curDistance;
 }
 
-void Camera::SetConfig(float dis,float maxDis,float minDis,physx::PxVec3 offset)
+void Camera::SetConfig(float dis,float minDis,float maxDis,physx::PxVec3 offset)
 {
 	mDistanceToTarget = dis;
 	mMinDistance = minDis;
