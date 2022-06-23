@@ -10,6 +10,7 @@ extern	PxMaterial* gMaterial;
 extern	PxScene* gScene;
 extern const char** _allModelsName;
 extern vector<Model> Models;			//模型
+extern void makeObjectDrivable(PxShape*& shape);
 
 class GameObject;
 
@@ -40,12 +41,13 @@ public:
 	PxRigidActor*  g_rigidBody=nullptr;
 
 	//组件
-	vector<Component*> components ;
+	vector<Component*> components;
 
 	GameObject()
 	{
 		transform = PxTransform(0,0,0);
 		scale = PxVec3(1, 1, 1);
+		components.clear();
 	}
 
 	void SetName(const char name[])
@@ -179,6 +181,13 @@ public:
 		}
 		return nullptr;
 	}
+
+	////删除GameObject
+	//void Delete()
+	//{
+	//	cout << "Delete" << endl;
+	//	delete this;
+	//}
 };
 
 
@@ -260,6 +269,8 @@ public:
 		BoxShape->setLocalPose(Transform);
 		parent->g_rigidBody->attachShape(*BoxShape);
 
+		//makeObjectDrivable(BoxShape);
+
 		_parent->AddComponent(this);
 	}
 
@@ -285,11 +296,11 @@ public:
 		ImGui::Text("BoxSize");
 		ImGui::PopID();
 		ImGui::PushID(4);
-		ImGui::DragFloat("x", &Size.x,0.01);
+		ImGui::DragFloat("x", &Size.x,0.1);
 		ImGui::SameLine();
-		ImGui::DragFloat("y", &Size.y,0.01);
+		ImGui::DragFloat("y", &Size.y,0.1);
 		ImGui::SameLine();
-		ImGui::DragFloat("z", &Size.z,0.01);
+		ImGui::DragFloat("z", &Size.z,0.1);
 		ImGui::PopID();
 
 		SetShape();
@@ -318,6 +329,7 @@ public:
 	{
 		ImGui::Spacing();
 		ImGui::Text("Model");
+		ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x - 100);
 		if (ImGui::Combo("Models", &item_current, _allModelsName,Models.size()))
 		{
 			SetModel(Models[item_current]);

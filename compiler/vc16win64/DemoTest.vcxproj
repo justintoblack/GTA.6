@@ -53,6 +53,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\DemoTest\CarGameObject.h" />
+    <ClInclude Include="..\..\src\DemoTest\DemoTestRender.h" />
     <ClInclude Include="..\..\src\DemoTest\GameObject.h" />
     <ClInclude Include="..\..\src\DemoTest\Mission.h" />
     <ClInclude Include="..\..\src\DemoTest\MisssionManager.h" />
@@ -86,6 +87,8 @@
     <None Include="..\..\src\Light\light.vs" />
     <None Include="..\..\src\ModelLoading\model_loading.fs" />
     <None Include="..\..\src\ModelLoading\model_loading.vs" />
+    <None Include="..\..\src\ModelLoading\shadow_loading.fs" />
+    <None Include="..\..\src\ModelLoading\shadow_loading.vs" />
     <None Include="..\..\src\Render\SkyBox.fs" />
     <None Include="..\..\src\Render\SkyBox.vs" />
   </ItemGroup>

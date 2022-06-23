@@ -14,8 +14,7 @@ void CreateJson(string& json)
 
 	//Value相当于一个结构体
 	//Json::Value/* root, fruit, mail,*/ 
-	Json::Value SceneGameObjects, GameObjectValue, TransformValue,
-		RigidbodyValue,BoxColliderValue,ModelValue,PxVec3Value;
+
 
 	Json::StreamWriterBuilder writerBuilder;
 	std::ostringstream os;
@@ -36,11 +35,14 @@ void CreateJson(string& json)
 	//mail["Google"] = "XXX@gmail.com";
 	//root["mail"] = mail;
 	//root["test"]["fruit"] = mail;
+	Json::Value SceneGameObjects;
 
 	for (int i = 0; i < theCreator.SceneGameObject.size(); i++)
 	{
 		GameObject cur = theCreator.SceneGameObject[i];
 
+		Json::Value  GameObjectValue, TransformValue,
+			RigidbodyValue, BoxColliderValue, ModelValue, PxVec3Value;
 		//名字
 		GameObjectValue["Name"] = cur.Name;
 
@@ -55,23 +57,29 @@ void CreateJson(string& json)
 		GameObjectValue["Transform"] = TransformValue;
 
 		//Rigidbody
-		if (cur.g_rigidBody == nullptr)
+		if (cur.hasComponent("RigidBody"))
 		{
-			RigidbodyValue["has"]=false;
-		}
-		else
-		{
-			RigidbodyValue["has"] =true;
-			if (cur.isStatic)
+			cout << i << "has rigid" << endl;
+			if (cur.g_rigidBody == nullptr)
 			{
-				RigidbodyValue["isStatic"] = true;
+				RigidbodyValue["has"] = false;
 			}
 			else
 			{
-				RigidbodyValue["isStatic"] = false;
+				RigidbodyValue["has"] = true;
+				if (cur.isStatic)
+				{
+					RigidbodyValue["isStatic"] = true;
+				}
+				else
+				{
+					RigidbodyValue["isStatic"] = false;
+				}
+				GameObjectValue["Rigidbody"] = RigidbodyValue;
 			}
-			GameObjectValue["Rigidbody"] = RigidbodyValue;
 		}
+
+
 
 		//BoxCollider
 		if (cur.hasComponent("BoxCollider"))
