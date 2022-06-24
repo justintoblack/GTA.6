@@ -40,8 +40,6 @@
 #include "../../compiler/vc16win64/Dependencies/imgui/imgui.h"
 #include "../../compiler/vc16win64/Dependencies/imgui/imgui_impl_glut.h"
 #include "../../compiler/vc16win64/Dependencies/imgui/imgui_impl_opengl2.h"
-
-
 #if PX_WINDOWS
 #include <windows.h>
 #pragma warning(disable: 4505)

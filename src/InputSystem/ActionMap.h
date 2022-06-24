@@ -11,10 +11,10 @@ class ActionMap
 {
 private:
 	//bool _qKeyDown;
-	bool isMKeyDown=false;
 	int lastX; int lastY;
 	bool needToPass = false;
 public:
+	bool isMKeyDown;
 	ActionMap();
 	void(*EditKeyEvent)();
 	virtual void InputAction();
@@ -29,10 +29,11 @@ private:
 	float moveSpeed;
 	bool isSpaceKeyDown;
 	bool isLeftButtonDown;
+	bool isFKeyDown = false;
 public:
 	void(*SpaceKeyEvent)();
 	void(*ShiftKeyEvent)(bool isPress);
-
+	void(*FKeyEvent)();
 	void (*LeftButtonDownEvent)();
 	void (*LeftButtonEvent)();
 
@@ -42,10 +43,13 @@ public:
 	physx::PxVec2 GetArrowKeyValue();
 };
 
+
+
 class VehicleActionMap : public ActionMap
 {
 private:
 	physx::PxVehicleDrive4W* m_controller;
+	bool isFKeyDown = true;
 	bool isVKeyDown;
 public:
 	void (*release)();
@@ -54,6 +58,7 @@ public:
 	void (*AKeyEvent)();
 	void (*DKeyEvent)();
 	void (*EKeyEvent)();
+	void (*FKeyEvent)();
 	void (*RKeyEvent)();
 	void (*VKeyEvent)();
 	void (*ReleaseWKeyEvent)();
@@ -70,6 +75,10 @@ class EditActionMap :public ActionMap
 private:
 	physx::PxVec2 arrowKey;
 public:
+	EditActionMap()
+	{
+		isMKeyDown = true;
+	}
 	void InputAction();
 	physx::PxVec2 GetArrowKeyValue();
 };

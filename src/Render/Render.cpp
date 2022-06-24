@@ -41,13 +41,14 @@
 #include <iostream>
 #include <glm/glm.hpp>
 #include "Camera.h"
+#include"../DemoTest/MissionManager.h"
 
 using namespace physx;
 
 
 extern	TheCreator theCreator;
 extern Snippets::Camera* sCamera;
-
+extern MissionManager missionManager;
 //==================================================================ImGUI state
 bool main_window = false;  //之所以不设置为静态全局变量，是因为在DemoTestRender.cpp中会使用到这个变量
 bool show_another_window = false;
@@ -56,7 +57,7 @@ bool inspector_window = false;
 bool isSimulation = true;
 static bool show_demo_window = false;
 extern bool isWireframe;
-bool show_countdown_window = false;
+bool show_countdown_window = true;
 
 
 //ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
@@ -362,6 +363,7 @@ void my_display_code()
 		ImGui::DragFloat("z", &_sCameraPos.z, 1);
 		ImGui::PopItemWidth();
 		sCamera->SetEye(_sCameraPos);
+		ImGui::SliderFloat("Camera Speed", &sCamera->EditMoveSpeed, 5.0f, 20.0f);
 
 		ImGui::Checkbox("IsSimulation", &isSimulation);
 		ImGui::Checkbox("IsWireframe",&isWireframe);
@@ -457,6 +459,17 @@ void my_display_code()
 			//_quaternion = curGameObject->transform.q;
 
 			//UI-Begin
+			if (ImGui::Button("LookAt"))
+			{
+				sCamera->SetDir(-sCamera->getEye()+curGameObject->transform.p);
+			}
+			ImGui::SameLine();
+
+			if (ImGui::Button("Duplicate"))
+			{
+				theCreator.DuplicateGameObject(curGameObject);
+			}
+
 			ImGui::Text("Name");
 			ImGui::InputTextWithHint(" ", "input GameObject name", _objName,
 				IM_ARRAYSIZE(_objName));
@@ -517,6 +530,10 @@ void my_display_code()
 			//删除GameObject
 			if (ImGui::Button("Delete", ImVec2(ImGui::GetContentRegionAvail().x - 100, 20)))
 			{
+				if (curGameObject->g_rigidBody != nullptr)
+				{
+					gScene->removeActor(*curGameObject->g_rigidBody);
+				}
 				theCreator.SceneGameObject.erase(theCreator.SceneGameObject.begin()+_gameObjectIdx);
 				curGameObject = nullptr;
 			}
@@ -539,12 +556,31 @@ void my_display_code()
 
 	if (show_countdown_window)
 	{
-		ImGui::Begin("CountDown",&show_countdown_window);
-		ImGui::SetNextWindowSize(ImVec2(200, 500));
+		ImGui::Begin("Mission",&show_countdown_window);
+		ImGui::SetNextWindowSize(ImVec2(500, 500));
 		ImGuiWindowFlags window_flags = 0;
 		window_flags |= ImGuiWindowFlags_NoCollapse;
 		window_flags |= ImGuiWindowFlags_NoResize;
+		for (size_t i = 0; i < missionManager.MissionList.size() ; i++)
+		{
+			const char* str = missionManager.MissionList[i]->MissionDescription.c_str();
+			const char* state = missionManager.MissionList[i]->IsActive ? "Active" : "NonActive";
+			state= missionManager.MissionList[i]->State ? "Success" : state;
+			if (state == "NonActive") continue;
+			ImGui::Text(str);
+			ImGui::Text( state);
+			if (state == "Active")
+			{
+				ImGui::Text("timer:%.2f", missionManager.MissionList[i]->Timer);
+				if (missionManager.MissionList[i]->Type == MissionType::FIND)
+				{
+					ImGui::SameLine();
+					ImGui::Text("     time limit:%.2f", missionManager.MissionList[i]->TimeLimit);
+				}
+			}
+			ImGui::Text("-----------------------");
 
+		}
 		
 		ImGui::End();
 	}
@@ -615,12 +651,13 @@ void setupDefaultWindow(const char *name)
 	//glutGameModeString("1920x1080");
 	//glutEnterGameMode();
 	//glutInitWindowPosition(960, 0);
-	glutInitWindowSize(1920, 1080);
+	glutInitWindowSize(glutGet(GLUT_SCREEN_WIDTH),
+		glutGet( GLUT_SCREEN_HEIGHT));
 
 
 	int mainHandle = glutCreateWindow(name);
 	glutSetWindow(mainHandle);
-	//glutFullScreen();
+	glutFullScreen();
 
 	//glutCreateWindow(name);
 	//glutFullScreen();

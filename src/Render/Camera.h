@@ -46,22 +46,24 @@ public:
 	void				handleAnalogMove(float x, float y);
 	void				goFront(physx::PxVec2 arrow);
 	void				Update(physx::PxVec3 pos);
-	void				SetConfig(float dis,physx::PxVec3 offset);
+	void				SetConfig(float dis,float minDis,float maxDis, physx::PxVec3 offset);
 	void				SetEye(physx::PxVec3 pos);
+	void				SetDir(physx::PxVec3 dir);
+	physx::PxVec3		getOffset()	const;
 	physx::PxVec3		getEye()	const;
 	physx::PxVec3		getDir()	const;
 	physx::PxTransform	getTransform() const;
+	float				EditMoveSpeed = 10;
+	float				mDistanceToTarget;
 private:
 	physx::PxVec3	mEye;
 	physx::PxVec3	mDir;
 	physx::PxVec3 m_offset; 
 	int				mMouseX;
 	int				mMouseY;
-	float				mDistanceToTarget;
 	float				mMinDistance=3;
 	float				mMaxDistance=6;
 	float				mDamp=3.0f;
-	float				_editMoveSpeed = 10;
 };
 
 

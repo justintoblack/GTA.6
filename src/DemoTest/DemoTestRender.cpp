@@ -48,7 +48,7 @@
 #include "../Utils/Mathf.h"
 #include "../Utils/Mathf.cpp"
 #include "../DemoTest/GameObject.h"
-
+#include "../DemoTest/MissionManager.h"
 #include "irrKlang/irrKlang.h" 
 #include "../GameDemo/TheCreator.h"
 
@@ -64,20 +64,26 @@ unsigned int		gClockVAO, gClockVBO, gClockEBO;
 unsigned int		gClockMainVAO, gClockMainVBO, gClockMainEBO;
 Model				gModel;
 Model               gBodyModel, gWheelModel_fl, gWheelModel_fr, gWheelModel_bl, gWheelModel_br;
+Model               gStar, gArrow, gExclamation;
 Shader				gSkyboxShader;
 Shader				gModelShader;
 Shader				gShadowShader;
 Shader				gClockShader;
 Shader				gClockMainShader;
 glm::vec3			gLightPos = glm::vec3(-1200.0f, 600.0f, -1200.0f);
-glm::vec3			gLightDir = glm::vec3(2.0f, -3.0f, 1.0f);
-glm::vec3			gLightAmbient = glm::vec3(0.6f, 0.6f, 0.6f);
-glm::vec3			gLightDiffuse = glm::vec3(0.5f, 0.5f, 0.5f);
-glm::vec3			gLightSpecular = glm::vec3(1.0f, 1.0f, 1.0f);
+glm::vec3			gLightDir;
+float				gLightAmbientBasis = 0.3f;//6点、18点左右的亮度
+float				gLightDiffuseBasis = 0.3f;
+float				gLightSpecularBasis = 0.6f;
+glm::vec3			gLightAmbient = glm::vec3(gLightAmbientBasis);
+glm::vec3			gLightDiffuse = glm::vec3(gLightDiffuseBasis);
+glm::vec3			gLightSpecular = glm::vec3(gLightSpecularBasis);
 glm::vec3			gSpotLightAmbient = glm::vec3(0.2f, 0.2f, 0.2f);
 glm::vec3			gSpotLightDiffuse = glm::vec3(0.3f, 0.3f, 0.3f);
-glm::vec3			gSpotLightSpecular = glm::vec3(0.8f, 0.8f, 0.8f);
-float				gSpotLightCutOff = 35.0f;
+glm::vec3			gSpotLightSpecular = glm::vec3(0.5f, 0.5f, 0.5f);
+float				gSpotLightCutOff = 25.0f;
+float				gVehicleShininess = 64.0f;
+float				gOthersShininess = 512.0f;
 extern	bool		vehicleUseSpotLight;
 
 //时钟顶点位置
@@ -169,6 +175,7 @@ float gSkyboxVertices[] = {
 extern void initPhysics(bool interactive);
 extern void stepPhysics(bool interactive);	
 extern void cleanupPhysics(bool interactive);
+extern MissionManager missionManager;
 //extern void keyPress(unsigned char key, const PxTransform& camera);
 
 //时间
@@ -566,12 +573,14 @@ namespace
 		//设置光源的属性：环境光强度、漫反射强度、镜面反射强度
 		PxVec3 viewPos = sCamera->getEye();
 		modelShader.SetVector3f("viewPos", viewPos.x, viewPos.y, viewPos.z);
+		//动态改变光的方向
+		gLightDir = -gLightPos;
 		modelShader.SetVector3f("light.direction", gLightDir);
 		modelShader.SetVector3f("light.ambient", gLightAmbient);
 		modelShader.SetVector3f("light.diffuse", gLightDiffuse);
 		modelShader.SetVector3f("light.specular", gLightSpecular);
 		//shininess发光值，发光值越高，反射能力越强，散射越少，高光点越小
-		modelShader.SetFloat("material.shininess", 1024.0f);
+		modelShader.SetFloat("material.shininess", gOthersShininess);
 		glm::mat4 modelMat = glm::mat4(1.0f);
 		modelMat = glm::translate(modelMat, model.getPos());  //平移操作，在（1.0， 1.0， 1.0， 1.0）的基础上平移model.getPos()， 默认为vec3（0.0， 0.0， 0.0， 0.0），上面有个setPos来传入参数
 		//modelMat = glm::rotate(modelMat, 1.0f, glm::vec3(0, -1, 0));  //旋转操作，第一个参数是原矩阵，第二个参数是选装角度，用弧度制（glm::radians(90.0f)）， 第三个参数表示绕哪个轴旋转
@@ -651,7 +660,7 @@ namespace
 			gModelShader.SetMatrix4fv("projection", projectionMat);
 			gModelShader.SetMatrix4fv("view", viewMat);
 			gModelShader.SetMatrix4fv("model", modelMat);
-			
+			gModelShader.SetFloat("material.shininess", gOthersShininess);
 			mod->MyModel->Draw(gModelShader);
 
 
@@ -715,16 +724,16 @@ namespace
 		//车辆水平方向
 		//PxVec3 vehicleHorizon = gameObject.transform.q.getBasisVector0().getNormalized();
 		//灯位置
-		PxVec3 vehicleLight = vehiclePos + vehicleForward * 5.0f;
+		PxVec3 vehicleLight = vehiclePos + vehicleForward * 2.3f;
 
 		//向shader传入参数
 		gModelShader.SetVector3f("spotLight.position", vehicleLight.x, vehicleLight.y, vehicleLight.z);
-		gModelShader.SetVector3f("spotLight.direction", vehicleForward.x, vehicleForward.y - 0.2f, vehicleForward.z);
+		gModelShader.SetVector3f("spotLight.direction", vehicleForward.x, vehicleForward.y - 0.3f, vehicleForward.z);
 		gModelShader.SetFloat("spotLight.cutOff", glm::cos(glm::radians(gSpotLightCutOff)));
 		gModelShader.SetVector3f("spotLight.ambient", gSpotLightAmbient);
 		gModelShader.SetVector3f("spotLight.diffuse", gSpotLightDiffuse);
 		gModelShader.SetVector3f("spotLight.specular", gSpotLightSpecular);
-
+		gModelShader.SetFloat("material.shininess", gVehicleShininess);
 		//应该对每个车轮应用不同转换矩阵
 		for (size_t i = 0; i < 4; i++)
 		{
@@ -757,6 +766,43 @@ namespace
 	}
 
 
+	//渲染任务图标
+	void RenderMissionObject()
+	{
+		for (size_t i = 0; i < missionManager.MissionList.size(); i++)
+		{
+			if (!missionManager.MissionList[i]->State)
+			{
+				Model m;
+				PxTransform t;
+				if (!missionManager.MissionList[i]->IsActive)
+				{
+					m = gExclamation;
+					t = missionManager.MissionList[i]->StartTrigger->getGlobalPose();
+				}
+				else
+				{
+					m = gStar;
+					t = missionManager.MissionList[i]->EndTrigger->getGlobalPose();
+
+				}
+				gModelShader.use();
+				glm::mat4 modelMat0 = glm::mat4(1.0f);
+				modelMat0 = glm::translate(modelMat0, Mathf::P3ToV3(t.p));
+				modelMat0 *= glm::mat4_cast(Mathf::Toquat(t.q));
+				modelMat0 = glm::scale(modelMat0, m.getScale()/=50);
+				glm::mat4 viewMat = getViewMat();
+				glm::mat4 projectionMat = glm::perspective(45.0f, (float)glutGet(GLUT_WINDOW_WIDTH) / (float)glutGet(GLUT_WINDOW_HEIGHT), 0.1f, 1000.0f);
+				gModelShader.SetMatrix4fv("projection", projectionMat);
+				gModelShader.SetMatrix4fv("view", viewMat);
+				gModelShader.SetMatrix4fv("model", modelMat0);
+				m.Draw(gModelShader);
+				glUseProgram(0);
+			}
+
+		}
+
+	}
 	
 	bool engineState = false;
 	ISoundEngine* backgroundMusicEngine = nullptr;
@@ -845,7 +891,23 @@ namespace
 			}
 		}
 	}
-
+	//随时间动态变换光照强度
+	void changeLightDynamic(bool add)
+	{
+		float dayPeriod = 240.0f / timeSpeed;
+		float omega = 2.0f * glm::pi<float>() / dayPeriod;
+		if (add)
+		{
+			gLightAmbient = glm::vec3(gLightAmbientBasis + 0.4f * glm::sin(omega * currentTime));
+			gLightDiffuse = glm::vec3(gLightDiffuseBasis + 0.2f * glm::sin(omega * currentTime));
+			gLightSpecular = glm::vec3(gLightSpecularBasis + 0.4 * glm::sin(omega * currentTime));
+		}
+		else {
+			gLightAmbient = glm::vec3(gLightAmbientBasis - 0.2f * abs(glm::sin(omega * currentTime)));
+			gLightDiffuse = glm::vec3(gLightDiffuseBasis - 0.2f * abs(glm::sin(omega * currentTime)));
+			gLightSpecular = glm::vec3(gLightSpecularBasis - 0.2 * abs(glm::sin(omega * currentTime)));
+		}
+	}
 
 	//显示窗口
 	void renderCallback()
@@ -886,8 +948,10 @@ namespace
 
 		//Calendar
 		if (timeSpeed != 0.0) {
+			//游戏内一天的周期等于现实240秒/timeSpeed
 			calendarDay = intCurrentTime / (int)(240 / timeSpeed);
 			calendarDayDisplay = calendarDay + 1;
+			//游戏内一小时等于现实10秒/timeSpeed
 			calendarHour = (int)((intCurrentTime % (int)(240 / timeSpeed)) * timeSpeed / 10);
 			calendarHourDisplay = calendarHour;
 			if (calendarHour < 24) {
@@ -932,7 +996,13 @@ namespace
 				gLightPos.z -= 20.0f * timeSpeed * deltaTime;
 			}
 		}
-
+		//输出游戏当前时间
+		/*cout << "===============================";
+		cout << calendarHourDisplay << ":" << calendarMinuteDisplay << endl;
+		cout << "===============================";*/
+		//动态变换光强度
+		//scenario 是否白天 
+		changeLightDynamic(scenario);
 		if (clock < deltaTime) {
 			scenarioChange = true;
 		}
@@ -988,7 +1058,7 @@ namespace
 		RenderClockMain();
 
 		RenderCarObject(carObject);
-
+		RenderMissionObject();
 		//渲染场景物体
 		for (int i = 0; i < theCreator.SceneGameObject.size(); i++)
 		{
@@ -1067,7 +1137,7 @@ namespace
 	{
 
 		sCamera = new Snippets::Camera(PxVec3(50.0f, 50.0f, 50.0f), PxVec3(-0.6f,-0.2f,-0.7f));
-		sCamera->SetConfig(4,PxVec3(0,0,0));
+		sCamera->SetConfig(2.5f, 2.25f, 3.0f, PxVec3(0, 0.5f, 0));
 
 
 		//初始化鼠标位置;
@@ -1095,6 +1165,11 @@ namespace
 		gWheelModel_fr = Model("../../assets/objects/car/wheel_fr.obj");
 		gWheelModel_bl = Model("../../assets/objects/car/wheel_bl.obj");
 		gWheelModel_br= Model("../../assets/objects/car/wheel_br.obj");
+
+
+		gStar = Model("../../assets/objects/mission/SM_Icon_Star_01.fbx");
+		gArrow = Model("../../assets/objects/mission/SM_Icon_Arrow_Small_01.fbx");
+		gExclamation = Model("../../assets/objects/mission/SM_Icon_Letter_Exclamation_01.fbx");
 
 		gModel = Model("../../assets/objects/nanosuit/nanosuit.obj");
 		//gModel2 = Model("../../assets/objects/Models/hougitse.fbx");

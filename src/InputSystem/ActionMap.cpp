@@ -137,10 +137,21 @@ void CharacterActionMap::InputAction()
 	{
 		isLeftButtonDown = false;
 	}
-
+	if (GetAsyncKeyState('F'))
+	{
+		if (!isFKeyDown)
+		{
+			isFKeyDown = true;
+			FKeyEvent();
+		}
+	}
+	else
+	{
+		isFKeyDown = false;
+	}
 	if (GetAsyncKeyState(VK_RBUTTON))
 	{
-		std::cout << "youjian" << std::endl;
+		//std::cout << "youjian" << std::endl;
 	}
 	arrowKey = arrow;
 }
@@ -207,6 +218,18 @@ void VehicleActionMap::InputAction()
 		isVKeyDown = false;
 	}
 
+	if (GetAsyncKeyState('F'))
+	{
+		if (!isFKeyDown)
+		{
+			isFKeyDown = true;
+			FKeyEvent();
+		}
+	}
+	else
+	{
+		isFKeyDown = false;
+	}
 }
 
 void VehicleActionMap::SetActionMap(physx::PxVehicleDrive4W* newController)
