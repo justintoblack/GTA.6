@@ -362,7 +362,7 @@ namespace
 		
 		{//--------------------render anim------------------------
 			//cout << "DemotestRender::render anim:: totalTime:" << totalTime << endl;
-			gAnimator->UpdateAnimation(0.0f);
+			gAnimator->UpdateAnimation(deltaTime);
 			gModelAnimShader.use();
 			glm::mat4 modelMat = glm::mat4(1.0f);
 			modelMat = glm::translate(modelMat, glm::vec3(5.0f, 2.0f, 5.0f));
@@ -455,7 +455,7 @@ void renderLoop()
 	gModelAnimShader = Shader("../../src/Bone/ModelAnim.vs",
 		"../../src/Bone/ModelAnim.fs");
 	string modelAnimPath("F:/Learning/mypt2/PhysX-Tutorial-master/PhysX_3.4/SCUT2022_Nayeon/assets/objects/Jogging.fbx");
-	//string modelAnimPath("F:/Learning/mypt2/PhysX-Tutorial-master/PhysX_3.4/SCUT2022_Nayeon/assets/objects/walk/Walk.dae");
+	//string modelAnimPath("F:/Learning/mypt2/PhysX-Tutorial-master/PhysX_3.4/SCUT2022_Nayeon/assets/objects/walking/Walking.dae");
 	gModelAnim = new ModelAnimation(modelAnimPath);
 	gAnimation = new Animation(modelAnimPath, gModelAnim);
 	gAnimator = new Animator(gAnimation);
