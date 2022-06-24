@@ -42,6 +42,7 @@ public:
 	physx::PxVec2 GetArrowKeyValue();
 };
 
+
 class VehicleActionMap : public ActionMap
 {
 private:
