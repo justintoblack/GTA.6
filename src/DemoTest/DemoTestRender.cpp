@@ -1039,8 +1039,8 @@ namespace
 		//std::cout << intGmaeTime << std::endl;
 		//std::cout << (int)gameTime << std::endl;
 		//cout << timeSpeed << endl;
-		cout << "您已进入游戏: " << gameTime << "秒				";
-		cout << "游戏进入第" << calendarDayDisplay << "天    " << calendarHourDisplay << "点" << calendarMinuteDisplay << "分" << endl;
+		//cout << "您已进入游戏: " << gameTime << "秒				";
+		//cout << "游戏进入第" << calendarDayDisplay << "天    " << calendarHourDisplay << "点" << calendarMinuteDisplay << "分" << endl;
 		//cout << currentTime <<endl;
 
 		

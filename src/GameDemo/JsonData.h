@@ -59,7 +59,6 @@ void CreateJson(string& json)
 		//Rigidbody
 		if (cur.hasComponent("RigidBody"))
 		{
-			cout << i << "has rigid" << endl;
 			if (cur.g_rigidBody == nullptr)
 			{
 				RigidbodyValue["has"] = false;

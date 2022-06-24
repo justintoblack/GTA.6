@@ -1328,7 +1328,7 @@ void stepPhysics(bool interactive)
 	PX_UNUSED(interactive);
 	//时间
 
-	//GlobalKeyEvent();
+	GlobalKeyEvent();
 	inputSystem.InputAction();
 
 
