@@ -57,10 +57,10 @@ using namespace physx;
 
 
 GLuint              gCubeTexture;
-Shader				gSkyboxShader;
 unsigned int		gSkyboxVAO, gSkyboxVBO;
 Model				gModel;
 Model               gBodyModel, gWheelModel_fl, gWheelModel_fr, gWheelModel_bl, gWheelModel_br;
+Shader				gSkyboxShader;
 Shader				gModelShader;
 Shader				gShadowShader;
 glm::vec3			gLightPos = glm::vec3(-1200.0f, 600.0f, -1200.0f);
@@ -74,8 +74,14 @@ glm::vec3			gSpotLightSpecular = glm::vec3(0.8f, 0.8f, 0.8f);
 float				gSpotLightCutOff = 35.0f;
 extern	bool		vehicleUseSpotLight;
 
-//天空盒六个面的纹理图片
-const char* gSkyboxFaces[6] = {
+//天空盒的纹理图片
+const char* gSkyboxFaces[12] = {
+	"../../assets/SkyboxImages/right.jpg",
+	"../../assets/SkyboxImages/left.jpg",
+	"../../assets/SkyboxImages/top.jpg",
+	"../../assets/SkyboxImages/bottom.jpg",
+	"../../assets/SkyboxImages/front.jpg",
+	"../../assets/SkyboxImages/back.jpg",
 	"../../assets/SkyboxImages/right1.png",
 	"../../assets/SkyboxImages/left1.png",
 	"../../assets/SkyboxImages/top1.png",
@@ -83,6 +89,13 @@ const char* gSkyboxFaces[6] = {
 	"../../assets/SkyboxImages/front1.png",
 	"../../assets/SkyboxImages/back1.png"
 };
+
+//天空盒渲染相关参数
+int widthDay, heightDay, nrChannelsDay;
+int widthNight, heightNight, nrChannelsNight;
+unsigned char* dataDay[6];
+unsigned char* dataNight[6];
+
 
 //天空盒六个方向
 const GLenum  CUBEMAP_DIRECTION[6] = {
@@ -125,14 +138,16 @@ extern void cleanupPhysics(bool interactive);
 //时间
 float deltaTime;		//时间插值
 float gameTime;		//当前程序执行时间
-float currentTime = 0.0f;
+float currentTime = 0.0f;			//游戏世界现在已经进行到多少秒了
 float compareTimeSpeed;
-int calendarDay = 0;
+bool day;                          //当前帧是否为白天
+bool former;					   //当前帧是否为（白天或者夜晚）的前半段
+int calendarDay = 0;				
 int calendarHour = 0;
 int calendarMinute = 0;
-int calendarDayDisplay = 0;
-int calendarHourDisplay = 0;
-int calendarMinuteDisplay = 0;
+int calendarDayDisplay = 0;			//游戏现在已经进行到第几天了
+int calendarHourDisplay = 0;		//这是游戏内那一天的几点
+int calendarMinuteDisplay = 0;		//这是游戏内那一个小时内的第几分钟
 __int64 firstCount;
 __int64 freq;
 static __int64 gTime, gLastTime;
@@ -262,13 +277,6 @@ namespace
 
 	void SetupSkybox()
 	{
-		//开启深度测试
-		glEnable(GL_DEPTH_TEST);
-		//glDepthFunc(GL_LEQUAL);
-
-		//加载SHADER
-		gSkyboxShader = Shader("../../src/Render/SkyBox.vs",
-								"../../src/Render/SkyBox.fs");
 
 		// 天空盒 VAO
 		glGenVertexArrays(1, &gSkyboxVAO);
@@ -280,7 +288,7 @@ namespace
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 		glBindVertexArray(0);
 
-		int width, height, nrChannels;
+		//int width, height, nrChannels;
 
 		// 禁用多边形背面上的光照、阴影和颜色计算及操作
 		glCullFace(GL_BACK);
@@ -292,50 +300,40 @@ namespace
 		glGenTextures(1, &gCubeTexture);
 		glBindTexture(GL_TEXTURE_CUBE_MAP, gCubeTexture);
 
+
+		if (scenario == true) {
+			for (GLuint i = 0; i < 6; i++) {
+				if (dataDay[i]) {
+					glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB,
+						widthDay, heightDay, 0, GL_RGB, GL_UNSIGNED_BYTE, dataDay[i]);
+				}
+				else {
+					std::cout << "Failed to load : " << gSkyboxFaces[i] << std::endl;
+					stbi_image_free(dataDay[i]);
+				}
+			}
+		}
+		else {
+			for (GLuint i = 0; i < 6; i++) {
+				if (dataNight[i]) {
+					glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB,
+						widthNight, heightNight, 0, GL_RGB, GL_UNSIGNED_BYTE, dataNight[i]);
+				}
+				else {
+					std::cout << "Failed to load : " << gSkyboxFaces[i+6] << std::endl;
+					stbi_image_free(dataNight[i]);
+				}
+			}
+		}
+
+
 		// 设置纹理过滤模式
 		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		//设置纹理渲染模式
 		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-		//设置数据内存对齐方式
-		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-
-
-		//==========================
-		if (scenario == true) {
-			gSkyboxFaces[0] = "../../assets/SkyboxImages/right.jpg";
-			gSkyboxFaces[1] = "../../assets/SkyboxImages/left.jpg";
-			gSkyboxFaces[2] = "../../assets/SkyboxImages/top.jpg";
-			gSkyboxFaces[3] = "../../assets/SkyboxImages/bottom.jpg";
-			gSkyboxFaces[4] = "../../assets/SkyboxImages/front.jpg";
-			gSkyboxFaces[5] = "../../assets/SkyboxImages/back.jpg";
-		}
-		else {
-			gSkyboxFaces[0] = "../../assets/SkyboxImages/right1.png";
-			gSkyboxFaces[1] = "../../assets/SkyboxImages/left1.png";
-			gSkyboxFaces[2] = "../../assets/SkyboxImages/top1.png";
-			gSkyboxFaces[3] = "../../assets/SkyboxImages/bottom1.png";
-			gSkyboxFaces[4] = "../../assets/SkyboxImages/front1.png";
-			gSkyboxFaces[5] = "../../assets/SkyboxImages/back1.png";
-		}
-		//加载纹理图片
-		for (GLuint i = 0; i < 6; i++)
-		{
-			unsigned char* data = stbi_load(gSkyboxFaces[i], &width, &height, &nrChannels, 0);
-			if (data)
-			{
-				glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB,
-					width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-			}
-			else
-			{
-				std::cout << "Failed to load : " << gSkyboxFaces[i] << std::endl;
-			}
-			stbi_image_free(data);
-		}
-
 		//开启mip贴图
 		glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
 	}
@@ -406,14 +404,12 @@ namespace
 
 		//shadow
 		//====================================
-		if (scenario == true) {
 		shadowShader.use();
 		shadowShader.SetMatrix4fv("projection", projectionMat);
 		shadowShader.SetMatrix4fv("view", viewMat);
 		shadowShader.SetMatrix4fv("model", modelMat);
 		shadowShader.SetVector3f("light", gLightPos);
 		model.Draw(shadowShader);
-		}
 		//=====================================
 
 		glUseProgram(0);
@@ -554,14 +550,12 @@ namespace
 
 		//shadow(just for the body)
 		//================================
-		if (scenario == true) {
 		gShadowShader.use();
 		gShadowShader.SetMatrix4fv("projection", projectionMat);
 		gShadowShader.SetMatrix4fv("view", viewMat);
 		gShadowShader.SetMatrix4fv("model", modelMat0);
 		gShadowShader.SetVector3f("light", gLightPos);
 		gameObject.g_body->Draw(gShadowShader);
-		}
 		//=================================
 		glUseProgram(0);
 	}
@@ -629,12 +623,13 @@ namespace
 		int intGmaeTime = (int)gameTime;  //int版的游戏时间
 		int intCurrentTime = (int)currentTime; //int版的当前时间线
 
-
 		float clock = currentTime - (intCurrentTime / (int)(120 / timeSpeed)) * (int)(120 / timeSpeed); //产生时钟上升沿跳变
+		if (timeSpeed != 0.0) {
 		int turn = intCurrentTime % (int)(240 / timeSpeed);  
-		bool day = (turn >= 0 && turn < (120 / timeSpeed))? true : false;  //现在是白天还是黑夜（黑夜0， 白天1）
+		day = (turn >= 0 && turn < (120 / timeSpeed))? true : false;  //现在是白天还是黑夜（黑夜0， 白天1）
 		int half = intCurrentTime % (int)(120 / timeSpeed); 
-		bool former = (half >= 0 && half < (60 / timeSpeed)) ? true : false; //现在是不是白天或者黑夜的上半场（是1， 不是0）
+		former = (half >= 0 && half < (60 / timeSpeed)) ? true : false; //现在是不是白天或者黑夜的上半场（是1， 不是0）
+		}
 
 
 		//Calendar
@@ -669,12 +664,22 @@ namespace
 		else
 		{
 			scenario = false;
-			gLightPos.x = -1200.0f;
-			gLightPos.y = 600.0f;
-			gLightPos.z = -1200.0f;
+			//gLightPos.x = -1200.0f;
+			//gLightPos.y = 600.0f;
+			//gLightPos.z = -1200.0f;
+			if (former) {
+				gLightPos.x -= 20.0f * timeSpeed * deltaTime;
+				gLightPos.y += 20.0f * timeSpeed * deltaTime;
+				gLightPos.z -= 20.0f * timeSpeed * deltaTime;
+			}
+			else {
+				gLightPos.x -= 20.0f * timeSpeed * deltaTime;
+				gLightPos.y -= 20.0f * timeSpeed * deltaTime;
+				gLightPos.z -= 20.0f * timeSpeed * deltaTime;
+			}
 		}
 
-		if (clock < 1.5 * deltaTime) {
+		if (clock < deltaTime) {
 			scenarioChange = true;
 		}
 
@@ -690,6 +695,7 @@ namespace
 		//cout << timeSpeed << endl;
 		//cout << "您已进入游戏: " << gameTime << "秒				";
 		//cout << "游戏进入第" << calendarDayDisplay << "天    " << calendarHourDisplay << "点" << calendarMinuteDisplay << "分" << endl;
+		//cout << currentTime <<endl;
 
 		
 		
@@ -698,6 +704,7 @@ namespace
 		if (scenarioChange == true) {
 			SetupSkybox();
 			cout << "scenario: " << scenario << endl;
+			cout << "=======================================" << endl;
 			scenarioChange = false;
 		}
 
@@ -811,7 +818,13 @@ namespace
 
 		glewInit();
 
-
+		
+		for (int i = 0; i < 6; i++) {
+			dataDay[i] = stbi_load(gSkyboxFaces[i], &widthDay, &heightDay, &nrChannelsDay, 0);
+		}
+		for (int i = 6; i < 12; i++) {
+			dataNight[i-6] = stbi_load(gSkyboxFaces[i], &widthNight, &heightNight, &nrChannelsNight, 0);
+		}
 
 		//----------Render Model----------
 		gBodyModel = Model("../../assets/objects/car/body.obj");
@@ -830,6 +843,9 @@ namespace
 								"../../src/ModelLoading/model_loading.fs");
 		gShadowShader = Shader("../../src/ModelLoading/shadow_loading.vs",
 								"../../src/ModelLoading/shadow_loading.fs");
+		//加载SHADER
+		gSkyboxShader = Shader("../../src/Render/SkyBox.vs",
+			"../../src/Render/SkyBox.fs");
 		////使用带光照的shader
 		//gModelShader = Shader("../../src/Light/light.vs", "../../src/Light/light.fs");
 

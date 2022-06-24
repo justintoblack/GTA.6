@@ -1,2 +1,7 @@
+<<<<<<< HEAD
 PlatformToolSet=v142:VCToolArchitecture=Native32Bit:VCToolsVersion=14.26.28801:TargetPlatformVersion=10.0.18362.0:
 debug|x64|D:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\compiler\vc16win64\|
+=======
+PlatformToolSet=v142:VCToolArchitecture=Native32Bit:VCToolsVersion=14.29.30133:TargetPlatformVersion=10.0.19041.0:
+debug|x64|D:\Homework\实训\PhysX-Tutorial-master\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\compiler\vc16win64\|
+>>>>>>> 5cfc750367be6b7a3956079d0b3bda6d58995d24

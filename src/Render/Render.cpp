@@ -412,30 +412,31 @@ void my_display_code()
 		}
 		ImGui::End();
 	}
+
+	static bool no_titlebar = false;
+	static bool no_scrollbar = false;
+	static bool no_menu = false;
+	static bool no_move = false;
+	static bool no_resize = false;
+	static bool no_collapse = false;
+	static bool no_close = false;
+	static bool no_nav = false;
+	static bool no_background = false;
+	static bool no_bring_to_front = false;
+	static bool unsaved_document = false;
+
+	ImGuiWindowFlags window_flags_1 = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoBackground;
+
 	if (show_calendar_window)
 	{
-		ImGui::Begin("Calendar", &show_calendar_window);
-		bool no_titlebar = false;
-		bool no_move = false;
-		bool no_close = false;
-		bool no_background = false;
+		ImGui::Begin("Calendar", &show_calendar_window, window_flags_1);
 
-
-		ImGuiWindowFlags window_flags = 0;
-		if (no_titlebar)        window_flags |= ImGuiWindowFlags_NoTitleBar;
-
-		if (ImGui::CollapsingHeader("Window options")) {
-
-			if (ImGui::BeginTable("split", 3))
-			{
-				ImGui::TableNextColumn(); ImGui::Checkbox("No titlebar", &no_titlebar);
-				ImGui::TableNextColumn(); ImGui::Checkbox("No move", &no_move);
-				ImGui::TableNextColumn(); ImGui::Checkbox("No close", &no_close);
-				ImGui::TableNextColumn(); ImGui::Checkbox("No background", &no_background);
-				ImGui::EndTable();
-			}
-		}
-
+		static int clicked = 0;
+		if (ImGui::Button("Accept the Mission"))
+			clicked++;
+		ImGui::SameLine();
+		if (ImGui::Button("Abandon the Mission"))
+			clicked++;
 		ImGui::End();
 	}
 
