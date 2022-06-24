@@ -48,7 +48,7 @@
 #include "../Utils/Mathf.h"
 #include "../Utils/Mathf.cpp"
 #include "../DemoTest/GameObject.h"
-
+#include "../DemoTest/MissionManager.h"
 #include "irrKlang/irrKlang.h" 
 #include "../GameDemo/TheCreator.h"
 
@@ -60,6 +60,7 @@ GLuint              gCubeTexture;
 unsigned int		gSkyboxVAO, gSkyboxVBO;
 Model				gModel;
 Model               gBodyModel, gWheelModel_fl, gWheelModel_fr, gWheelModel_bl, gWheelModel_br;
+Model               gStar, gArrow, gExclamation;
 Shader				gSkyboxShader;
 Shader				gModelShader;
 Shader				gShadowShader;
@@ -133,6 +134,7 @@ float gSkyboxVertices[] = {
 extern void initPhysics(bool interactive);
 extern void stepPhysics(bool interactive);	
 extern void cleanupPhysics(bool interactive);
+extern MissionManager missionManager;
 //extern void keyPress(unsigned char key, const PxTransform& camera);
 
 //时间
@@ -561,6 +563,43 @@ namespace
 	}
 
 
+	//渲染任务图标
+	void RenderMissionObject()
+	{
+		for (size_t i = 0; i < missionManager.MissionList.size(); i++)
+		{
+			if (!missionManager.MissionList[i]->State)
+			{
+				Model m;
+				PxTransform t;
+				if (!missionManager.MissionList[i]->IsActive)
+				{
+					m = gExclamation;
+					t = missionManager.MissionList[i]->StartTrigger->getGlobalPose();
+				}
+				else
+				{
+					m = gStar;
+					t = missionManager.MissionList[i]->EndTrigger->getGlobalPose();
+
+				}
+				gModelShader.use();
+				glm::mat4 modelMat0 = glm::mat4(1.0f);
+				modelMat0 = glm::translate(modelMat0, Mathf::P3ToV3(t.p));
+				modelMat0 *= glm::mat4_cast(Mathf::Toquat(t.q));
+				modelMat0 = glm::scale(modelMat0, m.getScale()/=50);
+				glm::mat4 viewMat = getViewMat();
+				glm::mat4 projectionMat = glm::perspective(45.0f, (float)glutGet(GLUT_WINDOW_WIDTH) / (float)glutGet(GLUT_WINDOW_HEIGHT), 0.1f, 1000.0f);
+				gModelShader.SetMatrix4fv("projection", projectionMat);
+				gModelShader.SetMatrix4fv("view", viewMat);
+				gModelShader.SetMatrix4fv("model", modelMat0);
+				m.Draw(gModelShader);
+				glUseProgram(0);
+			}
+
+		}
+
+	}
 	
 	bool engineState = false;
 	ISoundEngine* backgroundMusicEngine = nullptr;
@@ -725,7 +764,7 @@ namespace
 
 		RenderSkybox();
 		RenderCarObject(carObject);
-
+		RenderMissionObject();
 		//渲染场景物体
 		for (int i = 0; i < theCreator.SceneGameObject.size(); i++)
 		{
@@ -832,6 +871,11 @@ namespace
 		gWheelModel_fr = Model("../../assets/objects/car/wheel_fr.obj");
 		gWheelModel_bl = Model("../../assets/objects/car/wheel_bl.obj");
 		gWheelModel_br= Model("../../assets/objects/car/wheel_br.obj");
+
+
+		gStar = Model("../../assets/objects/mission/SM_Icon_Star_01.fbx");
+		gArrow = Model("../../assets/objects/mission/SM_Icon_Arrow_Small_01.fbx");
+		gExclamation = Model("../../assets/objects/mission/SM_Icon_Letter_Exclamation_01.fbx");
 
 		//gModel = Model("../../assets/objects/nanosuit/nanosuit.obj");
 		//gModel2 = Model("../../assets/objects/Models/house.fbx");

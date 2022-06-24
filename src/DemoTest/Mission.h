@@ -17,9 +17,7 @@ enum MissionType
 	KILL,
 };
 
-//static Model S_Star= Model("../../assets/objects/mission/SM_Icon_Star_01.fbx");
-//static Model S_Arrow = Model("../../assets/objects/mission/SM_Icon_Arrow_Small_01.fbx");
-//static Model S_Exclamation = Model("../../assets/objects/mission/SM_Icon_Letter_Exclamation_01.fbx");
+
 
 class Mission
 {
@@ -43,9 +41,6 @@ public:
 	double Timer = 0;
 	double TimeLimit = 10;
 	MissionType Type;
-	//Model Star = S_Star;
-	//Model Arrow = S_Arrow;
-	//Model Exclamation = S_Exclamation;
 
 	
 };
