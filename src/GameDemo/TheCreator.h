@@ -82,6 +82,9 @@ public:
 	//UI创建GameObject
 	void CreateNewGameObject();
 
+	//复制GameObject
+	void DuplicateGameObject(GameObject* gameObject);
+
 	//获取特定格式的文件名
 	void GetAllFormatFiles(string path, vector<string>& files, string format)
 	{

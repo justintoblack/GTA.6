@@ -394,6 +394,12 @@ void my_display_code()
 			{
 				sCamera->SetDir(-sCamera->getEye()+curGameObject->transform.p);
 			}
+			ImGui::SameLine();
+
+			if (ImGui::Button("Duplicate"))
+			{
+				theCreator.DuplicateGameObject(curGameObject);
+			}
 
 			ImGui::Text("Name");
 			ImGui::InputTextWithHint(" ", "input GameObject name", _objName,
@@ -455,6 +461,10 @@ void my_display_code()
 			//É¾³ýGameObject
 			if (ImGui::Button("Delete", ImVec2(ImGui::GetContentRegionAvail().x - 100, 20)))
 			{
+				if (curGameObject->g_rigidBody != nullptr)
+				{
+					gScene->removeActor(*curGameObject->g_rigidBody);
+				}
 				theCreator.SceneGameObject.erase(theCreator.SceneGameObject.begin()+_gameObjectIdx);
 				curGameObject = nullptr;
 			}

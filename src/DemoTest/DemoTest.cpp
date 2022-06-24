@@ -823,7 +823,7 @@ PxController* CreateCharacterController(PxExtendedVec3 initPos)
 
 	PxShape* haha;
 	ctrl->getActor()->getShapes(&haha, 1);
-	haha->setFlag(PxShapeFlag::eSCENE_QUERY_SHAPE, true);
+	haha->setFlag(PxShapeFlag::eSCENE_QUERY_SHAPE, false);
 
 	return ctrl;
 }
@@ -1392,24 +1392,24 @@ void stepPhysics(bool interactive)
 	}
 
 	////////////////////////////Test////////////////////////////
-	//PxTransform playerTrans = m_player->getActor()->getGlobalPose();
-	//PxRaycastBuffer raycastHit;
-	//if (gScene->raycast(playerTrans.p, sCamera->getDir().multiply(PxVec3(1,0,1)).getNormalized(), 
-	//	carRayDis, raycastHit))
-	//{
-	//		if (raycastHit.block.actor == gVehicle4W->getRigidDynamicActor())
-	//		{
-	//			hasVehicleToDrive = true;
-	//		}
-	//		else
-	//		{
-	//			hasVehicleToDrive = false;
-	//		}
-	//}
-	//else
-	//{
-	//	hasVehicleToDrive = false;
-	//}
+	PxTransform playerTrans = m_player->getActor()->getGlobalPose();
+	PxRaycastBuffer raycastHit;
+	if (gScene->raycast(playerTrans.p, sCamera->getDir().multiply(PxVec3(1,0,1)).getNormalized(), 
+		carRayDis, raycastHit))
+	{
+			if (raycastHit.block.actor == gVehicle4W->getRigidDynamicActor())
+			{
+				hasVehicleToDrive = true;
+			}
+			else
+			{
+				hasVehicleToDrive = false;
+			}
+	}
+	else
+	{
+		hasVehicleToDrive = false;
+	}
 
 	/////////////////////////////物理模拟////////////////////////////
 	if (isSimulation)
