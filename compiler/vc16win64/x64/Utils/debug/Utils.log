@@ -1,4 +1,7 @@
 <<<<<<< HEAD
+﻿  Utils.vcxproj -> E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\compiler\vc16win64\./../../lib/vc16win64\UtilsDEBUG.lib
+=======
+<<<<<<< HEAD
 ﻿  Utils.vcxproj -> D:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\compiler\vc16win64\./../../lib/vc16win64\UtilsDEBUG.lib
 =======
 ﻿  Mathf.cpp
@@ -30,3 +33,4 @@ F:\Learning\mypt2\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\third_party\in
   F:\Learning\mypt2\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\third_party\includes\foundation\PxVec3.h(303) : 注意: 此行上的源调用
   Utils.vcxproj -> F:\Learning\mypt2\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\lib\vc16win64\UtilsDEBUG.lib
 >>>>>>> 4dc8483743f7df5747e0e1c1630c48a99e83a6b1
+>>>>>>> 06d8db5a55535af0c4645588f81c9db0a2004ebb

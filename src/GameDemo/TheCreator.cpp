@@ -207,48 +207,7 @@ void TheCreator::CreatePoles(PxVec3 pos, PxVec3 dir, float separate, PxU32 num, 
 extern  float gameObjectPosition[3];
 void TheCreator::CreateGameObject()
 {
-	//GameObject tempObject;
-	//char objectName[] = "station_00";
-	//strcpy(tempObject.Name, objectName);
-	//tempObject.AddRigidbody(false);
-	//tempObject.AddModel(stationModel);
-	//tempObject.AddBoxCollider(4.35f, 4.25f, 4.6f, PxTransform(0, 4.29f, 0));
-	//tempObject.SetTransform(PxTransform(20, 0, 10));
-	//tempObject.AddToScene();
-
-	//SceneGameObject.push_back(tempObject);
-
-	//char objectName1[] = "station_01";
-	//strcpy(tempObject.Name, objectName1);
-	//tempObject.AddRigidbody(false);
-	//tempObject.AddModel(stationModel_01);
-	//tempObject.AddBoxCollider(5.38f, 2.87f, 2.95f, PxTransform(0, 2.87f, 0));
-	//tempObject.SetTransform(PxTransform(29, 0, 10));
-	//tempObject.AddToScene();
-
-	//SceneGameObject.push_back(tempObject);
-
-	//char objectName2[] = "station_02";
-	//strcpy(tempObject.Name, objectName2);
-	//tempObject.AddRigidbody(false);
-	//tempObject.AddModel(stationModel_01);
-	//tempObject.AddBoxCollider(5.38f, 2.87f, 2.95f, PxTransform(0, 2.87f, 0));
-	//tempObject.SetTransform(PxTransform(11, 0, 10));
-	//tempObject.AddToScene();
-
-	//SceneGameObject.push_back(tempObject);
-
-	////////////////////////////Test/////////////////////////////
-	//GameObject* test = new GameObject();
-	//RigidBody* rigidbody = new RigidBody(test);
-	//BoxCollider* boxCollider = new BoxCollider(test);
-	//test->SetName("123");
-
-	//test->AddToScene();
-	//ModelComponent* modelComponent = new ModelComponent(test);
-	//modelComponent->SetModel(stationModel_01);
-	//SceneGameObject.push_back(*test);
-	//////////////////////////Test-End/////////////////////////////
+	
 }
 
 void TheCreator::CreatePaticle(PxVec3 pos)
@@ -259,6 +218,14 @@ void TheCreator::CreateNewGameObject()
 {
 	GameObject* gameObject=new GameObject();
 	SceneGameObject.push_back(*gameObject);
+}
+
+void TheCreator::DuplicateGameObject(GameObject* gameObject)
+{
+	GameObject newGameObject;
+	GameObject other=*gameObject;
+	newGameObject = other;
+	SceneGameObject.push_back(newGameObject);
 }
 
 

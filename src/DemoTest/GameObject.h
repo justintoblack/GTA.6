@@ -13,6 +13,7 @@ extern vector<Model> Models;			//模型
 extern void makeObjectDrivable(PxShape*& shape);
 
 class GameObject;
+class ModelComponent;
 
 class Component
 {
@@ -23,6 +24,10 @@ public:
 	{
 		return;
 	};
+	Component& operator=(Component& obj)
+	{
+		return *this;
+	}
 };
 
 class GameObject
@@ -43,12 +48,32 @@ public:
 	//组件
 	vector<Component*> components;
 
+
 	GameObject()
 	{
 		transform = PxTransform(0,0,0);
 		scale = PxVec3(1, 1, 1);
 		components.clear();
 	}
+
+	//GameObject& operator=(const GameObject& obj)
+	//{
+	//	const char* newName = obj.Name;
+	//	strcpy(Name, newName);
+	//	transform = obj.transform;
+	//	localTransform = obj.localTransform;
+	//	parent = obj.parent;
+	//	for (int i = 0; i < obj.components.size(); i++)
+	//	{
+	//		Component* newComponent=new Component();
+	//		*newComponent = *obj.components[i];
+	//		components.push_back(newComponent);
+	//		//cout << i<<"OBj:  ";
+	//		//cout << &obj.components[i] << endl;
+	//		//cout << "this" << &*this << endl;
+	//	}
+	//	return *this;
+	//}
 
 	void SetName(const char name[])
 	{
@@ -192,7 +217,6 @@ public:
 
 
 
-
 class RigidBody:public Component
 {
 private:
@@ -207,6 +231,10 @@ public:
 		IsStatic = true;
 		_parent->AddComponent(this);
 	}
+	//RigidBody& operator=(RigidBody& obj)
+	//{
+	//	return *this;
+	//}
 	RigidBody(GameObject* parent, bool isStatic)
 	{
 		_parent = parent;
@@ -313,11 +341,13 @@ private:
 public:
 	int item_current =0;
 	Model* MyModel=nullptr;
+
 	ModelComponent(GameObject* parent)
 	{
 		_parent = parent;
 		_parent->AddComponent(this);
 	}
+
 
 	void SetModel(Model &model)
 	{

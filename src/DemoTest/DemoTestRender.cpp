@@ -874,7 +874,7 @@ namespace
 	{
 
 		sCamera = new Snippets::Camera(PxVec3(50.0f, 50.0f, 50.0f), PxVec3(-0.6f,-0.2f,-0.7f));
-		sCamera->SetConfig(4,PxVec3(0,0,0));
+		sCamera->SetConfig(2.5f, 2.25f, 3.0f, PxVec3(0, 0.5f, 0));
 
 
 		//初始化鼠标位置;
@@ -908,7 +908,7 @@ namespace
 		gArrow = Model("../../assets/objects/mission/SM_Icon_Arrow_Small_01.fbx");
 		gExclamation = Model("../../assets/objects/mission/SM_Icon_Letter_Exclamation_01.fbx");
 
-		//gModel = Model("../../assets/objects/nanosuit/nanosuit.obj");
+		gModel = Model("../../assets/objects/nanosuit/nanosuit.obj");
 		//gModel2 = Model("../../assets/objects/Models/house.fbx");
 		
 

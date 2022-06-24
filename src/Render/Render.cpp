@@ -363,6 +363,7 @@ void my_display_code()
 		ImGui::DragFloat("z", &_sCameraPos.z, 1);
 		ImGui::PopItemWidth();
 		sCamera->SetEye(_sCameraPos);
+		ImGui::SliderFloat("Camera Speed", &sCamera->EditMoveSpeed, 5.0f, 20.0f);
 
 		ImGui::Checkbox("IsSimulation", &isSimulation);
 		ImGui::Checkbox("IsWireframe",&isWireframe);
@@ -458,6 +459,17 @@ void my_display_code()
 			//_quaternion = curGameObject->transform.q;
 
 			//UI-Begin
+			if (ImGui::Button("LookAt"))
+			{
+				sCamera->SetDir(-sCamera->getEye()+curGameObject->transform.p);
+			}
+			ImGui::SameLine();
+
+			if (ImGui::Button("Duplicate"))
+			{
+				theCreator.DuplicateGameObject(curGameObject);
+			}
+
 			ImGui::Text("Name");
 			ImGui::InputTextWithHint(" ", "input GameObject name", _objName,
 				IM_ARRAYSIZE(_objName));
@@ -518,6 +530,10 @@ void my_display_code()
 			//É¾³ýGameObject
 			if (ImGui::Button("Delete", ImVec2(ImGui::GetContentRegionAvail().x - 100, 20)))
 			{
+				if (curGameObject->g_rigidBody != nullptr)
+				{
+					gScene->removeActor(*curGameObject->g_rigidBody);
+				}
 				theCreator.SceneGameObject.erase(theCreator.SceneGameObject.begin()+_gameObjectIdx);
 				curGameObject = nullptr;
 			}
@@ -635,12 +651,13 @@ void setupDefaultWindow(const char *name)
 	//glutGameModeString("1920x1080");
 	//glutEnterGameMode();
 	//glutInitWindowPosition(960, 0);
-	glutInitWindowSize(1920, 1080);
+	glutInitWindowSize(glutGet(GLUT_SCREEN_WIDTH),
+		glutGet( GLUT_SCREEN_HEIGHT));
 
 
 	int mainHandle = glutCreateWindow(name);
 	glutSetWindow(mainHandle);
-	//glutFullScreen();
+	glutFullScreen();
 
 	//glutCreateWindow(name);
 	//glutFullScreen();
