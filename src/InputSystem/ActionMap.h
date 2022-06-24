@@ -43,7 +43,6 @@ public:
 };
 
 
-
 class VehicleActionMap : public ActionMap
 {
 private:
