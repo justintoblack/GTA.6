@@ -858,7 +858,7 @@ PxController* CreateCharacterController(PxExtendedVec3 initPos)
 
 	PxShape* haha;
 	ctrl->getActor()->getShapes(&haha, 1);
-	haha->setFlag(PxShapeFlag::eSCENE_QUERY_SHAPE, false);
+	haha->setFlag(PxShapeFlag::eSCENE_QUERY_SHAPE, true);
 
 	return ctrl;
 }
