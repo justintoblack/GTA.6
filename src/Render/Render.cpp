@@ -426,7 +426,7 @@ void my_display_code()
 	static bool no_bring_to_front = false;
 	static bool unsaved_document = false;
 
-	ImGuiWindowFlags window_flags_1 = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoBackground;
+	ImGuiWindowFlags window_flags_1 = 0; // ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoBackground;
 
 	if (show_calendar_window)
 	{
