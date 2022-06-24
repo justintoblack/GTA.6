@@ -434,7 +434,7 @@ namespace
 		int width, height, nrChannels;
 		stbi_set_flip_vertically_on_load(true);
 
-		unsigned char* data = stbi_load("../../assets/Textures/awesomeface.png", &width, &height, &nrChannels, STBI_rgb_alpha);
+		unsigned char* data = stbi_load("../../assets/Textures/a.jpg", &width, &height, &nrChannels, STBI_rgb_alpha);
 		if (data)
 		{
 			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
@@ -609,12 +609,14 @@ namespace
 
 		//shadow
 		//====================================
-		shadowShader.use();
-		shadowShader.SetMatrix4fv("projection", projectionMat);
-		shadowShader.SetMatrix4fv("view", viewMat);
-		shadowShader.SetMatrix4fv("model", modelMat);
-		shadowShader.SetVector3f("light", gLightPos);
-		model.Draw(shadowShader);
+		if (scenario == true) {
+			shadowShader.use();
+			shadowShader.SetMatrix4fv("projection", projectionMat);
+			shadowShader.SetMatrix4fv("view", viewMat);
+			shadowShader.SetMatrix4fv("model", modelMat);
+			shadowShader.SetVector3f("light", gLightPos);
+			model.Draw(shadowShader);
+		}
 		//=====================================
 
 		glUseProgram(0);
@@ -755,12 +757,14 @@ namespace
 
 		//shadow(just for the body)
 		//================================
-		gShadowShader.use();
-		gShadowShader.SetMatrix4fv("projection", projectionMat);
-		gShadowShader.SetMatrix4fv("view", viewMat);
-		gShadowShader.SetMatrix4fv("model", modelMat0);
-		gShadowShader.SetVector3f("light", gLightPos);
-		gameObject.g_body->Draw(gShadowShader);
+		if (scenario == true) {
+			gShadowShader.use();
+			gShadowShader.SetMatrix4fv("projection", projectionMat);
+			gShadowShader.SetMatrix4fv("view", viewMat);
+			gShadowShader.SetMatrix4fv("model", modelMat0);
+			gShadowShader.SetVector3f("light", gLightPos);
+			gameObject.g_body->Draw(gShadowShader);
+		}
 		//=================================
 		glUseProgram(0);
 	}
@@ -826,32 +830,45 @@ namespace
 				engineState = true;
 			}
 			if (calendarHour < 2) {
-				float rate = (calendarHour * 60 + calendarMinute) / 120;
+				float rate = (float)(calendarHour * 60 + calendarMinute) / 120;
 				sndDay->setVolume(volume0 * rate);
 				sndNight->setVolume(0.0);
+				cout << "rate: " << rate << endl;
+				//cout << "calendarHour: " << calendarHour << endl;
+				//cout << "calendarMinute: " << calendarMinute << endl;
 			}
 			if (calendarHour > 1 && calendarHour < 10) {
 				sndDay->setVolume(volume0);
 				sndNight->setVolume(0.0);
 			}
 			if (calendarHour > 9 && calendarHour < 12) {
-				float rate = (120 - (calendarHour - 10) * 60 - calendarMinute) / 120;
+				float rate = (float)(120 - (calendarHour - 10) * 60 - calendarMinute) / 120;
 				sndDay->setVolume(volume0 * rate);
 				sndNight->setVolume(0.0);
+				cout << "rate: " << rate << endl;
+				//cout << "calendarHour: " << calendarHour << endl;
+				//cout << "calendarMinute: " << calendarMinute << endl;
 			}
 			if (calendarHour > 11 && calendarHour < 14) {
-				float rate = ((calendarHour - 12) * 60 + calendarMinute) / 120;
+				float rate = (float)((calendarHour - 12) * 60 + calendarMinute) / 120;
 				sndNight->setVolume(volume0 * rate);
 				sndDay->setVolume(0.0);
+				cout << "rate: " << rate << endl;
+				//cout << "calendarHour: " << calendarHour << endl;
+				//cout << "calendarMinute: " << calendarMinute << endl;
 			}
 			if (calendarHour > 13 && calendarHour < 21) {
 				sndNight->setVolume(volume0);
 				sndDay->setVolume(0.0);
 			}
 			if (calendarHour > 21 && calendarHour < 24) {
-				float rate = (120 - (calendarHour - 22) * 60 - calendarMinute) / 120;
+				float rate = (float)(120 - (calendarHour - 22) * 60 - calendarMinute) / 120;
 				sndNight->setVolume(volume0 * rate);
 				sndDay->setVolume(0.0);
+
+				cout << "rate: " << rate << endl;
+				//cout << "calendarHour: " << calendarHour << endl;
+				//cout << "calendarMinute: " << calendarMinute << endl;
 			}
 		}
 		else {
@@ -1022,8 +1039,8 @@ namespace
 		//std::cout << intGmaeTime << std::endl;
 		//std::cout << (int)gameTime << std::endl;
 		//cout << timeSpeed << endl;
-		//cout << "您已进入游戏: " << gameTime << "秒				";
-		//cout << "游戏进入第" << calendarDayDisplay << "天    " << calendarHourDisplay << "点" << calendarMinuteDisplay << "分" << endl;
+		cout << "您已进入游戏: " << gameTime << "秒				";
+		cout << "游戏进入第" << calendarDayDisplay << "天    " << calendarHourDisplay << "点" << calendarMinuteDisplay << "分" << endl;
 		//cout << currentTime <<endl;
 
 		
