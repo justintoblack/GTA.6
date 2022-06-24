@@ -65,15 +65,18 @@ Shader				gModelShader;
 Shader				gShadowShader;
 glm::vec3			gLightPos = glm::vec3(-1200.0f, 600.0f, -1200.0f);
 glm::vec3			gLightDir;
-glm::vec3			gLightAmbient = glm::vec3(0.6f, 0.6f, 0.6f);
-glm::vec3			gLightDiffuse = glm::vec3(0.5f, 0.5f, 0.5f);
-glm::vec3			gLightSpecular = glm::vec3(1.0f, 1.0f, 1.0f);
+float				gLightAmbientBasis = 0.3f;//6点、18点左右的亮度
+float				gLightDiffuseBasis = 0.3f;
+float				gLightSpecularBasis = 0.6f;
+glm::vec3			gLightAmbient = glm::vec3(gLightAmbientBasis);
+glm::vec3			gLightDiffuse = glm::vec3(gLightDiffuseBasis);
+glm::vec3			gLightSpecular = glm::vec3(gLightSpecularBasis);
 glm::vec3			gSpotLightAmbient = glm::vec3(0.2f, 0.2f, 0.2f);
 glm::vec3			gSpotLightDiffuse = glm::vec3(0.3f, 0.3f, 0.3f);
-glm::vec3			gSpotLightSpecular = glm::vec3(0.8f, 0.8f, 0.8f);
-float				gSpotLightCutOff = 35.0f;
+glm::vec3			gSpotLightSpecular = glm::vec3(0.5f, 0.5f, 0.5f);
+float				gSpotLightCutOff = 25.0f;
 float				gVehicleShininess = 64.0f;
-float				gOthersShininess = 1024.0f;
+float				gOthersShininess = 512.0f;
 extern	bool		vehicleUseSpotLight;
 
 //天空盒六个面的纹理图片
@@ -527,11 +530,11 @@ namespace
 		//车辆水平方向
 		//PxVec3 vehicleHorizon = gameObject.transform.q.getBasisVector0().getNormalized();
 		//灯位置
-		PxVec3 vehicleLight = vehiclePos + vehicleForward * 5.0f;
+		PxVec3 vehicleLight = vehiclePos + vehicleForward * 2.3f;
 
 		//向shader传入参数
 		gModelShader.SetVector3f("spotLight.position", vehicleLight.x, vehicleLight.y, vehicleLight.z);
-		gModelShader.SetVector3f("spotLight.direction", vehicleForward.x, vehicleForward.y - 0.2f, vehicleForward.z);
+		gModelShader.SetVector3f("spotLight.direction", vehicleForward.x, vehicleForward.y - 0.3f, vehicleForward.z);
 		gModelShader.SetFloat("spotLight.cutOff", glm::cos(glm::radians(gSpotLightCutOff)));
 		gModelShader.SetVector3f("spotLight.ambient", gSpotLightAmbient);
 		gModelShader.SetVector3f("spotLight.diffuse", gSpotLightDiffuse);
@@ -603,7 +606,23 @@ namespace
 			}
 		}
 	}
-
+	//随时间动态变换光照强度
+	void changeLightDynamic(bool add)
+	{
+		float dayPeriod = 240.0f / timeSpeed;
+		float omega = 2.0f * glm::pi<float>() / dayPeriod;
+		if (add)
+		{
+			gLightAmbient = glm::vec3(gLightAmbientBasis + 0.4f * glm::sin(omega * currentTime));
+			gLightDiffuse = glm::vec3(gLightDiffuseBasis + 0.2f * glm::sin(omega * currentTime));
+			gLightSpecular = glm::vec3(gLightSpecularBasis + 0.4 * glm::sin(omega * currentTime));
+		}
+		else {
+			gLightAmbient = glm::vec3(gLightAmbientBasis - 0.2f * abs(glm::sin(omega * currentTime)));
+			gLightDiffuse = glm::vec3(gLightDiffuseBasis - 0.2f * abs(glm::sin(omega * currentTime)));
+			gLightSpecular = glm::vec3(gLightSpecularBasis - 0.2 * abs(glm::sin(omega * currentTime)));
+		}
+	}
 
 	//显示窗口
 	void renderCallback()
@@ -643,8 +662,10 @@ namespace
 
 		//Calendar
 		if (timeSpeed != 0.0) {
+			//游戏内一天的周期等于现实240秒/timeSpeed
 			calendarDay = intCurrentTime / (int)(240 / timeSpeed);
 			calendarDayDisplay = calendarDay + 1;
+			//游戏内一小时等于现实10秒/timeSpeed
 			calendarHour = (int)((intCurrentTime % (int)(240 / timeSpeed)) * timeSpeed / 10);
 			calendarHourDisplay = calendarHour;
 			if (calendarHour < 24) {
@@ -677,7 +698,13 @@ namespace
 			gLightPos.y = 600.0f;
 			gLightPos.z = -1200.0f;
 		}
-
+		//输出游戏当前时间
+		/*cout << "===============================";
+		cout << calendarHourDisplay << ":" << calendarMinuteDisplay << endl;
+		cout << "===============================";*/
+		//动态变换光强度
+		//scenario 是否白天 
+		changeLightDynamic(scenario);
 		if (clock < 1.5 * deltaTime) {
 			scenarioChange = true;
 		}
