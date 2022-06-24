@@ -12,7 +12,6 @@
 #include <list>
 #include<io.h>
 
-
 using namespace physx;
 
 enum BreakType
@@ -79,6 +78,8 @@ public:
 	//创建GameObject
 	void CreateGameObject();
 
+	//创建粒子
+	void CreatePaticle(PxVec3 pos);
 	//UI创建GameObject
 	void CreateNewGameObject();
 

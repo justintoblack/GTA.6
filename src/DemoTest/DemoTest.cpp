@@ -25,6 +25,7 @@
 // Copyright (c) 2008-2018 NVIDIA Corporation. All rights reserved.
 // Copyright (c) 2004-2008 AGEIA Technologies, Inc. All rights reserved.
 // Copyright (c) 2001-2004 NovodeX AG. All rights reserved.  
+ 
 
 // ****************************************************************************
 // This snippet illustrates simple use of physx
@@ -32,6 +33,7 @@
 // It creates a number of box stacks on a plane, and if rendering, allows the
 // user to create new stacks and fire a ball from the camera position
 // ****************************************************************************
+ 
 
 
 #include <ctype.h>
@@ -46,7 +48,7 @@
 #include<string>
 #include<vector>
 #include<windows.h>
-
+#include<typeinfo>
 #include "../InputSystem/InputSystem.h"
 #include "../GameDemo/TheCreator.h"
 #include "../Utils/Mathf.h"
@@ -65,6 +67,7 @@
 #include "../SnippetVehicleCommon/SnippetVehicleTireFriction.h"
 #include "../SnippetVehicleCommon/SnippetVehicleCreate.h"
 #include "irrKlang/irrKlang.h"
+#include"MissionManager.h"
 //#include"../GameDemo/JsonData.h"
 
 
@@ -130,6 +133,8 @@ extern bool main_window;
 extern bool show_another_window;
 extern bool inspector_window;
 extern bool isSimulation;
+extern bool soundEffect;
+extern float volume1;
 
 //输入
 InputSyetem inputSystem;
@@ -139,6 +144,9 @@ EditActionMap editMap;
 
 //造物者
 TheCreator theCreator;
+
+//任务管理者
+MissionManager missionManager;
 
 //相机跟随位置
 PxVec3 characterPos;
@@ -260,6 +268,7 @@ extern float gameTime;
 #pragma region 全局按键事件
 bool isInGameMode=true;
 bool isQKeyDown;
+bool vehicleUseSpotLight = false;
 void GlobalKeyEvent()
 {
 	if (GetAsyncKeyState('Q'))
@@ -285,6 +294,7 @@ void GlobalKeyEvent()
 	{
 		isQKeyDown = false;
 	}
+
 }
 
 //切换游戏模式
@@ -328,12 +338,34 @@ struct FilterGroup
 //触发器相关变量
 
 //PxVec3 triggerPos = PxVec3(30, 1, 100);
-PxVec3 triggerPos[] = { PxVec3(30, 1, 70) , PxVec3(30, 1, 110) , PxVec3(30, 1, 150) , PxVec3(30, 1, 170) , PxVec3(70, 1, 190) , PxVec3(70, 1, 220) , PxVec3(100, 1, 220) , PxVec3(130, 1, 170) , PxVec3(150, 1, 160) , PxVec3(130, 1, 160) , PxVec3(90, 1,120), PxVec3(60, 1, 100), PxVec3(50, 1, 50), PxVec3(30, 1, 20) };
-int triggerBoxNum = sizeof(triggerPos) / sizeof(triggerPos[0]);
-bool isTouchTriggerBox = false;
-int currentTriggerIndex = -1;
+PxVec3 triggerPos[] = { PxVec3(30, 1,50) , PxVec3(30, 1,70) , PxVec3(30, 1, 150) , PxVec3(30, 1, 170) , PxVec3(70, 1, 190) , PxVec3(70, 1, 220) , PxVec3(100, 1, 220) , PxVec3(130, 1, 170) , PxVec3(150, 1, 160) , PxVec3(130, 1, 160) , PxVec3(90, 1,120), PxVec3(60, 1, 100), PxVec3(50, 1, 50), PxVec3(30, 1, 20) };
+
 
 //车辆相关的全局变量
+//GameObject carObject;
+//GameObject wheelFLObj;
+//GameObject wheelFRObj;
+//GameObject wheelBLObj;
+//GameObject wheelBRObj;
+//PxTransform wheelLF;
+//PxTransform wheelRF;
+//PxTransform wheelLB;
+//PxTransform wheelRB;
+//PxShape* wheels[5];
+
+//PxRigidDynamic* carBody;
+
+
+//VehicleSceneQueryData* gVehicleSceneQueryData = NULL;
+//PxBatchQuery* gBatchQuery = NULL;
+//
+//PxVehicleDrivableSurfaceToTireFrictionPairs* gFrictionPairs = NULL;
+//
+//PxRigidStatic* gGroundPlane = NULL;
+//PxVehicleDrive4W* gVehicle4W = NULL;
+//bool					gIsVehicleInAir = true;
+//PxVec3 vehicleUp = PxVec3(0, 1, 0);
+//PxVec3 vehicleForward = PxVec3(0, 0, 1);
 
 PxF32 gSteerVsForwardSpeedData[2 * 8] =
 {
@@ -415,36 +447,13 @@ DriveMode gDriveModeOrder[] =
 	eDRIVE_MODE_NONE
 };
 
-PxF32					gVehicleModeLifetime = 4.0f;
-PxF32					gVehicleModeTimer = 0.0f;
-PxU32					gVehicleOrderProgress = 0;
+
 bool					gVehicleOrderComplete = false;
 bool					gMimicKeyInputs = false;
+PxTransform startTransform;
 
 
-//创建新的目标触发器
-void createTriggerBox()
-{
-	currentTriggerIndex += 1;
-	if (currentTriggerIndex >= triggerBoxNum)
-	{
-		currentTriggerIndex = 0;
-	}
-	PxVec3 pos = triggerPos[currentTriggerIndex];
-	if (gTreasureActor != NULL)
-	{
-		gScene->removeActor(*gTreasureActor);
-	}
 
-	gTreasureActor = PxCreateDynamic(*gPhysics, PxTransform(pos),
-		PxBoxGeometry(PxVec3(1, 1, 1)), *gMaterial, 1.0f);
-	gTreasureActor->setActorFlag(PxActorFlag::eDISABLE_GRAVITY, true);
-	PxShape* treasureShape;
-	gTreasureActor->getShapes(&treasureShape, 1);
-	treasureShape->setFlag(PxShapeFlag::eSIMULATION_SHAPE, false);
-	treasureShape->setFlag(PxShapeFlag::eTRIGGER_SHAPE, true);
-	gScene->addActor(*gTreasureActor);
-}
 
 
 void setupFiltering(PxShape* shape, PxU32 filterGroup, PxU32 filterMask)
@@ -489,38 +498,51 @@ PxFilterFlags contactReportFilterShader(PxFilterObjectAttributes attributes0, Px
 class MusicEvent
 {
 public:
-	MusicEvent() {
+	
+	MusicEvent(char path []) {
+		ISoundEngine* PlayEngine = createIrrKlangDevice();
+		ISound* snd = PlayEngine->play2D(path, true, true, false, ESM_AUTO_DETECT);
+		this->PlayEngine = PlayEngine;
+		this->snd = snd;
 		this->isPlay = false;
 	}
-	ISoundEngine* PlayEngine = nullptr;
+
+	ISoundEngine* PlayEngine;
+	ISound* snd;
 	bool isPlay;
-	void create()
+
+	/*void create()
 	{
 		ISoundEngine* PlayEngine = createIrrKlangDevice();
 		this->PlayEngine = PlayEngine;
-	}
-	void play(char path [])
+	}*/
+
+	void play(bool soundEffect, float volume1)
 	{
-		extern bool soundEffect;
-		extern float volume1;
-		if (soundEffect == false)
-		{
-			volume1 = 0.0f;
-		}
-		//PlayEngine->play2D(path, true);
-		ISound* snd = PlayEngine->play2D(path, true, false, true);
-		if (snd)
+		if (soundEffect == true && isPlay == false){
+			snd->setIsPaused(false);
 			snd->setVolume(volume1);
-		this->isPlay = true;
+			this->isPlay = true;
+		}
 	}
+
 	void stop()
 	{
-		PlayEngine->drop();
+		///PlayEngine->drop();
+		snd->setIsPaused(true);
 		this->isPlay = false;
 	}
+
+	~MusicEvent()
+	{
+		snd->drop();
+		PlayEngine->drop();
+	}
 };
-MusicEvent carEngine;
-MusicEvent bell;
+char carEnginePath[] = "../../assets/audio/carEngine.wav";
+MusicEvent carEngine = MusicEvent(carEnginePath);
+char bellPath[] = "../../assets/audio/bell1.wav";
+MusicEvent bell = MusicEvent(bellPath);
 
 class ContactReportCallback : public PxSimulationEventCallback
 {
@@ -533,10 +555,23 @@ class ContactReportCallback : public PxSimulationEventCallback
 			// ignore pairs when shapes have been deleted
 			if (pairs[i].flags & (PxTriggerPairFlag::eREMOVED_SHAPE_TRIGGER | PxTriggerPairFlag::eREMOVED_SHAPE_OTHER))
 				continue;
+			
+			
 
-			if ((pairs[i].otherActor == gVehicle4W->getRigidDynamicActor()) && (pairs[i].triggerActor == gTreasureActor))
+			if ((pairs[i].otherActor == gVehicle4W->getRigidDynamicActor() && (Mission*)pairs[i].triggerActor->userData!=NULL))
 			{
-				isTouchTriggerBox = true;
+				Mission* triggerMission = (Mission*)pairs[i].triggerActor->userData;
+				cout << triggerMission->MissionDescription<<endl;
+				if (pairs[i].triggerActor == triggerMission->StartTrigger)
+				{
+					triggerMission->StartMission();
+					continue;
+				}
+			    if (pairs[i].triggerActor == triggerMission->EndTrigger)
+				{
+					triggerMission->FinishMission();
+					continue;
+				}
 			}
 		}
 	}
@@ -966,12 +1001,8 @@ VehicleDesc initVehicleDesc()
 
 void startAccelerateForwardsMode()
 {
-	//create engine and then start engine
-	if (carEngine.isPlay == false) {
-		carEngine.create();
-		char path[] = "../../assets/audio/carEngine.wav";
-		carEngine.play(path);
-	}
+	//play music
+	carEngine.play(soundEffect, volume1);
 
 
 	if (gVehicle4W->mDriveDynData.getCurrentGear() == PxVehicleGearsData::eREVERSE)
@@ -1089,27 +1120,31 @@ void releaseAllControls()
 		gVehicleInputData.setAnalogHandbrake(0.0f);
 	}
 }
+
+void resetVehicle()
+{
+	gVehicle4W->setToRestState();
+	releaseAllControls();
+	gVehicle4W->getRigidDynamicActor()->setGlobalPose(startTransform);
+}
+
 void stopEngine()
 {
-	if (carEngine.isPlay == true) {
-		carEngine.stop();
-	}
+	carEngine.stop();
 };
 void startBell()
 {
-	if (bell.isPlay == false) {
-		bell.create();
-		char path[] = "../../assets/audio/bell1.wav";
-		bell.play(path);
-	}
+	bell.play(soundEffect, volume1);
 };
 void stopBell()
 {
-	if (bell.isPlay == true) {
-		bell.stop();
-	}
+	bell.stop();
 };
 
+void switchSpotlightStatus()
+{
+	vehicleUseSpotLight ^= true;
+}
 
 extern Model gBodyModel, gWheelModel_fl, gWheelModel_fr, gWheelModel_bl, gWheelModel_br;
 PxRigidStatic* ballBody;
@@ -1121,7 +1156,6 @@ void MyCode()
 	theCreator.Init(gPhysics, gScene);
 
 	//CreateCoordinateAxis(PxTransform(0, 0, 0), 100, 200, 300);
-	createTriggerBox();
 	//CreateChain(PxTransform(PxVec3(0.0f, 20.0f, -10.0f)), 5, PxCapsuleGeometry(1.0f, 1.0f), 4.0f, createBreakableFixed);
 	//CreateChain(PxTransform(PxVec3(0.0f, 25.0f, -20.0f)), 5, PxBoxGeometry(2.0f, 0.5f, 0.5f), 4.0f, createDampedD6);
 
@@ -1129,8 +1163,8 @@ void MyCode()
 	PxRigidDynamic* playerActor = m_player->getActor();
 	PxShape* playerShape;
 	playerActor->getShapes(&playerShape, 1);
-	playerShape->setFlag(PxShapeFlag::eSIMULATION_SHAPE, false);
-	playerShape->setFlag(PxShapeFlag::eTRIGGER_SHAPE, true);
+
+
 	gScene->addActor(*playerActor);
 
 	//角色Input函数注册
@@ -1149,12 +1183,14 @@ void MyCode()
 	vehicleMap.DKeyEvent = startTurnHardLeftMode;
 	vehicleMap.EKeyEvent = startBell;
 	vehicleMap.FKeyEvent = GetOutVehicle;
+	vehicleMap.RKeyEvent = resetVehicle;
+	vehicleMap.VKeyEvent = switchSpotlightStatus;
 	vehicleMap.ReleaseWKeyEvent = stopEngine;
 	vehicleMap.ReleaseEKeyEvent = stopBell;
 
 	inputSystem.SetCharacterMap(characterMap);
 	CameraFollowTarget = &characterPos;
-
+ 
 	//创建物体
 	//theCreator.CreateBanister(PxVec3(-50, 0.0f, -50), PxVec3(1, 1, 1), gMaterial, 3, 5, 1, 100000, 50000);
 	//theCreator.CreateBanisters(PxVec3(60, 0.0f, 20), PxVec3(1,0,1),gMaterial,1, 20, 0.5f, 1.0f, 10, 10000, 1000);
@@ -1173,7 +1209,13 @@ void MyCode()
 	carObject.SetRigidbody(gVehicle4W->getRigidDynamicActor());
 	carObject.AddModel(gBodyModel, gWheelModel_fl, gWheelModel_fr, gWheelModel_bl, gWheelModel_br);
 
-	/////////////////////////////Test///////////////////////
+
+	missionManager.AddMission(triggerPos[0], triggerPos[1], MissionType::FIND, std::string("mission1"));
+	missionManager.AddMission(triggerPos[2], triggerPos[3], MissionType::FIND, std::string("mission2"));
+	missionManager.AddMission(triggerPos[4], triggerPos[5], MissionType::FIND, std::string("mission3"));
+	missionManager.AddMission(triggerPos[6], triggerPos[7] ,MissionType::FIND, std::string("mission4"));
+
+
 
 }
 
@@ -1255,7 +1297,7 @@ void initPhysics(bool interactive)
 	//Create a vehicle that will drive on the plane.
 	VehicleDesc vehicleDesc = initVehicleDesc();
 	gVehicle4W = createVehicle4W(vehicleDesc, gPhysics, gCooking);
-	PxTransform startTransform(PxVec3(30, (vehicleDesc.chassisDims.y * 0.5f + vehicleDesc.wheelRadius + 1.0f), 30), PxQuat(PxIdentity));
+	startTransform= PxTransform(PxVec3(30, (vehicleDesc.chassisDims.y * 0.5f + vehicleDesc.wheelRadius + 1.0f), 30), PxQuat(PxIdentity));
 	gVehicle4W->getRigidDynamicActor()->setGlobalPose(startTransform);
 	gScene->addActor(*gVehicle4W->getRigidDynamicActor());
 
@@ -1265,8 +1307,7 @@ void initPhysics(bool interactive)
 	gVehicle4W->mDriveDynData.forceGearChange(PxVehicleGearsData::eFIRST);
 	gVehicle4W->mDriveDynData.setUseAutoGears(true);
 
-	gVehicleModeTimer = 0.0f;
-	gVehicleOrderProgress = 0;
+
 	startBrakeMode();
 
 
@@ -1287,17 +1328,12 @@ void stepPhysics(bool interactive)
 	PX_UNUSED(interactive);
 	//时间
 
-
-	GlobalKeyEvent();
+	//GlobalKeyEvent();
 	inputSystem.InputAction();
 
-	if (isTouchTriggerBox)
-	{
-		isTouchTriggerBox = false;
-		createTriggerBox();
-	}
 
-	const PxF32 timestep = 1.0f / 60.0f;
+
+	const PxF32 timestep = 1.0f / 120.0f;
 	if (gMimicKeyInputs)
 	{
 		PxVehicleDrive4WSmoothDigitalRawInputsAndSetAnalogInputs(gKeySmoothingData, gSteerVsForwardSpeedTable, gVehicleInputData, timestep, gIsVehicleInAir, *gVehicle4W);
@@ -1418,6 +1454,11 @@ void stepPhysics(bool interactive)
 		gScene->fetchResults(true);
 	}
 
+	/////////////////////////////任务系统更新////////////////////////////////////
+
+	missionManager.UpdateAllMission(deltaTime);
+
+    /////////////////////////////任务系统更新////////////////////////////////////
 }
 
 //清空物理（在render中调用）

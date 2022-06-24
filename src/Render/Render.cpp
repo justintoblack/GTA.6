@@ -26,6 +26,14 @@
 // Copyright (c) 2008-2018 NVIDIA Corporation. All rights reserved.
 // Copyright (c) 2004-2008 AGEIA Technologies, Inc. All rights reserved.
 // Copyright (c) 2001-2004 NovodeX AG. All rights reserved.  
+
+
+#define GL_TEXTURE_COMPARE_MODE      GL_TEXTURE_COMPARE_MODE_ARB
+#define GL_TEXTURE_COMPARE_FUNC      GL_TEXTURE_COMPARE_FUNC_ARB
+#define GL_DEPTH_TEXTURE_MODE        GL_DEPTH_TEXTURE_MODE_ARB
+#define GL_COMPARE_R_TO_TEXTURE      GL_COMPARE_R_TO_TEXTURE_ARB
+
+
 #define _CRT_SECURE_NO_WARNINGS
 #include "../GameDemo/TheCreator.h"
 #include "../GameDemo/JsonData.h"
@@ -33,20 +41,24 @@
 #include <iostream>
 #include <glm/glm.hpp>
 #include "Camera.h"
+#include"../DemoTest/MissionManager.h"
 
 using namespace physx;
 
 
 extern	TheCreator theCreator;
 extern Snippets::Camera* sCamera;
-
+extern MissionManager missionManager;
 //==================================================================ImGUI state
 bool main_window = false;  //之所以不设置为静态全局变量，是因为在DemoTestRender.cpp中会使用到这个变量
 bool show_another_window = false;
+bool show_calendar_window = false;
 bool inspector_window = false;
 bool isSimulation = true;
 static bool show_demo_window = false;
 extern bool isWireframe;
+bool show_countdown_window = true;
+
 
 //ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 physx::PxVec3 clear_color = physx::PxVec3(0.45f, 0.55f, 0.60f);
@@ -54,8 +66,10 @@ bool backgroundMusic = false;
 bool soundEffect = false;
 float volume0;
 float volume1;
+float timeSpeed = 1.0f;
 float gameObjectPosition[3] = { 0.10f, 0.20f, 0.30f };
-bool editState;
+bool scenario = true;
+bool scenarioChange = true;
 extern glm::vec3 gLightDir;
 
 //==================================================================ImGUI state
@@ -273,15 +287,14 @@ void renderGeometry(const PxGeometryHolder& h)
 	case PxGeometryType::eGEOMETRY_COUNT:	
 	case PxGeometryType::ePLANE:/*这里设置了平面，给了几个点让glut画了个正方形，颜色设置为120的绿色（满值是255）*/
 		//glBegin(GL_QUADS);
-		//glColor4ub(170, 255, 0, 200); glVertex3f(-1.0f, -300.0f, -300.0f);/*这个坐标有点奇怪 后面应该是变换过，不用太在意，反正就当第一个是y轴就可以了*/
-		//glColor4ub(170, 255, 0, 200); glVertex3f(-1.0f, -300.0f, 300.0f);
-		//glColor4ub(170, 255, 0, 200); glVertex3f(-1.0f, 300.0f, 300.0f);
-		//glColor4ub(170, 255, 0, 200); glVertex3f(-1.0f, 300.0f, -300.0f);
+		//glColor4ub(0, 0, 10, 200); glVertex3f(10.0f, -30.0f, -30.0f);/*这个坐标有点奇怪 后面应该是变换过，不用太在意，反正就当第一个是y轴就可以了*/
+		//glColor4ub(0, 0, 10, 200); glVertex3f(10.0f, -30.0f, 30.0f);
+		//glColor4ub(0, 0, 10, 200); glVertex3f(10.0f, 30.0f, 30.0f);
+		//glColor4ub(0, 0, 10, 200); glVertex3f(10.0f, 30.0f, -30.0f);
 		//glEnd();
 		break;
 	}
 }
-
 //Imgui渲染具体内容
 void my_display_code()
 {
@@ -291,14 +304,50 @@ void my_display_code()
 		static int counter = 0;
 
 		ImGui::Begin("Console",&main_window);                          // Create a window called "Hello, world!" and append into it.
-
 		ImGui::Text("setting:");      
 		ImGui::Checkbox("Demo Window", &show_demo_window);      // Edit bools storing our window open/close state
 		ImGui::Checkbox("Game Object Settings Window", &show_another_window);// Display some text (you can use a format strings too)
+		ImGui::Checkbox("Calendar Window", &show_calendar_window);
 		ImGui::Checkbox("backgroundMusic", &backgroundMusic);
 		ImGui::SliderFloat("backgroundMusicVolume", &volume0, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
 		ImGui::Checkbox("soundEffect", &soundEffect);
 		ImGui::SliderFloat("soundEffectVolume", &volume1, 0.0f, 1.0f);
+
+		enum TimeSpeed {Speed_01, Speed_02, Speed_03, Speed_04, Speed_05, Speed_06, Speed_07, Speed_count};
+		static int elem = Speed_04;
+
+		const char* elems_names[Speed_count] = { "Extremely Slow", "Very Slow", "Slow", "Normal", "Fast", "Very Fast", "Extremely Fast"};
+		const char* elem_name = (elem >= 0 && elem < Speed_count) ? elems_names[elem] : "Stop";
+		ImGui::SliderInt("time speed ", &elem, 0, Speed_count, elem_name);
+
+		switch (elem) {
+		case Speed_01 :
+			timeSpeed = 0.166666;
+			break;
+		case Speed_02:
+			timeSpeed = 0.333333;
+			break;
+		case Speed_03:
+			timeSpeed = 0.5;
+			break;
+		case Speed_04:
+			timeSpeed = 1.0;
+			break;
+		case Speed_05:
+			timeSpeed = 2.0;
+			break;
+		case Speed_06:
+			timeSpeed = 3.0;
+			break;
+		case Speed_07:
+			timeSpeed = 6.0;
+			break;
+		case Speed_count:
+			timeSpeed = 0.0;
+			break;
+		}
+
+
 		ImGui::ColorEdit3("set color", (float*)&clear_color); // Edit 3 floats representing a color
 
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
@@ -337,6 +386,8 @@ void my_display_code()
 
 		ImGui::End();
 	}
+
+
 	if (show_another_window)
 	{
 		ImGui::Begin("Hierarchy", &show_another_window);   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
@@ -360,19 +411,37 @@ void my_display_code()
 			}
 			ImGui::PopID();
 		}
-		//const char* items[] = { "AAAA", "BBBB", "CCCC", "DDDD", "EEEE", "FFFF", "GGGG", "HHHH", "IIIIIII", "JJJJ", "KKKKKKK" };
-		//const char** point = items;
-		//static int item_current = 0;
-
-		//ImGui::Combo("combo", &item_current, point, IM_ARRAYSIZE(items));
-
-		
-		//ImGui::InputFloat3("position(x, y, z)", gameObjectPosition);
-
-		//if (ImGui::Button("Close the window"))
-		//	show_another_window = false;
 		ImGui::End();
 	}
+
+	static bool no_titlebar = false;
+	static bool no_scrollbar = false;
+	static bool no_menu = false;
+	static bool no_move = false;
+	static bool no_resize = false;
+	static bool no_collapse = false;
+	static bool no_close = false;
+	static bool no_nav = false;
+	static bool no_background = false;
+	static bool no_bring_to_front = false;
+	static bool unsaved_document = false;
+
+	ImGuiWindowFlags window_flags_1 = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoBackground;
+
+	if (show_calendar_window)
+	{
+		ImGui::Begin("Calendar", &show_calendar_window, window_flags_1);
+
+		static int clicked = 0;
+		if (ImGui::Button("Accept the Mission"))
+			clicked++;
+		ImGui::SameLine();
+		if (ImGui::Button("Abandon the Mission"))
+			clicked++;
+		ImGui::End();
+	}
+
+
 	if (inspector_window)
 	{
 		ImGui::Begin("Inspector", &inspector_window);
@@ -484,6 +553,37 @@ void my_display_code()
 	}
 	if (show_demo_window)
 		ImGui::ShowDemoWindow(&show_demo_window);
+
+	if (show_countdown_window)
+	{
+		ImGui::Begin("Mission",&show_countdown_window);
+		ImGui::SetNextWindowSize(ImVec2(500, 500));
+		ImGuiWindowFlags window_flags = 0;
+		window_flags |= ImGuiWindowFlags_NoCollapse;
+		window_flags |= ImGuiWindowFlags_NoResize;
+		for (size_t i = 0; i < missionManager.MissionList.size() ; i++)
+		{
+			const char* str = missionManager.MissionList[i]->MissionDescription.c_str();
+			const char* state = missionManager.MissionList[i]->IsActive ? "Active" : "NonActive";
+			state= missionManager.MissionList[i]->State ? "Success" : state;
+			if (state == "NonActive") continue;
+			ImGui::Text(str);
+			ImGui::Text( state);
+			if (state == "Active")
+			{
+				ImGui::Text("timer:%.2f", missionManager.MissionList[i]->Timer);
+				if (missionManager.MissionList[i]->Type == MissionType::FIND)
+				{
+					ImGui::SameLine();
+					ImGui::Text("     time limit:%.2f", missionManager.MissionList[i]->TimeLimit);
+				}
+			}
+			ImGui::Text("-----------------------");
+
+		}
+		
+		ImGui::End();
+	}
 }
 namespace Snippets
 {
@@ -591,6 +691,52 @@ void setupDefaultRenderState()
 	glEnable(GL_LIGHT0);
 }
 
+//void initShadow()
+//{
+//	GLfloat  white[] = { 1.0, 1.0, 1.0, 1.0 };
+//	GLfloat     lightPos[] = { 25.0, 25.0, 25.0, 1.0 };
+//
+//	//生成深度纹理(阴影图，只关心深度，对图像颜色信息并不关心，所以最后数据参数可以是NULL)
+//	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT,
+//		256, 256, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, NULL);//GL_DEPTH_COMPONENT:深度纹理格式，用于将深度值记录到这张图中
+//
+//	glLightfv(GL_LIGHT0, GL_POSITION, lightPos);
+//	glLightfv(GL_LIGHT0, GL_SPECULAR, white);
+//	glLightfv(GL_LIGHT0, GL_DIFFUSE, white);
+//
+//	//设置阴影图相关过滤方式
+//	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+//	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+//	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+//	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+//	/*深度纹理特有*/
+//	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);//比较规则
+//	glTexParameteri(GL_TEXTURE_2D, GL_DEPTH_TEXTURE_MODE, GL_LUMINANCE);//阴影图亮度
+//	/*分为普通对比模式（GL_NONE）和引用到贴图对比模式（GL_COMPARE_REF_TO_TEXTURE）,后者使用的深度纹理贴图是线性过滤的，而前者是直接填充。*/
+//	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
+//
+//	//自动生成纹理坐标
+//	glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_OBJECT_LINEAR);
+//	glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_OBJECT_LINEAR);
+//	glTexGeni(GL_R, GL_TEXTURE_GEN_MODE, GL_OBJECT_LINEAR);
+//	glTexGeni(GL_Q, GL_TEXTURE_GEN_MODE, GL_OBJECT_LINEAR);
+//
+//	glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+//
+//	glCullFace(GL_BACK);//剔除背面
+//
+//	glEnable(GL_DEPTH_TEST);
+//	glEnable(GL_LIGHT0);
+//	glEnable(GL_LIGHTING);
+//	glEnable(GL_TEXTURE_2D);
+//	glEnable(GL_TEXTURE_GEN_S);
+//	glEnable(GL_TEXTURE_GEN_T);
+//	glEnable(GL_TEXTURE_GEN_R);
+//	glEnable(GL_TEXTURE_GEN_Q);
+//	glEnable(GL_COLOR_MATERIAL);//激活颜色材料模式
+//	glEnable(GL_CULL_FACE);//激活表面剔除
+//}
+
 
 void startRender(const PxVec3& cameraEye, const PxVec3& cameraDir, PxReal clipNear, PxReal clipFar)
 {
@@ -643,7 +789,7 @@ void renderActors(PxRigidActor** actors, const PxU32 numActors, bool shadows, bo
 			if(sleeping)/*是否处于sleeping状态*/
 			{
 				PxVec3 darkColor = color * 0.5f;/*sleeping的情况下颜色*0.8*/
-				glColor4f(darkColor.x, darkColor.y, darkColor.z, 1.0f);
+				glColor4f(darkColor.x, darkColor.y, darkColor.z, 0.0f);
 			}
 			else
 				glColor4f(color.x, color.y, color.z, 1.0f);
@@ -652,6 +798,7 @@ void renderActors(PxRigidActor** actors, const PxU32 numActors, bool shadows, bo
 			{
 				renderGeometry(h);
 			}
+			//renderGeometry(h);
 			glPopMatrix();
 
 			glPolygonMode( GL_FRONT_AND_BACK, GL_FILL);
@@ -666,7 +813,7 @@ void renderActors(PxRigidActor** actors, const PxU32 numActors, bool shadows, bo
 				glMultMatrixf(shadowMat);
 				glMultMatrixf(reinterpret_cast<const float*>(&shapePose));
 				glDisable(GL_LIGHTING);
-				glColor4f(0.1f, 0.2f, 0.3f, 1.0f);
+				glColor4f(0.1f, 240.2f, 0.3f, 1.0f);
 				renderGeometry(h);
 				glEnable(GL_LIGHTING);
 				glPopMatrix();

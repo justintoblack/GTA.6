@@ -200,6 +200,23 @@ void VehicleActionMap::InputAction()
 	{
 		ReleaseEKeyEvent();
 	}
+	if (GetAsyncKeyState('R'))
+	{
+		RKeyEvent();
+	}
+
+	if (GetAsyncKeyState('V'))
+	{
+		if (!isVKeyDown)
+		{
+			VKeyEvent();
+			isVKeyDown = true;
+		}
+	}
+	else
+	{
+		isVKeyDown = false;
+	}
 
 	if (GetAsyncKeyState('F'))
 	{

@@ -36,18 +36,24 @@ namespace irrklang
 		/** \param sourceFileName Filename of sound, like "sounds/test.wav" or "foobar.ogg".
 		 \param playLooped plays the sound in loop mode. If set to 'false', the sound is played once, then stopped and deleted from the internal playing list. Calls to
 		 ISound have no effect after such a non looped sound has been stopped automaticly.
+
 		 \param startPaused starts the sound paused. This implies that track=true. Use this if you want to modify some of the playing
 		 parameters before the sound actually plays. Usually you would set this parameter to true, then use the ISound interface to
 		 modify some of the sound parameters and then call ISound::setPaused(false);
+
 		 Note: You need to call ISound::drop() when setting this parameter to true and you don't need the ISound
 		 object anymore. See 'return' for details.
+
 		 \param track Makes it possible to track the sound. Causes the method to return an ISound interface. See 'return' for details.
+
 		 \param streamMode Specifies if the file should be streamed or loaded completely into memory for playing.
 		 ESM_AUTO_DETECT sets this to autodetection. Note: if the sound has been loaded or played before into the
 		 engine, this parameter has no effect.
+
 		 \param enableSoundEffects Makes it possible to use sound effects such as chorus, distorsions, echo, 
 		 reverb and similar for this sound. Sound effects can then be controlled via ISound::getSoundEffectControl().
 		 Only enable if necessary. 
+
 		 \return Only returns a pointer to an ISound if the parameters 'track', 'startPaused' or 
 		 'enableSoundEffects' have been	 set to true. Note: if this method returns an ISound as result, 
 		 you HAVE to call ISound::drop() after you don't need the ISound interface anymore. Otherwise this 

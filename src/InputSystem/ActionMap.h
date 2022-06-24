@@ -43,11 +43,14 @@ public:
 	physx::PxVec2 GetArrowKeyValue();
 };
 
+
+
 class VehicleActionMap : public ActionMap
 {
 private:
 	physx::PxVehicleDrive4W* m_controller;
 	bool isFKeyDown = true;
+	bool isVKeyDown;
 public:
 	void (*release)();
 	void (*WKeyEvent)();
@@ -56,6 +59,8 @@ public:
 	void (*DKeyEvent)();
 	void (*EKeyEvent)();
 	void (*FKeyEvent)();
+	void (*RKeyEvent)();
+	void (*VKeyEvent)();
 	void (*ReleaseWKeyEvent)();
 	void (*ReleaseEKeyEvent)();
 

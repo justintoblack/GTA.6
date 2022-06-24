@@ -4,88 +4,69 @@
     <ClCompile Include="..\..\src\Common\ClassicMain.cpp" />
     <ClCompile Include="..\..\src\DemoTest\DemoTest.cpp" />
     <ClCompile Include="..\..\src\DemoTest\DemoTestRender.cpp" />
+    <ClCompile Include="..\..\src\GameDemo\TheCreator.cpp" />
     <ClCompile Include="..\..\src\InputSystem\ActionMap.cpp" />
     <ClCompile Include="..\..\src\InputSystem\InputSystem.cpp" />
     <ClCompile Include="..\..\src\Render\Camera.cpp" />
     <ClCompile Include="..\..\src\Render\Render.cpp" />
-    <ClCompile Include="Dependencies\imgui\imgui.cpp">
-      <Filter>imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="Dependencies\imgui\imgui_demo.cpp">
-      <Filter>imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="Dependencies\imgui\imgui_draw.cpp">
-      <Filter>imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="Dependencies\imgui\imgui_tables.cpp">
-      <Filter>imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="Dependencies\imgui\imgui_widgets.cpp">
-      <Filter>imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\SnippetVehicleCommon\SnippetVehicleTireFriction.cpp" />
-    <ClCompile Include="..\..\src\SnippetVehicleCommon\SnippetVehicleTankCreate.cpp" />
-    <ClCompile Include="..\..\src\SnippetVehicleCommon\SnippetVehicleSceneQuery.cpp" />
-    <ClCompile Include="..\..\src\SnippetVehicleCommon\SnippetVehicleNoDriveCreate.cpp" />
-    <ClCompile Include="..\..\src\SnippetVehicleCommon\SnippetVehicleFilterShader.cpp" />
-    <ClCompile Include="..\..\src\SnippetVehicleCommon\SnippetVehicleCreate.cpp" />
-    <ClCompile Include="..\..\src\SnippetVehicleCommon\SnippetVehicle4WCreate.cpp" />
     <ClCompile Include="..\..\src\Render\StbImageImpl.cpp" />
-    <ClCompile Include="..\..\src\GameDemo\TheCreator.cpp" />
+    <ClCompile Include="..\..\src\SnippetVehicleCommon\SnippetVehicle4WCreate.cpp" />
+    <ClCompile Include="..\..\src\SnippetVehicleCommon\SnippetVehicleCreate.cpp" />
+    <ClCompile Include="..\..\src\SnippetVehicleCommon\SnippetVehicleFilterShader.cpp" />
+    <ClCompile Include="..\..\src\SnippetVehicleCommon\SnippetVehicleNoDriveCreate.cpp" />
+    <ClCompile Include="..\..\src\SnippetVehicleCommon\SnippetVehicleSceneQuery.cpp" />
+    <ClCompile Include="..\..\src\SnippetVehicleCommon\SnippetVehicleTankCreate.cpp" />
+    <ClCompile Include="..\..\src\SnippetVehicleCommon\SnippetVehicleTireFriction.cpp" />
+    <ClCompile Include="Dependencies\imgui\imgui.cpp" />
+    <ClCompile Include="Dependencies\imgui\imgui_demo.cpp" />
+    <ClCompile Include="Dependencies\imgui\imgui_draw.cpp" />
     <ClCompile Include="Dependencies\imgui\imgui_impl_glut.cpp" />
     <ClCompile Include="Dependencies\imgui\imgui_impl_opengl2.cpp" />
+    <ClCompile Include="Dependencies\imgui\imgui_tables.cpp" />
+    <ClCompile Include="Dependencies\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="..\..\src\DemoTest\MissionManager.cpp" />
+    <ClCompile Include="..\..\src\DemoTest\Mission.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\src\DemoTest\CarGameObject.h" />
+    <ClInclude Include="..\..\src\DemoTest\DemoTestRender.h" />
+    <ClInclude Include="..\..\src\DemoTest\GameObject.h" />
+    <ClInclude Include="..\..\src\DemoTest\Mission.h" />
+    <ClInclude Include="..\..\src\DemoTest\MisssionManager.h" />
+    <ClInclude Include="..\..\src\GameDemo\JsonData.h" />
+    <ClInclude Include="..\..\src\GameDemo\TheCreator.h" />
     <ClInclude Include="..\..\src\InputSystem\ActionMap.h" />
     <ClInclude Include="..\..\src\InputSystem\InputSystem.h" />
-    <ClInclude Include="..\..\src\Render\Camera.h" />
-    <ClInclude Include="..\..\src\Render\Render.h" />
-    <ClInclude Include="Dependencies\imgui\imconfig.h">
-      <Filter>imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="Dependencies\imgui\imgui.h">
-      <Filter>imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="Dependencies\imgui\imgui_internal.h">
-      <Filter>imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="Dependencies\imgui\imstb_rectpack.h">
-      <Filter>imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="Dependencies\imgui\imstb_textedit.h">
-      <Filter>imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="Dependencies\imgui\imstb_truetype.h">
-      <Filter>imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\SnippetVehicleCommon\SnippetVehicleWheelQueryResult.h" />
-    <ClInclude Include="..\..\src\SnippetVehicleCommon\SnippetVehicleTireFriction.h" />
-    <ClInclude Include="..\..\src\SnippetVehicleCommon\SnippetVehicleSceneQuery.h" />
-    <ClInclude Include="..\..\src\SnippetVehicleCommon\SnippetVehicleFilterShader.h" />
-    <ClInclude Include="..\..\src\SnippetVehicleCommon\SnippetVehicleCreate.h" />
-    <ClInclude Include="..\..\src\SnippetVehicleCommon\SnippetVehicleConcurrency.h" />
-    <ClInclude Include="..\..\src\Render\Shader.h" />
-    <ClInclude Include="..\..\src\Render\stb_image.h" />
-    <ClInclude Include="..\..\src\GameDemo\TheCreator.h" />
     <ClInclude Include="..\..\src\ModelLoading\mesh.h" />
     <ClInclude Include="..\..\src\ModelLoading\model.h" />
-    <ClInclude Include="..\..\src\DemoTest\GameObject.h" />
-    <ClInclude Include="..\..\src\DemoTest\CarGameObject.h" />
+    <ClInclude Include="..\..\src\Render\Camera.h" />
+    <ClInclude Include="..\..\src\Render\Render.h" />
+    <ClInclude Include="..\..\src\Render\Shader.h" />
+    <ClInclude Include="..\..\src\Render\stb_image.h" />
+    <ClInclude Include="..\..\src\SnippetVehicleCommon\SnippetVehicleConcurrency.h" />
+    <ClInclude Include="..\..\src\SnippetVehicleCommon\SnippetVehicleCreate.h" />
+    <ClInclude Include="..\..\src\SnippetVehicleCommon\SnippetVehicleFilterShader.h" />
+    <ClInclude Include="..\..\src\SnippetVehicleCommon\SnippetVehicleSceneQuery.h" />
+    <ClInclude Include="..\..\src\SnippetVehicleCommon\SnippetVehicleTireFriction.h" />
+    <ClInclude Include="..\..\src\SnippetVehicleCommon\SnippetVehicleWheelQueryResult.h" />
+    <ClInclude Include="Dependencies\imgui\imconfig.h" />
+    <ClInclude Include="Dependencies\imgui\imgui.h" />
     <ClInclude Include="Dependencies\imgui\imgui_impl_glut.h" />
     <ClInclude Include="Dependencies\imgui\imgui_impl_opengl2.h" />
-    <ClInclude Include="..\..\src\GameDemo\JsonData.h" />
+    <ClInclude Include="Dependencies\imgui\imgui_internal.h" />
+    <ClInclude Include="Dependencies\imgui\imstb_rectpack.h" />
+    <ClInclude Include="Dependencies\imgui\imstb_textedit.h" />
+    <ClInclude Include="Dependencies\imgui\imstb_truetype.h" />
+    <ClInclude Include="..\..\src\DemoTest\MissionManager.h" />
   </ItemGroup>
   <ItemGroup>
-    <Filter Include="imgui">
-      <UniqueIdentifier>{6d9b5210-00f5-4be0-9486-f44381f2c940}</UniqueIdentifier>
-    </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\src\Render\SkyBox.fs" />
-    <None Include="..\..\src\Render\SkyBox.vs" />
+    <None Include="..\..\src\Light\light.fs" />
+    <None Include="..\..\src\Light\light.vs" />
     <None Include="..\..\src\ModelLoading\model_loading.fs" />
     <None Include="..\..\src\ModelLoading\model_loading.vs" />
-    <None Include="..\..\src\Light\light.vs" />
-    <None Include="..\..\src\Light\light.fs" />
+    <None Include="..\..\src\ModelLoading\shadow_loading.fs" />
+    <None Include="..\..\src\ModelLoading\shadow_loading.vs" />
+    <None Include="..\..\src\Render\SkyBox.fs" />
+    <None Include="..\..\src\Render\SkyBox.vs" />
   </ItemGroup>
 </Project>

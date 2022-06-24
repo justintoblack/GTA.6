@@ -40,8 +40,6 @@
 #include "../../compiler/vc16win64/Dependencies/imgui/imgui.h"
 #include "../../compiler/vc16win64/Dependencies/imgui/imgui_impl_glut.h"
 #include "../../compiler/vc16win64/Dependencies/imgui/imgui_impl_opengl2.h"
-
-
 #if PX_WINDOWS
 #include <windows.h>
 #pragma warning(disable: 4505)
@@ -58,7 +56,7 @@ namespace Snippets
 {
 void setupDefaultWindow(const char* name);
 void setupDefaultRenderState();
-
+//void initShadow();
 void startRender(const physx::PxVec3& cameraEye, const physx::PxVec3& cameraDir, physx::PxReal nearClip = 1.f, physx::PxReal farClip = 10000.f);
 void renderActors(physx::PxRigidActor** actors, const physx::PxU32 numActors, bool shadows = false, bool isWireframe=false, const physx::PxVec3 & color = clear_color);
 void finishRender();
