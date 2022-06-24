@@ -67,7 +67,7 @@
 #include "../SnippetVehicleCommon/SnippetVehicleTireFriction.h"
 #include "../SnippetVehicleCommon/SnippetVehicleCreate.h"
 #include "irrKlang/irrKlang.h"
-#include"MisssionManager.h"
+#include"MissionManager.h"
 //#include"../GameDemo/JsonData.h"
 
 
@@ -1166,7 +1166,10 @@ void MyCode()
 	carObject.AddModel(gBodyModel, gWheelModel_fl, gWheelModel_fr, gWheelModel_bl, gWheelModel_br);
 
 
-	missionManager.AddMission(triggerPos[0], triggerPos[1] ,MissionType::FIND, std::string("mission1"));
+	missionManager.AddMission(triggerPos[0], triggerPos[1], MissionType::FIND, std::string("mission1"));
+	missionManager.AddMission(triggerPos[2], triggerPos[3], MissionType::FIND, std::string("mission2"));
+	missionManager.AddMission(triggerPos[4], triggerPos[5], MissionType::FIND, std::string("mission3"));
+	missionManager.AddMission(triggerPos[6], triggerPos[7] ,MissionType::FIND, std::string("mission4"));
 
 
 
