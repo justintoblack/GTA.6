@@ -56,24 +56,22 @@ public:
 		components.clear();
 	}
 
-	//GameObject& operator=(const GameObject& obj)
-	//{
-	//	const char* newName = obj.Name;
-	//	strcpy(Name, newName);
-	//	transform = obj.transform;
-	//	localTransform = obj.localTransform;
-	//	parent = obj.parent;
-	//	for (int i = 0; i < obj.components.size(); i++)
-	//	{
-	//		Component* newComponent=new Component();
-	//		*newComponent = *obj.components[i];
-	//		components.push_back(newComponent);
-	//		//cout << i<<"OBj:  ";
-	//		//cout << &obj.components[i] << endl;
-	//		//cout << "this" << &*this << endl;
-	//	}
-	//	return *this;
-	//}
+	GameObject& operator=(const GameObject& obj)
+	{
+		const char* newName = obj.Name;
+		strcpy(Name, newName);
+		transform = obj.transform;
+		localTransform = obj.localTransform;
+		parent = obj.parent;
+		for (int i = 0; i < obj.components.size(); i++)
+		{
+			shared_ptr<Component*> p1 = make_shared<Component*>();
+			*p1 = &*obj.components[i];
+			shared_ptr<Component*>p2 = make_shared<Component*>(*p1);
+			this->components.push_back(*p2);
+		}
+		return *this;
+	}
 
 	void SetName(const char name[])
 	{
