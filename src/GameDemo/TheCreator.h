@@ -14,6 +14,8 @@
 
 using namespace physx;
 
+
+
 enum BreakType
 {
 	SomeInPiece,
@@ -35,7 +37,8 @@ public:
 	vector<string> ModelName;	//文件名
 	//const char** models;
 
-	Model  poleModel;
+	Model  Street_Pole;
+	Model	Traffic_light;
 	Model  stationModel;
 	Model  stationModel_01;
 	Model  road;
@@ -66,11 +69,14 @@ public:
 
 	//创建单个电线杆
 	void CreatePole(PxVec3 pos, PxMaterial* gMaterial, float halfXZ, float halfHeight,
-		float density, float force, float torque);
+		float density, float force, float torque,Model& Createmodel);
+
+	//创建streetLight
+	void CreateStreetPole(PxTransform pos);
 
 	//创建一排电线杆
 	void CreatePoles(PxVec3 pos, PxVec3 dir, float separate, PxU32 num, PxMaterial* gMaterial, float halfXZ, float halfHeight,
-		float density, float force, float torque);
+		float density, float force, float torque, Model& Createmodel);
 
 	//创建减速带
 	void createSlowArea(PxVec3 startPosition, PxF32 capsuleRadii, PxF32 interval, PxU32 num, PxMaterial* gMaterial);

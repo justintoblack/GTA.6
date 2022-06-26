@@ -246,6 +246,13 @@ public:
 			SetRigidBodyDynamic();
 		}
 	}
+	RigidBody(GameObject* parent, PxRigidActor* rig)
+	{
+		_parent = parent;
+		_parent->g_rigidBody = rig;
+		_parent->g_rigidBody->userData = _parent;
+		gScene->addActor(*_parent->g_rigidBody);
+	}
 
 	void SetRigidBodyStatic()
 	{
