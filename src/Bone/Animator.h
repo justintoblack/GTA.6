@@ -5,7 +5,7 @@
 #include "Animation.h"
 #include "AssimpGlmUtil.h"
 
-#define reservedVectorSize 100
+#define reservedVectorSize 250
 
 class Animator {
 public:

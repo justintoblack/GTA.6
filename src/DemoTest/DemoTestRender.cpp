@@ -374,6 +374,8 @@ namespace
 			glUniformMatrix4fv(glGetUniformLocation(gModelAnimShader.ID, "view"), 1, GL_FALSE, glm::value_ptr(viewMat));
 			glUniformMatrix4fv(glGetUniformLocation(gModelAnimShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(modelMat));
 			vector<glm::mat4> transform = gAnimator->GetFinalBoneMatrices();
+			cout << "transform.size = ";
+			cout<<transform.size()<<endl;
 			for (int i = 0; i < transform.size(); i++)
 			{
 				string name = "finalBonesMatrices[" + std::to_string(i) + "]";
@@ -454,7 +456,7 @@ void renderLoop()
 	//----------Model Anim-----------------------------
 	gModelAnimShader = Shader("../../src/Bone/ModelAnim.vs",
 		"../../src/Bone/ModelAnim.fs");
-	string modelAnimPath("F:/Learning/mypt2/PhysX-Tutorial-master/PhysX_3.4/SCUT2022_Nayeon/assets/objects/Jogging.fbx");
+	string modelAnimPath("F:/Learning/mypt2/PhysX-Tutorial-master/PhysX_3.4/SCUT2022_Nayeon/assets/objects/StartWalking.fbx");
 	//string modelAnimPath("F:/Learning/mypt2/PhysX-Tutorial-master/PhysX_3.4/SCUT2022_Nayeon/assets/objects/walking/Walking.dae");
 	gModelAnim = new ModelAnimation(modelAnimPath);
 	gAnimation = new Animation(modelAnimPath, gModelAnim);

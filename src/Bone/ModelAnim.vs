@@ -11,7 +11,7 @@ layout (location = 6) in vec4 weights;
 out vec2 TexCoords;
 
 const int MAX_BONE_INFLUENCE = 4;
-const int MAX_BONES = 100;
+const int MAX_BONES = 250;
 const int DEFAULT_BONE_ID = -1;
 uniform mat4 model;
 uniform mat4 view;
