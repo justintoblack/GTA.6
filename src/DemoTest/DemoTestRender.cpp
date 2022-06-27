@@ -57,13 +57,19 @@ using namespace physx;
 
 
 GLuint              gCubeTexture;
+GLuint              gClockTexture;
+GLuint				gClockMainTexture;
 unsigned int		gSkyboxVAO, gSkyboxVBO;
+unsigned int		gClockVAO, gClockVBO, gClockEBO;
+unsigned int		gClockMainVAO, gClockMainVBO, gClockMainEBO;
 Model				gModel;
 Model               gBodyModel, gWheelModel_fl, gWheelModel_fr, gWheelModel_bl, gWheelModel_br;
 Model               gStar, gArrow, gExclamation;
 Shader				gSkyboxShader;
 Shader				gModelShader;
 Shader				gShadowShader;
+Shader				gClockShader;
+Shader				gClockMainShader;
 glm::vec3			gLightPos = glm::vec3(-1200.0f, 600.0f, -1200.0f);
 glm::vec3			gLightDir;
 float				gLightAmbientBasis = 0.3f;//6点、18点左右的亮度
@@ -79,6 +85,36 @@ float				gSpotLightCutOff = 25.0f;
 float				gVehicleShininess = 64.0f;
 float				gOthersShininess = 512.0f;
 extern	bool		vehicleUseSpotLight;
+
+//时钟顶点位置
+float gClockVertices[] = {
+	// positions          // colors           // texture coords
+	 0.26667f,  0.7f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f, // top right
+	 0.26667f, 0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f, // bottom right
+	-0.26667f, 0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f, // bottom left
+	-0.26667f,  0.7f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f  // top left 
+};
+
+//时钟顶点数组
+unsigned int gClockIndices[] = {
+	   0, 1, 3, // first triangle
+	   1, 2, 3  // second triangle
+};
+
+//时钟顶点位置
+float gClockMainVertices[] = {
+	// positions          // colors           // texture coords
+	 0.1125f,  1.0f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f, // top right
+	 0.1125f, 0.6f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f, // bottom right
+	-0.1125f, 0.6f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f, // bottom left
+	-0.1125f,  1.0f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f  // top left 
+};
+
+//时钟顶点数组
+unsigned int gClockMainIndices[] = {
+	   0, 1, 3, // first triangle
+	   1, 2, 3  // second triangle
+};
 
 //天空盒的纹理图片
 const char* gSkyboxFaces[12] = {
@@ -282,6 +318,166 @@ namespace
 		return viewMat;
 	}
 
+	void SetupClock()
+	{
+		//时钟
+		glGenVertexArrays(1, &gClockVAO);
+		glGenBuffers(1, &gClockVBO);
+		glGenBuffers(1, &gClockEBO);
+
+		glBindVertexArray(gClockVAO);
+
+		glBindBuffer(GL_ARRAY_BUFFER, gClockVBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(gClockVertices), gClockVertices, GL_STATIC_DRAW);
+
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, gClockEBO);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(gClockIndices), gClockIndices, GL_STATIC_DRAW);
+
+		// position attribute
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+		glEnableVertexAttribArray(0);
+		// color attribute
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+		glEnableVertexAttribArray(1);
+		// texture coord attribute
+		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+		glEnableVertexAttribArray(2);
+
+		// texture 1
+		// ---------
+		glGenTextures(1, &gClockTexture);
+		glBindTexture(GL_TEXTURE_2D, gClockTexture);
+		// set the texture wrapping parameters
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// set texture wrapping to GL_REPEAT (default wrapping method)
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		//float borderColor[] = { 1.0f, 1.0f, 0.0f, 1.0f };
+		//glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
+		// set texture filtering parameters
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		// load image, create texture and generate mipmaps
+		int width, height, nrChannels;
+		stbi_set_flip_vertically_on_load(true);
+
+		unsigned char* data = stbi_load("../../assets/Textures/clock.png", &width, &height, &nrChannels, STBI_rgb_alpha);
+		if (data)
+		{
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+			glGenerateMipmap(GL_TEXTURE_2D);
+		}
+		else
+		{
+			std::cout << "Failed to load texture" << std::endl;
+		}
+		stbi_image_free(data);
+	}
+
+
+	void RenderClock()
+	{
+		
+		//glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+		// bind Texture
+		glBindTexture(GL_TEXTURE_2D, gClockTexture);
+
+		gClockShader.use(); // don't forget to activate/use the shader before setting uniforms!
+		
+		glBindVertexArray(gClockVAO);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+
+		glBindVertexArray(0);
+		/*漏掉这句后，胶囊体变为两颗小球，胶囊体中间的圆柱体不见了*/
+		glDeleteBuffers(1, &gClockVBO);
+		glUseProgram(0);
+
+	}
+
+	void SetupClockMain()
+	{
+		//时钟
+		glGenVertexArrays(1, &gClockMainVAO);
+		glGenBuffers(1, &gClockMainVBO);
+		glGenBuffers(1, &gClockMainEBO);
+
+		glBindVertexArray(gClockMainVAO);
+
+		glBindBuffer(GL_ARRAY_BUFFER, gClockMainVBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(gClockMainVertices), gClockMainVertices, GL_STATIC_DRAW);
+
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, gClockMainEBO);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(gClockMainIndices), gClockMainIndices, GL_STATIC_DRAW);
+
+		// position attribute
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+		glEnableVertexAttribArray(0);
+		// color attribute
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+		glEnableVertexAttribArray(1);
+		// texture coord attribute
+		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+		glEnableVertexAttribArray(2);
+
+		// texture 1
+		// ---------
+		glGenTextures(1, &gClockMainTexture);
+		glBindTexture(GL_TEXTURE_2D, gClockMainTexture);
+		// set the texture wrapping parameters
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// set texture wrapping to GL_REPEAT (default wrapping method)
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		//float borderColor[] = { 1.0f, 1.0f, 0.0f, 1.0f };
+		//glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
+		// set texture filtering parameters
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		// load image, create texture and generate mipmaps
+		int width, height, nrChannels;
+		stbi_set_flip_vertically_on_load(true);
+
+		unsigned char* data = stbi_load("../../assets/Textures/a.jpg", &width, &height, &nrChannels, STBI_rgb_alpha);
+		if (data)
+		{
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+			glGenerateMipmap(GL_TEXTURE_2D);
+		}
+		else
+		{
+			std::cout << "Failed to load texture" << std::endl;
+		}
+		stbi_image_free(data);
+	}
+
+	void RenderClockMain()
+	{
+
+		//glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+		// bind Texture
+		glBindTexture(GL_TEXTURE_2D, gClockMainTexture);
+
+		// create transformations
+		//glm::mat4 transform = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
+		//transform = glm::translate(transform, glm::vec3(0.5f, -0.6f, 0.0f));
+		//transform = glm::rotate(transform, currentTime, glm::vec3(0.0f, 0.0f, 1.0f));
+		
+
+		gClockMainShader.use(); // don't forget to activate/use the shader before setting uniforms!
+
+		//unsigned int transformLoc = glGetUniformLocation(gClockMainShader.ID, "transform");
+		//glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));
+
+		//gClockMainShader.SetMatrix4fv("transform", transform);
+
+		glBindVertexArray(gClockMainVAO);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+
+		glBindVertexArray(0);
+		/*漏掉这句后，胶囊体变为两颗小球，胶囊体中间的圆柱体不见了*/
+		glDeleteBuffers(1, &gClockVBO);
+		glUseProgram(0);
+
+	}
+
 	void SetupSkybox()
 	{
 
@@ -413,12 +609,14 @@ namespace
 
 		//shadow
 		//====================================
-		shadowShader.use();
-		shadowShader.SetMatrix4fv("projection", projectionMat);
-		shadowShader.SetMatrix4fv("view", viewMat);
-		shadowShader.SetMatrix4fv("model", modelMat);
-		shadowShader.SetVector3f("light", gLightPos);
-		model.Draw(shadowShader);
+		if (scenario == true) {
+			shadowShader.use();
+			shadowShader.SetMatrix4fv("projection", projectionMat);
+			shadowShader.SetMatrix4fv("view", viewMat);
+			shadowShader.SetMatrix4fv("model", modelMat);
+			shadowShader.SetVector3f("light", gLightPos);
+			model.Draw(shadowShader);
+		}
 		//=====================================
 
 		glUseProgram(0);
@@ -559,12 +757,14 @@ namespace
 
 		//shadow(just for the body)
 		//================================
-		gShadowShader.use();
-		gShadowShader.SetMatrix4fv("projection", projectionMat);
-		gShadowShader.SetMatrix4fv("view", viewMat);
-		gShadowShader.SetMatrix4fv("model", modelMat0);
-		gShadowShader.SetVector3f("light", gLightPos);
-		gameObject.g_body->Draw(gShadowShader);
+		if (scenario == true) {
+			gShadowShader.use();
+			gShadowShader.SetMatrix4fv("projection", projectionMat);
+			gShadowShader.SetMatrix4fv("view", viewMat);
+			gShadowShader.SetMatrix4fv("model", modelMat0);
+			gShadowShader.SetVector3f("light", gLightPos);
+			gameObject.g_body->Draw(gShadowShader);
+		}
 		//=================================
 		glUseProgram(0);
 	}
@@ -611,6 +811,75 @@ namespace
 	bool engineState = false;
 	ISoundEngine* backgroundMusicEngine = nullptr;
 	ISound* snd = nullptr;
+
+	ISoundEngine* BackgroundMusicEngine = createIrrKlangDevice();
+	char pathDay[] = "../../assets/audio/owu12-u5eaj.wav";
+	char pathNight[] = "../../assets/audio/Lawrence.wav";
+	ISound* sndDay = BackgroundMusicEngine->play2D(pathDay, true, true, false, ESM_AUTO_DETECT);
+	ISound* sndNight = BackgroundMusicEngine->play2D(pathNight, true, true, false, ESM_AUTO_DETECT);
+
+	void playBackgroundMusic(float timeSpeed, int calendarHour, int calendarMinute, bool backgroundMusic, float volume0 )
+	{
+		
+
+		if (backgroundMusic == true)
+		{
+			if (engineState == false) {
+				sndDay->setIsPaused(false);
+				sndNight->setIsPaused(false);
+				engineState = true;
+			}
+			if (calendarHour < 2) {
+				float rate = (float)(calendarHour * 60 + calendarMinute) / 120;
+				sndDay->setVolume(volume0 * rate);
+				sndNight->setVolume(0.0);
+				cout << "rate: " << rate << endl;
+				//cout << "calendarHour: " << calendarHour << endl;
+				//cout << "calendarMinute: " << calendarMinute << endl;
+			}
+			if (calendarHour > 1 && calendarHour < 10) {
+				sndDay->setVolume(volume0);
+				sndNight->setVolume(0.0);
+			}
+			if (calendarHour > 9 && calendarHour < 12) {
+				float rate = (float)(120 - (calendarHour - 10) * 60 - calendarMinute) / 120;
+				sndDay->setVolume(volume0 * rate);
+				sndNight->setVolume(0.0);
+				cout << "rate: " << rate << endl;
+				//cout << "calendarHour: " << calendarHour << endl;
+				//cout << "calendarMinute: " << calendarMinute << endl;
+			}
+			if (calendarHour > 11 && calendarHour < 14) {
+				float rate = (float)((calendarHour - 12) * 60 + calendarMinute) / 120;
+				sndNight->setVolume(volume0 * rate);
+				sndDay->setVolume(0.0);
+				cout << "rate: " << rate << endl;
+				//cout << "calendarHour: " << calendarHour << endl;
+				//cout << "calendarMinute: " << calendarMinute << endl;
+			}
+			if (calendarHour > 13 && calendarHour < 21) {
+				sndNight->setVolume(volume0);
+				sndDay->setVolume(0.0);
+			}
+			if (calendarHour > 21 && calendarHour < 24) {
+				float rate = (float)(120 - (calendarHour - 22) * 60 - calendarMinute) / 120;
+				sndNight->setVolume(volume0 * rate);
+				sndDay->setVolume(0.0);
+
+				cout << "rate: " << rate << endl;
+				//cout << "calendarHour: " << calendarHour << endl;
+				//cout << "calendarMinute: " << calendarMinute << endl;
+			}
+		}
+		else {
+			if (engineState == true) {
+				sndDay->setIsPaused(true);
+				sndNight->setIsPaused(true);
+				engineState = false;
+			}
+		}
+	}
+
 
 	void playBackgroundMusic()
 	{
@@ -712,6 +981,8 @@ namespace
 			calendarMinuteDisplay = calendarMinute;
 		}
 
+		//游戏时钟的应用：
+		//==============================================================
 		if (day) {        
 			scenario = true;
 			if (former) {
@@ -753,6 +1024,11 @@ namespace
 			scenarioChange = true;
 		}
 
+		//====================================================================
+
+
+
+
 		if (timeSpeed != 0.0) {         //保存上一帧的timeSpeed状态
 		compareTimeSpeed = timeSpeed;
 		}
@@ -779,7 +1055,7 @@ namespace
 		}
 
 		//背景音乐播放状态机
-		playBackgroundMusic();
+		playBackgroundMusic(timeSpeed, calendarHour, calendarMinute, backgroundMusic, volume0);
 		
 		//Imgui中需要加入渲染回调的函数
 		Snippets::glut_display_func();
@@ -794,6 +1070,10 @@ namespace
 
 
 		RenderSkybox();
+
+		//RenderClock();
+		//RenderClockMain();
+
 		RenderCarObject(carObject);
 		RenderMissionObject();
 		//渲染场景物体
@@ -908,6 +1188,7 @@ namespace
 		gArrow = Model("../../assets/objects/mission/SM_Icon_Arrow_Small_01.fbx");
 		gExclamation = Model("../../assets/objects/mission/SM_Icon_Letter_Exclamation_01.fbx");
 		gModel = Model("../../assets/objects/nanosuit/nanosuit.obj");
+		//gModel2 = Model("../../assets/objects/Models/hougitse.fbx");
 		
 
 
@@ -919,11 +1200,20 @@ namespace
 		//加载SHADER
 		gSkyboxShader = Shader("../../src/Render/SkyBox.vs",
 			"../../src/Render/SkyBox.fs");
+
+		gClockShader = Shader("../../src/Render/Clock.vs",
+			"../../src/Render/Clock.fs");
+
+		gClockMainShader = Shader("../../src/Render/ClockMain.vs",
+			"../../src/Render/ClockMain.fs");
 		////使用带光照的shader
 		//gModelShader = Shader("../../src/Light/light.vs", "../../src/Light/light.fs");
 
 		//----------Render Model----------
 		//SetupSkybox();
+
+		//SetupClockMain();
+		//SetupClock();
 
 		//这个idle函数意为空闲函数，将在事件队列的最后（即完成鼠标键盘事件响应，准备下一个渲染帧，渲染当前帧）进行，具有最低的优先级
 		glutIdleFunc(idleCallback);

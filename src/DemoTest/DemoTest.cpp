@@ -888,7 +888,7 @@ PxController* CreateCharacterController(PxExtendedVec3 initPos)
 
 	PxShape* haha;
 	ctrl->getActor()->getShapes(&haha, 1);
-	haha->setFlag(PxShapeFlag::eSCENE_QUERY_SHAPE, false);
+	haha->setFlag(PxShapeFlag::eSCENE_QUERY_SHAPE, true);
 
 	return ctrl;
 }
@@ -1356,7 +1356,8 @@ void stepPhysics(bool interactive)
 {
 	PX_UNUSED(interactive);
 	//时间
-	//GlobalKeyEvent();
+
+	GlobalKeyEvent();
 	inputSystem.InputAction();
 
 	DriveCarTrigger->setGlobalPose(m_player->getActor()->getGlobalPose()); //更新上车触发器的位置

@@ -1,1 +1,5 @@
+<<<<<<< HEAD
 ﻿  Utils.vcxproj -> D:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\compiler\vc16win64\./../../lib/vc16win64\UtilsDEBUG.lib
+=======
+﻿  Utils.vcxproj -> D:\PhysX\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\lib\vc16win64\UtilsDEBUG.lib
+>>>>>>> ce2e9475e662ddfe74f6c723476285a29e542ce7
