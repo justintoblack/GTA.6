@@ -91,7 +91,9 @@ extern	bool		vehicleUseSpotLight;
 Shader				gModelAnimShader;
 ModelAnimation*		gModelAnim;
 Animation*			gAnimation;
+Animation*			gAnimationIdle;
 Animator*			gAnimator;
+Animator*			gAnimatorIdle;
 vector<glm::mat4>	gBoneTransform;
 
 //时钟顶点位置
@@ -1152,12 +1154,18 @@ namespace
 			forwardDir = glm::normalize( Mathf::Slerp(forwardDir, targetDir, deltaTime * rotateSpeed));
 			gAnimator->UpdateAnimation(deltaTime);
 			gBoneTransform = gAnimator->GetFinalBoneMatrices();
-			gModelAnimShader.use();
-			for (int i = 0; i < gBoneTransform.size(); i++)
-			{
-				string name = "finalBonesMatrices[" + std::to_string(i) + "]";
-				gModelAnimShader.SetMatrix4fv(name.c_str(), gBoneTransform[i]);
-			}
+		}
+		else {
+			gAnimatorIdle->UpdateAnimation(deltaTime);
+			gBoneTransform = gAnimatorIdle->GetFinalBoneMatrices();
+		}
+		//更新骨骼变换矩阵
+		
+		gModelAnimShader.use();
+		for (int i = 0; i < gBoneTransform.size(); i++)
+		{
+			string name = "finalBonesMatrices[" + std::to_string(i) + "]";
+			gModelAnimShader.SetMatrix4fv(name.c_str(), gBoneTransform[i]);
 		}
 		RenderModelAnim(gModelAnim, glm::vec3(haha.x, haha.y, haha.z),-forwardDir, gModelAnimShader, gShadowShader);
 			//RenderModel(gModel, glm::vec3(-20.0f, 10.0f, -45.0f), gModelShader);
@@ -1274,15 +1282,18 @@ namespace
 		gModelAnimShader = Shader("../../src/Bone/ModelAnim.vs",
 			"../../src/ModelLoading/model_loading.fs");
 		string modelAnimPath("F:/Learning/mypt2/PhysX-Tutorial-master/PhysX_3.4/SCUT2022_Nayeon/assets/objects/StandardWalk.fbx");
-		//string modelAnimPath("F:/Learning/mypt2/PhysX-Tutorial-master/PhysX_3.4/SCUT2022_Nayeon/assets/objects/walking/Walking.dae");
+		string modelAnimIdlePath("F:/Learning/mypt2/PhysX-Tutorial-master/PhysX_3.4/SCUT2022_Nayeon/assets/objects/StandingW_BriefcaseIdle.fbx");
 		gModelAnim = new ModelAnimation(modelAnimPath);
 		gAnimation = new Animation(modelAnimPath, gModelAnim);
 		gAnimator = new Animator(gAnimation);
-		gAnimator->UpdateAnimation(deltaTime);
+
+		gAnimationIdle = new Animation(modelAnimIdlePath, gModelAnim);
+		gAnimatorIdle = new Animator(gAnimationIdle);
+		gAnimatorIdle->UpdateAnimation(deltaTime);
 		gModelAnimShader.use();
 		//shininess发光值，发光值越高，反射能力越强，散射越少，高光点越小
 		gModelAnimShader.SetFloat("material.shininess", gOthersShininess);
-		gBoneTransform = gAnimator->GetFinalBoneMatrices();
+		gBoneTransform = gAnimatorIdle->GetFinalBoneMatrices();
 		for (int i = 0; i < gBoneTransform.size(); i++)
 		{
 			string name = "finalBonesMatrices[" + std::to_string(i) + "]";
