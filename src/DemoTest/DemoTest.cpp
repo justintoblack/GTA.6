@@ -170,6 +170,7 @@ bool					gIsVehicleInAir = true;
 PxVec3 vehicleUp = PxVec3(0, 1, 0);
 PxVec3 vehicleForward = PxVec3(0, 0, 1);
 
+
 #pragma region 角色属性
 PxController* m_player;
 
@@ -187,6 +188,9 @@ float characterHeight = 1.0f;
 float checkSphereRadius = 0.1f;
 float carRayDis = 1.0f;		//载具射线检测距离
 
+PxRigidDynamic* DriveCarTrigger = NULL;
+
+
 float curSpeed;
 float walkSpeed = 3.0f;
 float sprintSpeed = 7.0f;
@@ -194,6 +198,8 @@ float sprintSpeed = 7.0f;
 bool isGrounded;
 bool isAiming;
 bool hasVehicleToDrive = false;
+
+
 
 ///跳跃
 void Jump()
@@ -258,6 +264,20 @@ void Sprint(bool isSprint)
 		curSpeed = walkSpeed;
 	}
 }
+
+void InitDriveCarTrigger()
+{
+	PxMaterial* gMaterial = gPhysics->createMaterial(0.5f, 0.5f, 0.0f);
+	PxShape* TriggerShape;
+	DriveCarTrigger = PxCreateDynamic(*gPhysics, PxTransform(m_player->getActor()->getGlobalPose()), PxBoxGeometry(PxVec3(0.5, 1.1, 1.1)), *gMaterial, 1.0f);
+	DriveCarTrigger->getShapes(&TriggerShape, 1);
+	DriveCarTrigger->setActorFlag(PxActorFlag::eDISABLE_GRAVITY, true);
+	TriggerShape->setFlag(PxShapeFlag::eSIMULATION_SHAPE, false);
+	TriggerShape->setFlag(PxShapeFlag::eTRIGGER_SHAPE, true);
+	gScene->addActor(*DriveCarTrigger);
+}
+
+
 
 #pragma endregion
 
@@ -556,7 +576,17 @@ class ContactReportCallback : public PxSimulationEventCallback
 			if (pairs[i].flags & (PxTriggerPairFlag::eREMOVED_SHAPE_TRIGGER | PxTriggerPairFlag::eREMOVED_SHAPE_OTHER))
 				continue;
 			
+
+			if ((pairs[i].otherActor == gVehicle4W->getRigidDynamicActor() && pairs[i].triggerActor == DriveCarTrigger))
+			{
+				if(pairs[i].status==PxPairFlag::eNOTIFY_TOUCH_FOUND)
+					hasVehicleToDrive = true;
+				else if(pairs[i].status == PxPairFlag::eNOTIFY_TOUCH_LOST)
+					hasVehicleToDrive = false;
+
+			}
 			
+
 
 			if ((pairs[i].otherActor == gVehicle4W->getRigidDynamicActor() && (Mission*)pairs[i].triggerActor->userData!=NULL))
 			{
@@ -909,7 +939,6 @@ private:
 
 };
 WheelContactModifyCallback gWheelContactModifyCallback;
-
 //The class WheelCCDContactModifyCallback identifies and modifies ccd contacts
 //that involve a wheel.  Contacts that can be identified and managed by the suspension
 //system are ignored.  Any contacts that remain are modified to account for the rotation
@@ -1163,9 +1192,8 @@ void MyCode()
 	PxRigidDynamic* playerActor = m_player->getActor();
 	PxShape* playerShape;
 	playerActor->getShapes(&playerShape, 1);
-
-
 	gScene->addActor(*playerActor);
+	InitDriveCarTrigger();
 
 	//角色Input函数注册
 	characterMap.SetActionMap(m_player, sCamera, 5.0f);
@@ -1331,9 +1359,8 @@ void stepPhysics(bool interactive)
 	//GlobalKeyEvent();
 	inputSystem.InputAction();
 
-
-
-	const PxF32 timestep = 1.0f / 120.0f;
+	DriveCarTrigger->setGlobalPose(m_player->getActor()->getGlobalPose()); //更新上车触发器的位置
+	const PxF32 timestep = 1.0f / 60.0f;
 	if (gMimicKeyInputs)
 	{
 		PxVehicleDrive4WSmoothDigitalRawInputsAndSetAnalogInputs(gKeySmoothingData, gSteerVsForwardSpeedTable, gVehicleInputData, timestep, gIsVehicleInAir, *gVehicle4W);
@@ -1405,25 +1432,25 @@ void stepPhysics(bool interactive)
 	{
 		sCamera->Update(*CameraFollowTarget);
 		//相机碰撞检测
-		PxRaycastHit hit[2];
-		PxRaycastBuffer buffer(hit, 2);
-		if (gScene->raycast(*CameraFollowTarget + sCamera->getOffset(),
-			-sCamera->getDir(), sCamera->mDistanceToTarget, buffer))
-		{
-			if (buffer.nbTouches > 1)
-			{
-				PxVec3 newPos;
-				if (buffer.getTouch(0).distance < 0.1)
-				{
-					newPos = buffer.getTouch(1).position;
-				}
-				else
-				{
-					newPos = buffer.getTouch(0).position;
-				}
-				sCamera->SetEye(newPos);
-			}
-		}
+		//PxRaycastHit hit[2];
+		//PxRaycastBuffer buffer(hit, 2);
+		//if (gScene->raycast(*CameraFollowTarget + sCamera->getOffset(),
+		//	-sCamera->getDir(), sCamera->mDistanceToTarget, buffer))
+		//{
+		//	if (buffer.nbTouches > 1)
+		//	{
+		//		PxVec3 newPos;
+		//		if (buffer.getTouch(0).distance < 0.1)
+		//		{
+		//			newPos = buffer.getTouch(1).position;
+		//		}
+		//		else
+		//		{
+		//			newPos = buffer.getTouch(0).position;
+		//		}
+		//		sCamera->SetEye(newPos);
+		//	}
+		//}
 	}
 	else
 	{
@@ -1431,24 +1458,24 @@ void stepPhysics(bool interactive)
 	}
 
 	////////////////////////////Test////////////////////////////
-	PxTransform playerTrans = m_player->getActor()->getGlobalPose();
-	PxRaycastBuffer raycastHit;
-	if (gScene->raycast(playerTrans.p, sCamera->getDir().multiply(PxVec3(1,0,1)).getNormalized(), 
-		carRayDis, raycastHit))
-	{
-			if (raycastHit.block.actor == gVehicle4W->getRigidDynamicActor())
-			{
-				hasVehicleToDrive = true;
-			}
-			else
-			{
-				hasVehicleToDrive = false;
-			}
-	}
-	else
-	{
-		hasVehicleToDrive = false;
-	}
+	//PxTransform playerTrans = m_player->getActor()->getGlobalPose();
+	//PxRaycastBuffer raycastHit;
+	//if (gScene->raycast(playerTrans.p, sCamera->getDir().multiply(PxVec3(1,0,1)).getNormalized(), 
+	//	carRayDis, raycastHit))
+	//{
+	//		if (raycastHit.block.actor == gVehicle4W->getRigidDynamicActor())
+	//		{
+	//			hasVehicleToDrive = true;
+	//		}
+	//		else
+	//		{
+	//			hasVehicleToDrive = false;
+	//		}
+	//}
+	//else
+	//{
+	//	hasVehicleToDrive = false;
+	//}
 
 	/////////////////////////////物理模拟////////////////////////////
 	if (isSimulation)

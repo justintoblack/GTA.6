@@ -59,15 +59,9 @@ void CreateJson(string& json)
 		//Rigidbody
 		if (cur.hasComponent("RigidBody"))
 		{
-			cout << i << "has rigid" << endl;
-			if (cur.g_rigidBody == nullptr)
-			{
-				RigidbodyValue["has"] = false;
-			}
-			else
-			{
 				RigidbodyValue["has"] = true;
-				if (cur.isStatic)
+				RigidBody* rig = (RigidBody*)cur.GetComponent("RigidBody");
+				if (rig->IsStatic)
 				{
 					RigidbodyValue["isStatic"] = true;
 				}
@@ -76,7 +70,6 @@ void CreateJson(string& json)
 					RigidbodyValue["isStatic"] = false;
 				}
 				GameObjectValue["Rigidbody"] = RigidbodyValue;
-			}
 		}
 
 
