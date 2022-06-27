@@ -290,7 +290,7 @@ namespace
 
 	void idleCallback()
 	{
-		//��Ҫ��
+		//必要的
 		glutPostRedisplay();
 
 	}
@@ -327,7 +327,7 @@ namespace
 
 	void SetupClock()
 	{
-		//ʱ��
+		//时钟
 		glGenVertexArrays(1, &gClockVAO);
 		glGenBuffers(1, &gClockVBO);
 		glGenBuffers(1, &gClockEBO);
@@ -394,7 +394,7 @@ namespace
 
 
 		glBindVertexArray(0);
-		/*©�����󣬽������Ϊ����С�򣬽������м��Բ���岻����*/
+		/*漏掉这句后，胶囊体变为两颗小球，胶囊体中间的圆柱体不见了*/
 		glDeleteBuffers(1, &gClockVBO);
 		glUseProgram(0);
 
@@ -402,7 +402,7 @@ namespace
 
 	void SetupClockMain()
 	{
-		//ʱ��
+		//时钟
 		glGenVertexArrays(1, &gClockMainVAO);
 		glGenBuffers(1, &gClockMainVBO);
 		glGenBuffers(1, &gClockMainEBO);
@@ -479,7 +479,7 @@ namespace
 
 
 		glBindVertexArray(0);
-		/*©�����󣬽������Ϊ����С�򣬽������м��Բ���岻����*/
+		/*漏掉这句后，胶囊体变为两颗小球，胶囊体中间的圆柱体不见了*/
 		glDeleteBuffers(1, &gClockVBO);
 		glUseProgram(0);
 
@@ -488,7 +488,7 @@ namespace
 	void SetupSkybox()
 	{
 
-		// ��պ� VAO
+		// 天空盒 VAO
 		glGenVertexArrays(1, &gSkyboxVAO);
 		glGenBuffers(1, &gSkyboxVBO);
 		glBindVertexArray(gSkyboxVAO);
@@ -500,13 +500,13 @@ namespace
 
 		//int width, height, nrChannels;
 
-		// ���ö���α����ϵĹ��ա���Ӱ����ɫ���㼰����
+		// 禁用多边形背面上的光照、阴影和颜色计算及操作
 		glCullFace(GL_BACK);
-		//GL_CCW ��ʾ����������ͶӰ����εĶ���˳��Ϊ��ʱ�뷽��ı���Ϊ����
+		//GL_CCW 表示窗口坐标上投影多边形的顶点顺序为逆时针方向的表面为正面
 		glFrontFace(GL_CCW);
-		//������Ȳ���
+		//开启深度测试
 		glEnable(GL_DEPTH_TEST);
-		// �����������
+		// 创建纹理对象
 		glGenTextures(1, &gCubeTexture);
 		glBindTexture(GL_TEXTURE_CUBE_MAP, gCubeTexture);
 
@@ -537,14 +537,14 @@ namespace
 		}
 
 
-		// �����������ģʽ
+		// 设置纹理过滤模式
 		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		//����������Ⱦģʽ
+		//设置纹理渲染模式
 		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-		//����mip��ͼ
+		//开启mip贴图
 		glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
 	}
 	void RenderSkybox(void)
@@ -564,35 +564,35 @@ namespace
 		glBindTexture(GL_TEXTURE_CUBE_MAP, gCubeTexture);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 		glBindVertexArray(0);
-		/*©�����󣬽������Ϊ����С�򣬽������м��Բ���岻����*/
+		/*漏掉这句后，胶囊体变为两颗小球，胶囊体中间的圆柱体不见了*/
 		glDeleteBuffers(1, &gSkyboxVBO);
 		glDepthMask(GL_TRUE);
 		glUseProgram(0);
 	}
 
-	//����ģ�Ͷ���model���Լ�ģ�͵�λ��pos
+	//传入模型对象model，以及模型的位置pos
 	void RenderModel(Model& model, glm::vec3 pos, glm::vec3 dir , Shader& modelShader, Shader& shadowShader)
 	{
 
 		//glEnable(GL_DEPTH_TEST);
 		model.setPos(pos);
 		modelShader.use();
-		//���ù�Դ�����ԣ�������ǿ�ȡ�������ǿ�ȡ����淴��ǿ��
+		//设置光源的属性：环境光强度、漫反射强度、镜面反射强度
 		PxVec3 viewPos = sCamera->getEye();
 		modelShader.SetVector3f("viewPos", viewPos.x, viewPos.y, viewPos.z);
-		//��̬�ı��ķ���
+		//动态改变光的方向
 		gLightDir = -gLightPos;
 		modelShader.SetVector3f("light.direction", gLightDir);
 		modelShader.SetVector3f("light.ambient", gLightAmbient);
 		modelShader.SetVector3f("light.diffuse", gLightDiffuse);
 		modelShader.SetVector3f("light.specular", gLightSpecular);
-		//shininess����ֵ������ֵԽ�ߣ���������Խǿ��ɢ��Խ�٣��߹��ԽС
+		//shininess发光值，发光值越高，反射能力越强，散射越少，高光点越小
 		modelShader.SetFloat("material.shininess", gOthersShininess);
 		glm::mat4 modelMat = glm::mat4(1.0f);
-		modelMat = glm::translate(modelMat, model.getPos());  //ƽ�Ʋ������ڣ�1.0�� 1.0�� 1.0�� 1.0���Ļ�����ƽ��model.getPos()�� Ĭ��Ϊvec3��0.0�� 0.0�� 0.0�� 0.0���������и�setPos���������
-		//modelMat = glm::rotate(modelMat, 1.0f, glm::vec3(0, -1, 0));  //��ת��������һ��������ԭ���󣬵ڶ���������ѡװ�Ƕȣ��û����ƣ�glm::radians(90.0f)���� ������������ʾ���ĸ�����ת
+		modelMat = glm::translate(modelMat, model.getPos()); //平移操作，在（1.0， 1.0， 1.0， 1.0）的基础上平移model.getPos()， 默认为vec3（0.0， 0.0， 0.0， 0.0），上面有个setPos来传入参数
+		//modelMat = glm::rotate(modelMat, 1.0f, glm::vec3(0, -1, 0));    //旋转操作，第一个参数是原矩阵，第二个参数是选装角度，用弧度制（glm::radians(90.0f)）， 第三个参数表示绕哪个轴旋转
 		modelMat *= glm::mat4_cast(glm::quatLookAt(dir, glm::vec3(0, 1, 0)));    // ??????????
-		modelMat = glm::scale(modelMat, glm::vec3(.1f, .1f, .1f)); // ���Ų�����x�� y��z���궼��С��ԭ����ʮ��֮һ
+		modelMat = glm::scale(modelMat, glm::vec3(.1f, .1f, .1f)); // 缩放操作，x， y，z坐标都缩小到原来的十分之一
 		glm::mat4 viewMat = getViewMat();
 		glm::mat4 projectionMat = glm::perspective(45.0f, (float)glutGet(GLUT_WINDOW_WIDTH) / (float)glutGet(GLUT_WINDOW_HEIGHT), 0.1f, 1000.0f);
 		modelShader.SetMatrix4fv("projection", projectionMat);
@@ -631,10 +631,10 @@ namespace
 
 
 
-	//��ȾGameObject
+	//渲染GameObject
 	void RenderGameObject(GameObject &gameObject)
 	{
-		//�Ƿ��и�����
+		//是否有父物体
 		if (gameObject.parent != nullptr)
 		{
 			gameObject.transform = gameObject.parent->transform.transform(gameObject.localTransform);
@@ -645,7 +645,7 @@ namespace
 
 			//gameObject.transform.q *= gameObject.localTransform.q;
 		}
-		//��Ҫ��������ģ��
+		//需要跟踪物理模拟
 		else if (gameObject.g_rigidBody&&gameObject.g_rigidBody->getType()==
 			PxActorType::eRIGID_DYNAMIC)
 		{
@@ -704,7 +704,7 @@ namespace
 		gVehicle4W->getRigidDynamicActor()->getShapes(vehicleshapes, 5);
 
 
-		//��Ⱦ����
+		//渲染车体
 		gModelShader.use();
 		glm::mat4 modelMat0 = glm::mat4(1.0f);
 		modelMat0 = glm::translate(modelMat0, Mathf::P3ToV3(gameObject.transform.p));
@@ -722,20 +722,20 @@ namespace
 		
 
 
-		//��Ⱦ����
+		//渲染车轮
 		Model* wheels[4] = { gameObject.g_wheel_fl,gameObject.g_wheel_fr,gameObject.g_wheel_bl,gameObject.g_wheel_br};
 		PxVec3 offset[4] = { PxVec3(0.88467, -0.7733, 1.6328) , PxVec3(-0.88467, -0.7733, 1.6328) ,PxVec3(0.88467, -0.7733, -1.2502),PxVec3(-0.88467, -0.7733, -1.2502)};
 		//spotlight
-		//��������λ��
+		//车辆中心位置
 		PxVec3 vehiclePos = gameObject.transform.p;
-		//����ǰ������
+		//车辆前进方向
 		PxVec3 vehicleForward = gameObject.transform.q.getBasisVector2().getNormalized();
-		//����ˮƽ����
+		//车辆水平方向
 		//PxVec3 vehicleHorizon = gameObject.transform.q.getBasisVector0().getNormalized();
-		//��λ��
+		//灯位置
 		PxVec3 vehicleLight = vehiclePos + vehicleForward * 2.3f;
 
-		//��shader�������
+		//向shader传入参数
 		gModelShader.SetVector3f("spotLight.position", vehicleLight.x, vehicleLight.y, vehicleLight.z);
 		gModelShader.SetVector3f("spotLight.direction", vehicleForward.x, vehicleForward.y - 0.3f, vehicleForward.z);
 		gModelShader.SetFloat("spotLight.cutOff", glm::cos(glm::radians(gSpotLightCutOff)));
@@ -743,7 +743,7 @@ namespace
 		gModelShader.SetVector3f("spotLight.diffuse", gSpotLightDiffuse);
 		gModelShader.SetVector3f("spotLight.specular", gSpotLightSpecular);
 		gModelShader.SetFloat("material.shininess", gVehicleShininess);
-		//Ӧ�ö�ÿ������Ӧ�ò�ͬת������
+		//应该对每个车轮应用不同转换矩阵
 		for (size_t i = 0; i < 4; i++)
 		{
 			glm::mat4 modelMat1 = glm::mat4(1.0f);
@@ -777,7 +777,7 @@ namespace
 	}
 
 
-	//��Ⱦ����ͼ��
+	//渲染任务图标
 	void RenderMissionObject()
 	{
 		for (size_t i = 0; i < missionManager.MissionList.size(); i++)
@@ -915,7 +915,7 @@ namespace
 			}
 		}
 	}
-	//��ʱ�䶯̬�任����ǿ��
+	//随时间动态变换光照强度
 	void changeLightDynamic(bool add)
 	{
 		float dayPeriod = 240.0f / timeSpeed;
@@ -933,18 +933,18 @@ namespace
 		}
 	}
 
-	//��ʾ����
+	//显示窗口
 	void renderCallback()
 	{
 
-		//����ʱ��(����һ���޷�ά���Ĵ���)
+		//关于时间(这是一段无法维护的代码)
 		QueryPerformanceCounter((LARGE_INTEGER*)&gTime); //get current count
 		QueryPerformanceFrequency((LARGE_INTEGER*)&freq); //get processor freq
 		deltaTime = (float)(gTime - gLastTime) / (float)freq;
 		gLastTime = gTime;
 		gameTime = (float)(gTime - firstCount) / (float)pow(10, 7);
 		//float gameTimeMatch = gameTime / timeSpeed;
-		currentTime += deltaTime;  //��ǰʱ����
+		currentTime += deltaTime;  //当前时间线
 		if (timeSpeed != 0.0) {
 			if (compareTimeSpeed != timeSpeed) {
 				float rate = compareTimeSpeed / timeSpeed;
@@ -956,26 +956,26 @@ namespace
 			currentTime -= deltaTime;
 		}
 
-		//��ҹʱ����
+		//昼夜时间钟
 
-		int intGmaeTime = (int)gameTime;  //int�����Ϸʱ��
-		int intCurrentTime = (int)currentTime; //int��ĵ�ǰʱ����
+		int intGmaeTime = (int)gameTime; //int版的游戏时间
+		int intCurrentTime = (int)currentTime; //int版的当前时间线
 
-		float clock = currentTime - (intCurrentTime / (int)(120 / timeSpeed)) * (int)(120 / timeSpeed); //����ʱ������������
+		float clock = currentTime - (intCurrentTime / (int)(120 / timeSpeed)) * (int)(120 / timeSpeed); //产生时钟上升沿跳变
 		if (timeSpeed != 0.0) {
 		int turn = intCurrentTime % (int)(240 / timeSpeed);  
-		day = (turn >= 0 && turn < (120 / timeSpeed))? true : false;  //�����ǰ��컹�Ǻ�ҹ����ҹ0�� ����1��
+		day = (turn >= 0 && turn < (120 / timeSpeed))? true : false;  //现在是白天还是黑夜（黑夜0， 白天1）
 		int half = intCurrentTime % (int)(120 / timeSpeed); 
-		former = (half >= 0 && half < (60 / timeSpeed)) ? true : false; //�����ǲ��ǰ�����ߺ�ҹ���ϰ볡����1�� ����0��
+		former = (half >= 0 && half < (60 / timeSpeed)) ? true : false; //现在是不是白天或者黑夜的上半场（是1， 不是0）
 		}
 
 
 		//Calendar
 		if (timeSpeed != 0.0) {
-			//��Ϸ��һ������ڵ�����ʵ240��/timeSpeed
+			//游戏内一天的周期等于现实240秒/timeSpeed
 			calendarDay = intCurrentTime / (int)(240 / timeSpeed);
 			calendarDayDisplay = calendarDay + 1;
-			//��Ϸ��һСʱ������ʵ10��/timeSpeed
+			//游戏内一小时等于现实10秒/timeSpeed
 			calendarHour = (int)((intCurrentTime % (int)(240 / timeSpeed)) * timeSpeed / 10);
 			calendarHourDisplay = calendarHour;
 			if (calendarHour < 24) {
@@ -988,7 +988,7 @@ namespace
 			calendarMinuteDisplay = calendarMinute;
 		}
 
-		//��Ϸʱ�ӵ�Ӧ�ã�
+		//游戏时钟的应用：
 		//==============================================================
 		if (day) {        
 			scenario = true;
@@ -1020,12 +1020,12 @@ namespace
 				gLightPos.z -= 20.0f * timeSpeed * deltaTime;
 			}
 		}
-		//�����Ϸ��ǰʱ��
+		//输出游戏当前时间
 		/*cout << "===============================";
 		cout << calendarHourDisplay << ":" << calendarMinuteDisplay << endl;
 		cout << "===============================";*/
-		//��̬�任��ǿ��
-		//scenario �Ƿ���� 
+		//动态变换光强度
+		//scenario 是否白天 
 		changeLightDynamic(scenario);
 		if (clock < deltaTime) {
 			scenarioChange = true;
@@ -1036,7 +1036,7 @@ namespace
 
 
 
-		if (timeSpeed != 0.0) {         //������һ֡��timeSpeed״̬
+		if (timeSpeed != 0.0) {         //保存上一帧的timeSpeed状态
 		compareTimeSpeed = timeSpeed;
 		}
 
@@ -1046,14 +1046,14 @@ namespace
 		//std::cout << intGmaeTime << std::endl;
 		//std::cout << (int)gameTime << std::endl;
 		//cout << timeSpeed << endl;
-		//cout << "���ѽ�����Ϸ: " << gameTime << "��				";
-		//cout << "��Ϸ�����" << calendarDayDisplay << "��    " << calendarHourDisplay << "��" << calendarMinuteDisplay << "��" << endl;
+		//cout << "您已进入游戏: " << gameTime << "秒				";
+		//cout << "游戏进入第" << calendarDayDisplay << "天    " << calendarHourDisplay << "点" << calendarMinuteDisplay << "分" << endl;
 		//cout << currentTime <<endl;
 
 		
 		
 
-		//��պг�ʼ��״̬��
+		//天空盒初始化状态机
 		if (scenarioChange == true) {
 			SetupSkybox();
 			cout << "scenario: " << scenario << endl;
@@ -1061,16 +1061,16 @@ namespace
 			scenarioChange = false;
 		}
 
-		//�������ֲ���״̬��
+		//背景音乐播放状态机
 		playBackgroundMusic(timeSpeed, calendarHour, calendarMinute, backgroundMusic, volume0);
 		
-		//Imgui����Ҫ������Ⱦ�ص��ĺ���
+		//Imgui中需要加入渲染回调的函数
 		Snippets::glut_display_func();
 		
-		//����ģ��
+		//物理模拟
 		stepPhysics(true);
 
-		//��Ⱦ�������
+		//渲染相机场景
 		Snippets::startRender(sCamera->getEye(), sCamera->getDir(),0.1f, 1000.0f);
 
 
@@ -1083,13 +1083,13 @@ namespace
 
 		RenderCarObject(carObject);
 		RenderMissionObject();
-		//��Ⱦ��������
+		//渲染场景物体
 		for (int i = 0; i < theCreator.SceneGameObject.size(); i++)
 		{
 			RenderGameObject(theCreator.SceneGameObject[i]);
 		}
 
-		//��Ⱦ��������
+		//渲染特殊物体
 		for (int i = 0; i < theCreator.SpecialGameObject.size(); i++)
 		{
 			RenderGameObject(theCreator.SpecialGameObject[i]);
@@ -1102,7 +1102,7 @@ namespace
 		//RenderGameObject(wheelBRObj);
 		
 		float rotateSpeed = 5;
-		//��ʾ�����ƶ�
+		//表示正在移动
 		PxExtendedVec3 haha= m_player->getFootPosition();
 		if (!moveDir.isZero())
 		{
@@ -1155,7 +1155,7 @@ namespace
 		PxScene* scene;
 		PxGetPhysics().getScenes(&scene, 1);
 
-		//��ȡ�����е�Actor����OpenGL��Ⱦ
+		//获取场景中的Actor并用OpenGL渲染
 		PxU32 nbActors = scene->getNbActors(PxActorTypeFlag::eRIGID_DYNAMIC | PxActorTypeFlag::eRIGID_STATIC);
 		if (nbActors)
 		{
@@ -1294,7 +1294,8 @@ namespace
 
 	initPhysics(true);
 
-	//��¼��Ϸ��һ֡ʱ��
+	//记录游戏第一帧时间
+
 
 	QueryPerformanceCounter((LARGE_INTEGER*)&gTime);
 	QueryPerformanceFrequency((LARGE_INTEGER*)&freq);
