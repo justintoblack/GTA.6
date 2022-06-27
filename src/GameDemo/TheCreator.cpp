@@ -30,6 +30,9 @@ PxTransform polesPos[] =
 	PxTransform(PxVec3(-133.3,3.1,27),q3),PxTransform(PxVec3(-133.3,3.1,47),q3),PxTransform(PxVec3(-133.3,3.1,67),q3),
 };
 
+//CarNPC
+vector<PxTransform> track_00;
+
 //可行使
 void makeObjectDrivable(PxShape*& shape)
 {
@@ -95,14 +98,6 @@ void TheCreator::Init(PxPhysics* physics, PxScene* gScene)
 	 //初始化场景
 	 string scenePath = "../../assets/Scene/Scene.Data";
 	 FileToString(scenePath);
-
-	 //创建MonoBehaviour物体
-	 Zombie *testZombie = new Zombie();
-	 SpecialGameObject.push_back(testZombie);
-	 for (int i = 0; i < SpecialGameObject.size(); i++)
-	 {
-		 SpecialGameObject[i]->Awake();
-	 }
 
 }
 
@@ -243,7 +238,7 @@ void TheCreator::CreateStreetPole(PxTransform pos)
 	ModelComponent* model = new ModelComponent(gameObject);
 	model->SetModel(Street_Pole);
 	gameObject->SetTransform(pos);
-	SceneGameObject.push_back(*gameObject);
+	SpecialGameObject.push_back(gameObject);
 }
 
 void TheCreator::CreatePoles(PxVec3 pos, PxVec3 dir, float separate, PxU32 num, PxMaterial* gMaterial, float halfXZ, float halfHeight, float density, float force, float torque, Model& Createmodel)
@@ -263,6 +258,16 @@ void TheCreator::CreateGameObject()
 	for (int i = 0; i < 45; i++)
 	{
 		CreateStreetPole(polesPos[i]);
+	}
+
+	track_00.push_back(PxTransform(-2.4, 0.9, 0));
+	track_00.push_back(PxTransform(-2.4, 0.9, 100));
+	//创建MonoBehaviour物体
+	CarNPC* testCar = new CarNPC(Models[41],PxTransform(0,0,0),track_00,0);
+	SpecialGameObject.push_back(testCar);
+	for (int i = 0; i < SpecialGameObject.size(); i++)
+	{
+	    SpecialGameObject[i]->Awake();
 	}
 }
 
