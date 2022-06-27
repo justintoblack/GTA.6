@@ -9,6 +9,8 @@ layout (location = 5) in ivec4 boneIDs;
 layout (location = 6) in vec4 weights;
 
 out vec2 TexCoords;
+out vec3 Normal;
+out vec3 FragPos;
 
 const int MAX_BONE_INFLUENCE = 4;
 const int MAX_BONES = 250;
@@ -22,7 +24,9 @@ uniform mat4 finalBonesMatrices[MAX_BONES];
 
 void main()
 {
-    TexCoords = aTexCoords;    
+    TexCoords = aTexCoords;
+    Normal = mat3(transpose(inverse(model))) * aNormal;
+	FragPos =vec3(model * vec4(aPos,1.0f));   
 
     vec4 position = vec4(0.0f);
     for (int i = 0; i < MAX_BONE_INFLUENCE; i++)
@@ -37,5 +41,4 @@ void main()
         position += finalBonesMatrices[boneIDs[i]] * weights[i] * vec4(aPos, 1.0f);
     }
     gl_Position = projection * view * model * position;
-    //gl_Position = projection * view * model * vec4(aPos,1.0);
 }

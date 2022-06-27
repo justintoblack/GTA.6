@@ -71,7 +71,6 @@
     <None Include="..\..\src\ModelLoading\shadow_loading.vs" />
     <None Include="..\..\src\Render\SkyBox.fs" />
     <None Include="..\..\src\Render\SkyBox.vs" />
-    <None Include="..\..\src\Bone\ModelAnim.fs" />
     <None Include="..\..\src\Bone\ModelAnim.vs" />
   </ItemGroup>
 </Project>

@@ -1120,6 +1120,12 @@ namespace
 			//cout << "DemotestRender::render anim:: totalTime:" << totalTime << endl;
 			gAnimator->UpdateAnimation(deltaTime);
 			gModelAnimShader.use();
+			gModelAnimShader.SetVector3f("light.direction", gLightDir);
+			gModelAnimShader.SetVector3f("light.ambient", gLightAmbient);
+			gModelAnimShader.SetVector3f("light.diffuse", gLightDiffuse);
+			gModelAnimShader.SetVector3f("light.specular", gLightSpecular);
+			//shininess发光值，发光值越高，反射能力越强，散射越少，高光点越小
+			gModelAnimShader.SetFloat("material.shininess", gOthersShininess);
 			glm::mat4 modelMat = glm::mat4(1.0f);
 			modelMat = glm::translate(modelMat, glm::vec3(5.0f, 2.0f, 5.0f));
 			//modelMat = glm::rotate(modelMat, 1.0f, glm::vec3(0, -1, 0));
@@ -1261,7 +1267,7 @@ namespace
 		glutDisplayFunc(renderCallback);
 	//----------Model Anim-----------------------------
 	gModelAnimShader = Shader("../../src/Bone/ModelAnim.vs",
-		"../../src/Bone/ModelAnim.fs");
+		"../../src/ModelLoading/model_loading.fs");
 	string modelAnimPath("F:/Learning/mypt2/PhysX-Tutorial-master/PhysX_3.4/SCUT2022_Nayeon/assets/objects/StartWalking.fbx");
 	//string modelAnimPath("F:/Learning/mypt2/PhysX-Tutorial-master/PhysX_3.4/SCUT2022_Nayeon/assets/objects/walking/Walking.dae");
 	gModelAnim = new ModelAnimation(modelAnimPath);

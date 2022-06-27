@@ -89,7 +89,6 @@
     <ClInclude Include="Dependencies\imgui\imstb_truetype.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\src\Bone\ModelAnim.fs" />
     <None Include="..\..\src\Bone\ModelAnim.vs" />
     <None Include="..\..\src\Light\light.fs" />
     <None Include="..\..\src\Light\light.vs" />
