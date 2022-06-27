@@ -1187,7 +1187,6 @@ namespace
 		gStar = Model("../../assets/objects/mission/SM_Icon_Star_01.fbx");
 		gArrow = Model("../../assets/objects/mission/SM_Icon_Arrow_Small_01.fbx");
 		gExclamation = Model("../../assets/objects/mission/SM_Icon_Letter_Exclamation_01.fbx");
-
 		gModel = Model("../../assets/objects/nanosuit/nanosuit.obj");
 		//gModel2 = Model("../../assets/objects/Models/hougitse.fbx");
 		
