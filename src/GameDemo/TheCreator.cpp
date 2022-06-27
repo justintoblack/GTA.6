@@ -5,6 +5,31 @@ extern const char** _allModelsName;
 extern void FileToString(string& path);
 vector<Model> Models;			//模型
 
+PxQuat q0 = PxQuat(PxIdentity);
+PxQuat q1 = PxQuat(Mathf::DegToRad(90), PxVec3(0, -1, 0));
+PxQuat q2 = PxQuat(Mathf::DegToRad(180), PxVec3(0, -1, 0));
+PxQuat q3 = PxQuat(Mathf::DegToRad(270), PxVec3(0, -1, 0));
+PxTransform polesPos[] =
+{
+	PxTransform(PxVec3(1.8,3.1,-110),q1),PxTransform(PxVec3(1.8,3.1,-125),q1),PxTransform(PxVec3( 1.8,3.1,0),q1),
+	PxTransform(PxVec3(1.8,3.1,15),q1),PxTransform(PxVec3( 1.8,3.1,30),q1),PxTransform(PxVec3(1.8,3.1,50),q1),
+	PxTransform(PxVec3(1.8,3.1,85),q1),PxTransform(PxVec3(1.8,3.1,100),q1),PxTransform(PxVec3(1.8,3.1,115),q1),
+	PxTransform(PxVec3(1.8,3.1,130),q1),PxTransform(PxVec3(1.8,3.1,-80),q1),PxTransform(PxVec3(1.8,3.1,-50),q1),
+	PxTransform(PxVec3(-11.5,3.1,-110),q3),PxTransform(PxVec3(-11.5,3.1,-125),q3),PxTransform(PxVec3(-11.5,3.1,0),q3),
+	PxTransform(PxVec3(-11.5,3.1,15),q3),PxTransform(PxVec3(-11.5,3.1,30),q3),PxTransform(PxVec3(-11.5,3.1,50),q3),
+	PxTransform(PxVec3(-11.5,3.1,85),q3),PxTransform(PxVec3(-11.5,3.1,100),q3),PxTransform(PxVec3(-11.5,3.1,115),q3),
+	PxTransform(PxVec3(-11.5,3.1,130),q3),PxTransform(PxVec3(-11.5,3.1,-80),q3),PxTransform(PxVec3(-11.5,3.1,-50),q3),
+
+	PxTransform(PxVec3(-68,3.1,-75),q1),PxTransform(PxVec3(-68,3.1,-60),q1),PxTransform(PxVec3(-81.6,3.1,-75),q3),
+	PxTransform(PxVec3(-81.6,3.1,-60),q3),PxTransform(PxVec3(-108,3.1,-70),q1),PxTransform(PxVec3(-108,3.1,-46),q1),
+	PxTransform(PxVec3(-121,3.1,-70),q3),PxTransform(PxVec3(-121,3.1,-46),q3),PxTransform(PxVec3(-146.5,3.1,-32.6),q3),
+	PxTransform(PxVec3(-146.5,3.1,-17.6),q3),PxTransform(PxVec3(-151.4,3.1,-65.2),q3),PxTransform(PxVec3(-151.4,3.1,-90.2),q3),
+
+	PxTransform(PxVec3(106.7,3.1,48.3),q1),PxTransform(PxVec3(106.7,3.1,28.3),q1),PxTransform(PxVec3(106.7,3.1,8.3),q1),
+	PxTransform(PxVec3(106.7,3.1,-12),q1),PxTransform(PxVec3(-133.3,3.1,-8),q3),PxTransform(PxVec3(-133.3,3.1,-7),q3),
+	PxTransform(PxVec3(-133.3,3.1,27),q3),PxTransform(PxVec3(-133.3,3.1,47),q3),PxTransform(PxVec3(-133.3,3.1,67),q3),
+};
+
 //可行使
 void makeObjectDrivable(PxShape*& shape)
 {
@@ -41,13 +66,10 @@ void TheCreator::Init(PxPhysics* physics, PxScene* gScene)
 	m_gPhysics = physics;
 	m_gScene = gScene;
 
-	poleModel = Model("../../assets/objects/Models/01_SM_Prop_LightPole_Base_02.fbx");
-	//stationModel = Model("../../assets/objects/Models/SM_Bld_Station_01.fbx");
-	//stationModel_01 = Model("../../assets/objects/Models/SM_Bld_Station_03.fbx");
-	//road = Model("../../assets/objects/Models/SM_Env_Road_Bare_01.fbx");
-	//_carBody=Model("../../assets/objects/Models/carBody.fbx");
-	//_carWheelLeft=Model("../../assets/objects/Models/wheel_left.fbx");
-	//_carWheelRight=Model("../../assets/objects/Models/wheel_right.fbx");
+	//poleModel = Model("../../assets/objects/Models/01_SM_Prop_LightPole_Base_02.fbx");
+	Street_Pole = Model("../../assets/objects/Models/47_Street_Pole.fbx");
+	Traffic_light = Model("../../assets/objects/Models/46_Traffic_Pole.fbx");
+
 
 	//加载模型
 	string filePath = "../../assets/objects/Models";
@@ -73,6 +95,15 @@ void TheCreator::Init(PxPhysics* physics, PxScene* gScene)
 	 //初始化场景
 	 string scenePath = "../../assets/Scene/Scene.Data";
 	 FileToString(scenePath);
+
+	 //创建MonoBehaviour物体
+	 Zombie *testZombie = new Zombie();
+	 SpecialGameObject.push_back(testZombie);
+	 for (int i = 0; i < SpecialGameObject.size(); i++)
+	 {
+		 SpecialGameObject[i]->Awake();
+	 }
+
 }
 
 void TheCreator::CreateAnchorBall(PxTransform pos, PxMaterial* gMaterial,float radius)
@@ -166,7 +197,7 @@ void TheCreator::CreateBanisters(physx::PxVec3 pos, physx:: PxVec3 dir, PxMateri
 }
 
 void TheCreator::CreatePole(PxVec3 pos, PxMaterial* gMaterial,float radius,
-	float halfHeight,float density,float force,float torque)
+	float halfHeight,float density,float force,float torque,Model& Createmodel)
 {
 	GameObject* gameObject=new GameObject();
 	gameObject->SetName("Pole");
@@ -175,14 +206,14 @@ void TheCreator::CreatePole(PxVec3 pos, PxMaterial* gMaterial,float radius,
 	box->Size = PxVec3(radius, halfHeight, radius);
 	box->SetShape();
 	ModelComponent* model = new ModelComponent(gameObject);
-	model->SetModel(poleModel);
+	model->SetModel(Createmodel);
 	gameObject->SetTransform(PxTransform(PxVec3(pos)+PxVec3(0,halfHeight,0)));
 
 
-	//PxRigidDynamic* link = PxCreateDynamic(*m_gPhysics,
-	//	PxTransform(pos + PxVec3(0, halfHeight, 0)),
-	//	PxBoxGeometry(radius, halfHeight, radius),
-	//	*gMaterial, density);
+	PxRigidDynamic* link = PxCreateDynamic(*m_gPhysics,
+		PxTransform(pos + PxVec3(0, halfHeight, 0)),
+		PxBoxGeometry(radius, halfHeight, radius),
+		*gMaterial, density);
 
 	PxFixedJoint* j = PxFixedJointCreate(*m_gPhysics, NULL, PxTransform(pos), gameObject->g_rigidBody,
 		PxTransform(PxVec3(0,-halfHeight, 0)));
@@ -190,24 +221,49 @@ void TheCreator::CreatePole(PxVec3 pos, PxMaterial* gMaterial,float radius,
 	j->setBreakForce(force, torque);
 
 	////gScene->addActor(*link);
-	SpecialGameObject.push_back(*gameObject);
+	SpecialGameObject.push_back(gameObject);
+	gScene->addActor(*link);
+	SceneGameObject.push_back(*gameObject);
 }
 
-void TheCreator::CreatePoles(PxVec3 pos, PxVec3 dir, float separate, PxU32 num, PxMaterial* gMaterial, float halfXZ, float halfHeight, float density, float force, float torque)
+void TheCreator::CreateStreetPole(PxTransform pos)
+{
+	GameObject* gameObject = new GameObject();
+	gameObject->SetName("Pole");
+
+	PxShape* shape = gPhysics->createShape(PxBoxGeometry(0.1, 3.1, 0.1), *gMaterial);
+	PxRigidDynamic* link = PxCreateDynamic(*m_gPhysics, pos, *shape, 10);
+	shape= gPhysics->createShape(PxBoxGeometry(0.1, 0.1, 1.1), *gMaterial);
+	shape->setLocalPose(PxTransform(0, 3.3, 1.26));
+	link->attachShape(*shape);
+	PxFixedJoint* j = PxFixedJointCreate(*m_gPhysics, NULL, PxTransform(PxVec3(pos.p)-PxVec3(0,3.1,0),pos.q), link,
+		PxTransform(PxVec3(0, -3.1, 0)));
+	j->setBreakForce(100, 100);
+	RigidBody* rig = new RigidBody(gameObject, link);
+	ModelComponent* model = new ModelComponent(gameObject);
+	model->SetModel(Street_Pole);
+	gameObject->SetTransform(pos);
+	SceneGameObject.push_back(*gameObject);
+}
+
+void TheCreator::CreatePoles(PxVec3 pos, PxVec3 dir, float separate, PxU32 num, PxMaterial* gMaterial, float halfXZ, float halfHeight, float density, float force, float torque, Model& Createmodel)
 {
 	dir = dir.getNormalized();
-	CreatePole(pos, gMaterial, halfXZ, halfHeight, density, force, torque);
+	CreatePole(pos, gMaterial, halfXZ, halfHeight, density, force, torque,Createmodel);
 
 	for (int i = 1; i < num; i++)
 	{
 		pos += dir * separate;
-		CreatePole(pos, gMaterial, halfXZ, halfHeight, density, force, torque);
+		CreatePole(pos, gMaterial, halfXZ, halfHeight, density, force, torque,Createmodel);
 	}
 }
 extern  float gameObjectPosition[3];
 void TheCreator::CreateGameObject()
 {
-	
+	for (int i = 0; i < 45; i++)
+	{
+		CreateStreetPole(polesPos[i]);
+	}
 }
 
 void TheCreator::CreatePaticle(PxVec3 pos)

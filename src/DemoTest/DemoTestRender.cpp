@@ -1049,8 +1049,8 @@ namespace
 		//天空盒初始化状态机
 		if (scenarioChange == true) {
 			SetupSkybox();
-			cout << "scenario: " << scenario << endl;
-			cout << "=======================================" << endl;
+			//cout << "scenario: " << scenario << endl;
+			//cout << "=======================================" << endl;
 			scenarioChange = false;
 		}
 
@@ -1076,6 +1076,7 @@ namespace
 
 		RenderCarObject(carObject);
 		RenderMissionObject();
+
 		//渲染场景物体
 		for (int i = 0; i < theCreator.SceneGameObject.size(); i++)
 		{
@@ -1085,7 +1086,7 @@ namespace
 		//渲染特殊物体
 		for (int i = 0; i < theCreator.SpecialGameObject.size(); i++)
 		{
-			RenderGameObject(theCreator.SpecialGameObject[i]);
+			RenderGameObject(*theCreator.SpecialGameObject[i]);
 		}
 
 		//RenderGameObject(carObject);

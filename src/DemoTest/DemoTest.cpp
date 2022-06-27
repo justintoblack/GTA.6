@@ -269,7 +269,7 @@ void InitDriveCarTrigger()
 {
 	PxMaterial* gMaterial = gPhysics->createMaterial(0.5f, 0.5f, 0.0f);
 	PxShape* TriggerShape;
-	DriveCarTrigger = PxCreateDynamic(*gPhysics, PxTransform(m_player->getActor()->getGlobalPose()), PxBoxGeometry(PxVec3(1.1, 1.1, 1.1)), *gMaterial, 1.0f);
+	DriveCarTrigger = PxCreateDynamic(*gPhysics, PxTransform(m_player->getActor()->getGlobalPose()), PxBoxGeometry(PxVec3(0.5, 1.1, 1.1)), *gMaterial, 1.0f);
 	DriveCarTrigger->getShapes(&TriggerShape, 1);
 	DriveCarTrigger->setActorFlag(PxActorFlag::eDISABLE_GRAVITY, true);
 	TriggerShape->setFlag(PxShapeFlag::eSIMULATION_SHAPE, false);
@@ -888,7 +888,7 @@ PxController* CreateCharacterController(PxExtendedVec3 initPos)
 
 	PxShape* haha;
 	ctrl->getActor()->getShapes(&haha, 1);
-	haha->setFlag(PxShapeFlag::eSCENE_QUERY_SHAPE, true);
+	haha->setFlag(PxShapeFlag::eSCENE_QUERY_SHAPE, false);
 
 	return ctrl;
 }
@@ -939,7 +939,6 @@ private:
 
 };
 WheelContactModifyCallback gWheelContactModifyCallback;
-
 //The class WheelCCDContactModifyCallback identifies and modifies ccd contacts
 //that involve a wheel.  Contacts that can be identified and managed by the suspension
 //system are ignored.  Any contacts that remain are modified to account for the rotation
@@ -1358,7 +1357,7 @@ void stepPhysics(bool interactive)
 	PX_UNUSED(interactive);
 	//时间
 
-	GlobalKeyEvent();
+	//GlobalKeyEvent();
 	inputSystem.InputAction();
 
 	DriveCarTrigger->setGlobalPose(m_player->getActor()->getGlobalPose()); //更新上车触发器的位置
@@ -1418,9 +1417,12 @@ void stepPhysics(bool interactive)
 
 	////////////////////////////移动结束////////////////////////////////
 
-	/////////////////////////////载具更新////////////////////////////////////
-
-
+	/////////////////////////////GameObject Update/////////////////////
+	for (int i = 0; i < theCreator.SpecialGameObject.size(); i++)
+	{
+		theCreator.SpecialGameObject[i]->Update();
+	}
+	/////////////////////////////GameObject Update/////////////////////
 
 	////////////////////////////////////////////////////////////
 	//相机跟随
@@ -1431,23 +1433,26 @@ void stepPhysics(bool interactive)
 	{
 		sCamera->Update(*CameraFollowTarget);
 		//相机碰撞检测
-		PxRaycastHit hit[2];
-		PxRaycastBuffer buffer(hit, 2);
-		if (gScene->raycast(*CameraFollowTarget + sCamera->getOffset(),
-			-sCamera->getDir(), sCamera->mDistanceToTarget, buffer))
+		if (!inputSystem.isVehicle)
 		{
-			if (buffer.nbTouches > 1)
+			PxRaycastHit hit[2];
+			PxRaycastBuffer buffer(hit, 2);
+			if (gScene->raycast(*CameraFollowTarget + sCamera->getOffset(),
+				-sCamera->getDir(), sCamera->mDistanceToTarget, buffer))
 			{
-				PxVec3 newPos;
-				if (buffer.getTouch(0).distance < 0.1)
+				if (buffer.nbTouches > 1)
 				{
-					newPos = buffer.getTouch(1).position;
+					PxVec3 newPos;
+					if (buffer.getTouch(0).distance < 0.1)
+					{
+						newPos = buffer.getTouch(1).position;
+					}
+					else
+					{
+						newPos = buffer.getTouch(0).position;
+					}
+					sCamera->SetEye(newPos);
 				}
-				else
-				{
-					newPos = buffer.getTouch(0).position;
-				}
-				sCamera->SetEye(newPos);
 			}
 		}
 	}
@@ -1482,6 +1487,7 @@ void stepPhysics(bool interactive)
 		gScene->simulate(1.0f / 60.0f);
 		gScene->fetchResults(true);
 	}
+	/////////////////////////////物理模拟////////////////////////////
 
 	/////////////////////////////任务系统更新////////////////////////////////////
 
@@ -1506,19 +1512,6 @@ void cleanupPhysics(bool interactive)
 
 	printf("HelloWorld done.\n");
 }
-
-//按键设置
-//void keyPress(unsigned char key, const PxTransform& camera)
-//{
-//	switch(toupper(key))
-//	{
-//	case 'B':	createStack(PxTransform(PxVec3(0,0,stackZ-=10.0f)), 10, 2.0f);						break;
-//	//PxSphereGeometry Transform,geometry,velocity（速度）
-//	case ' ':	createDynamic(2,camera,camera.rotate(PxVec3(0,0,-1))*200);	break;
-//	}
-//}
-
-
 
 
 #define RENDER_SNIPPET 1
