@@ -768,33 +768,35 @@ namespace
 		gModelShader.SetMatrix4fv("projection", projectionMat);
 		gModelShader.SetMatrix4fv("view", viewMat);
 		gModelShader.SetMatrix4fv("model", modelMat0);
-		gameObject.g_body->switchSpotLightStatus(vehicleUseSpotLight, gModelShader);
+		//车灯会影响到这些shader
+		gameObject.g_body->switchSpotLightStatus(vehicleUseSpotLight, gModelShader);	
 		gameObject.g_body->Draw(gModelShader);
-
-		
-		
-
 
 		//渲染车轮
 		Model* wheels[4] = { gameObject.g_wheel_fl,gameObject.g_wheel_fr,gameObject.g_wheel_bl,gameObject.g_wheel_br};
 		PxVec3 offset[4] = { PxVec3(0.88467, -0.7733, 1.6328) , PxVec3(-0.88467, -0.7733, 1.6328) ,PxVec3(0.88467, -0.7733, -1.2502),PxVec3(-0.88467, -0.7733, -1.2502)};
-		//spotlight
-		//车辆中心位置
-		PxVec3 vehiclePos = gameObject.transform.p;
-		//车辆前进方向
-		PxVec3 vehicleForward = gameObject.transform.q.getBasisVector2().getNormalized();
-		//车辆水平方向
-		//PxVec3 vehicleHorizon = gameObject.transform.q.getBasisVector0().getNormalized();
-		//灯位置
-		PxVec3 vehicleLight = vehiclePos + vehicleForward * 2.3f;
+		//如果使用了车灯，才进行相关计算 
+		PxVec3 vehicleForward, vehicleLight;
+		if (vehicleUseSpotLight)
+		{
+			//spotlight
+			//车辆中心位置
+			PxVec3 vehiclePos = gameObject.transform.p;
+			//车辆前进方向
+			vehicleForward = gameObject.transform.q.getBasisVector2().getNormalized();
+			//车辆水平方向
+			//PxVec3 vehicleHorizon = gameObject.transform.q.getBasisVector0().getNormalized();
+			//灯位置
+			vehicleLight = vehiclePos + vehicleForward * 2.3f;
 
-		//向shader传入参数
-		gModelShader.SetVector3f("spotLight.position", vehicleLight.x, vehicleLight.y, vehicleLight.z);
-		gModelShader.SetVector3f("spotLight.direction", vehicleForward.x, vehicleForward.y - 0.3f, vehicleForward.z);
-		gModelShader.SetFloat("spotLight.cutOff", glm::cos(glm::radians(gSpotLightCutOff)));
-		gModelShader.SetVector3f("spotLight.ambient", gSpotLightAmbient);
-		gModelShader.SetVector3f("spotLight.diffuse", gSpotLightDiffuse);
-		gModelShader.SetVector3f("spotLight.specular", gSpotLightSpecular);
+			//向shader传入参数
+			gModelShader.SetVector3f("spotLight.position", vehicleLight.x, vehicleLight.y, vehicleLight.z);
+			gModelShader.SetVector3f("spotLight.direction", vehicleForward.x, vehicleForward.y - 0.3f, vehicleForward.z);
+			gModelShader.SetFloat("spotLight.cutOff", glm::cos(glm::radians(gSpotLightCutOff)));
+			gModelShader.SetVector3f("spotLight.ambient", gSpotLightAmbient);
+			gModelShader.SetVector3f("spotLight.diffuse", gSpotLightDiffuse);
+			gModelShader.SetVector3f("spotLight.specular", gSpotLightSpecular);
+		}
 		gModelShader.SetFloat("material.shininess", gVehicleShininess);
 		//应该对每个车轮应用不同转换矩阵
 		for (size_t i = 0; i < 4; i++)
@@ -826,6 +828,19 @@ namespace
 			gameObject.g_body->Draw(gShadowShader);
 		}
 		//=================================
+		//无论本次是否使用车灯，都要更新使用车灯的状态
+		gModelAnimShader.use();
+		gameObject.g_body->switchSpotLightStatus(vehicleUseSpotLight, gModelAnimShader);
+		//只有本次使用了车灯，才计算具体的值
+		if (vehicleUseSpotLight)
+		{
+			gModelAnimShader.SetVector3f("spotLight.position", vehicleLight.x, vehicleLight.y, vehicleLight.z);
+			gModelAnimShader.SetVector3f("spotLight.direction", vehicleForward.x, vehicleForward.y - 0.3f, vehicleForward.z);
+			gModelAnimShader.SetFloat("spotLight.cutOff", glm::cos(glm::radians(gSpotLightCutOff)));
+			gModelAnimShader.SetVector3f("spotLight.ambient", gSpotLightAmbient);
+			gModelAnimShader.SetVector3f("spotLight.diffuse", gSpotLightDiffuse);
+			gModelAnimShader.SetVector3f("spotLight.specular", gSpotLightSpecular);
+		}
 		glUseProgram(0);
 	}
 
