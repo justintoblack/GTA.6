@@ -9,10 +9,13 @@
 #include "../SnippetVehicleCommon/SnippetVehicleFilterShader.h"
 #include "../SnippetVehicleCommon/SnippetVehicleSceneQuery.h"
 #include "../DemoTest/GameObject.h"
+#include"../DemoTest/Zombie.h"
 #include <list>
 #include<io.h>
 
 using namespace physx;
+
+
 
 enum BreakType
 {
@@ -30,12 +33,13 @@ private:
 public:
 
 	vector<GameObject> SceneGameObject;		//场景中的GameObject
-	vector<GameObject> SpecialGameObject;	//需要代码生成的物件
+	vector<GameObject*> SpecialGameObject;	//需要代码生成的物件
 	vector<string> ModelPath;	//模型路径
 	vector<string> ModelName;	//文件名
 	//const char** models;
 
-	Model  poleModel;
+	Model  Street_Pole;
+	Model	Traffic_light;
 	Model  stationModel;
 	Model  stationModel_01;
 	Model  road;
@@ -44,33 +48,36 @@ public:
 	Model  _carWheelRight;
 
 	//初始化
-	void Init(PxPhysics* physics,PxScene* gScene);
+	void Init(PxPhysics* physics, PxScene* gScene);
 
 	//创建位置标志小球(static)
-	void CreateAnchorBall(PxTransform pos, PxMaterial* gMaterial,float radius);
+	void CreateAnchorBall(PxTransform pos, PxMaterial* gMaterial, float radius);
 
 	//创建位置标志立方体(static)
-	void CreateAnchorBox(PxTransform pos, PxMaterial* gMaterial, float halfX,float halfY,float halfZ);
+	void CreateAnchorBox(PxTransform pos, PxMaterial* gMaterial, float halfX, float halfY, float halfZ);
 
 	//创建动态球体(Dynamic)
 	void CreateDynamicSphere(PxTransform pos, PxMaterial* gMaterial, float radius);
 
 	//创建单个栅栏
-	void CreateBanister(PxVec3 pos,PxVec3 dir, PxMaterial* gMaterial, float halfHeight, 
-		float halfLength, float density, float force, float torque,BreakType type);
-	
+	void CreateBanister(PxVec3 pos, PxVec3 dir, PxMaterial* gMaterial, float halfHeight,
+		float halfLength, float density, float force, float torque, BreakType type);
+
 	//创建一排栅栏
-	void CreateBanisters(PxVec3 pos, PxVec3 dir, PxMaterial* gMaterial,float separate, 
+	void CreateBanisters(PxVec3 pos, PxVec3 dir, PxMaterial* gMaterial, float separate,
 		physx::PxU32 num, float halfHeight, float halfLength,
 		float density, float force, float torque);
 
 	//创建单个电线杆
 	void CreatePole(PxVec3 pos, PxMaterial* gMaterial, float halfXZ, float halfHeight,
-		float density, float force, float torque);
+		float density, float force, float torque,Model& Createmodel);
+
+	//创建streetLight
+	void CreateStreetPole(PxTransform pos);
 
 	//创建一排电线杆
-	void CreatePoles(PxVec3 pos, PxVec3 dir,float separate,PxU32 num, PxMaterial* gMaterial, float halfXZ, float halfHeight,
-		float density, float force, float torque);
+	void CreatePoles(PxVec3 pos, PxVec3 dir, float separate, PxU32 num, PxMaterial* gMaterial, float halfXZ, float halfHeight,
+		float density, float force, float torque, Model& Createmodel);
 
 	//创建减速带
 	void createSlowArea(PxVec3 startPosition, PxF32 capsuleRadii, PxF32 interval, PxU32 num, PxMaterial* gMaterial);

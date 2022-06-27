@@ -39,7 +39,7 @@ public:
 	PxRigidDynamic* StartTrigger = NULL;
 	PxRigidDynamic* EndTrigger = NULL;
 	double Timer = 0;
-	double TimeLimit = 10;
+	double TimeLimit = 15;
 	MissionType Type;
 
 	

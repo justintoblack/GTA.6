@@ -1681,8 +1681,8 @@ namespace
 			glDeleteVertexArrays(1, &gSkyboxVAO);
 			glDeleteBuffers(1, &gSkyboxVBO);
 			SetupSkybox();
-			cout << "scenario: " << scenario << endl;
-			cout << "=======================================" << endl;
+			//cout << "scenario: " << scenario << endl;
+			//cout << "=======================================" << endl;
 			scenarioChange = false;
 		}
 
@@ -1793,6 +1793,7 @@ namespace
 
 		RenderCarObject(carObject);
 		RenderMissionObject();
+
 		//渲染场景物体
 		for (int i = 0; i < theCreator.SceneGameObject.size(); i++)
 		{
@@ -1802,7 +1803,7 @@ namespace
 		//渲染特殊物体
 		for (int i = 0; i < theCreator.SpecialGameObject.size(); i++)
 		{
-			RenderGameObject(theCreator.SpecialGameObject[i]);
+			RenderGameObject(*theCreator.SpecialGameObject[i]);
 		}
 
 		//RenderGameObject(carObject);
@@ -1926,7 +1927,6 @@ namespace
 		gStar = Model("../../assets/objects/mission/SM_Icon_Star_01.fbx");
 		gArrow = Model("../../assets/objects/mission/SM_Icon_Arrow_Small_01.fbx");
 		gExclamation = Model("../../assets/objects/mission/SM_Icon_Letter_Exclamation_01.fbx");
-
 		gModel = Model("../../assets/objects/nanosuit/nanosuit.obj");
 		//gModel2 = Model("../../assets/objects/Models/hougitse.fbx");
 		

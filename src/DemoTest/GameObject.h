@@ -3,13 +3,14 @@
 #define _GameObject_H
 #include "../ModelLoading/model.h"
 #include "../Render/Render.h"
+#include	"MonoBehaviour.h"
 using namespace physx;
 
 extern	PxPhysics* gPhysics;
 extern	PxMaterial* gMaterial;
 extern	PxScene* gScene;
 extern const char** _allModelsName;
-extern vector<Model> Models;			//Ä£ĞÍ
+extern vector<Model> Models;			//æ¨¡å‹
 extern void makeObjectDrivable(PxShape*& shape);
 
 class GameObject;
@@ -45,9 +46,8 @@ public:
 	Model*  g_model=nullptr;
 	PxRigidActor*  g_rigidBody=nullptr;
 
-	//×é¼ş
+	//ç»„ä»¶
 	vector<Component*> components;
-
 
 	GameObject()
 	{
@@ -55,32 +55,32 @@ public:
 		scale = PxVec3(1, 1, 1);
 		components.clear();
 	}
+	virtual void Awake() {};
+	virtual void Update() {};
 
-	//GameObject& operator=(const GameObject& obj)
-	//{
-	//	const char* newName = obj.Name;
-	//	strcpy(Name, newName);
-	//	transform = obj.transform;
-	//	localTransform = obj.localTransform;
-	//	parent = obj.parent;
-	//	for (int i = 0; i < obj.components.size(); i++)
-	//	{
-	//		Component* newComponent=new Component();
-	//		*newComponent = *obj.components[i];
-	//		components.push_back(newComponent);
-	//		//cout << i<<"OBj:  ";
-	//		//cout << &obj.components[i] << endl;
-	//		//cout << "this" << &*this << endl;
-	//	}
-	//	return *this;
-	//}
+	GameObject& operator=(const GameObject& obj)
+	{
+		const char* newName = obj.Name;
+		strcpy(Name, newName);
+		transform = obj.transform;
+		localTransform = obj.localTransform;
+		parent = obj.parent;
+		for (int i = 0; i < obj.components.size(); i++)
+		{
+			shared_ptr<Component*> p1 = make_shared<Component*>();
+			*p1 = &*obj.components[i];
+			shared_ptr<Component*>p2 = make_shared<Component*>(*p1);
+			this->components.push_back(*p2);
+		}
+		return *this;
+	}
 
 	void SetName(const char name[])
 	{
 		strcpy(Name, name);
 	}
 
-	//ÉèÖÃGameObjectÎ»ÖÃ
+	//è®¾ç½®GameObjectä½ç½®
 	void SetTransform(PxTransform trans)
 	{
 		transform = trans;
@@ -90,7 +90,7 @@ public:
 		}
 	}
 
-	//ÉèÖÃ¾Ö²¿×ø±ê
+	//è®¾ç½®å±€éƒ¨åæ ‡
 	void SetLocalTransform(PxTransform trans)
 	{
 		localTransform = trans;
@@ -102,13 +102,13 @@ public:
 		g_rigidBody->setGlobalPose({ gameObjectPosition[0], gameObjectPosition[1], gameObjectPosition[2] });
 	}
 
-	//°ó¶¨Ä£ĞÍ
+	//ç»‘å®šæ¨¡å‹
 	void AddModel(Model &model)
 	{
 		g_model = &model;
 	}
 
-	//Ìí¼Ó¸ÕÌå
+	//æ·»åŠ åˆšä½“
 	void AddRigidbody(bool isDynamic)
 	{
 		if (isDynamic)
@@ -131,7 +131,7 @@ public:
 		g_rigidBody->userData = this;
 	}
 
-	//Ìí¼ÓBoxCollider
+	//æ·»åŠ BoxCollider
 	void AddBoxCollider(float halfX,float halfY,float halfZ,PxTransform localPos)
 	{
 		PxShape* shape = gPhysics->createShape(PxBoxGeometry(halfX, halfY,
@@ -140,7 +140,7 @@ public:
 		g_rigidBody->attachShape(*shape);
 	}
 
-	///Ìí¼ÓSphereCollider
+	///æ·»åŠ SphereCollider
 	void AddSphereCollider(float radius,PxTransform localPos)
 	{
 		PxShape* shape = gPhysics->createShape(PxSphereGeometry(radius), 
@@ -149,7 +149,7 @@ public:
 		g_rigidBody->attachShape(*shape);
 	}
 
-	//Ìí¼Ócapsule
+	//æ·»åŠ capsule
 	void AddCapsuleCollider(float radius,float halfHeigght,PxTransform localPos)
 	{
 		PxShape* shape = gPhysics->createShape(PxCapsuleGeometry(radius, halfHeigght),
@@ -158,7 +158,7 @@ public:
 		g_rigidBody->attachShape(*shape);
 	}
 
-	//Ìí¼Óµ½³¡¾°ÖĞ
+	//æ·»åŠ åˆ°åœºæ™¯ä¸­
 	void AddToScene()
 	{
 		if (g_rigidBody != nullptr)
@@ -178,7 +178,7 @@ public:
 		components.push_back(component);
 	}
 
-	//²éÑ¯ÊÇ·ñ´æÔÚComponent
+	//æŸ¥è¯¢æ˜¯å¦å­˜åœ¨Component
 	bool hasComponent(string typeName)
 	{
 		string a = "class " + typeName;
@@ -192,7 +192,7 @@ public:
 		return false;
 	}
 
-	//»ñÈ¡×é¼ş
+	//è·å–ç»„ä»¶
 	Component* GetComponent(string typeName)
 	{
 		string a = "class " + typeName;
@@ -207,7 +207,7 @@ public:
 		return nullptr;
 	}
 
-	////É¾³ıGameObject
+	////åˆ é™¤GameObject
 	//void Delete()
 	//{
 	//	cout << "Delete" << endl;
@@ -247,6 +247,13 @@ public:
 		{
 			SetRigidBodyDynamic();
 		}
+	}
+	RigidBody(GameObject* parent, PxRigidActor* rig)
+	{
+		_parent = parent;
+		_parent->g_rigidBody = rig;
+		_parent->g_rigidBody->userData = _parent;
+		gScene->addActor(*_parent->g_rigidBody);
 	}
 
 	void SetRigidBodyStatic()
@@ -366,4 +373,6 @@ public:
 		}
 	}
 };
+
+
 #endif // !GameObject

@@ -60,6 +60,8 @@
     <ClInclude Include="..\..\src\DemoTest\Mission.h" />
     <ClInclude Include="..\..\src\DemoTest\MissionManager.h" />
     <ClInclude Include="..\..\src\DemoTest\MisssionManager.h" />
+    <ClInclude Include="..\..\src\DemoTest\MonoBehaviour.h" />
+    <ClInclude Include="..\..\src\DemoTest\Zombie.h" />
     <ClInclude Include="..\..\src\GameDemo\JsonData.h" />
     <ClInclude Include="..\..\src\GameDemo\TheCreator.h" />
     <ClInclude Include="..\..\src\InputSystem\ActionMap.h" />
