@@ -888,7 +888,7 @@ PxController* CreateCharacterController(PxExtendedVec3 initPos)
 
 	PxShape* haha;
 	ctrl->getActor()->getShapes(&haha, 1);
-	haha->setFlag(PxShapeFlag::eSCENE_QUERY_SHAPE, true);
+	haha->setFlag(PxShapeFlag::eSCENE_QUERY_SHAPE, false);
 
 	return ctrl;
 }
@@ -1432,25 +1432,28 @@ void stepPhysics(bool interactive)
 	{
 		sCamera->Update(*CameraFollowTarget);
 		//相机碰撞检测
-		//PxRaycastHit hit[2];
-		//PxRaycastBuffer buffer(hit, 2);
-		//if (gScene->raycast(*CameraFollowTarget + sCamera->getOffset(),
-		//	-sCamera->getDir(), sCamera->mDistanceToTarget, buffer))
-		//{
-		//	if (buffer.nbTouches > 1)
-		//	{
-		//		PxVec3 newPos;
-		//		if (buffer.getTouch(0).distance < 0.1)
-		//		{
-		//			newPos = buffer.getTouch(1).position;
-		//		}
-		//		else
-		//		{
-		//			newPos = buffer.getTouch(0).position;
-		//		}
-		//		sCamera->SetEye(newPos);
-		//	}
-		//}
+		if (!inputSystem.isVehicle)
+		{
+			PxRaycastHit hit[2];
+			PxRaycastBuffer buffer(hit, 2);
+			if (gScene->raycast(*CameraFollowTarget + sCamera->getOffset(),
+				-sCamera->getDir(), sCamera->mDistanceToTarget, buffer))
+			{
+				if (buffer.nbTouches > 1)
+				{
+					PxVec3 newPos;
+					if (buffer.getTouch(0).distance < 0.1)
+					{
+						newPos = buffer.getTouch(1).position;
+					}
+					else
+					{
+						newPos = buffer.getTouch(0).position;
+					}
+					sCamera->SetEye(newPos);
+				}
+			}
+		}
 	}
 	else
 	{
