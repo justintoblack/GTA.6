@@ -42,7 +42,6 @@
     <ClInclude Include="..\..\src\Render\Camera.h" />
     <ClInclude Include="..\..\src\Render\Render.h" />
     <ClInclude Include="..\..\src\Render\Shader.h" />
-    <ClInclude Include="..\..\src\Render\stb_image.h" />
     <ClInclude Include="..\..\src\SnippetVehicleCommon\SnippetVehicleConcurrency.h" />
     <ClInclude Include="..\..\src\SnippetVehicleCommon\SnippetVehicleCreate.h" />
     <ClInclude Include="..\..\src\SnippetVehicleCommon\SnippetVehicleFilterShader.h" />
@@ -58,6 +57,7 @@
     <ClInclude Include="Dependencies\imgui\imstb_textedit.h" />
     <ClInclude Include="Dependencies\imgui\imstb_truetype.h" />
     <ClInclude Include="..\..\src\DemoTest\MissionManager.h" />
+    <ClInclude Include="..\..\src\Render\stb_image.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\src\Light\light.fs" />
@@ -68,5 +68,11 @@
     <None Include="..\..\src\ModelLoading\shadow_loading.vs" />
     <None Include="..\..\src\Render\SkyBox.fs" />
     <None Include="..\..\src\Render\SkyBox.vs" />
+    <None Include="..\..\src\Render\Clock.fs" />
+    <None Include="..\..\src\Render\Clock.vs" />
+    <None Include="..\..\src\Render\ClockMain.fs" />
+    <None Include="..\..\src\Render\ClockMain.vs" />
+    <None Include="..\..\src\Render\Dashboard.fs" />
+    <None Include="..\..\src\Render\Dashboard.vs" />
   </ItemGroup>
 </Project>

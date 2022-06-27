@@ -9,6 +9,8 @@ extern InputSyetem inputSystem;
 extern float deltaTime;
 extern bool isInGameMode;
 
+void GlobalKeyEvent();
+
 extern void SwitchMode();
 
 ActionMap::ActionMap()
