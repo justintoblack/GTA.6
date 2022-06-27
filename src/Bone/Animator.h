@@ -3,7 +3,7 @@
 
 #include <glm/glm.hpp>
 #include "Animation.h"
-#include "AssimpGlmUtil.h"
+#include "../Utils/AssimpGlmUtil.h"
 
 #define reservedVectorSize 250
 

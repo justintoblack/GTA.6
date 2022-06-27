@@ -5,7 +5,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtx/quaternion.hpp>
 #include <vector>
-#include "AssimpGlmUtil.h"
+#include "../Utils/AssimpGlmUtil.h"
 
 using namespace std;
 

@@ -58,6 +58,9 @@
     <ClInclude Include="Dependencies\imgui\imstb_textedit.h" />
     <ClInclude Include="Dependencies\imgui\imstb_truetype.h" />
     <ClInclude Include="..\..\src\DemoTest\MissionManager.h" />
+    <ClInclude Include="..\..\src\Bone\Animation.h" />
+    <ClInclude Include="..\..\src\Bone\Animator.h" />
+    <ClInclude Include="..\..\src\Bone\ModelAnimation.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\src\Light\light.fs" />
@@ -68,5 +71,7 @@
     <None Include="..\..\src\ModelLoading\shadow_loading.vs" />
     <None Include="..\..\src\Render\SkyBox.fs" />
     <None Include="..\..\src\Render\SkyBox.vs" />
+    <None Include="..\..\src\Bone\ModelAnim.fs" />
+    <None Include="..\..\src\Bone\ModelAnim.vs" />
   </ItemGroup>
 </Project>

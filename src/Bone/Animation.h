@@ -8,7 +8,7 @@
 #include <glm/glm.hpp>
 #include "Bone.h"
 #include "ModelAnimation.h"
-#include "AssimpGlmUtil.h"
+#include "../Utils/AssimpGlmUtil.h"
 
 using namespace std;
 struct AssimpNode {

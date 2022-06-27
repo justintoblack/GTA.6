@@ -51,9 +51,9 @@
 #include "../DemoTest/MissionManager.h"
 #include "irrKlang/irrKlang.h" 
 #include "../GameDemo/TheCreator.h"
-#include "ModelAnimation.h"
-#include "Animation.h"
-#include "Animator.h"
+#include "../Bone/ModelAnimation.h"
+#include "../Bone/Animation.h"
+#include "../Bone/Animator.h"
 
 using namespace irrklang;
 using namespace physx;
@@ -1115,8 +1115,6 @@ namespace
 		//	gModelShader);
 
 
-		///////////////EndTest////////////////////////////
-		totalTime += deltaTime; 
 		
 		{//--------------------render anim------------------------
 			//cout << "DemotestRender::render anim:: totalTime:" << totalTime << endl;
