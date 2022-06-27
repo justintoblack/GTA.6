@@ -58,6 +58,8 @@
     <ClInclude Include="Dependencies\imgui\imstb_textedit.h" />
     <ClInclude Include="Dependencies\imgui\imstb_truetype.h" />
     <ClInclude Include="..\..\src\DemoTest\MissionManager.h" />
+    <ClInclude Include="..\..\src\DemoTest\MonoBehaviour.h" />
+    <ClInclude Include="..\..\src\DemoTest\Zombie.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\src\Light\light.fs" />

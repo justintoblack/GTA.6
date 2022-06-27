@@ -1389,9 +1389,12 @@ void stepPhysics(bool interactive)
 
 	////////////////////////////移动结束////////////////////////////////
 
-	/////////////////////////////载具更新////////////////////////////////////
-
-
+	/////////////////////////////GameObject Update/////////////////////
+	for (int i = 0; i < theCreator.SpecialGameObject.size(); i++)
+	{
+		theCreator.SpecialGameObject[i]->Update();
+	}
+	/////////////////////////////GameObject Update/////////////////////
 
 	////////////////////////////////////////////////////////////
 	//相机跟随
@@ -1453,6 +1456,7 @@ void stepPhysics(bool interactive)
 		gScene->simulate(1.0f / 60.0f);
 		gScene->fetchResults(true);
 	}
+	/////////////////////////////物理模拟////////////////////////////
 
 	/////////////////////////////任务系统更新////////////////////////////////////
 
@@ -1477,19 +1481,6 @@ void cleanupPhysics(bool interactive)
 
 	printf("HelloWorld done.\n");
 }
-
-//按键设置
-//void keyPress(unsigned char key, const PxTransform& camera)
-//{
-//	switch(toupper(key))
-//	{
-//	case 'B':	createStack(PxTransform(PxVec3(0,0,stackZ-=10.0f)), 10, 2.0f);						break;
-//	//PxSphereGeometry Transform,geometry,velocity（速度）
-//	case ' ':	createDynamic(2,camera,camera.rotate(PxVec3(0,0,-1))*200);	break;
-//	}
-//}
-
-
 
 
 #define RENDER_SNIPPET 1

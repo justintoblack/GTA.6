@@ -1039,8 +1039,8 @@ namespace
 		//std::cout << intGmaeTime << std::endl;
 		//std::cout << (int)gameTime << std::endl;
 		//cout << timeSpeed << endl;
-		cout << "您已进入游戏: " << gameTime << "秒				";
-		cout << "游戏进入第" << calendarDayDisplay << "天    " << calendarHourDisplay << "点" << calendarMinuteDisplay << "分" << endl;
+		//cout << "您已进入游戏: " << gameTime << "秒				";
+		//cout << "游戏进入第" << calendarDayDisplay << "天    " << calendarHourDisplay << "点" << calendarMinuteDisplay << "分" << endl;
 		//cout << currentTime <<endl;
 
 		
@@ -1049,8 +1049,8 @@ namespace
 		//天空盒初始化状态机
 		if (scenarioChange == true) {
 			SetupSkybox();
-			cout << "scenario: " << scenario << endl;
-			cout << "=======================================" << endl;
+			//cout << "scenario: " << scenario << endl;
+			//cout << "=======================================" << endl;
 			scenarioChange = false;
 		}
 
@@ -1076,6 +1076,7 @@ namespace
 
 		RenderCarObject(carObject);
 		RenderMissionObject();
+
 		//渲染场景物体
 		for (int i = 0; i < theCreator.SceneGameObject.size(); i++)
 		{
@@ -1085,7 +1086,7 @@ namespace
 		//渲染特殊物体
 		for (int i = 0; i < theCreator.SpecialGameObject.size(); i++)
 		{
-			RenderGameObject(theCreator.SpecialGameObject[i]);
+			RenderGameObject(*theCreator.SpecialGameObject[i]);
 		}
 
 		//RenderGameObject(carObject);

@@ -1,33 +1,24 @@
-﻿  ClassicMain.cpp
-  DemoTest.cpp
+﻿  DemoTest.cpp
 E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\DemoTest\DemoTest.cpp(1,1): warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
 E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\ModelLoading\mesh.h(108,1): warning C4267: “参数”: 从“size_t”转换到“GLsizei”，可能丢失数据
-E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\DemoTest\GameObject.h(80,1): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\DemoTest\GameObject.h(81,1): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
 C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\ucrt\string.h(133): message : 参见“strcpy”的声明
-E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\DemoTest\GameObject.h(363,1): warning C4267: “参数”: 从“size_t”转换到“int”，可能丢失数据
+E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\DemoTest\GameObject.h(364,1): warning C4267: “参数”: 从“size_t”转换到“int”，可能丢失数据
 E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\DemoTest\DemoTest.cpp(979,1): warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
   DemoTestRender.cpp
 E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\ModelLoading\mesh.h(108,1): warning C4267: “参数”: 从“size_t”转换到“GLsizei”，可能丢失数据
 E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\Utils\Mathf.cpp(1,1): warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
-E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\DemoTest\GameObject.h(80,1): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\DemoTest\GameObject.h(81,1): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
 C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\ucrt\string.h(133): message : 参见“strcpy”的声明
-E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\DemoTest\GameObject.h(363,1): warning C4267: “参数”: 从“size_t”转换到“int”，可能丢失数据
-  Mission.cpp
-E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\ModelLoading\mesh.h(108,1): warning C4267: “参数”: 从“size_t”转换到“GLsizei”，可能丢失数据
-  MissionManager.cpp
-E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\ModelLoading\mesh.h(108,1): warning C4267: “参数”: 从“size_t”转换到“GLsizei”，可能丢失数据
+E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\DemoTest\GameObject.h(364,1): warning C4267: “参数”: 从“size_t”转换到“int”，可能丢失数据
   TheCreator.cpp
 E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\GameDemo\TheCreator.cpp(1,1): warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
 E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\ModelLoading\mesh.h(108,1): warning C4267: “参数”: 从“size_t”转换到“GLsizei”，可能丢失数据
-E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\DemoTest\GameObject.h(80,1): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\DemoTest\GameObject.h(81,1): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
 C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\ucrt\string.h(133): message : 参见“strcpy”的声明
-E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\DemoTest\GameObject.h(363,1): warning C4267: “参数”: 从“size_t”转换到“int”，可能丢失数据
-E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\GameDemo\TheCreator.cpp(64,34): warning C4267: “=”: 从“size_t”转换到“int”，可能丢失数据
-E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\GameDemo\TheCreator.cpp(201,20): warning C4018: “<”: 有符号/无符号不匹配
-  ActionMap.cpp
-  InputSystem.cpp
-  Camera.cpp
-E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\Render\Camera.cpp(145,25): warning C4305: “初始化”: 从“double”到“float”截断
+E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\DemoTest\GameObject.h(364,1): warning C4267: “参数”: 从“size_t”转换到“int”，可能丢失数据
+E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\GameDemo\TheCreator.cpp(58,34): warning C4267: “=”: 从“size_t”转换到“int”，可能丢失数据
+E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\GameDemo\TheCreator.cpp(204,20): warning C4018: “<”: 有符号/无符号不匹配
   Render.cpp
 E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\third_party\includes\GL\glew.h(1518,1): warning C4005: “GL_DEPTH_TEXTURE_MODE”: 宏重定义
 E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\Render\Render.cpp(33): message : 参见“GL_DEPTH_TEXTURE_MODE”的前一个定义
@@ -38,25 +29,8 @@ E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\Render\Render.c
 E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\third_party\includes\GL\glew.h(1521,1): warning C4005: “GL_COMPARE_R_TO_TEXTURE”: 宏重定义
 E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\Render\Render.cpp(34): message : 参见“GL_COMPARE_R_TO_TEXTURE”的前一个定义
 E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\ModelLoading\mesh.h(108,1): warning C4267: “参数”: 从“size_t”转换到“GLsizei”，可能丢失数据
-E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\DemoTest\GameObject.h(363,1): warning C4267: “参数”: 从“size_t”转换到“int”，可能丢失数据
+E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\DemoTest\GameObject.h(364,1): warning C4267: “参数”: 从“size_t”转换到“int”，可能丢失数据
 E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\GameDemo\JsonData.h(169,20): warning C4018: “<”: 有符号/无符号不匹配
-  StbImageImpl.cpp
-  SnippetVehicle4WCreate.cpp
-  SnippetVehicleCreate.cpp
-  SnippetVehicleFilterShader.cpp
-  SnippetVehicleNoDriveCreate.cpp
-  SnippetVehicleSceneQuery.cpp
-  SnippetVehicleTankCreate.cpp
-  SnippetVehicleTireFriction.cpp
-  imgui.cpp
-  imgui_demo.cpp
-  正在生成代码...
-  正在编译...
-  imgui_draw.cpp
-  imgui_impl_glut.cpp
-  imgui_impl_opengl2.cpp
-  imgui_tables.cpp
-  imgui_widgets.cpp
   正在生成代码...
   DemoTest.vcxproj -> E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\compiler\vc16win64\./../../../bin/vc16win64\DemoTestDEBUG.exe
   复制了 0 个文件

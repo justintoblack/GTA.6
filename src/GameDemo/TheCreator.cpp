@@ -42,12 +42,6 @@ void TheCreator::Init(PxPhysics* physics, PxScene* gScene)
 	m_gScene = gScene;
 
 	poleModel = Model("../../assets/objects/Models/01_SM_Prop_LightPole_Base_02.fbx");
-	//stationModel = Model("../../assets/objects/Models/SM_Bld_Station_01.fbx");
-	//stationModel_01 = Model("../../assets/objects/Models/SM_Bld_Station_03.fbx");
-	//road = Model("../../assets/objects/Models/SM_Env_Road_Bare_01.fbx");
-	//_carBody=Model("../../assets/objects/Models/carBody.fbx");
-	//_carWheelLeft=Model("../../assets/objects/Models/wheel_left.fbx");
-	//_carWheelRight=Model("../../assets/objects/Models/wheel_right.fbx");
 
 	//加载模型
 	string filePath = "../../assets/objects/Models";
@@ -73,6 +67,15 @@ void TheCreator::Init(PxPhysics* physics, PxScene* gScene)
 	 //初始化场景
 	 string scenePath = "../../assets/Scene/Scene.Data";
 	 FileToString(scenePath);
+
+	 //创建MonoBehaviour物体
+	 Zombie *testZombie = new Zombie();
+	 SpecialGameObject.push_back(testZombie);
+	 for (int i = 0; i < SpecialGameObject.size(); i++)
+	 {
+		 SpecialGameObject[i]->Awake();
+	 }
+
 }
 
 void TheCreator::CreateAnchorBall(PxTransform pos, PxMaterial* gMaterial,float radius)
@@ -190,7 +193,7 @@ void TheCreator::CreatePole(PxVec3 pos, PxMaterial* gMaterial,float radius,
 	j->setBreakForce(force, torque);
 
 	////gScene->addActor(*link);
-	SpecialGameObject.push_back(*gameObject);
+	SpecialGameObject.push_back(gameObject);
 }
 
 void TheCreator::CreatePoles(PxVec3 pos, PxVec3 dir, float separate, PxU32 num, PxMaterial* gMaterial, float halfXZ, float halfHeight, float density, float force, float torque)

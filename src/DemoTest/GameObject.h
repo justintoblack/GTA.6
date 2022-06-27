@@ -3,6 +3,7 @@
 #define _GameObject_H
 #include "../ModelLoading/model.h"
 #include "../Render/Render.h"
+#include	"MonoBehaviour.h"
 using namespace physx;
 
 extern	PxPhysics* gPhysics;
@@ -48,14 +49,14 @@ public:
 	//×é¼þ
 	vector<Component*> components;
 
-
 	GameObject()
 	{
 		transform = PxTransform(0,0,0);
 		scale = PxVec3(1, 1, 1);
 		components.clear();
 	}
-
+	virtual void Awake() {};
+	virtual void Update() {};
 	//GameObject& operator=(const GameObject& obj)
 	//{
 	//	const char* newName = obj.Name;
@@ -366,4 +367,6 @@ public:
 		}
 	}
 };
+
+
 #endif // !GameObject
