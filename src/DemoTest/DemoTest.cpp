@@ -1354,6 +1354,7 @@ void initPhysics(bool interactive)
 //（在render中调用）
 void stepPhysics(bool interactive)
 {
+
 	PX_UNUSED(interactive);
 	//时间
 
@@ -1361,7 +1362,7 @@ void stepPhysics(bool interactive)
 	inputSystem.InputAction();
 
 	DriveCarTrigger->setGlobalPose(m_player->getActor()->getGlobalPose()); //更新上车触发器的位置
-	const PxF32 timestep = 1.0f / 120.0f;
+	const PxF32 timestep = deltaTime;
 	if (gMimicKeyInputs)
 	{
 		PxVehicleDrive4WSmoothDigitalRawInputsAndSetAnalogInputs(gKeySmoothingData, gSteerVsForwardSpeedTable, gVehicleInputData, timestep, gIsVehicleInAir, *gVehicle4W);
