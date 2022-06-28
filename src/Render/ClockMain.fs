@@ -1,13 +1,16 @@
 #version 330 core
 out vec4 FragColor;
 
+in vec3 ourColor;
 in vec2 TexCoord;
 
-// texture samplers
+// texture sampler
 uniform sampler2D gClockMainTexture;
 
 void main()
 {
-	// linearly interpolate between both textures (80% container, 20% awesomeface)
-	FragColor = texture(gClockMainTexture, TexCoord);
+	vec4 texColor= texture(gClockMainTexture, TexCoord);
+	if(texColor.a<0.5)
+		discard;
+	FragColor=texColor;
 }
