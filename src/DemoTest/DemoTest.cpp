@@ -341,7 +341,7 @@ void GlobalKeyEvent()
 	{
 		isQKeyDown = false;
 	}*/
-	if (GetAsyncKeyState(100))
+	if (GetAsyncKeyState(100) || GetAsyncKeyState(52))
 	{
 		if (!is4KeyDown)
 		{
@@ -360,7 +360,7 @@ void GlobalKeyEvent()
 		is4KeyDown = false;
 	}
 
-	if (GetAsyncKeyState(102))
+	if (GetAsyncKeyState(102) || GetAsyncKeyState(54))
 	{
 		if (!is6KeyDown)
 		{
@@ -379,7 +379,7 @@ void GlobalKeyEvent()
 		is6KeyDown = false;
 	}
 
-	if (GetAsyncKeyState(98))
+	if (GetAsyncKeyState(98) || GetAsyncKeyState(50))
 	{
 		if (!is2KeyDown)
 		{
@@ -398,7 +398,7 @@ void GlobalKeyEvent()
 		is2KeyDown = false;
 	}
 
-	if (GetAsyncKeyState(104))
+	if (GetAsyncKeyState(104) || GetAsyncKeyState(56))
 	{
 		if (!is8KeyDown)
 		{
@@ -417,7 +417,7 @@ void GlobalKeyEvent()
 		is8KeyDown = false;
 	}
 
-	if (GetAsyncKeyState(101))
+	if (GetAsyncKeyState(101) || GetAsyncKeyState(53))
 	{
 		if (!is5KeyDown)
 		{
@@ -436,7 +436,7 @@ void GlobalKeyEvent()
 		is5KeyDown = false;
 	}
 
-	if (GetAsyncKeyState(107))
+	if (GetAsyncKeyState(107) || GetAsyncKeyState(57))
 	{
 		if (!isAddKeyDown)
 		{
@@ -455,7 +455,7 @@ void GlobalKeyEvent()
 		isAddKeyDown = false;
 	}
 
-	if (GetAsyncKeyState(109))
+	if (GetAsyncKeyState(109) || GetAsyncKeyState(48))
 	{
 		if (!isReduceKeyDown)
 		{

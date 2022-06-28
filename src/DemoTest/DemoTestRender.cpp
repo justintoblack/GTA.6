@@ -1546,9 +1546,9 @@ namespace
 				missionMusic = true;
 			}
 		}
-		cout << "isSelected" << isSelected << endl;
-		cout << "compareIsSelected" << compareIsSelected << endl;
-		cout << "missionMusic" << missionMusic << endl;
+		//cout << "isSelected" << isSelected << endl;
+		//cout << "compareIsSelected" << compareIsSelected << endl;
+		//cout << "missionMusic" << missionMusic << endl;
 		if ((soundEffect == false && missionMusic == true)|| (isSelected != compareIsSelected && isSelected == false && missionMusic == true)) {
 			cout << "ready to play Mission music!!!" << endl;
 			sndMission->setIsPaused(true);
