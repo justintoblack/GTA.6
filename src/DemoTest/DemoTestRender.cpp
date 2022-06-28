@@ -358,6 +358,7 @@ extern void initPhysics(bool interactive);
 extern void stepPhysics(bool interactive);
 extern void cleanupPhysics(bool interactive);
 extern MissionManager missionManager;
+
 //extern void keyPress(unsigned char key, const PxTransform& camera);
 
 //时间
@@ -434,6 +435,8 @@ bool beginMusic = false;
 bool InBeginMusic = false;
 bool missionMusic = false;
 
+bool missionFinish = false;
+bool missionSuccess = false;
 int currentSelect = 5;
 bool isInConfirm = false; //在任务详情界面
 bool isSelected = false;  //已接受任务时被置为true，没接受任务或者任务结束的那一帧被置为false
