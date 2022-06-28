@@ -69,11 +69,6 @@ void ActionMap::InputAction()
 	{
 		isMKeyDown = false;
 	}
-
-	if (GetAsyncKeyState(VK_ESCAPE))
-	{
-		exit(0);
-	}
 }
 
 

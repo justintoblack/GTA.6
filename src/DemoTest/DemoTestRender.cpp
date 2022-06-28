@@ -51,6 +51,7 @@
 #include "../DemoTest/MissionManager.h"
 #include "irrKlang/irrKlang.h" 
 #include "../GameDemo/TheCreator.h"
+#include "../InputSystem/ActionMap.h"
 
 using namespace irrklang;
 using namespace physx;
@@ -213,11 +214,13 @@ const char* gTaskBarFaces[2] = {
 	"../../assets/Textures/mission.png"
 };
 
-const char* gBoxFaces[4] = {
+const char* gBoxFaces[6] = {
 	"../../assets/Textures/missionBox1.png",
 	"../../assets/Textures/missionBox2.png",
 	"../../assets/Textures/missionBox3.png",
-	"../../assets/Textures/missionBox4.png"
+	"../../assets/Textures/missionBox4.png",
+	"../../assets/Textures/quitGame.png",
+	"../../assets/Textures/enterGame.png"
 };
 
 //天空盒的纹理图片
@@ -254,7 +257,7 @@ unsigned char* gClockMainData;
 unsigned char* gDashboardData;
 unsigned char* gTaskBarData[2];
 unsigned char* gSelectData;
-unsigned char* gBoxData[4];
+unsigned char* gBoxData[6];
 
 
 //天空盒六个方向
@@ -415,6 +418,10 @@ extern bool downKey;
 extern bool midKey;
 extern bool addKey;
 extern bool reduceKey;
+extern bool escKey;
+extern bool enterKey;
+
+extern void SwitchMode();
 
 extern bool soundEffect;
 
@@ -422,11 +429,22 @@ bool chooseMusic = false;
 bool hitMusic = false;
 bool enterMusic = false;
 bool beginMusic = false;
+bool InBeginMusic = false;
+bool missionMusic = false;
 
 int currentSelect = 5;
-bool isInConfirm = false;
-bool isSelected = false;
-bool compareIsSelected = true;
+bool isInConfirm = false; //在任务详情界面
+bool isSelected = false;  //已接受任务时被置为true，没接受任务或者任务结束的那一帧被置为false
+bool isInQuit = false;	  //在退出游戏界面
+bool isInBegin = true;    //在游戏欢迎界面
+bool isEndBegin = false;  //只会在退出欢迎界面的那一帧被置为true，该信号量会用于执行一次SwitchMode，但外界将无法读取到这个信号量被置为true的那一帧
+bool gotoSwitchMode = true;  //该信号量只会出现一次跳转，为true只发生在RenderCallback的第一次循环，即第一帧，用于执行一次SwitchMode，之后就一直是false
+bool haveSetupBox = false;
+bool compareIsSelected = true; //用于追踪上一帧的IsSelect的值，仅当在任务栏状态切换的那一帧，isSelect != compareIsSelect，且这个状态只出现在两个函数体之间
+
+
+float currentAngle = 0.0f;
+
 
 ////////////////////////////////////UI////////////////////////////////////////////
  
@@ -670,9 +688,9 @@ namespace
 		glm::vec3 tailMain = glm::vec3(0.7f, -0.5839f, -1.0f);
 		glm::vec3 headMain = glm::vec3(0.7f, -0.5839f, 1.0f);
 
-		float currentThetaUp = 6.0f * deltaTime * (float)(270.0f / (dashboardTheta + 30.0f)) / 9.0f;    //每帧的角度值变化
+		float currentThetaUp = 6.0f * deltaTime * (float)(270.0f / (dashboardTheta + 30.0f)) / 6.0f;    //每帧的角度值变化
 		float thetaMainUp = glm::radians(-currentThetaUp); //每帧的弧度值变化
-		float currentThetaDown = 6.0f * deltaTime * (float)((dashboardTheta + 30.0f) / 60.0f);    //每帧的角度值变化
+		float currentThetaDown = 6.0f * deltaTime * (float)((dashboardTheta + 30.0f) / 90.0f);    //每帧的角度值变化
 		float thetaMainDown = glm::radians(-currentThetaDown); //每帧的弧度值变化
 
 		if (isDriving == true && dashboardTheta < 270) {
@@ -1004,11 +1022,14 @@ namespace
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
+		
+			
+		
 
-		if (currentSelect == 1 || currentSelect == 5 || currentSelect == 7) {
-			if (gBoxData[0]) {
+		if (isInQuit == true) {
+			if (gBoxData[4]) {
 				cout << "gBoxData is ready!!!" << endl;
-				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, gBoxWidth, gBoxHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, gBoxData[0]);
+				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, gBoxWidth, gBoxHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, gBoxData[4]);
 				glGenerateMipmap(GL_TEXTURE_2D);
 
 			}
@@ -1018,23 +1039,53 @@ namespace
 			}
 			//stbi_image_free(gBoxData[0]);         绝对不要去释放掉这些data内存，否则下一次使用时会因找不到数据而报错
 		}
+		else if (isInBegin == true) {
+			if (gBoxData[5]) {
+				cout << "gBoxData is ready!!!" << endl;
+				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, gBoxWidth, gBoxHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, gBoxData[5]);
+				glGenerateMipmap(GL_TEXTURE_2D);
 
-		if (currentSelect == 4 || currentSelect == 9) {
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, gBoxWidth, gBoxHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, gBoxData[1]);
-			glGenerateMipmap(GL_TEXTURE_2D);
-			//stbi_image_free(gBoxData[1]);
+			}
+			else
+			{
+				std::cout << "Failed to load texture" << std::endl;
+			}
+			//stbi_image_free(gBoxData[0]);         绝对不要去释放掉这些data内存，否则下一次使用时会因找不到数据而报错
 		}
+		else
+		{
 
-		if (currentSelect == 3 || currentSelect == 8) {
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, gBoxWidth, gBoxHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, gBoxData[2]);
-			glGenerateMipmap(GL_TEXTURE_2D);
-			//stbi_image_free(gBoxData[2]);
-		}
+			if (currentSelect == 1 || currentSelect == 5 || currentSelect == 7) {
+				if (gBoxData[0]) {
+					cout << "gBoxData is ready!!!" << endl;
+					glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, gBoxWidth, gBoxHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, gBoxData[0]);
+					glGenerateMipmap(GL_TEXTURE_2D);
 
-		if (currentSelect == 2 || currentSelect == 6) {
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, gBoxWidth, gBoxHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, gBoxData[3]);
-			glGenerateMipmap(GL_TEXTURE_2D);
-			//stbi_image_free(gBoxData[3]);
+				}
+				else
+				{
+					std::cout << "Failed to load texture" << std::endl;
+				}
+				//stbi_image_free(gBoxData[0]);         绝对不要去释放掉这些data内存，否则下一次使用时会因找不到数据而报错
+			}
+
+			if (currentSelect == 4 || currentSelect == 9) {
+				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, gBoxWidth, gBoxHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, gBoxData[1]);
+				glGenerateMipmap(GL_TEXTURE_2D);
+				//stbi_image_free(gBoxData[1]);
+			}
+
+			if (currentSelect == 3 || currentSelect == 8) {
+				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, gBoxWidth, gBoxHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, gBoxData[2]);
+				glGenerateMipmap(GL_TEXTURE_2D);
+				//stbi_image_free(gBoxData[2]);
+			}
+
+			if (currentSelect == 2 || currentSelect == 6) {
+				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, gBoxWidth, gBoxHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, gBoxData[3]);
+				glGenerateMipmap(GL_TEXTURE_2D);
+				//stbi_image_free(gBoxData[3]);
+			}
 		}
 	}
 
@@ -1397,10 +1448,16 @@ namespace
 	char pathHit[] = "../../assets/audio/hitMusic.wav";
 	char pathEnter[] = "../../assets/audio/enterMusic.wav";
 	char pathBegin[] = "../../assets/audio/beginMusic.wav";
+	char pathInBegin[] = "../../assets/audio/begining.wav";
+	char pathMission[] = "../../assets/audio/mission.wav";
 	ISoundSource* sourceChoose = BackgroundMusicEngine->addSoundSourceFromFile(pathChoose, ESM_AUTO_DETECT, true);
 	ISoundSource* sourceHit = BackgroundMusicEngine->addSoundSourceFromFile(pathHit, ESM_AUTO_DETECT, true);
 	ISoundSource* sourceEnter = BackgroundMusicEngine->addSoundSourceFromFile(pathEnter, ESM_AUTO_DETECT, true);
 	ISoundSource* sourceBegin = BackgroundMusicEngine->addSoundSourceFromFile(pathBegin, ESM_AUTO_DETECT, true);
+	ISoundSource* sourceInBegin = BackgroundMusicEngine->addSoundSourceFromFile(pathInBegin, ESM_AUTO_DETECT, true);
+	ISoundSource* sourceMission = BackgroundMusicEngine->addSoundSourceFromFile(pathMission, ESM_AUTO_DETECT, true);
+	ISound* sndMission = BackgroundMusicEngine->play2D(sourceMission, true, true, false, false);
+	ISound* sndInBegin = BackgroundMusicEngine->play2D(sourceInBegin, true, true, false, false);
 
 	void playHitMusic(bool hitMusic, bool soundEffect)
 	{
@@ -1424,6 +1481,51 @@ namespace
 	{
 		if (soundEffect == true && beginMusic == true) {
 			BackgroundMusicEngine->play2D(sourceBegin, false, false, false, false);
+		}
+	}
+	void playInBeginMusic(bool gotoSwitchMode, bool &InBeginMusic, bool isInBegin) 
+	{
+		if (gotoSwitchMode == true && InBeginMusic == false) {   //gotoSwitchMode唯一一次等于false且此时音乐没在播放
+			cout << "<>InBeginMusic" << InBeginMusic << endl;
+			cout << "ready to play InBegin music!!!" << endl;
+			sndInBegin->setIsPaused(false);
+			cout << "ready to set InBeginMusic!!!================================================" << endl;
+			InBeginMusic = true;  //音乐在播放
+			cout << "InBeginMusic" << InBeginMusic << endl;
+		}
+		/*if (sndInBegin) {
+			cout << "sndInBegin is exit!!!1" << endl;
+		}*/
+		//cout << "InBeginMusic" << InBeginMusic << endl;
+		//cout << "isInBegin" << isInBegin << endl;
+		if (InBeginMusic == true && isInBegin == false) {
+			cout << "ready to stop InBegin music!!!" << endl;
+			sndInBegin->setIsPaused(true);
+			sndInBegin->drop();
+			InBeginMusic = false;
+		}
+	}
+	void playMissionMusic(bool isSelected, bool compareIsSelected, bool soundEffect, bool &missionMusic)
+	{
+		if (soundEffect == true) {
+			cout << "<>isSelected" << isSelected << endl;
+			cout << "<>compareIsSelected" << compareIsSelected << endl;
+			cout << "<>missionMusic" << missionMusic << endl;
+
+			if (isSelected != compareIsSelected && isSelected == true) {
+				cout << "ready to play Mission music!!!" << endl;
+				sndMission->setIsPaused(false);
+				missionMusic = true;
+			}
+		}
+		cout << "isSelected" << isSelected << endl;
+		cout << "compareIsSelected" << compareIsSelected << endl;
+		cout << "missionMusic" << missionMusic << endl;
+		if ((soundEffect == false && missionMusic == true)|| (isSelected != compareIsSelected && isSelected == false && missionMusic == true)) {
+			cout << "ready to play Mission music!!!" << endl;
+			sndMission->setIsPaused(true);
+			sndMission->drop();
+			missionMusic = false;
 		}
 	}
 
@@ -1692,6 +1794,8 @@ namespace
 		playHitMusic(hitMusic, soundEffect);
 		playEnterMusic(enterMusic, soundEffect);
 		playBeginMusic(beginMusic, soundEffect);
+		playInBeginMusic(gotoSwitchMode, InBeginMusic, isInBegin);
+		
 		
 		//Imgui中需要加入渲染回调的函数
 		Snippets::glut_display_func();
@@ -1707,88 +1811,117 @@ namespace
 
 		RenderSkybox();
 
-		if (midKey == true) {
-			cout << "midKey is Pressed" << endl;
-		}
-
-
-
-		if (midKey == true && isInConfirm == false && isSelected == false) {   //在没有进入确认界面的状态下按下了“5”
+		if (escKey == true && isInConfirm == false) {
+			isInQuit = true;
+			//haveSetupBox = false;
 			glDeleteVertexArrays(1, &gBoxVAO);
 			glDeleteBuffers(1, &gBoxVBO);
 			glDeleteBuffers(1, &gBoxEBO);
-			cout << "ready to SetupBox" << endl;
+			cout << "Begin to SetupBox in quit!!! " << endl;
 			SetupBox();
-			cout << "SetupBox is finished" << endl;
-			isInConfirm = true;
-			cout << "isInConfirm" << isInConfirm << endl;
-			enterMusic = true;
-		}
-		else {
-			enterMusic = false;
 		}
 
-		//if (midKey == true && isInConfirm == true) {   //处于确认界面的状态下按下了“5”
-		//	
-		//	isInConfirm = false;
-		//	cout << "isInConfirm" << isInConfirm << endl;
-		//}
-
-		if (reduceKey == true && isInConfirm == true) { //处于确认界面的状态下按下了“-”
-			
-			isInConfirm = false;
-			cout << "isInConfirm" << isInConfirm << endl;
+		if (isInBegin == true && haveSetupBox == false) {
+			haveSetupBox = true;
+			glDeleteVertexArrays(1, &gBoxVAO);
+			glDeleteBuffers(1, &gBoxVBO);
+			glDeleteBuffers(1, &gBoxEBO);
+			cout << "Begin to SetupBox in begining!!! " << endl;
+			SetupBox();
 		}
 
-		if (addKey == true && isInConfirm == true) {    //处于确认界面的状态下按下了“+”
-			
-			isInConfirm = false;
-			
-			isSelected = true;               //进入正式任务界面
-
-			beginMusic = true;
-			cout << "isInConfirm" << isInConfirm << endl;
-		}
-		else {
-			beginMusic = false;
+		if (isInQuit == true && addKey == true) {
+			exit(0);
 		}
 
-		if (isInConfirm == true ) {               //现在正处在确认界面中
-			cout << "ready to RenderBox" << endl;
+		if (isInQuit == true && reduceKey == true) {
+			isInQuit = false;
+			haveSetupBox = false;
+			cout << "isInQuit" << isInQuit << endl;
+		}
+
+		if (isInConfirm == true || isInQuit == true || isInBegin == true) {               //现在正处在确认界面中
+			//cout << "ready to RenderBox" << endl;
 			RenderBox();
-			cout << "RenderBox is working!!!" << endl;
+			//cout << "RenderBox is working!!!" << endl;
 		}
 
-		if (compareIsSelected != isSelected) {          //还没进入到正式任务界面
-			glDeleteVertexArrays(1, &gTaskBarVAO);
-			glDeleteBuffers(1, &gTaskBarVBO);
-			glDeleteBuffers(1, &gTaskBarEBO);
-			SetupTaskBar();
-			compareIsSelected = isSelected;
+		if (!isInBegin) {
+
+
+			if (midKey == true && isInConfirm == false && isSelected == false) {   //在没有进入确认界面的状态下按下了“5”
+				glDeleteVertexArrays(1, &gBoxVAO);
+				glDeleteBuffers(1, &gBoxVBO);
+				glDeleteBuffers(1, &gBoxEBO);
+				cout << "ready to SetupBox" << endl;
+				SetupBox();
+				cout << "SetupBox is finished" << endl;
+				isInConfirm = true;
+				cout << "isInConfirm" << isInConfirm << endl;
+				enterMusic = true;
+			}
+			else {
+				enterMusic = false;
+			}
+
+			//if (midKey == true && isInConfirm == true) {   //处于确认界面的状态下按下了“5”
+			//	
+			//	isInConfirm = false;
+			//	cout << "isInConfirm" << isInConfirm << endl;
+			//}
+
+			if (reduceKey == true && isInConfirm == true) { //处于确认界面的状态下按下了“-”
+			
+				isInConfirm = false;
+				cout << "isInConfirm" << isInConfirm << endl;
+			}
+
+			if (addKey == true && isInConfirm == true) {    //处于确认界面的状态下按下了“+”
+			
+				isInConfirm = false;
+			
+				isSelected = true;               //进入正式任务界面
+
+				beginMusic = true;
+				cout << "isInConfirm" << isInConfirm << endl;
+			}
+			else {
+				beginMusic = false;
+			}
+			playMissionMusic(isSelected, compareIsSelected, soundEffect, missionMusic);
+
+			if (compareIsSelected != isSelected) {          //还没进入到正式任务界面
+				glDeleteVertexArrays(1, &gTaskBarVAO);
+				glDeleteBuffers(1, &gTaskBarVBO);
+				glDeleteBuffers(1, &gTaskBarEBO);
+				SetupTaskBar();
+				compareIsSelected = isSelected;
+			}
+
+			if (isSelected == false)
+			{
+				RenderSelect();
+			}
+
+			RenderTaskBar();
+
+
+
+
+
+
+
+
+
+
+
+			if (inputSystem.isVehicle) {
+				RenderClockMain();
+				RenderDashboard();
+			}
 		}
-
-		if (isSelected == false)
-		{
-			RenderSelect();
-		}
-
-		RenderTaskBar();
-
-
-
-
-
-
-
-
-
-
 		RenderClock();
 
-		if (inputSystem.isVehicle) {
-			RenderClockMain();
-			RenderDashboard();
-		}
 		
 
 		RenderCarObject(carObject);
@@ -1844,8 +1977,27 @@ namespace
 		}
 		//////////////////////To be deleted////////////////////////////////
 
+		if (enterKey) {
+			cout << "enterKey is pressed!!!" << endl;
+		}
 
-
+		if (isInBegin == true && enterKey == false) {
+			if (gotoSwitchMode == true) {
+				SwitchMode();
+			}
+			physx::PxVec3 cameraUIPos = physx::PxVec3(150.0f * sin(glm::radians(currentAngle)), 150.0f, 160.0f * cos(glm::radians(currentAngle)));
+			sCamera->SetEye(cameraUIPos);
+			physx::PxVec3 cameraUIDir = physx::PxVec3(-150.0f * sin(glm::radians(currentAngle)), -150.0f, -150.0f * cos(glm::radians(currentAngle)));
+			sCamera->SetDir(cameraUIDir);
+			currentAngle += 10.0f * deltaTime;
+		}
+		if (isInBegin == true && enterKey == true) {
+			isInBegin = false;
+			isEndBegin = true;
+			cout << "ready go to SwitchMode" << endl;
+			SwitchMode();
+			isEndBegin = false;
+		}
 
 
 		Snippets::finishRender();
@@ -1874,6 +2026,8 @@ namespace
 
 		sCamera = new Snippets::Camera(PxVec3(50.0f, 50.0f, 50.0f), PxVec3(-0.6f,-0.2f,-0.7f));
 		sCamera->SetConfig(2.5f, 2.25f, 3.0f, PxVec3(0, 0.5f, 0));
+
+
 
 
 		//初始化鼠标位置;
@@ -1907,7 +2061,7 @@ namespace
 		
 		gSelectData = stbi_load("../../assets/Textures/select.png", &gSelectWidth, &gSelectHeight, &gSelectNrChannels, STBI_rgb_alpha);
 
-		for (int i = 0; i < 4; i++) {
+		for (int i = 0; i < 6; i++) {
 			gBoxData[i] = stbi_load(gBoxFaces[i], &gBoxWidth, &gBoxHeight, &gBoxNrChannels, STBI_rgb_alpha);
 		}
 

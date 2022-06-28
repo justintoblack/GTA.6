@@ -296,6 +296,9 @@ bool is8KeyDown;
 bool is5KeyDown;
 bool isAddKeyDown;
 bool isReduceKeyDown;
+bool isEscKeyDown;
+bool isEnterKeyDown;
+
 bool vehicleUseSpotLight = false;
 
 bool leftKey;
@@ -305,6 +308,12 @@ bool upKey;
 bool midKey;
 bool addKey;
 bool reduceKey;
+bool escKey;
+bool enterKey;
+
+extern bool isInBegin;
+extern bool isEndBegin;
+extern bool gotoSwitchMode;
 
 
 
@@ -465,12 +474,61 @@ void GlobalKeyEvent()
 	{
 		isReduceKeyDown = false;
 	}
+
+	if (GetAsyncKeyState(VK_ESCAPE))
+	{
+		if (!isEscKeyDown)
+		{
+			isEscKeyDown = true;
+
+			//执行想要执行的动作，该动作只会被执行一次
+			escKey = true;
+		}
+		else
+		{
+			escKey = false;
+		}
+	}
+	else
+	{
+		isEscKeyDown = false;
+	}
+
+	if (GetAsyncKeyState(13))
+	{
+		if (!isEnterKeyDown)
+		{
+			isEnterKeyDown = true;
+
+			//执行想要执行的动作，该动作只会被执行一次
+			enterKey = true;
+		}
+		else
+		{
+			enterKey = false;
+		}
+	}
+	else
+	{
+		isEnterKeyDown = false;
+	}
 }
 
 //切换游戏模式
+//戴灿贤在设计开始游戏的UI时对此进行了一些改动，你无需知道这些改动会带来什么
+//你只需要知道在点击开始游戏前，切换游戏模式由UI状态机接管；
+//点击进入游戏后，那些由你不理解的信号量所驱动的if语句块将永远不会执行，改动后的效果与改动前的效果没有任何区别。
 void SwitchMode()
 {
 	isInGameMode = !isInGameMode;
+
+	if (isInBegin == true) {
+		isInGameMode = false;
+		gotoSwitchMode = false;
+	}
+	if (isEndBegin == true) {
+		isInGameMode = true;
+	}
 	if (isInGameMode)
 	{
 		main_window = false;
@@ -482,9 +540,16 @@ void SwitchMode()
 	}
 	else
 	{
-		main_window = true;
-		show_another_window = true;
-		inspector_window = true;
+		if (isInBegin == true) {
+			main_window = false;
+			show_another_window = false;
+			inspector_window = false;
+		}
+		else {
+			main_window = true;
+			show_another_window = true;
+			inspector_window = true;
+		}
 		isSimulation = false;
 		inputSystem.SetEditMap(editMap);
 		glutSetCursor(GLUT_CURSOR_LEFT_ARROW);
