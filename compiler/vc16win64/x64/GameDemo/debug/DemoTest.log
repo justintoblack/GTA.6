@@ -26,8 +26,8 @@ C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\ucrt\string.h(133): 
 E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\DemoTest\GameObject.h(80,1): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
 C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\ucrt\string.h(133): message : 参见“strcpy”的声明
 E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\DemoTest\GameObject.h(370,1): warning C4267: “参数”: 从“size_t”转换到“int”，可能丢失数据
-E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\GameDemo\TheCreator.cpp(89,34): warning C4267: “=”: 从“size_t”转换到“int”，可能丢失数据
-E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\GameDemo\TheCreator.cpp(249,20): warning C4018: “<”: 有符号/无符号不匹配
+E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\GameDemo\TheCreator.cpp(90,34): warning C4267: “=”: 从“size_t”转换到“int”，可能丢失数据
+E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\GameDemo\TheCreator.cpp(250,20): warning C4018: “<”: 有符号/无符号不匹配
   Render.cpp
 E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\DemoTest\GameObject.h(1,1): warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
 E:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\third_party\includes\GL\glew.h(1518,1): warning C4005: “GL_DEPTH_TEXTURE_MODE”: 宏重定义
