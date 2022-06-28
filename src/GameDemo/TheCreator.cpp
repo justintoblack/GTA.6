@@ -260,10 +260,26 @@ void TheCreator::CreateGameObject()
 		CreateStreetPole(polesPos[i]);
 	}
 
-	track_00.push_back(PxTransform(-2.4, 0.9, 0));
-	track_00.push_back(PxTransform(-2.4, 0.9, 100));
+	track_00.push_back(PxTransform(-2.4, 0.9, -10));
+	track_00.push_back(PxTransform(-2.4, 0.9, 67.2));
+	track_00.push_back(PxTransform(PxVec3(-1.4, 0.9, 71.5), PxQuat(Mathf::DegToRad(45), PxVec3(0, 1, 0))));//45
+	track_00.push_back(PxTransform(PxVec3(5.2, 0.9, 72.5),PxQuat(Mathf::DegToRad(90),PxVec3(0,1,0))));	//90
+	track_00.push_back(PxTransform(PxVec3(63.7, 0.9, 72.5), PxQuat(Mathf::DegToRad(90), PxVec3(0, 1, 0))));
+	track_00.push_back(PxTransform(PxVec3(65.6, 0.9, 74.5), PxQuat(Mathf::DegToRad(42.8), PxVec3(0, 1, 0))));//42.8
+	track_00.push_back(PxTransform(PxVec3(69.4, 0.9, 77.1), PxQuat(Mathf::DegToRad(42.8), PxVec3(0, 1, 0))));//42.8
+	//track_00.push_back(PxTransform(PxVec3(70.6, 0.9, 77.4), PxQuat(Mathf::DegToRad(90), PxVec3(0, 1, 0))));//90
+	track_00.push_back(PxTransform(PxVec3(99.8, 0.9, 77.4), PxQuat(Mathf::DegToRad(90), PxVec3(0, 1, 0))));//90
+	track_00.push_back(PxTransform(PxVec3(101.6, 0.9, 76.5), PxQuat(Mathf::DegToRad(135), PxVec3(0, 1, 0))));//135
+	track_00.push_back(PxTransform(PxVec3( 102.6, 0.9, 72.8), PxQuat(Mathf::DegToRad(180), PxVec3(0, 1, 0))));//180
+	track_00.push_back(PxTransform(PxVec3( 102.6, 0.9, -19.5), PxQuat(Mathf::DegToRad(180), PxVec3(0, 1, 0))));//180
+	track_00.push_back(PxTransform(PxVec3(101.6, 0.9, -21.6), PxQuat(Mathf::DegToRad(225), PxVec3(0, 1, 0))));//225
+	track_00.push_back(PxTransform(PxVec3( 98.4, 0.9, -22.3), PxQuat(Mathf::DegToRad(270), PxVec3(0, 1, 0))));//270
+	track_00.push_back(PxTransform(PxVec3(0.3, 0.9, -22.3), PxQuat(Mathf::DegToRad(270), PxVec3(0, 1, 0))));//270
+	track_00.push_back(PxTransform(PxVec3(-1.4, 0.9, -21.1), PxQuat(Mathf::DegToRad(315), PxVec3(0, 1, 0))));//315
+	track_00.push_back(PxTransform(-2.3, 0.9, -11.9));//0
+
 	//创建MonoBehaviour物体
-	CarNPC* testCar = new CarNPC(Models[41],PxTransform(0,0,0),track_00,0);
+	CarNPC* testCar = new CarNPC(Models[41],track_00[0],track_00,1);
 	SpecialGameObject.push_back(testCar);
 	for (int i = 0; i < SpecialGameObject.size(); i++)
 	{
