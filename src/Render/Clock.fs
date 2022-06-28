@@ -9,5 +9,8 @@ uniform sampler2D gClockTexture;
 
 void main()
 {
-	FragColor = texture(gClockTexture, TexCoord);
+	vec4 texColor= texture(gClockTexture, TexCoord);
+	if(texColor.a<0.5)
+		discard;
+	FragColor=texColor;
 }

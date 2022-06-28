@@ -59,41 +59,70 @@ using namespace physx;
 GLuint              gCubeTexture;
 GLuint              gClockTexture;
 GLuint				gClockMainTexture;
+GLuint				gDashboardTexture;
+GLuint				gTaskBarTexture;
+GLuint				gSelectTexture;
+GLuint				gBoxTexture;
+
 unsigned int		gSkyboxVAO, gSkyboxVBO;
 unsigned int		gClockVAO, gClockVBO, gClockEBO;
 unsigned int		gClockMainVAO, gClockMainVBO, gClockMainEBO;
+unsigned int		gDashboardVAO, gDashboardVBO, gDashboardEBO;
+unsigned int		gTaskBarVAO, gTaskBarVBO, gTaskBarEBO;
+unsigned int		gSelectVAO, gSelectVBO, gSelectEBO;
+unsigned int		gBoxVAO, gBoxVBO, gBoxEBO;
+
 Model				gModel;
 Model               gBodyModel, gWheelModel_fl, gWheelModel_fr, gWheelModel_bl, gWheelModel_br;
 Model               gStar, gArrow, gExclamation;
+
 Shader				gSkyboxShader;
 Shader				gModelShader;
 Shader				gShadowShader;
 Shader				gClockShader;
 Shader				gClockMainShader;
-glm::vec3			gLightPos = glm::vec3(-1200.0f, 600.0f, -1200.0f);
-glm::vec3			gLightDir;
+Shader				gDashboardShader;
+Shader				gTaskBarShader;
+Shader				gSelectShader;
+Shader				gBoxShader;
+
+
 float				gLightAmbientBasis = 0.3f;//6点、18点左右的亮度
 float				gLightDiffuseBasis = 0.3f;
 float				gLightSpecularBasis = 0.6f;
+glm::vec3			gLightPos = glm::vec3(-1200.0f, 600.0f, -1200.0f);
+glm::vec3			gLightDir;
 glm::vec3			gLightAmbient = glm::vec3(gLightAmbientBasis);
 glm::vec3			gLightDiffuse = glm::vec3(gLightDiffuseBasis);
 glm::vec3			gLightSpecular = glm::vec3(gLightSpecularBasis);
 glm::vec3			gSpotLightAmbient = glm::vec3(0.2f, 0.2f, 0.2f);
 glm::vec3			gSpotLightDiffuse = glm::vec3(0.3f, 0.3f, 0.3f);
 glm::vec3			gSpotLightSpecular = glm::vec3(0.5f, 0.5f, 0.5f);
+
+
+glm::mat4			clockTrans = glm::mat4(1.0f);
+glm::mat4			clockMainTrans = glm::mat4(1.0f);
+glm::mat4			dashboardTrans = glm::mat4(1.0f);
+glm::mat4			taskBarTrans = glm::mat4(1.0f);
+glm::mat4			selectTrans = glm::mat4(1.0f);
+//glm::mat4			boxTrans = glm::mat4(1.0f);
+
+
 float				gSpotLightCutOff = 25.0f;
 float				gVehicleShininess = 64.0f;
 float				gOthersShininess = 512.0f;
 extern	bool		vehicleUseSpotLight;
 extern PxVec3* CameraFollowTarget;
 extern PxVec3 currentTraceTarge;
+extern  bool		isDriving;
+
 //时钟顶点位置
 float gClockVertices[] = {
 	// positions          // colors           // texture coords
-	 0.26667f,  0.7f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f, // top right
-	 0.26667f, 0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f, // bottom right
-	-0.26667f, 0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f, // bottom left
-	-0.26667f,  0.7f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f  // top left 
+	 0.1f,  0.1f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f, // top right
+	 0.1f, -0.1f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f, // bottom right
+	-0.1f, -0.1f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f, // bottom left
+	-0.1f,  0.1f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f  // top left 
 };
 
 //时钟顶点数组
@@ -102,19 +131,95 @@ unsigned int gClockIndices[] = {
 	   1, 2, 3  // second triangle
 };
 
-//时钟顶点位置
+//时钟基座顶点位置
 float gClockMainVertices[] = {
 	// positions          // colors           // texture coords
-	 0.1125f,  1.0f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f, // top right
-	 0.1125f, 0.6f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f, // bottom right
-	-0.1125f, 0.6f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f, // bottom left
-	-0.1125f,  1.0f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f  // top left 
+	 0.1066f,  0.1522f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f, // top right
+	 0.1066f, -0.1522f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f, // bottom right
+	-0.1066f, -0.1522f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f, // bottom left
+	-0.1066f,  0.1522f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f  // top left 
 };
 
-//时钟顶点数组
+//时钟基座顶点数组
 unsigned int gClockMainIndices[] = {
 	   0, 1, 3, // first triangle
 	   1, 2, 3  // second triangle
+};
+
+//仪表盘顶点位置
+float gDashboardVertices[] = {
+	// positions          // colors           // texture coords
+	 0.2865f,  0.4235f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f, // top right
+	 0.2865f, -0.4235f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f, // bottom right
+	-0.2865f, -0.4235f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f, // bottom left
+	-0.2865f,  0.4235f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f  // top left 
+};
+
+//仪表盘顶点数组
+unsigned int gDashboardIndices[] = {
+	   0, 1, 3, // first triangle
+	   1, 2, 3  // second triangle
+};
+
+float dashboardTheta = 0.0f;
+glm::mat4 rotateMain = glm::mat4(1.0f);
+
+//任务栏顶点位置
+float gTaskBarVertices[] = {
+	// positions          // colors           // texture coords
+	 0.2069f,  0.4067f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f, // top right
+	 0.2069f, -0.4067f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f, // bottom right
+	-0.2069f, -0.4067f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f, // bottom left
+	-0.2069f,  0.4067f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f  // top left 
+};
+
+//任务栏顶点数组
+unsigned int gTaskBarIndices[] = {
+	   0, 1, 3, // first triangle
+	   1, 2, 3  // second triangle
+};
+
+//选择框顶点位置
+float gSelectVertices[] = {
+	// positions          // colors           // texture coords
+	 0.03463f,  0.08633f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f, // top right
+	 0.03463f, -0.08633f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f, // bottom right
+	-0.03463f, -0.08633f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f, // bottom left
+	-0.03463f,  0.08633f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f  // top left 
+};
+
+//选择框顶点数组
+unsigned int gSelectIndices[] = {
+	   0, 1, 3, // first triangle
+	   1, 2, 3  // second triangle
+};
+
+//任务详情顶点位置
+float gBoxVertices[] = {
+	// positions          // colors           // texture coords
+	 1.0f,  1.0f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f, // top right
+	 1.0f, -1.0f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f, // bottom right
+	-1.0f, -1.0f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f, // bottom left
+	-1.0f,  1.0f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f  // top left 
+};
+
+//任务详情顶点数组
+unsigned int gBoxIndices[] = {
+	   0, 1, 3, // first triangle
+	   1, 2, 3  // second triangle
+};
+
+
+const char* gTaskBarFaces[2] = {
+	"../../assets/Textures/taskBarFull.png",
+	"../../assets/Textures/mission.png"
+};
+
+const char* gBoxFaces[4] = {
+	"../../assets/Textures/missionBox1.png",
+	"../../assets/Textures/missionBox2.png",
+	"../../assets/Textures/missionBox3.png",
+	"../../assets/Textures/missionBox4.png"
 };
 
 //天空盒的纹理图片
@@ -133,11 +238,25 @@ const char* gSkyboxFaces[12] = {
 	"../../assets/SkyboxImages/back1.png"
 };
 
-//天空盒渲染相关参数
+
+//UI渲染相关参数
 int widthDay, heightDay, nrChannelsDay;
 int widthNight, heightNight, nrChannelsNight;
+int gClockWidth, gClockHeight, gClockNrChannels;
+int  gClockMainWidth, gClockMainHeight, gClockMainNrChannels;
+int  gDashboardWidth, gDashboardHeight, gDashboardNrChannels;
+int  gTaskBarWidth, gTaskBarHeight, gTaskBarNrChannels;
+int  gSelectWidth, gSelectHeight, gSelectNrChannels;
+int  gBoxWidth, gBoxHeight, gBoxNrChannels;
+
 unsigned char* dataDay[6];
 unsigned char* dataNight[6];
+unsigned char* gClockData;
+unsigned char* gClockMainData;
+unsigned char* gDashboardData;
+unsigned char* gTaskBarData[2];
+unsigned char* gSelectData;
+unsigned char* gBoxData[4];
 
 
 //天空盒六个方向
@@ -171,6 +290,65 @@ float gSkyboxVertices[] = {
 	-1.0f, -1.0f, -1.0f,	1.0f, -1.0f, -1.0f,		1.0f,  1.0f, -1.0f,
 	1.0f,  1.0f, -1.0f,		-1.0f,  1.0f, -1.0f,	-1.0f, -1.0f, -1.0f
 };
+
+//绕任意轴的旋转
+glm::mat4 RotateArbitraryLine(glm::vec3 v1, glm::vec3 v2, float theta)
+{
+	glm::mat4 rmatrix;
+	float a = v1.x;
+	float b = v1.y;
+	float c = v1.z;
+
+	glm::vec3 p1 = v2 - v1;
+	glm::vec3 p = glm::normalize(p1);
+
+	float u = p.x;
+	float v = p.y;
+	float w = p.z;
+
+	float uu = u * u;
+	float uv = u * v;
+	float uw = u * w;
+	float vv = v * v;
+	float vw = v * w;
+	float ww = w * w;
+	float au = a * u;
+	float av = a * v;
+	float aw = a * w;
+	float bu = b * u;
+	float bv = b * v;
+	float bw = b * w;
+	float cu = c * u;
+	float cv = c * v;
+	float cw = c * w;
+
+	float costheta = glm::cos(theta);
+	float sintheta = glm::sin(theta);
+
+	rmatrix[0][0] = uu + (vv + ww) * costheta;
+	rmatrix[0][1] = uv * (1 - costheta) + w * sintheta;
+	rmatrix[0][2] = uw * (1 - costheta) - v * sintheta;
+	rmatrix[0][3] = 0;
+
+	rmatrix[1][0] = uv * (1 - costheta) - w * sintheta;
+	rmatrix[1][1] = vv + (uu + ww) * costheta;
+	rmatrix[1][2] = vw * (1 - costheta) + u * sintheta;
+	rmatrix[1][3] = 0;
+
+	rmatrix[2][0] = uw * (1 - costheta) + v * sintheta;
+	rmatrix[2][1] = vw * (1 - costheta) - u * sintheta;
+	rmatrix[2][2] = ww + (uu + vv) * costheta;
+	rmatrix[2][3] = 0;
+
+	rmatrix[3][0] = (a * (vv + ww) - u * (bv + cw)) * (1 - costheta) + (bw - cv) * sintheta;
+	rmatrix[3][1] = (b * (uu + ww) - v * (au + cw)) * (1 - costheta) + (cu - aw) * sintheta;
+	rmatrix[3][2] = (c * (uu + vv) - w * (au + bv)) * (1 - costheta) + (av - bu) * sintheta;
+	rmatrix[3][3] = 1;
+
+	return rmatrix;
+}
+
+
 
 
 extern void initPhysics(bool interactive);
@@ -229,6 +407,31 @@ bool isWireframe = false;
 
 // /////////////////////////Imgui//////////////////////////////////
 
+
+////////////////////////////////////UI////////////////////////////////////////////
+
+extern bool leftKey;
+extern bool rightKey;
+extern bool upKey;
+extern bool downKey;
+extern bool midKey;
+extern bool addKey;
+extern bool reduceKey;
+
+extern bool soundEffect;
+
+bool chooseMusic = false;
+bool hitMusic = false;
+bool enterMusic = false;
+bool beginMusic = false;
+
+int currentSelect = 5;
+bool isInConfirm = false;
+bool isSelected = false;
+bool compareIsSelected = true;
+
+////////////////////////////////////UI////////////////////////////////////////////
+ 
 
 
 
@@ -349,30 +552,33 @@ namespace
 		glGenTextures(1, &gClockTexture);
 		glBindTexture(GL_TEXTURE_2D, gClockTexture);
 		// set the texture wrapping parameters
+		//float borderColor[] = { 1.0f, 1.0f, 0.0f, 0.0f };
+		//glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
+
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// set texture wrapping to GL_REPEAT (default wrapping method)
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-		//float borderColor[] = { 1.0f, 1.0f, 0.0f, 1.0f };
-		//glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
 		// set texture filtering parameters
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		// load image, create texture and generate mipmaps
-		int width, height, nrChannels;
-		stbi_set_flip_vertically_on_load(true);
+		
+		
+		//int gClockWidth, gClockHeight, gClockNrChannels;
+		//stbi_set_flip_vertically_on_load(true);
 
-		unsigned char* data = stbi_load("../../assets/Textures/clock.png", &width, &height, &nrChannels, STBI_rgb_alpha);
-		if (data)
+		//unsigned char* gClockData = stbi_load("../../assets/Textures/clock.png", &gClockWidth, &gClockHeight, &gClockNrChannels, STBI_rgb_alpha);
+		if (gClockData)
 		{
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, gClockWidth, gClockHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, gClockData);
+			
 			glGenerateMipmap(GL_TEXTURE_2D);
 		}
 		else
 		{
 			std::cout << "Failed to load texture" << std::endl;
 		}
-		stbi_image_free(data);
+		stbi_image_free(gClockData);
 	}
-
 
 	void RenderClock()
 	{
@@ -381,16 +587,31 @@ namespace
 		// bind Texture
 		glBindTexture(GL_TEXTURE_2D, gClockTexture);
 
+		glm::vec3 tail = glm::vec3(0.8f, 0.83f, -1.0f);
+		glm::vec3 head = glm::vec3(0.8f, 0.83f, 1.0f);
+		float theta = glm::radians(1.5f * deltaTime * timeSpeed);
+
+		glm::mat4 rotate = RotateArbitraryLine(tail, head, theta);
+		//clockTrans = glm::scale(clockTrans, glm::vec3(float(192 / 108), 1.0, 1.0));
+		clockTrans = rotate * clockTrans;
+		//clockTrans = glm::scale(clockTrans, glm::vec3(0.5625, 1.0, 1.0));
+
+
 		gClockShader.use(); // don't forget to activate/use the shader before setting uniforms!
 
+		unsigned int transformLoc = glGetUniformLocation(gClockShader.ID, "transform");
+		glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(clockTrans));
+		
 		glBindVertexArray(gClockVAO);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
 
-		glBindVertexArray(0);
+		//glBindVertexArray(0);
 		/*漏掉这句后，胶囊体变为两颗小球，胶囊体中间的圆柱体不见了*/
-		glDeleteBuffers(1, &gClockVBO);
-		glUseProgram(0);
+		//glDeleteVertexArrays(1, &gClockVAO);
+		//glDeleteBuffers(1, &gClockVBO);
+		//glDeleteBuffers(1, &gClockEBO);
+		//glUseProgram(0);
 
 	}
 
@@ -419,64 +640,420 @@ namespace
 		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
 		glEnableVertexAttribArray(2);
 
-		// texture 1
-		// ---------
+
 		glGenTextures(1, &gClockMainTexture);
 		glBindTexture(GL_TEXTURE_2D, gClockMainTexture);
-		// set the texture wrapping parameters
+
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// set texture wrapping to GL_REPEAT (default wrapping method)
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-		//float borderColor[] = { 1.0f, 1.0f, 0.0f, 1.0f };
-		//glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
-		// set texture filtering parameters
+
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		// load image, create texture and generate mipmaps
-		int width, height, nrChannels;
-		stbi_set_flip_vertically_on_load(true);
+		
 
-		unsigned char* data = stbi_load("../../assets/Textures/a.jpg", &width, &height, &nrChannels, STBI_rgb_alpha);
-		if (data)
+		if (gClockMainData)
 		{
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, gClockMainWidth, gClockMainHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, gClockMainData);
 			glGenerateMipmap(GL_TEXTURE_2D);
 		}
 		else
 		{
 			std::cout << "Failed to load texture" << std::endl;
 		}
-		stbi_image_free(data);
+		stbi_image_free(gClockMainData);
 	}
 
 	void RenderClockMain()
 	{
 
-		//glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-		// bind Texture
+		
 		glBindTexture(GL_TEXTURE_2D, gClockMainTexture);
 
-		// create transformations
-		//glm::mat4 transform = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
-		//transform = glm::translate(transform, glm::vec3(0.5f, -0.6f, 0.0f));
-		//transform = glm::rotate(transform, currentTime, glm::vec3(0.0f, 0.0f, 1.0f));
+		glm::vec3 tailMain = glm::vec3(0.7f, -0.5839f, -1.0f);
+		glm::vec3 headMain = glm::vec3(0.7f, -0.5839f, 1.0f);
 
+		float currentThetaUp = 6.0f * deltaTime * (float)(270.0f / (dashboardTheta + 30.0f)) / 9.0f;    //每帧的角度值变化
+		float thetaMainUp = glm::radians(-currentThetaUp); //每帧的弧度值变化
+		float currentThetaDown = 6.0f * deltaTime * (float)((dashboardTheta + 30.0f) / 60.0f);    //每帧的角度值变化
+		float thetaMainDown = glm::radians(-currentThetaDown); //每帧的弧度值变化
 
-		gClockMainShader.use(); // don't forget to activate/use the shader before setting uniforms!
+		if (isDriving == true && dashboardTheta < 270) {
 
-		//unsigned int transformLoc = glGetUniformLocation(gClockMainShader.ID, "transform");
-		//glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));
+			rotateMain = RotateArbitraryLine(tailMain, headMain, thetaMainUp);  //每帧的旋转
+			dashboardTheta += currentThetaUp;  //旋转后递增增加的角度值，用于判断
+		}
+		else if (isDriving == false && dashboardTheta > 0)
+		{
+			rotateMain = RotateArbitraryLine(tailMain, headMain, -thetaMainDown);
+			dashboardTheta -= currentThetaDown ;
+		}
+		else
+		{
+			rotateMain = glm::mat4(1.0f);
+		}
+		
 
-		//gClockMainShader.SetMatrix4fv("transform", transform);
+		//clockTrans = glm::scale(clockTrans, glm::vec3(float(192 / 108), 1.0, 1.0));
+		clockMainTrans = rotateMain * clockMainTrans;
+
+		gClockMainShader.use(); 
+
+		unsigned int transform = glGetUniformLocation(gClockMainShader.ID, "transformMain");
+		glUniformMatrix4fv(transform, 1, GL_FALSE, glm::value_ptr(clockMainTrans));
 
 		glBindVertexArray(gClockMainVAO);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
+	}
 
-		glBindVertexArray(0);
-		/*漏掉这句后，胶囊体变为两颗小球，胶囊体中间的圆柱体不见了*/
-		glDeleteBuffers(1, &gClockVBO);
-		glUseProgram(0);
+	void SetupDashboard()
+	{
+		//时钟
+		glGenVertexArrays(1, &gDashboardVAO);
+		glGenBuffers(1, &gDashboardVBO);
+		glGenBuffers(1, &gDashboardEBO);
 
+		glBindVertexArray(gDashboardVAO);
+
+		glBindBuffer(GL_ARRAY_BUFFER, gDashboardVBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(gDashboardVertices), gDashboardVertices, GL_STATIC_DRAW);
+
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, gDashboardEBO);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(gDashboardIndices), gDashboardIndices, GL_STATIC_DRAW);
+
+		// position attribute
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+		glEnableVertexAttribArray(0);
+		// color attribute
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+		glEnableVertexAttribArray(1);
+		// texture coord attribute
+		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+		glEnableVertexAttribArray(2);
+
+		// texture 1
+		// ---------
+		glGenTextures(1, &gDashboardTexture);
+		glBindTexture(GL_TEXTURE_2D, gDashboardTexture);
+		// set the texture wrapping parameters
+		//float borderColor[] = { 1.0f, 1.0f, 0.0f, 0.0f };
+		//glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// set texture wrapping to GL_REPEAT (default wrapping method)
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		// set texture filtering parameters
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		// load image, create texture and generate mipmaps
+
+
+		//int gClockWidth, gClockHeight, gClockNrChannels;
+		
+
+		//unsigned char* gClockData = stbi_load("../../assets/Textures/clock.png", &gClockWidth, &gClockHeight, &gClockNrChannels, STBI_rgb_alpha);
+		if (gDashboardData)
+		{
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, gDashboardWidth, gDashboardHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, gDashboardData);
+
+			glGenerateMipmap(GL_TEXTURE_2D);
+		}
+		else
+		{
+			std::cout << "Failed to load texture" << std::endl;
+		}
+		stbi_image_free(gDashboardData);
+	}
+
+	void RenderDashboard()
+	{
+
+		//glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+		// bind Texture
+		glBindTexture(GL_TEXTURE_2D, gDashboardTexture);
+
+		gDashboardShader.use(); // don't forget to activate/use the shader before setting uniforms!
+
+		unsigned int transformDashboard = glGetUniformLocation(gDashboardShader.ID, "transformDashboard");
+		glUniformMatrix4fv(transformDashboard, 1, GL_FALSE, glm::value_ptr(dashboardTrans));
+
+		glBindVertexArray(gDashboardVAO);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+	}
+
+	void SetupTaskBar()
+	{
+		//时钟
+		glGenVertexArrays(1, &gTaskBarVAO);
+		glGenBuffers(1, &gTaskBarVBO);
+		glGenBuffers(1, &gTaskBarEBO);
+
+		glBindVertexArray(gTaskBarVAO);
+
+		glBindBuffer(GL_ARRAY_BUFFER, gTaskBarVBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(gTaskBarVertices), gTaskBarVertices, GL_STATIC_DRAW);
+
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, gTaskBarEBO);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(gTaskBarIndices), gTaskBarIndices, GL_STATIC_DRAW);
+
+		// position attribute
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+		glEnableVertexAttribArray(0);
+		// color attribute
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+		glEnableVertexAttribArray(1);
+		// texture coord attribute
+		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+		glEnableVertexAttribArray(2);
+
+		// texture 1
+		// ---------
+		glGenTextures(1, &gTaskBarTexture);
+		glBindTexture(GL_TEXTURE_2D, gTaskBarTexture);
+		// set the texture wrapping parameters
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// set texture wrapping to GL_REPEAT (default wrapping method)
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		// set texture filtering parameters
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+
+		if (!isSelected) {
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, gTaskBarWidth, gTaskBarHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, gTaskBarData[0]);
+			glGenerateMipmap(GL_TEXTURE_2D);
+			//stbi_image_free(gTaskBarData[0]);
+		}
+		else {
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, gTaskBarWidth, gTaskBarHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, gTaskBarData[1]);
+			glGenerateMipmap(GL_TEXTURE_2D);
+			//stbi_image_free(gTaskBarData[1]);
+		}
+
+
+	}
+
+	void RenderTaskBar()
+	{
+
+		//glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+		// bind Texture
+		glBindTexture(GL_TEXTURE_2D, gTaskBarTexture);
+
+		gTaskBarShader.use(); // don't forget to activate/use the shader before setting uniforms!
+
+		unsigned int transformTaskBar = glGetUniformLocation(gTaskBarShader.ID, "transformTaskBar");
+		glUniformMatrix4fv(transformTaskBar, 1, GL_FALSE, glm::value_ptr(taskBarTrans));
+
+		glBindVertexArray(gTaskBarVAO);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+	}
+
+	void SetupSelect()
+	{
+		//时钟
+		glGenVertexArrays(1, &gSelectVAO);
+		glGenBuffers(1, &gSelectVBO);
+		glGenBuffers(1, &gSelectEBO);
+
+		glBindVertexArray(gSelectVAO);
+
+		glBindBuffer(GL_ARRAY_BUFFER, gSelectVBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(gSelectVertices), gSelectVertices, GL_STATIC_DRAW);
+
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, gSelectEBO);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(gSelectIndices), gSelectIndices, GL_STATIC_DRAW);
+
+		// position attribute
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+		glEnableVertexAttribArray(0);
+		// color attribute
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+		glEnableVertexAttribArray(1);
+		// texture coord attribute
+		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+		glEnableVertexAttribArray(2);
+
+		// texture 1
+		// ---------
+		glGenTextures(1, &gSelectTexture);
+		glBindTexture(GL_TEXTURE_2D, gSelectTexture);
+		// set the texture wrapping parameters
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// set texture wrapping to GL_REPEAT (default wrapping method)
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		// set texture filtering parameters
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+		if (gSelectData)
+		{
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, gSelectWidth, gSelectHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, gSelectData);
+
+			glGenerateMipmap(GL_TEXTURE_2D);
+		}
+		else
+		{
+			std::cout << "Failed to load texture" << std::endl;
+		}
+		stbi_image_free(gSelectData);
+	}
+
+	void RenderSelect()
+	{
+
+		//glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+		// bind Texture
+		glBindTexture(GL_TEXTURE_2D, gSelectTexture);
+
+		gSelectShader.use(); // don't forget to activate/use the shader before setting uniforms!
+
+		if (leftKey == true)
+		{
+			if (currentSelect != 1 && currentSelect != 4 && currentSelect != 7) {
+				selectTrans = glm::translate(selectTrans, glm::vec3(-0.0775f, 0.0f, 0.0f)); //           x:0.0775         y:0.1911
+				currentSelect -= 1;
+				chooseMusic = true;
+				cout << "currentSelect" << currentSelect << endl;
+			}
+			else {
+				hitMusic = true;
+			}
+		}
+		else if (rightKey == true)
+		{
+			if (currentSelect != 3 && currentSelect != 6 && currentSelect != 9) {
+				selectTrans = glm::translate(selectTrans, glm::vec3(0.0775f, 0.0f, 0.0f));
+				currentSelect += 1;
+				chooseMusic = true;
+				cout << "currentSelect" << currentSelect << endl;
+			}
+			else {
+				hitMusic = true;
+			}
+		}
+		else if (upKey == true)
+		{	
+			if (currentSelect != 7 && currentSelect != 8 && currentSelect != 9) {
+				selectTrans = glm::translate(selectTrans, glm::vec3(0.0f, 0.1911f, 0.0f));
+				currentSelect += 3;
+				chooseMusic = true;
+				cout << "currentSelect" << currentSelect << endl;
+			}
+			else {
+				hitMusic = true;
+			}
+		}
+		else if (downKey == true)
+		{
+			if (currentSelect != 1 && currentSelect != 2 && currentSelect != 3) {
+				selectTrans = glm::translate(selectTrans, glm::vec3(0.0f, -0.1911f, 0.0f));
+				currentSelect -= 3;
+				chooseMusic = true;
+				cout << "currentSelect" << currentSelect << endl;
+			}
+			else {
+				hitMusic = true;
+			}
+		}
+		else
+		{
+			chooseMusic = false;
+			hitMusic = false;
+		}
+		
+
+		unsigned int transformSelect = glGetUniformLocation(gSelectShader.ID, "transformSelect");
+		glUniformMatrix4fv(transformSelect, 1, GL_FALSE, glm::value_ptr(selectTrans));
+
+		glBindVertexArray(gSelectVAO);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+	}
+
+	void SetupBox()
+	{
+		//时钟
+		glGenVertexArrays(1, &gBoxVAO);
+		glGenBuffers(1, &gBoxVBO);
+		glGenBuffers(1, &gBoxEBO);
+
+		glBindVertexArray(gBoxVAO);
+
+		glBindBuffer(GL_ARRAY_BUFFER, gBoxVBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(gBoxVertices), gBoxVertices, GL_STATIC_DRAW);
+
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, gBoxEBO);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(gBoxIndices), gBoxIndices, GL_STATIC_DRAW);
+
+		// position attribute
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+		glEnableVertexAttribArray(0);
+		// color attribute
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+		glEnableVertexAttribArray(1);
+		// texture coord attribute
+		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+		glEnableVertexAttribArray(2);
+
+		// texture 1
+		// ---------
+		glGenTextures(1, &gBoxTexture);
+		glBindTexture(GL_TEXTURE_2D, gBoxTexture);
+		// set the texture wrapping parameters
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// set texture wrapping to GL_REPEAT (default wrapping method)
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		// set texture filtering parameters
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+
+		if (currentSelect == 1 || currentSelect == 5 || currentSelect == 7) {
+			if (gBoxData[0]) {
+				cout << "gBoxData is ready!!!" << endl;
+				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, gBoxWidth, gBoxHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, gBoxData[0]);
+				glGenerateMipmap(GL_TEXTURE_2D);
+
+			}
+			else
+			{
+				std::cout << "Failed to load texture" << std::endl;
+			}
+			//stbi_image_free(gBoxData[0]);         绝对不要去释放掉这些data内存，否则下一次使用时会因找不到数据而报错
+		}
+
+		if (currentSelect == 4 || currentSelect == 9) {
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, gBoxWidth, gBoxHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, gBoxData[1]);
+			glGenerateMipmap(GL_TEXTURE_2D);
+			//stbi_image_free(gBoxData[1]);
+		}
+
+		if (currentSelect == 3 || currentSelect == 8) {
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, gBoxWidth, gBoxHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, gBoxData[2]);
+			glGenerateMipmap(GL_TEXTURE_2D);
+			//stbi_image_free(gBoxData[2]);
+		}
+
+		if (currentSelect == 2 || currentSelect == 6) {
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, gBoxWidth, gBoxHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, gBoxData[3]);
+			glGenerateMipmap(GL_TEXTURE_2D);
+			//stbi_image_free(gBoxData[3]);
+		}
+	}
+
+	void RenderBox()
+	{
+
+		//glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+		// bind Texture
+		glBindTexture(GL_TEXTURE_2D, gBoxTexture);
+
+		gBoxShader.use(); // don't forget to activate/use the shader before setting uniforms!
+
+		//unsigned int transformBox = glGetUniformLocation(gBoxShader.ID, "transformBox");
+		//glUniformMatrix4fv(transformBox, 1, GL_FALSE, glm::value_ptr(boxTrans));
+
+		glBindVertexArray(gBoxVAO);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 	}
 
 	void SetupSkybox()
@@ -513,7 +1090,7 @@ namespace
 				}
 				else {
 					std::cout << "Failed to load : " << gSkyboxFaces[i] << std::endl;
-					stbi_image_free(dataDay[i]);
+					//stbi_image_free(dataDay[i]);
 				}
 			}
 		}
@@ -524,8 +1101,8 @@ namespace
 						widthNight, heightNight, 0, GL_RGB, GL_UNSIGNED_BYTE, dataNight[i]);
 				}
 				else {
-					std::cout << "Failed to load : " << gSkyboxFaces[i + 6] << std::endl;
-					stbi_image_free(dataNight[i]);
+					std::cout << "Failed to load : " << gSkyboxFaces[i+6] << std::endl;
+					//stbi_image_free(dataNight[i]);
 				}
 			}
 		}
@@ -559,7 +1136,9 @@ namespace
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 		glBindVertexArray(0);
 		/*漏掉这句后，胶囊体变为两颗小球，胶囊体中间的圆柱体不见了*/
-		glDeleteBuffers(1, &gSkyboxVBO);
+
+
+		glDeleteBuffers(1, &gSkyboxVBO); //在每次渲染完之后立即释放掉VBO，而仅仅在Setup之前释放掉VBO就会导致ImGUI的渲染出现问题，猜测可能是共用了同个VBO地址
 		glDepthMask(GL_TRUE);
 		glUseProgram(0);
 	}
@@ -610,14 +1189,12 @@ namespace
 
 		//shadow
 		//====================================
-		if (scenario == true) {
-			shadowShader.use();
-			shadowShader.SetMatrix4fv("projection", projectionMat);
-			shadowShader.SetMatrix4fv("view", viewMat);
-			shadowShader.SetMatrix4fv("model", modelMat);
-			shadowShader.SetVector3f("light", gLightPos);
-			model.Draw(shadowShader);
-		}
+		shadowShader.use();
+		shadowShader.SetMatrix4fv("projection", projectionMat);
+		shadowShader.SetMatrix4fv("view", viewMat);
+		shadowShader.SetMatrix4fv("model", modelMat);
+		shadowShader.SetVector3f("light", gLightPos);
+		model.Draw(shadowShader);
 		//=====================================
 
 		glUseProgram(0);
@@ -758,14 +1335,14 @@ namespace
 
 		//shadow(just for the body)
 		//================================
-		if (scenario == true) {
-			gShadowShader.use();
-			gShadowShader.SetMatrix4fv("projection", projectionMat);
-			gShadowShader.SetMatrix4fv("view", viewMat);
-			gShadowShader.SetMatrix4fv("model", modelMat0);
-			gShadowShader.SetVector3f("light", gLightPos);
-			gameObject.g_body->Draw(gShadowShader);
-		}
+		
+		gShadowShader.use();
+		gShadowShader.SetMatrix4fv("projection", projectionMat);
+		gShadowShader.SetMatrix4fv("view", viewMat);
+		gShadowShader.SetMatrix4fv("model", modelMat0);
+		gShadowShader.SetVector3f("light", gLightPos);
+		gameObject.g_body->Draw(gShadowShader);
+		
 		//=================================
 		glUseProgram(0);
 	}
@@ -840,9 +1417,42 @@ namespace
 
 	ISoundEngine* BackgroundMusicEngine = createIrrKlangDevice();
 	char pathDay[] = "../../assets/audio/owu12-u5eaj.wav";
-	char pathNight[] = "../../assets/audio/Lawrence.wav";
+	char pathNight[] = "../../assets/audio/Night.wav";
 	ISound* sndDay = BackgroundMusicEngine->play2D(pathDay, true, true, false, ESM_AUTO_DETECT);
 	ISound* sndNight = BackgroundMusicEngine->play2D(pathNight, true, true, false, ESM_AUTO_DETECT);
+	char pathChoose[] = "../../assets/audio/chooseMusic.wav";
+	char pathHit[] = "../../assets/audio/hitMusic.wav";
+	char pathEnter[] = "../../assets/audio/enterMusic.wav";
+	char pathBegin[] = "../../assets/audio/beginMusic.wav";
+	ISoundSource* sourceChoose = BackgroundMusicEngine->addSoundSourceFromFile(pathChoose, ESM_AUTO_DETECT, true);
+	ISoundSource* sourceHit = BackgroundMusicEngine->addSoundSourceFromFile(pathHit, ESM_AUTO_DETECT, true);
+	ISoundSource* sourceEnter = BackgroundMusicEngine->addSoundSourceFromFile(pathEnter, ESM_AUTO_DETECT, true);
+	ISoundSource* sourceBegin = BackgroundMusicEngine->addSoundSourceFromFile(pathBegin, ESM_AUTO_DETECT, true);
+
+	void playHitMusic(bool hitMusic, bool soundEffect)
+	{
+		if (soundEffect == true && hitMusic == true) {
+			BackgroundMusicEngine->play2D(sourceHit, false, false, false, false);
+		}
+	}
+	void playChooseMusic(bool chooseMusic, bool soundEffect)
+	{
+		if (soundEffect == true && chooseMusic == true) {
+			BackgroundMusicEngine->play2D(sourceChoose, false, false, false, false);
+		}
+	}
+	void playEnterMusic(bool enterMusic, bool soundEffect)
+	{
+		if (soundEffect == true && enterMusic == true) {
+			BackgroundMusicEngine->play2D(sourceEnter, false, false, false, false);
+		}
+	}
+	void playBeginMusic(bool beginMusic, bool soundEffect)
+	{
+		if (soundEffect == true && beginMusic == true) {
+			BackgroundMusicEngine->play2D(sourceBegin, false, false, false, false);
+		}
+	}
 
 	void playBackgroundMusic(float timeSpeed, int calendarHour, int calendarMinute, bool backgroundMusic, float volume0)
 	{
@@ -866,6 +1476,7 @@ namespace
 			if (calendarHour > 1 && calendarHour < 10) {
 				sndDay->setVolume(volume0);
 				sndNight->setVolume(0.0);
+				cout << "rate: " << "1.0" << endl;
 			}
 			if (calendarHour > 9 && calendarHour < 12) {
 				float rate = (float)(120 - (calendarHour - 10) * 60 - calendarMinute) / 120;
@@ -886,6 +1497,7 @@ namespace
 			if (calendarHour > 13 && calendarHour < 21) {
 				sndNight->setVolume(volume0);
 				sndDay->setVolume(0.0);
+				cout << "rate: " << "1.0" << endl;
 			}
 			if (calendarHour > 21 && calendarHour < 24) {
 				float rate = (float)(120 - (calendarHour - 22) * 60 - calendarMinute) / 120;
@@ -957,6 +1569,25 @@ namespace
 	{
 
 		//关于时间(这是一段无法维护的代码)
+
+		//关于时间的各个参数说明：
+		//1、 timeSpeed：这个参数代表当前帧的时间流速；float timeSpeed 有这些枚举值：1/6， 1/3， 1/2， 1， 2， 3， 6，0    请注意：timeSpeed可为0！！！
+		//2、 compareTimeSpeed： 这个参数在timeSpeed不等于0的情况下都会等于timeSpeed， 当timeSpeed = 0时，这个参数会等于离这一帧最近的不为零的timeSpeed
+		//3、 deltaTime，这个值代表这一帧持续的时间
+		//4、 clock，这个值只会在昼夜更替的那一帧小于deltaTime
+		//5、 currentTime，这个值代表在当前游戏流速的情况下，已经离游戏的开始过去了多少时间，可以理解为在此时的时间流速下，游戏人物的视角中，现在离游戏开始已经过了多久了
+		//6、 gameTime,这个值代表在现实中，离游戏的开始过去了多少时间
+		//7、 day，这个值是个布尔值，代表当前帧是白天还是黑夜（0代表黑夜，1代表白天）
+		//8、 former， 这个值是个布尔值，代表当前帧是（白天或者黑夜）的前半段时间     （1代表是， 0代表不是）
+		
+		//9、 calendarDay， 这是个int值，游戏开始时从0开始，代表过了几天
+		//10、calendarHour，这是个int值，代表当前帧是游戏内哪个小时（0到24），（白天从calendarHour = 0 开始）
+		//11、calendarMinute， 这是个int值，代表当前帧是游戏内哪一分钟（0到60）
+		
+		//9、 calendarDayDisplay， 这是个int值，游戏开始时从1开始，代表现在是第几天
+		//10、calendarHourDisplay，这是个int值，代表当前帧是游戏内哪个小时（0到24），（白天从calendarHour = 6 开始）
+		//11、calendarMinuteDisplay， 这是个int值，代表当前帧是游戏内哪一分钟（0到60），与calendarMinute并无差别，只是为了对称
+
 		QueryPerformanceCounter((LARGE_INTEGER*)&gTime); //get current count
 		QueryPerformanceFrequency((LARGE_INTEGER*)&freq); //get processor freq
 		deltaTime = (float)(gTime - gLastTime) / (float)freq;
@@ -1074,6 +1705,8 @@ namespace
 
 		//天空盒初始化状态机
 		if (scenarioChange == true) {
+			glDeleteVertexArrays(1, &gSkyboxVAO);
+			glDeleteBuffers(1, &gSkyboxVBO);
 			SetupSkybox();
 			//cout << "scenario: " << scenario << endl;
 			//cout << "=======================================" << endl;
@@ -1082,7 +1715,11 @@ namespace
 
 		//背景音乐播放状态机
 		playBackgroundMusic(timeSpeed, calendarHour, calendarMinute, backgroundMusic, volume0);
-
+		playChooseMusic(chooseMusic, soundEffect);
+		playHitMusic(hitMusic, soundEffect);
+		playEnterMusic(enterMusic, soundEffect);
+		playBeginMusic(beginMusic, soundEffect);
+		
 		//Imgui中需要加入渲染回调的函数
 		Snippets::glut_display_func();
 
@@ -1097,8 +1734,89 @@ namespace
 
 		RenderSkybox();
 
-		//RenderClock();
-		//RenderClockMain();
+		if (midKey == true) {
+			cout << "midKey is Pressed" << endl;
+		}
+
+
+
+		if (midKey == true && isInConfirm == false && isSelected == false) {   //在没有进入确认界面的状态下按下了“5”
+			glDeleteVertexArrays(1, &gBoxVAO);
+			glDeleteBuffers(1, &gBoxVBO);
+			glDeleteBuffers(1, &gBoxEBO);
+			cout << "ready to SetupBox" << endl;
+			SetupBox();
+			cout << "SetupBox is finished" << endl;
+			isInConfirm = true;
+			cout << "isInConfirm" << isInConfirm << endl;
+			enterMusic = true;
+		}
+		else {
+			enterMusic = false;
+		}
+
+		//if (midKey == true && isInConfirm == true) {   //处于确认界面的状态下按下了“5”
+		//	
+		//	isInConfirm = false;
+		//	cout << "isInConfirm" << isInConfirm << endl;
+		//}
+
+		if (reduceKey == true && isInConfirm == true) { //处于确认界面的状态下按下了“-”
+			
+			isInConfirm = false;
+			cout << "isInConfirm" << isInConfirm << endl;
+		}
+
+		if (addKey == true && isInConfirm == true) {    //处于确认界面的状态下按下了“+”
+			
+			isInConfirm = false;
+			
+			isSelected = true;               //进入正式任务界面
+
+			beginMusic = true;
+			cout << "isInConfirm" << isInConfirm << endl;
+		}
+		else {
+			beginMusic = false;
+		}
+
+		if (isInConfirm == true ) {               //现在正处在确认界面中
+			cout << "ready to RenderBox" << endl;
+			RenderBox();
+			cout << "RenderBox is working!!!" << endl;
+		}
+
+		if (compareIsSelected != isSelected) {          //还没进入到正式任务界面
+			glDeleteVertexArrays(1, &gTaskBarVAO);
+			glDeleteBuffers(1, &gTaskBarVBO);
+			glDeleteBuffers(1, &gTaskBarEBO);
+			SetupTaskBar();
+			compareIsSelected = isSelected;
+		}
+
+		if (isSelected == false)
+		{
+			RenderSelect();
+		}
+
+		RenderTaskBar();
+
+
+
+
+
+
+
+
+
+
+		RenderClock();
+
+		if (inputSystem.isVehicle) {
+			RenderClockMain();
+			RenderDashboard();
+		}
+		
 
 		RenderCarObject(carObject);
 		RenderMissionObject();
@@ -1166,6 +1884,7 @@ namespace
 		delete sCamera;
 		cleanupPhysics(true);
 
+
 		//===========================================
 		ImGui_ImplOpenGL2_Shutdown();
 		ImGui_ImplGLUT_Shutdown();
@@ -1194,6 +1913,34 @@ void renderLoop()
 	Snippets::setupDefaultRenderState();
 
 	glewInit();
+
+		
+
+		//---------------------stbi_load--------------------------------
+		for (int i = 0; i < 6; i++) {
+			dataDay[i] = stbi_load(gSkyboxFaces[i], &widthDay, &heightDay, &nrChannelsDay, 0);
+		}
+		for (int i = 6; i < 12; i++) {
+			dataNight[i-6] = stbi_load(gSkyboxFaces[i], &widthNight, &heightNight, &nrChannelsNight, 0);
+		}
+		gClockData = stbi_load("../../assets/Textures/777.png", &gClockWidth, &gClockHeight, &gClockNrChannels, STBI_rgb_alpha); //STBI_rgb_alpha
+		stbi_set_flip_vertically_on_load(true);
+		gClockMainData = stbi_load("../../assets/Textures/pointer.png", &gClockMainWidth, &gClockMainHeight, &gClockMainNrChannels, STBI_rgb_alpha);
+		gDashboardData = stbi_load("../../assets/Textures/dashboardMain.png", &gDashboardWidth, &gDashboardHeight, &gDashboardNrChannels, STBI_rgb_alpha);
+
+		for (int i = 0; i < 2; i++) {
+			gTaskBarData[i] = stbi_load(gTaskBarFaces[i], &gTaskBarWidth, &gTaskBarHeight, &gTaskBarNrChannels, STBI_rgb_alpha);
+		}
+		
+		gSelectData = stbi_load("../../assets/Textures/select.png", &gSelectWidth, &gSelectHeight, &gSelectNrChannels, STBI_rgb_alpha);
+
+		for (int i = 0; i < 4; i++) {
+			gBoxData[i] = stbi_load(gBoxFaces[i], &gBoxWidth, &gBoxHeight, &gBoxNrChannels, STBI_rgb_alpha);
+		}
+
+		
+		stbi_set_flip_vertically_on_load(false);
+		
 
 
 	for (int i = 0; i < 6; i++) {
@@ -1227,20 +1974,45 @@ void renderLoop()
 	//加载SHADER
 	gSkyboxShader = Shader("../../src/Render/SkyBox.vs",
 		"../../src/Render/SkyBox.fs");
+		gClockMainShader = Shader("../../src/Render/ClockMain.vs",
+			"../../src/Render/ClockMain.fs");
+
+		gDashboardShader = Shader("../../src/Render/Dashboard.vs",
+			"../../src/Render/Dashboard.fs");
+
+		gTaskBarShader = Shader("../../src/Render/TaskBar.vs",
+			"../../src/Render/TaskBar.fs");
+
+		gSelectShader = Shader("../../src/Render/Select.vs",
+			"../../src/Render/Select.fs");
+
+		gBoxShader = Shader("../../src/Render/Box.vs",
+			"../../src/Render/Box.fs");
+
+
+		////使用带光照的shader
+		//gModelShader = Shader("../../src/Light/light.vs", "../../src/Light/light.fs");
 
 	gClockShader = Shader("../../src/Render/Clock.vs",
 		"../../src/Render/Clock.fs");
 
-	gClockMainShader = Shader("../../src/Render/ClockMain.vs",
-		"../../src/Render/ClockMain.fs");
-	////使用带光照的shader
-	//gModelShader = Shader("../../src/Light/light.vs", "../../src/Light/light.fs");
+		SetupClockMain();
+		SetupClock();
+		SetupDashboard();
+		SetupSelect();
+		
 
 	//----------Render Model----------
 	//SetupSkybox();
 
-	//SetupClockMain();
-	//SetupClock();
+		clockTrans = glm::translate(clockTrans, glm::vec3(0.8f, 0.83f, 0.0f));
+		clockMainTrans = glm::translate(clockMainTrans, glm::vec3(0.5934f, -0.7316f, 0.0f));
+		dashboardTrans = glm::translate(dashboardTrans, glm::vec3(0.7f, -0.5f, 0.0f));
+		taskBarTrans = glm::translate(taskBarTrans, glm::vec3(-0.7920f, 0.59f, 0.0f));
+		selectTrans = glm::translate(selectTrans, glm::vec3(-0.7985f, 0.5300f, 0.0f));
+		//boxTrans = glm::translate(selectTrans, glm::vec3(0.0f, 0.0f, 0.0f));
+
+		glutDisplayFunc(renderCallback);
 
 	//这个idle函数意为空闲函数，将在事件队列的最后（即完成鼠标键盘事件响应，准备下一个渲染帧，渲染当前帧）进行，具有最低的优先级
 	glutIdleFunc(idleCallback);

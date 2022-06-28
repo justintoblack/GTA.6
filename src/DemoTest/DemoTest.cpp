@@ -283,14 +283,33 @@ void InitDriveCarTrigger()
 //时间
 extern float deltaTime;
 extern float gameTime;
+extern float timeSpeed;
 
 #pragma region 全局按键事件
 bool isInGameMode = true;
 bool isQKeyDown;
+bool is4KeyDown;
+bool is6KeyDown;
+bool is2KeyDown;
+bool is8KeyDown;
+bool is5KeyDown;
+bool isAddKeyDown;
+bool isReduceKeyDown;
 bool vehicleUseSpotLight = false;
+
+bool leftKey;
+bool rightKey;
+bool downKey;
+bool upKey;
+bool midKey;
+bool addKey;
+bool reduceKey;
+
+
+
 void GlobalKeyEvent()
 {
-	if (GetAsyncKeyState('Q'))
+	/*if (GetAsyncKeyState('Q'))
 	{
 		if (!isQKeyDown)
 		{
@@ -312,8 +331,139 @@ void GlobalKeyEvent()
 	else
 	{
 		isQKeyDown = false;
+	}*/
+	if (GetAsyncKeyState(100))
+	{
+		if (!is4KeyDown)
+		{
+			is4KeyDown = true;
+
+			//执行想要执行的动作，该动作只会被执行一次
+			leftKey = true;
+		}
+		else
+		{
+			leftKey = false;
+		}
+	}
+	else
+	{
+		is4KeyDown = false;
 	}
 
+	if (GetAsyncKeyState(102))
+	{
+		if (!is6KeyDown)
+		{
+			is6KeyDown = true;
+
+			//执行想要执行的动作，该动作只会被执行一次
+			rightKey = true;
+		}
+		else
+		{
+			rightKey = false;
+		}
+	}
+	else
+	{
+		is6KeyDown = false;
+	}
+
+	if (GetAsyncKeyState(98))
+	{
+		if (!is2KeyDown)
+		{
+			is2KeyDown = true;
+
+			//执行想要执行的动作，该动作只会被执行一次
+			downKey = true;
+		}
+		else
+		{
+			downKey = false;
+		}
+	}
+	else
+	{
+		is2KeyDown = false;
+	}
+
+	if (GetAsyncKeyState(104))
+	{
+		if (!is8KeyDown)
+		{
+			is8KeyDown = true;
+
+			//执行想要执行的动作，该动作只会被执行一次
+			upKey = true;
+		}
+		else
+		{
+			upKey = false;
+		}
+	}
+	else
+	{
+		is8KeyDown = false;
+	}
+
+	if (GetAsyncKeyState(101))
+	{
+		if (!is5KeyDown)
+		{
+			is5KeyDown = true;
+
+			//执行想要执行的动作，该动作只会被执行一次
+			midKey = true;
+		}
+		else
+		{
+			midKey = false;
+		}
+	}
+	else
+	{
+		is5KeyDown = false;
+	}
+
+	if (GetAsyncKeyState(107))
+	{
+		if (!isAddKeyDown)
+		{
+			isAddKeyDown = true;
+
+			//执行想要执行的动作，该动作只会被执行一次
+			addKey = true;
+		}
+		else
+		{
+			addKey = false;
+		}
+	}
+	else
+	{
+		isAddKeyDown = false;
+	}
+
+	if (GetAsyncKeyState(109))
+	{
+		if (!isReduceKeyDown)
+		{
+			isReduceKeyDown = true;
+
+			//执行想要执行的动作，该动作只会被执行一次
+			reduceKey = true;
+		}
+		else
+		{
+			reduceKey = false;
+		}
+	}
+	else
+	{
+		isReduceKeyDown = false;
+	}
 }
 
 //切换游戏模式
@@ -513,50 +663,167 @@ PxFilterFlags contactReportFilterShader(PxFilterObjectAttributes attributes0, Px
 	return PxFilterFlag::eDEFAULT;
 }
 
+
+//音乐
 class MusicEvent
 {
 public:
 
 	MusicEvent(char path[]) {
 		ISoundEngine* PlayEngine = createIrrKlangDevice();
-		ISound* snd = PlayEngine->play2D(path, true, true, false, ESM_AUTO_DETECT);
+		ISoundSource* source = PlayEngine->addSoundSourceFromFile(path, ESM_AUTO_DETECT, true);
+		if (source) {
+			cout << "source is created!!!" << endl;
+		}
+		else {
+			cout << "source is failed to be created!!!" << endl;
+		}
 		this->PlayEngine = PlayEngine;
-		this->snd = snd;
+		this->source = source;
 		this->isPlay = false;
 	}
 
 	ISoundEngine* PlayEngine;
-	ISound* snd;
+	ISoundSource* source;
+	ISound* snd = nullptr;
+	ISound* sndQuick = nullptr;
 	bool isPlay;
+	bool isDroped;
+	float totalTime = 0;
+	
 
-	/*void create()
-	{
-		ISoundEngine* PlayEngine = createIrrKlangDevice();
-		this->PlayEngine = PlayEngine;
-	}*/
 
+	//bool soundEffect代表是否开启音效，float volume1代表音效的声音
 	void play(bool soundEffect, float volume1)
 	{
+		if (soundEffect == true){
+			if (isPlay == false) {
+				if (source) {
+					cout << "source is ready!!!" << endl;
+				}
+				else {
+					cout << "source is failed to be found!!!" << endl;
+				}
+				snd = PlayEngine->play2D(source, true, false, true);
+				if (snd) {
+					cout << "snd is created!!!" << endl;
+				}
+				else {
+					cout << "snd is failed to be created!!!" << endl;
+				}
+				this->snd = snd;
+				this->isPlay = true;
+			}
+			else {
+				if (totalTime < volume1) {
+					totalTime += deltaTime * timeSpeed * volume1 / 3.0f;
+					if (snd) {
+						snd->setVolume(totalTime);
+					}
+					else
+					{
+						cout << "snd is not found!!!" << endl;
+					}
+				}
+				else
+				{
+					if(snd){
+						snd->setVolume(volume1);
+					}
+					else
+					{
+						cout << "snd is not found!!!" << endl;
+					}
+				}
+
+			}
+		}
+	}
+
+	void playQuick(bool soundEffect, float volume1) 
+	{
 		if (soundEffect == true && isPlay == false) {
-			snd->setIsPaused(false);
-			snd->setVolume(volume1);
+			if (source) {
+				cout << "source is ready!!!" << endl;
+			}
+			else {
+				cout << "source is failed to be found!!!" << endl;
+			}
+			sndQuick = PlayEngine->play2D(source, true, false, true, true);
+			if (sndQuick) {
+				cout << "snd is created!!!" << endl;
+			}
+			else {
+				cout << "snd is failed to be created!!!" << endl;
+			}
+			sndQuick->setVolume(volume1);
+			//this->sndQuick = sndQuick;
 			this->isPlay = true;
 		}
 	}
 
-	void stop()
+	void stop(float volume1)
 	{
-		///PlayEngine->drop();
-		snd->setIsPaused(true);
-		this->isPlay = false;
+		if (isPlay == true) {
+			if (totalTime > 0) {
+				totalTime -= deltaTime * timeSpeed * volume1 / 3.0f;
+				if (totalTime <= 0) {
+					totalTime = 0.0f;
+					if (snd) {
+						snd->setVolume(0.0f);
+						snd->setIsPaused(true);
+						this->isDroped = snd->drop();
+						cout << "snd is droped!!!" << endl;
+						cout << "========================================" << endl;
+					}
+					else
+					{
+						cout << "snd is not found!!!" << endl;
+					}
+					this->isPlay = false;
+				}
+				if (totalTime > 0) {
+					if (snd) {
+						snd->setVolume(totalTime);
+					}
+					else
+					{
+						cout << "snd is not found!!!" << endl;
+					}
+				}
+			}
+		}
+		
+		
+	}
+
+	void stopQuick()
+	{
+		if (isPlay == true) {
+			if (sndQuick) {
+				sndQuick->setIsPaused(true);
+				this->isDroped = this->sndQuick->drop();
+				
+				this->isPlay = false;
+				
+				cout << "snd is droped!!!" << endl;
+				
+				cout << "========================================" << endl;
+			}
+			else
+			{
+				cout << "snd is not found!!!" << endl;
+			}
+		}
+		
 	}
 
 	~MusicEvent()
 	{
-		snd->drop();
 		PlayEngine->drop();
 	}
 };
+
 char carEnginePath[] = "../../assets/audio/carEngine.wav";
 MusicEvent carEngine = MusicEvent(carEnginePath);
 char bellPath[] = "../../assets/audio/bell1.wav";
@@ -779,6 +1046,8 @@ PxShape* shape;
 PxRigidDynamic* dynamicbody;
 PxRigidStatic* staticbody;
 PxTransform tm(0, 0, 0);
+
+bool isDriving;
 
 
 
@@ -1031,6 +1300,8 @@ void startAccelerateForwardsMode()
 	//play music
 	carEngine.play(soundEffect, volume1);
 
+	isDriving = true;
+
 
 	if (gVehicle4W->mDriveDynData.getCurrentGear() == PxVehicleGearsData::eREVERSE)
 	{
@@ -1157,15 +1428,17 @@ void resetVehicle()
 
 void stopEngine()
 {
-	carEngine.stop();
+	carEngine.stop(volume1);
+
+	isDriving = false;
 };
 void startBell()
 {
-	bell.play(soundEffect, volume1);
+	bell.playQuick(soundEffect, volume1);
 };
 void stopBell()
 {
-	bell.stop();
+	bell.stopQuick();
 };
 
 void switchSpotlightStatus()
@@ -1352,7 +1625,7 @@ void stepPhysics(bool interactive)
 	PX_UNUSED(interactive);
 	//时间
 
-	//GlobalKeyEvent();
+	GlobalKeyEvent();
 	inputSystem.InputAction();
 
 	DriveCarTrigger->setGlobalPose(m_player->getActor()->getGlobalPose()); //更新上车触发器的位置

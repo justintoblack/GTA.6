@@ -9,11 +9,11 @@ class Zombie:public GameObject
 public:
 	void Awake()
 	{
-		cout << "Zombie Awake" << endl;
+		//cout << "Zombie Awake" << endl;
 	}
 	void Update() 
 	{
-		cout << "Zombie Update" << endl;
+		//cout << "Zombie Update" << endl;
 	}
 };
 
