@@ -18,7 +18,7 @@ void MissionManager::AddTaxiMission(double _reward)
 {
 	int start = rand() % triggerPos.size();
 	int end = (start + 8) % triggerPos.size();
-	MissionList.push_back(new Mission(triggerPos[start], triggerPos[end], "Taxi mission", TotalNum, MissionType::FIND, _reward));
+	AddMission(triggerPos[start], triggerPos[end], MissionType::FIND, "Taxi mission",_reward);
 	TotalNum += 1;
 }
 

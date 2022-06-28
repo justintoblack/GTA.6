@@ -1508,7 +1508,6 @@ void MyCode()
 	carObject.AddModel(gBodyModel, gWheelModel_fl, gWheelModel_fr, gWheelModel_bl, gWheelModel_br);
 
 	missionManager.AddTaxiMission(100);
-	currentTraceTarge = (missionManager.MissionList[0]->StartTrigger->getGlobalPose().p);
 
 
 

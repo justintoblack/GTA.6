@@ -1381,6 +1381,7 @@ namespace
 				glUseProgram(0);
 			}
 
+
 		}
 
 		if (true)
@@ -1722,6 +1723,11 @@ namespace
 		
 		//Imgui中需要加入渲染回调的函数
 		Snippets::glut_display_func();
+
+
+		//改变当前任务追踪状态
+
+
 
 		//物理模拟
 		stepPhysics(true);

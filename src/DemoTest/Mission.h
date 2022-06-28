@@ -34,6 +34,7 @@ public:
 	bool IsActive = false;
 	bool ChangeLock = false;
 	bool TimerLock = false;
+	bool IsTracing = false;
 	std::string MissionDescription;
 	int ID;
 	PxRigidDynamic* StartTrigger = NULL;
