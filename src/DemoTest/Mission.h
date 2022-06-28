@@ -22,7 +22,7 @@ enum MissionType
 class Mission
 {
 public:
-	Mission(PxVec3 StartPos, PxVec3 EndPos,std::string Description,int _ID, MissionType _Type);
+	Mission(PxVec3 StartPos, PxVec3 EndPos,std::string Description,int _ID, MissionType _Type,double _reward);
 	~Mission();
 	void StartMission();
 	void FinishMission();
@@ -41,6 +41,7 @@ public:
 	double Timer = 0;
 	double TimeLimit = 15;
 	MissionType Type;
+	double reward=0;
 
 	
 };

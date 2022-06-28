@@ -8,9 +8,17 @@ MissionManager::~MissionManager()
 {
 }
 
-void MissionManager::AddMission(PxVec3 StartPos, PxVec3 EndPos, MissionType _Type, std::string Description)
+void MissionManager::AddMission(PxVec3 StartPos, PxVec3 EndPos, MissionType _Type, std::string Description,double _reward)
 {
-	MissionList.push_back(new Mission(StartPos, EndPos, Description, TotalNum, _Type));
+	MissionList.push_back(new Mission(StartPos, EndPos, Description, TotalNum, _Type,_reward));
+	TotalNum += 1;
+}
+
+void MissionManager::AddTaxiMission(double _reward)
+{
+	int start = rand() % triggerPos.size();
+	int end = (start + 8) % triggerPos.size();
+	MissionList.push_back(new Mission(triggerPos[start], triggerPos[end], "Taxi mission", TotalNum, MissionType::FIND, _reward));
 	TotalNum += 1;
 }
 

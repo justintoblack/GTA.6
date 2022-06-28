@@ -1,6 +1,6 @@
 #include"Mission.h"
 
-Mission::Mission(PxVec3 StartPos, PxVec3 EndPos, std::string Description, int _ID, MissionType _Type)
+Mission::Mission(PxVec3 StartPos, PxVec3 EndPos, std::string Description, int _ID, MissionType _Type, double _reward)
 {
 
 	PxMaterial* gMaterial = gPhysics->createMaterial(0.5f, 0.5f, 0.0f);
@@ -12,21 +12,18 @@ Mission::Mission(PxVec3 StartPos, PxVec3 EndPos, std::string Description, int _I
 	TriggerShape->setFlag(PxShapeFlag::eTRIGGER_SHAPE, true);
 	gScene->addActor(*StartTrigger);
 
-
 	EndTrigger = PxCreateDynamic(*gPhysics, PxTransform(EndPos), PxBoxGeometry(PxVec3(1, 1, 1)), *gMaterial, 1.0f);
 	EndTrigger->setActorFlag(PxActorFlag::eDISABLE_GRAVITY, true);
 	EndTrigger->getShapes(&TriggerShape, 1);
 	TriggerShape->setFlag(PxShapeFlag::eSIMULATION_SHAPE, false);
 	TriggerShape->setFlag(PxShapeFlag::eTRIGGER_SHAPE, true);
 
-
-
-
 	MissionDescription = Description;
 	ID = _ID;
 	Type = _Type;
 	StartTrigger->userData = this;
 	EndTrigger->userData = this;
+	reward = _reward;
 	//cout << StartTrigger->userData<<"   " <<this<<endl;
 }
 
