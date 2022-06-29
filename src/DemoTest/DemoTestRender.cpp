@@ -2197,32 +2197,22 @@ void renderLoop()
 	gShadowShader = Shader("../../src/ModelLoading/shadow_loading.vs",
 		"../../src/ModelLoading/shadow_loading.fs");
 	//加载SHADER
-	gSkyboxShader = Shader("../../src/Render/SkyBox.vs",
-		"../../src/Render/SkyBox.fs");
-		gClockMainShader = Shader("../../src/Render/ClockMain.vs",
-			"../../src/Render/ClockMain.fs");
+	gSkyboxShader = Shader("../../src/Render/SkyBox.vs", "../../src/Render/SkyBox.fs");
+		gClockMainShader = Shader("../../src/Render/ClockMain.vs", "../../src/Render/ClockMain.fs");
 
-		gDashboardShader = Shader("../../src/Render/Dashboard.vs",
-			"../../src/Render/Dashboard.fs");
+		gDashboardShader = Shader("../../src/Render/Dashboard.vs", "../../src/Render/Dashboard.fs");
 
-		gTaskBarShader = Shader("../../src/Render/TaskBar.vs",
-			"../../src/Render/TaskBar.fs");
+		gTaskBarShader = Shader("../../src/Render/TaskBar.vs", "../../src/Render/TaskBar.fs");
 
-		gSelectShader = Shader("../../src/Render/Select.vs",
-			"../../src/Render/Select.fs");
+		gSelectShader = Shader("../../src/Render/Select.vs", "../../src/Render/Select.fs");
 
-		gBoxShader = Shader("../../src/Render/Box.vs",
-			"../../src/Render/Box.fs");
+		gBoxShader = Shader("../../src/Render/Box.vs", "../../src/Render/Box.fs");
 
 
 		////使用带光照的shader
 		//gModelShader = Shader("../../src/Light/light.vs", "../../src/Light/light.fs");
 
-	gClockShader = Shader("../../src/Render/Clock.vs",
-		"../../src/Render/Clock.fs");
-
-		gClockMainShader = Shader("../../src/Render/ClockMain.vs",
-			"../../src/Render/ClockMain.fs");
+		gClockShader = Shader("../../src/Render/Clock.vs", "../../src/Render/Clock.fs");
 
 		////使用带光照的shader
 		//gModelShader = Shader("../../src/Light/light.vs", "../../src/Light/light.fs");
