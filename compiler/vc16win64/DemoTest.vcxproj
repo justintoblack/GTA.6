@@ -56,6 +56,7 @@
   <ItemGroup>
     <ClInclude Include="..\..\src\Bone\Animation.h" />
     <ClInclude Include="..\..\src\Bone\Animator.h" />
+    <ClInclude Include="..\..\src\Bone\Bone.h" />
     <ClInclude Include="..\..\src\Bone\ModelAnimation.h" />
     <ClInclude Include="..\..\src\DemoTest\CarGameObject.h" />
     <ClInclude Include="..\..\src\DemoTest\DemoTestRender.h" />

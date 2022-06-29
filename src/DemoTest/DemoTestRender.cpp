@@ -650,9 +650,9 @@ namespace
 		
 		glm::mat4 modelMat = glm::mat4(1.0f);
 		modelMat = glm::translate(modelMat, modelAnim->getPos()); //平移操作，在（1.0， 1.0， 1.0， 1.0）的基础上平移model.getPos()， 默认为vec3（0.0， 0.0， 0.0， 0.0），上面有个setPos来传入参数
-		//modelMat = glm::rotate(modelMat, 1.0f, glm::vec3(0, -1, 0));    //旋转操作，第一个参数是原矩阵，第二个参数是选装角度，用弧度制（glm::radians(90.0f)）， 第三个参数表示绕哪个轴旋转
+		//modelMat = glm::rotate(modelMat, 1.0f, glm::vec3(0, -1, 0));    //旋转操作，第一个参数是原矩阵，第二个参数是旋转角度，用弧度制（glm::radians(90.0f)）， 第三个参数表示绕哪个轴旋转
 		modelMat *= glm::mat4_cast(glm::quatLookAt(dir, glm::vec3(0, 1, 0)));    // ??????????
-		modelMat = glm::scale(modelMat, glm::vec3(.005f, .005f, .005f)); // 缩放操作，x， y，z坐标都缩小到原来的十分之一
+		modelMat = glm::scale(modelMat, glm::vec3(.01f, .01f, .01f));
 		glm::mat4 viewMat = getViewMat();
 		glm::mat4 projectionMat = glm::perspective(45.0f, (float)glutGet(GLUT_WINDOW_WIDTH) / (float)glutGet(GLUT_WINDOW_HEIGHT), 0.1f, 1000.0f);
 		modelAnimShader.SetMatrix4fv("projection", projectionMat);
@@ -1296,8 +1296,8 @@ namespace
 		//----------Model Anim-----------------------------
 		gModelAnimShader = Shader("../../src/Bone/ModelAnim.vs",
 			"../../src/ModelLoading/model_loading.fs");
-		string modelAnimPath("F:/Learning/mypt2/PhysX-Tutorial-master/PhysX_3.4/SCUT2022_Nayeon/assets/objects/StandardWalk.fbx");
-		string modelAnimIdlePath("F:/Learning/mypt2/PhysX-Tutorial-master/PhysX_3.4/SCUT2022_Nayeon/assets/objects/StandingW_BriefcaseIdle.fbx");
+		string modelAnimPath("../../assets/objects/Models/Standard_Walk_skin.fbx");
+		string modelAnimIdlePath("../../assets/objects/Models/Neutral_Idle_skin.fbx");
 		gModelAnim = new ModelAnimation(modelAnimPath);
 		gAnimation = new Animation(modelAnimPath, gModelAnim);
 		gAnimator = new Animator(gAnimation);

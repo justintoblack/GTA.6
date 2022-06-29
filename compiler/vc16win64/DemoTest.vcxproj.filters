@@ -61,6 +61,7 @@
     <ClInclude Include="..\..\src\Bone\Animation.h" />
     <ClInclude Include="..\..\src\Bone\Animator.h" />
     <ClInclude Include="..\..\src\Bone\ModelAnimation.h" />
+    <ClInclude Include="..\..\src\Bone\Bone.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\src\Light\light.fs" />
