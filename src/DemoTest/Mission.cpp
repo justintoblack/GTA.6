@@ -52,6 +52,9 @@ Mission::~Mission()
 		State = true;
 		TimerLock = false;
 		ChangeLock = true;
+		missionFinish = true;
+		missionSuccess = true;
+		IsTracing = false;
 
 	}
 
@@ -66,6 +69,9 @@ Mission::~Mission()
 		ChangeLock = true;
 		TimerLock = false;
 		Timer = 0;
+		missionFinish = true;
+		missionSuccess = false;
+		IsTracing = false;
 	}
 }
 

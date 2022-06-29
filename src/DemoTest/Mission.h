@@ -10,6 +10,7 @@
 
 extern PxPhysics* gPhysics;
 extern PxScene* gScene ;
+extern bool missionFinish, missionSuccess;
 
 enum MissionType
 {
@@ -40,7 +41,7 @@ public:
 	PxRigidDynamic* StartTrigger = NULL;
 	PxRigidDynamic* EndTrigger = NULL;
 	double Timer = 0;
-	double TimeLimit = 15;
+	double TimeLimit = 60;
 	MissionType Type;
 	double reward=0;
 

@@ -1404,10 +1404,13 @@ namespace
 	//渲染任务图标
 	void RenderMissionObject()
 	{
+		bool NeedRenderArrow = false;
 		for (size_t i = 0; i < missionManager.MissionList.size(); i++)
 		{
-			if (!missionManager.MissionList[i]->State)
+			
+			if (!missionManager.MissionList[i]->State&& missionManager.MissionList[i]->IsTracing==true)
 			{
+				NeedRenderArrow = true;
 				Model m;
 				PxTransform t;
 				if (!missionManager.MissionList[i]->IsActive)
@@ -1436,10 +1439,20 @@ namespace
 			}
 
 
+
 		}
 
-		if (true)
+		if (NeedRenderArrow)
 		{
+			int size;
+			if (isDriving)
+			{
+				size = 10;
+			}
+			else
+			{
+				size = 3;
+			}
 			//渲染指示箭头
 			Model m = gArrow;
 			PxVec3 p = *CameraFollowTarget;
@@ -1447,14 +1460,12 @@ namespace
 			PxVec3 dir =( currentTraceTarge - *CameraFollowTarget);
 			dir = dir.getNormalized();
 			dir.y = 0;
-
-			
 			gModelShader.use();
 			glm::mat4 modelMat0 = glm::mat4(1.0f);
 			modelMat0 = glm::translate(modelMat0, Mathf::P3ToV3(p)); 
 			modelMat0 = glm::rotate(modelMat0, PxAtan2(dir.x, dir.z), glm::vec3(0,1, 0));
 			modelMat0 = glm::rotate(modelMat0, glm::radians(90.0f), glm::vec3(1,0, 0));
-			modelMat0 = glm::scale(modelMat0,glm::vec3(10,10,10));
+			modelMat0 = glm::scale(modelMat0,glm::vec3(size,size,size));
 			glm::mat4 viewMat = getViewMat();
 			glm::mat4 projectionMat = glm::perspective(45.0f, (float)glutGet(GLUT_WINDOW_WIDTH) / (float)glutGet(GLUT_WINDOW_HEIGHT), 0.1f, 1000.0f);
 			gModelShader.SetMatrix4fv("projection", projectionMat);
@@ -1917,6 +1928,9 @@ namespace
 				isInConfirm = false;
 			
 				isSelected = true;               //进入正式任务界面
+
+				missionManager.MissionList[currentSelect]->IsTracing = true;
+				currentTraceTarge = missionManager.MissionList[currentSelect]->StartTrigger->getGlobalPose().p;
 
 				beginMusic = true;
 				cout << "isInConfirm" << isInConfirm << endl;

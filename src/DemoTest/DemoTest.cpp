@@ -921,17 +921,24 @@ class ContactReportCallback : public PxSimulationEventCallback
 			if ((pairs[i].otherActor == gVehicle4W->getRigidDynamicActor() && (Mission*)pairs[i].triggerActor->userData != NULL))
 			{
 				Mission* triggerMission = (Mission*)pairs[i].triggerActor->userData;
-				cout << triggerMission->MissionDescription << endl;
-				if (pairs[i].triggerActor == triggerMission->StartTrigger)
+
+				if (triggerMission->IsTracing)
 				{
-					triggerMission->StartMission();
-					continue;
+					cout << triggerMission->MissionDescription << endl;
+					if (pairs[i].triggerActor == triggerMission->StartTrigger)
+					{
+						currentTraceTarge = triggerMission->EndTrigger->getGlobalPose().p;
+						triggerMission->StartMission();
+						continue;
+					}
+					if (pairs[i].triggerActor == triggerMission->EndTrigger)
+					{
+						triggerMission->IsTracing = false;
+						triggerMission->FinishMission();
+						continue;
+					}
 				}
-				if (pairs[i].triggerActor == triggerMission->EndTrigger)
-				{
-					triggerMission->FinishMission();
-					continue;
-				}
+
 			}
 		}
 	}
@@ -1572,7 +1579,10 @@ void MyCode()
 	carObject.SetRigidbody(gVehicle4W->getRigidDynamicActor());
 	carObject.AddModel(gBodyModel, gWheelModel_fl, gWheelModel_fr, gWheelModel_bl, gWheelModel_br);
 
-	missionManager.AddTaxiMission(100);
+	for (size_t i = 0; i < 9; i++)
+	{
+		missionManager.AddTaxiMission(100);
+	}
 
 
 

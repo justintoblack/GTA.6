@@ -7,8 +7,6 @@
 #include<vector>
 
 
-
-
 class MissionManager
 {
 public:
