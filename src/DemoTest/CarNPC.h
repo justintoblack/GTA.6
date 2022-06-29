@@ -9,7 +9,7 @@ class CarNPC:public GameObject
 {
 private:
 	int idx;
-	float moveSpeed=10;
+	float moveSpeed=7.5;
 	float rotateFactor=2.5;
 	vector<PxTransform> TargetPoints;
 	PxVec3 offset;
@@ -41,7 +41,7 @@ public:
 	{
 		//this->SetTransform(PxTransform(transform.p + PxVec3(0, 0, 1)*moveSpeed*deltaTime));
 		PxVec3 dir = TargetPoints[idx].p-transform.p+offset;
-		if (dir.magnitudeSquared()<0.1f)
+		if (dir.magnitudeSquared()<0.5f)
 		{
 			idx++;
 			if (idx >= TargetPoints.size())
@@ -57,8 +57,9 @@ public:
 
 		dir = dir.getNormalized() * moveSpeed * deltaTime;
 		glm::quat qq=glm::quatLookAt(Mathf::P3ToV3(-dir), glm::vec3(0, 1, 0));
+		qq= glm::slerp(Mathf::Toquat(transform.q), qq,rotateFactor*deltaTime);
 		PxQuat q = Mathf::ToPxQ(qq);
-		q = Mathf::Slerp(transform.q, q, rotateFactor*deltaTime);
+		//q = Mathf::Slerp(transform.q, q, rotateFactor*deltaTime);
 		this->SetTransform(PxTransform(transform.p + dir,q));
 	}
 
