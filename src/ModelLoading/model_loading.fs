@@ -74,7 +74,8 @@ vec3 CalcDirLight(Light dirLight, vec3 normal, bool useAttenuation)
     vec3 lightDir = normalize(-dirLight.direction);
     float diff = max(dot(lightDir,norm), 0.0);
     vec3 diffuse = dirLight.diffuse * diff * texture(material.texture_diffuse1, TexCoords).rgb;
-    diffuse += dirLight.diffuse * diff * texture(material.texture_diffuse2, TexCoords).rgb;
+    if (material.diffuseCount >= 2)
+        diffuse += dirLight.diffuse * diff * texture(material.texture_diffuse2, TexCoords).rgb;
 
      //镜面反射分量
     vec3 viewDir = normalize(viewPos - FragPos);
@@ -105,9 +106,8 @@ vec3 CalcDirLight(Light dirLight, vec3 normal, bool useAttenuation)
     //lightDir,片段指向光源
         vec3 lightDir = normalize(dirLight.position - FragPos);
         float distance = length(dirLight.position - FragPos);
-        float attenuation = 1.0 / (1.0 + 0.07 * distance + 0.017 * distance * distance);
-        diffuse *= attenuation;
-        specular *= attenuation;
+        float attenuation = 1.0 / (1.0 + 0.027 * distance + 0.0028 * distance * distance);
+        
         float theta = dot(-lightDir, normalize(dirLight.direction));
         //内外圆锥余弦的差
         float epsilon = (dirLight.cutOff - dirLight.outerCutOff);
@@ -116,7 +116,10 @@ vec3 CalcDirLight(Light dirLight, vec3 normal, bool useAttenuation)
         ambient *= intensity;
         diffuse *= intensity;
         specular *= intensity;
-        ambient = vec3(0.0);
+        
+        ambient *= attenuation;
+        diffuse *= attenuation;
+        specular *= attenuation;
     }
 
     vec3 result = ambient + diffuse + specular;

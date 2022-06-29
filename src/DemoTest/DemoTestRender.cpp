@@ -99,9 +99,9 @@ glm::vec3			gLightDir;
 glm::vec3			gLightAmbient = glm::vec3(gLightAmbientBasis);
 glm::vec3			gLightDiffuse = glm::vec3(gLightDiffuseBasis);
 glm::vec3			gLightSpecular = glm::vec3(gLightSpecularBasis);
-glm::vec3			gSpotLightAmbient = glm::vec3(0.3f, 0.3f, 0.3f);
-glm::vec3			gSpotLightDiffuse = glm::vec3(0.9f, 0.9f, 0.9f);
-glm::vec3			gSpotLightSpecular = glm::vec3(0.9f, 0.9f, 0.9f);
+glm::vec3			gSpotLightAmbient = glm::vec3(0.7f, 0.7f, 0.7f);
+glm::vec3			gSpotLightDiffuse = glm::vec3(0.5f, 0.5f, 0.5f);
+glm::vec3			gSpotLightSpecular = glm::vec3(0.8f, 0.8f, 0.8f);
 
 
 glm::mat4			clockTrans = glm::mat4(1.0f);
