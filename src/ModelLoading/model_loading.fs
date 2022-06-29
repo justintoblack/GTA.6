@@ -22,9 +22,14 @@ uniform Material material;
 struct Light{
     vec3 position;
     vec3 direction;
+    float cutOff;
+    float outerCutOff;
     vec3 ambient;
     vec3 diffuse;
     vec3 specular;
+    float constant;
+    float linear;
+    float quardratic;
 };
 uniform Light light;
 
@@ -46,19 +51,19 @@ uniform SpotLight spotLight;
 uniform int useSpotLight;
 out vec4 FragColor;
 
-vec3 CalcDirLight(Light light, vec3 normal);
+vec3 CalcDirLight(Light light, vec3 normal, bool useAttenuation);
 vec3 CalcSpotLight(SpotLight spotLight, vec3 normal);
 
 
 void main()
 {   
-    vec3 result = CalcDirLight(light, Normal);
+    vec3 result = CalcDirLight(light, Normal, false);
     if (useSpotLight == 1)
         result += CalcSpotLight(spotLight, Normal);
     FragColor = vec4(result, 1.0f);
 }
 
-vec3 CalcDirLight(Light dirLight, vec3 normal)
+vec3 CalcDirLight(Light dirLight, vec3 normal, bool useAttenuation)
 {
     vec3 ambient = dirLight.ambient * texture(material.texture_diffuse1, TexCoords).rgb;
 
@@ -94,6 +99,26 @@ vec3 CalcDirLight(Light dirLight, vec3 normal)
     
     //emission
     //vec3 emission = texture(material.texture_emissive, TexCoords).rgb;
+
+    // attenuation 衰减
+    if (useAttenuation){
+    //lightDir,片段指向光源
+        vec3 lightDir = normalize(dirLight.position - FragPos);
+        float distance = length(dirLight.position - FragPos);
+        float attenuation = 1.0 / (1.0 + 0.07 * distance + 0.017 * distance * distance);
+        diffuse *= attenuation;
+        specular *= attenuation;
+        float theta = dot(-lightDir, normalize(dirLight.direction));
+        //内外圆锥余弦的差
+        float epsilon = (dirLight.cutOff - dirLight.outerCutOff);
+        //I = (theta - outerCutOff) / (cutOff - outerCutOff), 用clamp限制在0.0到1.0范围
+        float intensity = clamp((theta - dirLight.outerCutOff)/epsilon, 0.0, 1.0 );
+        ambient *= intensity;
+        diffuse *= intensity;
+        specular *= intensity;
+        ambient = vec3(0.0);
+    }
+
     vec3 result = ambient + diffuse + specular;
     return result;
 }
@@ -103,18 +128,36 @@ vec3 CalcSpotLight(SpotLight spotLight, vec3 normal)
     //lightDir,片段指向光源
     vec3 lightDir = normalize(spotLight.position - FragPos);
     float theta = dot(-lightDir, normalize(spotLight.direction));
-    if (theta > spotLight.cutOff)
-    {
-        Light tmpLight;
-        tmpLight.position = spotLight.position;
-        tmpLight.direction = spotLight.direction;
-        tmpLight.ambient = spotLight.ambient;
-        tmpLight.diffuse = spotLight.diffuse;
-        tmpLight.specular = spotLight.specular;
 
-        return CalcDirLight(tmpLight, normal);
-    }
-    else{
-        return vec3(0.0);
-    }
+    //if (theta > spotLight.cutOff)
+    //{
+    //    Light tmpLight;
+    //    tmpLight.position = spotLight.position;
+    //    tmpLight.direction = spotLight.direction;
+    //    tmpLight.ambient = spotLight.ambient;
+    //    tmpLight.diffuse = spotLight.diffuse;
+    //    tmpLight.specular = spotLight.specular;
+    //    tmpLight.constant = spotLight.constant;
+    //    tmpLight.linear = spotLight.linear;
+    //    tmpLight.quardratic = spotLight.quardratic;
+    //    return CalcDirLight(tmpLight, normal, true);
+    //}
+    //else{
+    //    return vec3(0.0);
+    //}
+
+    Light tmpLight;
+    tmpLight.position = spotLight.position;
+    tmpLight.direction = spotLight.direction;
+    tmpLight.ambient = spotLight.ambient;
+    tmpLight.diffuse = spotLight.diffuse;
+    tmpLight.specular = spotLight.specular;
+    tmpLight.constant = spotLight.constant;
+    tmpLight.linear = spotLight.linear;
+    tmpLight.quardratic = spotLight.quardratic;
+    tmpLight.cutOff = spotLight.cutOff;
+    tmpLight.outerCutOff = spotLight.outerCutOff;
+    return CalcDirLight(tmpLight, normal, true);
+    
+
 }
