@@ -15,13 +15,13 @@ private:
 	PxVec3 offset;
 public:
 	CarNPC(Model& model,PxTransform pos,vector<PxTransform>& points,
-		int idx,PxVec3 off)
+		int idx,PxVec3 off,PxVec3 boxSize)
 	{
 		this->SetName("carTest");
 		ModelComponent* newModel = new ModelComponent(this);
 		RigidBody* rig = new RigidBody(this, false);
 		BoxCollider* box = new BoxCollider(this);
-		box->Size = PxVec3(0.9,0.9,2.4);
+		box->Size = boxSize;
 		box->SetShape();
 		newModel->SetModel(model);
 		this->SetTransform(PxTransform(pos.p+off,pos.q));

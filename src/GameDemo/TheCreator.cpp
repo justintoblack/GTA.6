@@ -280,20 +280,16 @@ void TheCreator::CreateGameObject()
 	track_00.push_back(PxTransform( PxVec3(-2.3, 0, -11.9),PxQuat(Mathf::DegToRad(360),PxVec3(0,1,0))));//0
 
 	//创建MonoBehaviour物体
-	CarNPC* testCar = new CarNPC(Models[41],track_00[0],track_00,1,PxVec3(0,0.9,0));
-	CarNPC* testCar2 = new CarNPC(Models[42],track_00[4],track_00,4,PxVec3(0,0.9,0));
-	CarNPC* testCar3 = new CarNPC(Models[40],track_00[8],track_00,8, PxVec3(0, 0, 0));
-	CarNPC* testCar4 = new CarNPC(Models[44],track_00[12],track_00,12, PxVec3(0, 1.1, 0));
-	SpecialGameObject.push_back(testCar);
-	SpecialGameObject.push_back(testCar2);
-	SpecialGameObject.push_back(testCar3);
-	SpecialGameObject.push_back(testCar4);
+	//CarNPC* testCar = new CarNPC(Models[41],track_00[0],track_00,1,PxVec3(0,0.9,0),PxVec3(0.9,0.9,2.4));
+	//CarNPC* testCar2 = new CarNPC(Models[42],track_00[4],track_00,5,PxVec3(0,0.9,0),PxVec3(0.9, 0.9, 2.4));
+	//CarNPC* testCar4 = new CarNPC(Models[44],track_00[12],track_00,13, PxVec3(0, 1.1, 0), PxVec3(0.9, 1.0, 2.5));
+	//SpecialGameObject.push_back(testCar);
+	//SpecialGameObject.push_back(testCar2);
+	//SpecialGameObject.push_back(testCar4);
 	for (int i = 0; i < SpecialGameObject.size(); i++)
 	{
 	    SpecialGameObject[i]->Awake();
 	}
-
-	
 }
 
 void TheCreator::CreatePaticle(PxVec3 pos)
