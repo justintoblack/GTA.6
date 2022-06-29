@@ -68,6 +68,10 @@ public:
 		mCurrentTick = 0;
 	}
 
+	void setCurrentTick(float curTick) {
+		mCurrentTick = curTick;
+	}
+
 	vector<glm::mat4> GetFinalBoneMatrices() {
 		return mFinalBoneMatrices;
 	}

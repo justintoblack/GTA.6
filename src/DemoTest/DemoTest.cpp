@@ -196,8 +196,9 @@ float sprintSpeed = 7.0f;
  
 bool isGrounded;
 bool isAiming; 
+bool isJumping; 
+bool startJumping;
 bool hasVehicleToDrive = false;
-
 
 
 ///跳跃
@@ -205,8 +206,11 @@ void Jump()
 {
 	if (isGrounded)
 	{
+		isJumping = true;
+		startJumping = true;
 		velocity.y = PxSqrt(jumpHeight * gravity.y * -2);
 	}
+	
 }
 
 //左键
@@ -1749,6 +1753,7 @@ void stepPhysics(bool interactive)
 	if (isGrounded && velocity.y < 0)
 	{
 		velocity.y = -0.0f;
+		isJumping = false;
 	}
 
 	velocity += gravity * deltaTime;

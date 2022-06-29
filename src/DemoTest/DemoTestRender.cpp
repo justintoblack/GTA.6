@@ -124,13 +124,16 @@ Shader				gModelAnimShader;
 ModelAnimation*		gModelAnim;
 Animation*			gAnimation;
 Animation*			gAnimationIdle;
+Animation*			gAnimatonJump;
 Animator*			gAnimator;
 Animator*			gAnimatorIdle;
+Animator*			gAnimatorJump;
 vector<glm::mat4>	gBoneTransform;
 extern PxVec3* CameraFollowTarget;
 extern PxVec3 currentTraceTarge;
 extern  bool		isDriving;
-
+extern  bool		isJumping;
+extern  bool		startJumping;
 //时钟顶点位置
 float gClockVertices[] = {
 	// positions          // colors           // texture coords
@@ -2055,10 +2058,22 @@ namespace
 		float rotateSpeed = 5;
 		//表示正在移动
 		PxExtendedVec3 haha = m_player->getFootPosition();
+		
 		if (!moveDir.isZero())
 		{
 			glm::vec3 targetDir = glm::vec3(moveDir.x, 0, moveDir.z);
 			forwardDir = glm::normalize( Mathf::Slerp(forwardDir, targetDir, deltaTime * rotateSpeed));
+			
+		}
+		if (isJumping) {
+			if (startJumping) {
+				gAnimatorJump->setCurrentTick(15.0f);
+				startJumping = false;
+			}
+			gAnimatorJump->UpdateAnimation(deltaTime);
+			gBoneTransform = gAnimatorJump->GetFinalBoneMatrices();
+		}
+		else if (!moveDir.isZero()) {
 			gAnimator->UpdateAnimation(deltaTime);
 			gBoneTransform = gAnimator->GetFinalBoneMatrices();
 		}
@@ -2258,6 +2273,7 @@ void renderLoop()
 			"../../src/ModelLoading/model_loading.fs");
 		string modelAnimPath("../../assets/objects/Models/Standard_Walk_skin.fbx");
 		string modelAnimIdlePath("../../assets/objects/Models/Neutral_Idle_skin.fbx");
+		string modelAnimJumpPath("../../assets/objects/Models/jump_skin.fbx");
 		gModelAnim = new ModelAnimation(modelAnimPath);
 		gAnimation = new Animation(modelAnimPath, gModelAnim);
 		gAnimator = new Animator(gAnimation);
@@ -2265,6 +2281,9 @@ void renderLoop()
 		gAnimationIdle = new Animation(modelAnimIdlePath, gModelAnim);
 		gAnimatorIdle = new Animator(gAnimationIdle);
 		gAnimatorIdle->UpdateAnimation(deltaTime);
+
+		gAnimatonJump = new Animation(modelAnimJumpPath, gModelAnim);
+		gAnimatorJump = new Animator(gAnimatonJump);
 		gModelAnimShader.use();
 		//shininess发光值，发光值越高，反射能力越强，散射越少，高光点越小
 		gModelAnimShader.SetFloat("material.shininess", gOthersShininess);
