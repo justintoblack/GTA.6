@@ -51,6 +51,9 @@
 #include "../DemoTest/MissionManager.h"
 #include "irrKlang/irrKlang.h" 
 #include "../GameDemo/TheCreator.h"
+#include "../Bone/ModelAnimation.h"
+#include "../Bone/Animation.h"
+#include "../Bone/Animator.h"
 #include "../InputSystem/ActionMap.h"
 
 using namespace irrklang;
@@ -96,9 +99,9 @@ glm::vec3			gLightDir;
 glm::vec3			gLightAmbient = glm::vec3(gLightAmbientBasis);
 glm::vec3			gLightDiffuse = glm::vec3(gLightDiffuseBasis);
 glm::vec3			gLightSpecular = glm::vec3(gLightSpecularBasis);
-glm::vec3			gSpotLightAmbient = glm::vec3(0.2f, 0.2f, 0.2f);
-glm::vec3			gSpotLightDiffuse = glm::vec3(0.3f, 0.3f, 0.3f);
-glm::vec3			gSpotLightSpecular = glm::vec3(0.5f, 0.5f, 0.5f);
+glm::vec3			gSpotLightAmbient = glm::vec3(0.7f, 0.7f, 0.7f);
+glm::vec3			gSpotLightDiffuse = glm::vec3(0.5f, 0.5f, 0.5f);
+glm::vec3			gSpotLightSpecular = glm::vec3(0.8f, 0.8f, 0.8f);
 
 
 glm::mat4			clockTrans = glm::mat4(1.0f);
@@ -109,12 +112,28 @@ glm::mat4			selectTrans = glm::mat4(1.0f);
 //glm::mat4			boxTrans = glm::mat4(1.0f);
 
 
-float				gSpotLightCutOff = 25.0f;
+float				gSpotLightCutOff = 28.0f;
+float				gSpotLightOuterCutOff = 35.0f;
 float				gVehicleShininess = 64.0f;
 float				gOthersShininess = 512.0f;
+float				gAttenuationConstant = 1.0f;
+float				gAttenuationLinear = 0.09;
+float				gAttenuationQuadratic = 0.032;
 extern	bool		vehicleUseSpotLight;
+Shader				gModelAnimShader;
+ModelAnimation*		gModelAnim;
+Animation*			gAnimation;
+Animation*			gAnimationIdle;
+Animation*			gAnimatonJump;
+Animator*			gAnimator;
+Animator*			gAnimatorIdle;
+Animator*			gAnimatorJump;
+vector<glm::mat4>	gBoneTransform;
+extern PxVec3* CameraFollowTarget;
+extern PxVec3 currentTraceTarge;
 extern  bool		isDriving;
-
+extern  bool		isJumping;
+extern  bool		startJumping;
 //时钟顶点位置
 float gClockVertices[] = {
 	// positions          // colors           // texture coords
@@ -353,9 +372,10 @@ glm::mat4 RotateArbitraryLine(glm::vec3 v1, glm::vec3 v2, float theta)
 
 
 extern void initPhysics(bool interactive);
-extern void stepPhysics(bool interactive);	
+extern void stepPhysics(bool interactive);
 extern void cleanupPhysics(bool interactive);
 extern MissionManager missionManager;
+
 //extern void keyPress(unsigned char key, const PxTransform& camera);
 
 //时间
@@ -365,7 +385,7 @@ float currentTime = 0.0f;			//游戏世界现在已经进行到多少秒了
 float compareTimeSpeed;
 bool day;                          //当前帧是否为白天
 bool former;					   //当前帧是否为（白天或者夜晚）的前半段
-int calendarDay = 0;				
+int calendarDay = 0;
 int calendarHour = 0;
 int calendarMinute = 0;
 int calendarDayDisplay = 0;			//游戏现在已经进行到第几天了
@@ -389,11 +409,11 @@ extern TheCreator theCreator;
 extern GameObject gameObject_00;
 
 extern PxVec3 moveDir;
-glm::vec3 forwardDir(0,0,1);
+glm::vec3 forwardDir(0, 0, 1);
 extern PxController* m_player;
 extern InputSyetem inputSystem;
 extern PxVehicleDrive4W* gVehicle4W;
-Snippets::Camera*	sCamera;
+Snippets::Camera* sCamera;
 
 
 /////////////////////////Imgui//////////////////////////////////
@@ -403,7 +423,7 @@ extern float volume0;
 extern bool scenario;
 extern bool scenarioChange;
 extern float timeSpeed;
-bool isWireframe=false;
+bool isWireframe = false;
 
 
 // /////////////////////////Imgui//////////////////////////////////
@@ -432,6 +452,8 @@ bool beginMusic = false;
 bool InBeginMusic = false;
 bool missionMusic = false;
 
+bool missionFinish = false;
+bool missionSuccess = false;
 int currentSelect = 5;
 bool isInConfirm = false; //在任务详情界面
 bool isSelected = false;  //已接受任务时被置为true，没接受任务或者任务结束的那一帧被置为false
@@ -457,9 +479,9 @@ float currentAngle = 0.0f;
 
 //bool needToPass=false;
 
-namespace 
+namespace
 {
-	
+
 	//void motionCallback(int x, int y)
 	//{
 
@@ -489,9 +511,9 @@ namespace
 
 	void keyboardCallback(unsigned char key, int x, int y)
 	{
-		if(key==27)
+		if (key == 27)
 			exit(0);
-	
+
 		/*if(!sCamera->handleKey(key, x, y))
 			keyPress(key, sCamera->getTransform());*/
 	}
@@ -598,7 +620,7 @@ namespace
 
 	void RenderClock()
 	{
-		
+
 		//glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 		// bind Texture
 		glBindTexture(GL_TEXTURE_2D, gClockTexture);
@@ -1193,7 +1215,7 @@ namespace
 	}
 
 	//传入模型对象model，以及模型的位置pos
-	void RenderModel(Model& model, glm::vec3 pos, glm::vec3 dir , Shader& modelShader, Shader& shadowShader)
+	void RenderModel(Model& model, glm::vec3 pos, glm::vec3 dir, Shader& modelShader, Shader& shadowShader)
 	{
 
 		//glEnable(GL_DEPTH_TEST);
@@ -1211,8 +1233,8 @@ namespace
 		//shininess发光值，发光值越高，反射能力越强，散射越少，高光点越小
 		modelShader.SetFloat("material.shininess", gOthersShininess);
 		glm::mat4 modelMat = glm::mat4(1.0f);
-		modelMat = glm::translate(modelMat, model.getPos());  //平移操作，在（1.0， 1.0， 1.0， 1.0）的基础上平移model.getPos()， 默认为vec3（0.0， 0.0， 0.0， 0.0），上面有个setPos来传入参数
-		//modelMat = glm::rotate(modelMat, 1.0f, glm::vec3(0, -1, 0));  //旋转操作，第一个参数是原矩阵，第二个参数是选装角度，用弧度制（glm::radians(90.0f)）， 第三个参数表示绕哪个轴旋转
+		modelMat = glm::translate(modelMat, model.getPos()); //平移操作，在（1.0， 1.0， 1.0， 1.0）的基础上平移model.getPos()， 默认为vec3（0.0， 0.0， 0.0， 0.0），上面有个setPos来传入参数
+		//modelMat = glm::rotate(modelMat, 1.0f, glm::vec3(0, -1, 0));    //旋转操作，第一个参数是原矩阵，第二个参数是选装角度，用弧度制（glm::radians(90.0f)）， 第三个参数表示绕哪个轴旋转
 		modelMat *= glm::mat4_cast(glm::quatLookAt(dir, glm::vec3(0, 1, 0)));    // ??????????
 		modelMat = glm::scale(modelMat, glm::vec3(.1f, .1f, .1f)); // 缩放操作，x， y，z坐标都缩小到原来的十分之一
 		glm::mat4 viewMat = getViewMat();
@@ -1222,18 +1244,7 @@ namespace
 		modelShader.SetMatrix4fv("model", modelMat);
 
 
-		/*std::cout << "=======================================================================" << std::endl;
-		for (int i = 0; i < 4; i++) {
-			for (int j = 0; j < 4; j++) {
-				std::cout << modelMat[i][j] << std::endl;
-			}
-		}
-
-		std::cout << "=======================================================================" << std::endl;*/
-		
-
 		model.Draw(modelShader);
-
 
 
 		//shadow
@@ -1249,24 +1260,63 @@ namespace
 		glUseProgram(0);
 	}
 
+	void RenderModelAnim(ModelAnimation* modelAnim, glm::vec3 pos, glm::vec3 dir, Shader& modelAnimShader, Shader& shadowShader)
+	{
 
+		//glEnable(GL_DEPTH_TEST);
+		modelAnim->setPos(pos);
+		modelAnimShader.use();
+		//设置光源的属性：环境光强度、漫反射强度、镜面反射强度
+		PxVec3 viewPos = sCamera->getEye();
+		modelAnimShader.SetVector3f("viewPos", viewPos.x, viewPos.y, viewPos.z);
+		//动态改变光的方向
+		gLightDir = -gLightPos;
+		modelAnimShader.SetVector3f("light.direction", gLightDir);
+		modelAnimShader.SetVector3f("light.ambient", gLightAmbient);
+		modelAnimShader.SetVector3f("light.diffuse", gLightDiffuse);
+		modelAnimShader.SetVector3f("light.specular", gLightSpecular);
+		
+		glm::mat4 modelMat = glm::mat4(1.0f);
+		modelMat = glm::translate(modelMat, modelAnim->getPos()); //平移操作，在（1.0， 1.0， 1.0， 1.0）的基础上平移model.getPos()， 默认为vec3（0.0， 0.0， 0.0， 0.0），上面有个setPos来传入参数
+		//modelMat = glm::rotate(modelMat, 1.0f, glm::vec3(0, -1, 0));    //旋转操作，第一个参数是原矩阵，第二个参数是旋转角度，用弧度制（glm::radians(90.0f)）， 第三个参数表示绕哪个轴旋转
+		modelMat *= glm::mat4_cast(glm::quatLookAt(dir, glm::vec3(0, 1, 0)));    // ??????????
+		modelMat = glm::scale(modelMat, glm::vec3(.01f, .01f, .01f));
+		glm::mat4 viewMat = getViewMat();
+		glm::mat4 projectionMat = glm::perspective(45.0f, (float)glutGet(GLUT_WINDOW_WIDTH) / (float)glutGet(GLUT_WINDOW_HEIGHT), 0.1f, 1000.0f);
+		modelAnimShader.SetMatrix4fv("projection", projectionMat);
+		modelAnimShader.SetMatrix4fv("view", viewMat);
+		modelAnimShader.SetMatrix4fv("model", modelMat);
+		modelAnim->Draw(modelAnimShader);
+
+		//shadow
+		//====================================
+		shadowShader.use();
+		shadowShader.SetMatrix4fv("projection", projectionMat);
+		shadowShader.SetMatrix4fv("view", viewMat);
+		shadowShader.SetMatrix4fv("model", modelMat);
+		shadowShader.SetVector3f("light", gLightPos);
+		modelAnim->Draw(shadowShader);
+		//=====================================
+
+		glUseProgram(0);
+	}
 
 	//渲染GameObject
-	void RenderGameObject(GameObject &gameObject)
+	void RenderGameObject(GameObject& gameObject)
 	{
 		//是否有父物体
 		if (gameObject.parent != nullptr)
 		{
 			gameObject.transform = gameObject.parent->transform.transform(gameObject.localTransform);
-			gameObject.transform.q= gameObject.parent->transform.q;
-			gameObject.transform.q *=gameObject.localTransform.q;
+			gameObject.transform.q = gameObject.parent->transform.q;
+			gameObject.transform.q *= gameObject.localTransform.q;
 			//gameObject.transform = gameObject.parent->transform.transform
 			//(gameObject.localTransform);
 
 			//gameObject.transform.q *= gameObject.localTransform.q;
 		}
 		//需要跟踪物理模拟
-		else if (gameObject.g_rigidBody&&gameObject.g_rigidBody->getType()==
+		else if (gameObject.g_rigidBody && gameObject.g_rigidBody->getType() ==
 			PxActorType::eRIGID_DYNAMIC)
 		{
 			gameObject.transform = gameObject.g_rigidBody->getGlobalPose();
@@ -1280,6 +1330,15 @@ namespace
 				return;
 			}
 			gModelShader.use();
+			//设置光源的属性：环境光强度、漫反射强度、镜面反射强度
+			PxVec3 viewPos = sCamera->getEye();
+			gModelShader.SetVector3f("viewPos", viewPos.x, viewPos.y, viewPos.z);
+			//动态改变光的方向、强度
+			gLightDir = -gLightPos;
+			gModelShader.SetVector3f("light.direction", gLightDir);
+			gModelShader.SetVector3f("light.ambient", gLightAmbient);
+			gModelShader.SetVector3f("light.diffuse", gLightDiffuse);
+			gModelShader.SetVector3f("light.specular", gLightSpecular);
 			glm::mat4 modelMat = glm::mat4(1.0f);
 			modelMat = glm::translate(modelMat, Mathf::P3ToV3(gameObject.transform.p));
 			modelMat *= glm::mat4_cast(Mathf::Toquat(gameObject.transform.q));
@@ -1335,33 +1394,36 @@ namespace
 		gModelShader.SetMatrix4fv("projection", projectionMat);
 		gModelShader.SetMatrix4fv("view", viewMat);
 		gModelShader.SetMatrix4fv("model", modelMat0);
-		gameObject.g_body->switchSpotLightStatus(vehicleUseSpotLight, gModelShader);
+		//车灯会影响到这些shader
+		gameObject.g_body->switchSpotLightStatus(vehicleUseSpotLight, gModelShader);	
 		gameObject.g_body->Draw(gModelShader);
-
-		
-		
-
 
 		//渲染车轮
 		Model* wheels[4] = { gameObject.g_wheel_fl,gameObject.g_wheel_fr,gameObject.g_wheel_bl,gameObject.g_wheel_br};
 		PxVec3 offset[4] = { PxVec3(0.88467, -0.7733, 1.6328) , PxVec3(-0.88467, -0.7733, 1.6328) ,PxVec3(0.88467, -0.7733, -1.2502),PxVec3(-0.88467, -0.7733, -1.2502)};
-		//spotlight
-		//车辆中心位置
-		PxVec3 vehiclePos = gameObject.transform.p;
-		//车辆前进方向
-		PxVec3 vehicleForward = gameObject.transform.q.getBasisVector2().getNormalized();
-		//车辆水平方向
-		//PxVec3 vehicleHorizon = gameObject.transform.q.getBasisVector0().getNormalized();
-		//灯位置
-		PxVec3 vehicleLight = vehiclePos + vehicleForward * 2.3f;
+		//如果使用了车灯，才进行相关计算 
+		PxVec3 vehicleForward, vehicleLight;
+		if (vehicleUseSpotLight)
+		{
+			//spotlight
+			//车辆中心位置
+			PxVec3 vehiclePos = gameObject.transform.p;
+			//车辆前进方向
+			vehicleForward = gameObject.transform.q.getBasisVector2().getNormalized();
+			//车辆水平方向
+			//PxVec3 vehicleHorizon = gameObject.transform.q.getBasisVector0().getNormalized();
+			//灯位置
+			vehicleLight = vehiclePos + vehicleForward * 2.3f;
 
-		//向shader传入参数
-		gModelShader.SetVector3f("spotLight.position", vehicleLight.x, vehicleLight.y, vehicleLight.z);
-		gModelShader.SetVector3f("spotLight.direction", vehicleForward.x, vehicleForward.y - 0.3f, vehicleForward.z);
-		gModelShader.SetFloat("spotLight.cutOff", glm::cos(glm::radians(gSpotLightCutOff)));
-		gModelShader.SetVector3f("spotLight.ambient", gSpotLightAmbient);
-		gModelShader.SetVector3f("spotLight.diffuse", gSpotLightDiffuse);
-		gModelShader.SetVector3f("spotLight.specular", gSpotLightSpecular);
+			//向shader传入参数
+			gModelShader.SetVector3f("spotLight.position", vehicleLight.x, vehicleLight.y, vehicleLight.z);
+			gModelShader.SetVector3f("spotLight.direction", vehicleForward.x, vehicleForward.y - 0.3f, vehicleForward.z);
+			gModelShader.SetFloat("spotLight.cutOff", glm::cos(glm::radians(gSpotLightCutOff)));
+			gModelShader.SetFloat("spotLight.outerCutOff", glm::cos(glm::radians(gSpotLightOuterCutOff)));
+			gModelShader.SetVector3f("spotLight.ambient", gSpotLightAmbient);
+			gModelShader.SetVector3f("spotLight.diffuse", gSpotLightDiffuse);
+			gModelShader.SetVector3f("spotLight.specular", gSpotLightSpecular);
+		}
 		gModelShader.SetFloat("material.shininess", gVehicleShininess);
 		//应该对每个车轮应用不同转换矩阵
 		for (size_t i = 0; i < 4; i++)
@@ -1379,7 +1441,7 @@ namespace
 			gModelShader.SetMatrix4fv("view", viewMat);
 			gModelShader.SetMatrix4fv("model", modelMat1);
 			wheels[i]->Draw(gModelShader);
-			
+
 		}
 
 		//shadow(just for the body)
@@ -1393,17 +1455,33 @@ namespace
 		gameObject.g_body->Draw(gShadowShader);
 		
 		//=================================
+		//无论本次是否使用车灯，都要更新使用车灯的状态
+		gModelAnimShader.use();
+		gameObject.g_body->switchSpotLightStatus(vehicleUseSpotLight, gModelAnimShader);
+		//只有本次使用了车灯，才计算具体的值
+		if (vehicleUseSpotLight)
+		{
+			gModelAnimShader.SetVector3f("spotLight.position", vehicleLight.x, vehicleLight.y, vehicleLight.z);
+			gModelAnimShader.SetVector3f("spotLight.direction", vehicleForward.x, vehicleForward.y - 0.3f, vehicleForward.z);
+			gModelAnimShader.SetFloat("spotLight.cutOff", glm::cos(glm::radians(gSpotLightCutOff)));
+			gModelAnimShader.SetFloat("spotLight.outerCutOff", glm::cos(glm::radians(gSpotLightOuterCutOff)));
+			gModelAnimShader.SetVector3f("spotLight.ambient", gSpotLightAmbient);
+			gModelAnimShader.SetVector3f("spotLight.diffuse", gSpotLightDiffuse);
+			gModelAnimShader.SetVector3f("spotLight.specular", gSpotLightSpecular);
+		}
 		glUseProgram(0);
 	}
-
 
 	//渲染任务图标
 	void RenderMissionObject()
 	{
+		bool NeedRenderArrow = false;
 		for (size_t i = 0; i < missionManager.MissionList.size(); i++)
 		{
-			if (!missionManager.MissionList[i]->State)
+			
+			if (!missionManager.MissionList[i]->State&& missionManager.MissionList[i]->IsTracing==true)
 			{
+				NeedRenderArrow = true;
 				Model m;
 				PxTransform t;
 				if (!missionManager.MissionList[i]->IsActive)
@@ -1421,7 +1499,7 @@ namespace
 				glm::mat4 modelMat0 = glm::mat4(1.0f);
 				modelMat0 = glm::translate(modelMat0, Mathf::P3ToV3(t.p));
 				modelMat0 *= glm::mat4_cast(Mathf::Toquat(t.q));
-				modelMat0 = glm::scale(modelMat0, m.getScale()/=50);
+				modelMat0 = glm::scale(modelMat0, m.getScale());
 				glm::mat4 viewMat = getViewMat();
 				glm::mat4 projectionMat = glm::perspective(45.0f, (float)glutGet(GLUT_WINDOW_WIDTH) / (float)glutGet(GLUT_WINDOW_HEIGHT), 0.1f, 1000.0f);
 				gModelShader.SetMatrix4fv("projection", projectionMat);
@@ -1431,10 +1509,45 @@ namespace
 				glUseProgram(0);
 			}
 
+
+
 		}
 
+		if (NeedRenderArrow)
+		{
+			int size;
+			if (isDriving)
+			{
+				size = 10;
+			}
+			else
+			{
+				size = 3;
+			}
+			//渲染指示箭头
+			Model m = gArrow;
+			PxVec3 p = *CameraFollowTarget;
+			p.y += 1;
+			PxVec3 dir =( currentTraceTarge - *CameraFollowTarget);
+			dir = dir.getNormalized();
+			dir.y = 0;
+			gModelShader.use();
+			glm::mat4 modelMat0 = glm::mat4(1.0f);
+			modelMat0 = glm::translate(modelMat0, Mathf::P3ToV3(p)); 
+			modelMat0 = glm::rotate(modelMat0, PxAtan2(dir.x, dir.z), glm::vec3(0,1, 0));
+			modelMat0 = glm::rotate(modelMat0, glm::radians(90.0f), glm::vec3(1,0, 0));
+			modelMat0 = glm::scale(modelMat0,glm::vec3(size,size,size));
+			glm::mat4 viewMat = getViewMat();
+			glm::mat4 projectionMat = glm::perspective(45.0f, (float)glutGet(GLUT_WINDOW_WIDTH) / (float)glutGet(GLUT_WINDOW_HEIGHT), 0.1f, 1000.0f);
+			gModelShader.SetMatrix4fv("projection", projectionMat);
+			gModelShader.SetMatrix4fv("view", viewMat);
+			gModelShader.SetMatrix4fv("model", modelMat0);
+			m.Draw(gModelShader);
+			glUseProgram(0);
+		}
 	}
-	
+
+
 	bool engineState = false;
 	ISoundEngine* backgroundMusicEngine = nullptr;
 	ISound* snd = nullptr;
@@ -1529,9 +1642,8 @@ namespace
 		}
 	}
 
-	void playBackgroundMusic(float timeSpeed, int calendarHour, int calendarMinute, bool backgroundMusic, float volume0 )
+	void playBackgroundMusic(float timeSpeed, int calendarHour, int calendarMinute, bool backgroundMusic, float volume0)
 	{
-		
 
 		if (backgroundMusic == true)
 		{
@@ -1633,9 +1745,9 @@ namespace
 			gLightSpecular = glm::vec3(gLightSpecularBasis + 0.4 * glm::sin(omega * currentTime));
 		}
 		else {
-			gLightAmbient = glm::vec3(gLightAmbientBasis - 0.2f * abs(glm::sin(omega * currentTime)));
+			gLightAmbient = glm::vec3(gLightAmbientBasis - 0.25f * abs(glm::sin(omega * currentTime)));
 			gLightDiffuse = glm::vec3(gLightDiffuseBasis - 0.2f * abs(glm::sin(omega * currentTime)));
-			gLightSpecular = glm::vec3(gLightSpecularBasis - 0.2 * abs(glm::sin(omega * currentTime)));
+			gLightSpecular = glm::vec3(gLightSpecularBasis - 0.4 * abs(glm::sin(omega * currentTime)));
 		}
 	}
 
@@ -1683,15 +1795,15 @@ namespace
 
 		//昼夜时间钟
 
-		int intGmaeTime = (int)gameTime;  //int版的游戏时间
+		int intGmaeTime = (int)gameTime; //int版的游戏时间
 		int intCurrentTime = (int)currentTime; //int版的当前时间线
 
 		float clock = currentTime - (intCurrentTime / (int)(120 / timeSpeed)) * (int)(120 / timeSpeed); //产生时钟上升沿跳变
 		if (timeSpeed != 0.0) {
-		int turn = intCurrentTime % (int)(240 / timeSpeed);  
-		day = (turn >= 0 && turn < (120 / timeSpeed))? true : false;  //现在是白天还是黑夜（黑夜0， 白天1）
-		int half = intCurrentTime % (int)(120 / timeSpeed); 
-		former = (half >= 0 && half < (60 / timeSpeed)) ? true : false; //现在是不是白天或者黑夜的上半场（是1， 不是0）
+			int turn = intCurrentTime % (int)(240 / timeSpeed);
+			day = (turn >= 0 && turn < (120 / timeSpeed)) ? true : false;  //现在是白天还是黑夜（黑夜0， 白天1）
+			int half = intCurrentTime % (int)(120 / timeSpeed);
+			former = (half >= 0 && half < (60 / timeSpeed)) ? true : false; //现在是不是白天或者黑夜的上半场（是1， 不是0）
 		}
 
 
@@ -1706,7 +1818,7 @@ namespace
 			if (calendarHour < 24) {
 				calendarHourDisplay += 6;
 			}
-			if (calendarHour > 17 ) {
+			if (calendarHour > 17) {
 				calendarHourDisplay = calendarHour - 18;
 			}
 			calendarMinute = ((intCurrentTime % (int)(240 / timeSpeed)) * timeSpeed - calendarHour * 10) * 6;
@@ -1715,7 +1827,7 @@ namespace
 
 		//游戏时钟的应用：
 		//==============================================================
-		if (day) {        
+		if (day) {
 			scenario = true;
 			if (former) {
 				gLightPos.x += 20.0f * timeSpeed * deltaTime;
@@ -1758,11 +1870,8 @@ namespace
 
 		//====================================================================
 
-
-
-
 		if (timeSpeed != 0.0) {         //保存上一帧的timeSpeed状态
-		compareTimeSpeed = timeSpeed;
+			compareTimeSpeed = timeSpeed;
 		}
 
 		//cout << clock<<endl;
@@ -1774,9 +1883,6 @@ namespace
 		//cout << "您已进入游戏: " << gameTime << "秒				";
 		//cout << "游戏进入第" << calendarDayDisplay << "天    " << calendarHourDisplay << "点" << calendarMinuteDisplay << "分" << endl;
 		//cout << currentTime <<endl;
-
-		
-		
 
 		//天空盒初始化状态机
 		if (scenarioChange == true) {
@@ -1799,15 +1905,17 @@ namespace
 		
 		//Imgui中需要加入渲染回调的函数
 		Snippets::glut_display_func();
-		
+
+
+		//改变当前任务追踪状态
+
+
+
 		//物理模拟
 		stepPhysics(true);
 
 		//渲染相机场景
-		Snippets::startRender(sCamera->getEye(), sCamera->getDir(),0.1f, 1000.0f);
-
-
-
+		Snippets::startRender(sCamera->getEye(), sCamera->getDir(), 0.1f, 1000.0f);
 
 		RenderSkybox();
 
@@ -1882,6 +1990,9 @@ namespace
 			
 				isSelected = true;               //进入正式任务界面
 
+				missionManager.MissionList[currentSelect]->IsTracing = true;
+				currentTraceTarge = missionManager.MissionList[currentSelect]->StartTrigger->getGlobalPose().p;
+
 				beginMusic = true;
 				cout << "isInConfirm" << isInConfirm << endl;
 			}
@@ -1926,7 +2037,6 @@ namespace
 
 		RenderCarObject(carObject);
 		RenderMissionObject();
-
 		//渲染场景物体
 		for (int i = 0; i < theCreator.SceneGameObject.size(); i++)
 		{
@@ -1944,32 +2054,54 @@ namespace
 		//RenderGameObject(wheelFRObj);
 		//RenderGameObject(wheelBLObj);
 		//RenderGameObject(wheelBRObj);
-		
+
 		float rotateSpeed = 5;
 		//表示正在移动
-		PxExtendedVec3 haha= m_player->getFootPosition();
+		PxExtendedVec3 haha = m_player->getFootPosition();
+		
 		if (!moveDir.isZero())
 		{
 			glm::vec3 targetDir = glm::vec3(moveDir.x, 0, moveDir.z);
 			forwardDir = glm::normalize( Mathf::Slerp(forwardDir, targetDir, deltaTime * rotateSpeed));
+			
 		}
-		RenderModel(gModel, glm::vec3(haha.x, haha.y, haha.z),-forwardDir, gModelShader, gShadowShader);
+		if (isJumping) {
+			if (startJumping) {
+				gAnimatorJump->setCurrentTick(15.0f);
+				startJumping = false;
+			}
+			gAnimatorJump->UpdateAnimation(deltaTime);
+			gBoneTransform = gAnimatorJump->GetFinalBoneMatrices();
+		}
+		else if (!moveDir.isZero()) {
+			gAnimator->UpdateAnimation(deltaTime);
+			gBoneTransform = gAnimator->GetFinalBoneMatrices();
+		}
+		else {
+			gAnimatorIdle->UpdateAnimation(deltaTime);
+			gBoneTransform = gAnimatorIdle->GetFinalBoneMatrices();
+		}
+		//更新骨骼变换矩阵
+		
+		gModelAnimShader.use();
+		for (int i = 0; i < gBoneTransform.size(); i++)
+		{
+			string name = "finalBonesMatrices[" + std::to_string(i) + "]";
+			gModelAnimShader.SetMatrix4fv(name.c_str(), gBoneTransform[i]);
+		}
+		RenderModelAnim(gModelAnim, glm::vec3(haha.x, haha.y, haha.z),-forwardDir, gModelAnimShader, gShadowShader);
 			//RenderModel(gModel, glm::vec3(-20.0f, 10.0f, -45.0f), gModelShader);
 		//RenderModel(gModel2, glm::vec3(10.0, 1.0f, 10.0f),glm::vec3(0,0,1),
 		//	gModelShader);
 
 
-
-		
-
-
 		//////////////////////To be deleted////////////////////////////////
 		PxScene* scene;
-		PxGetPhysics().getScenes(&scene,1);
+		PxGetPhysics().getScenes(&scene, 1);
 
 		//获取场景中的Actor并用OpenGL渲染
 		PxU32 nbActors = scene->getNbActors(PxActorTypeFlag::eRIGID_DYNAMIC | PxActorTypeFlag::eRIGID_STATIC);
-		if(nbActors)
+		if (nbActors)
 		{
 			std::vector<PxRigidActor*> actors(nbActors);
 			scene->getActors(PxActorTypeFlag::eRIGID_DYNAMIC | PxActorTypeFlag::eRIGID_STATIC, reinterpret_cast<PxActor**>(&actors[0]), nbActors);
@@ -2020,12 +2152,12 @@ namespace
 
 
 
-	//渲染流程
-	void renderLoop()
-	{
+//渲染流程
+void renderLoop()
+{
 
-		sCamera = new Snippets::Camera(PxVec3(50.0f, 50.0f, 50.0f), PxVec3(-0.6f,-0.2f,-0.7f));
-		sCamera->SetConfig(2.5f, 2.25f, 3.0f, PxVec3(0, 0.5f, 0));
+	sCamera = new Snippets::Camera(PxVec3(50.0f, 50.0f, 50.0f), PxVec3(-0.6f, -0.2f, -0.7f));
+	sCamera->SetConfig(2.5f, 2.25f, 3.0f, PxVec3(0, 0.5f, 0));
 
 
 
@@ -2036,10 +2168,10 @@ namespace
 		//lastY = p.y;
 
 
-		Snippets::setupDefaultWindow("Nayeon Studio");
-		Snippets::setupDefaultRenderState();
+	Snippets::setupDefaultWindow("Nayeon Studio");
+	Snippets::setupDefaultRenderState();
 
-		glewInit();
+	glewInit();
 
 		
 
@@ -2070,64 +2202,62 @@ namespace
 		
 
 
-		//----------Render Model----------
-		gBodyModel = Model("../../assets/objects/car/body.obj");
-		gWheelModel_fl = Model("../../assets/objects/car/wheel_fl.obj");
-		gWheelModel_fr = Model("../../assets/objects/car/wheel_fr.obj");
-		gWheelModel_bl = Model("../../assets/objects/car/wheel_bl.obj");
-		gWheelModel_br= Model("../../assets/objects/car/wheel_br.obj");
+	for (int i = 0; i < 6; i++) {
+		dataDay[i] = stbi_load(gSkyboxFaces[i], &widthDay, &heightDay, &nrChannelsDay, 0);
+	}
+	for (int i = 6; i < 12; i++) {
+		dataNight[i - 6] = stbi_load(gSkyboxFaces[i], &widthNight, &heightNight, &nrChannelsNight, 0);
+	}
+
+	//----------Render Model----------
+	gBodyModel = Model("../../assets/objects/car/body.obj");
+	gWheelModel_fl = Model("../../assets/objects/car/wheel_fl.obj");
+	gWheelModel_fr = Model("../../assets/objects/car/wheel_fr.obj");
+	gWheelModel_bl = Model("../../assets/objects/car/wheel_bl.obj");
+	gWheelModel_br = Model("../../assets/objects/car/wheel_br.obj");
 
 
-		gStar = Model("../../assets/objects/mission/SM_Icon_Star_01.fbx");
-		gArrow = Model("../../assets/objects/mission/SM_Icon_Arrow_Small_01.fbx");
-		gExclamation = Model("../../assets/objects/mission/SM_Icon_Letter_Exclamation_01.fbx");
-		gModel = Model("../../assets/objects/nanosuit/nanosuit.obj");
-		//gModel2 = Model("../../assets/objects/Models/hougitse.fbx");
-		
+	gStar = Model("../../assets/objects/Models/49_Icon_Star.fbx");
+	gArrow = Model("../../assets/objects/Models/48_Icon_Arrow.fbx");
+	gExclamation = Model("../../assets/objects/Models/50_Icon_Exclamation.fbx");
+	gModel = Model("../../assets/objects/nanosuit/nanosuit.obj");
+	//gModel2 = Model("../../assets/objects/Models/hougitse.fbx");
 
 
-		//最初的shader
-		gModelShader = Shader("../../src/ModelLoading/model_loading.vs",
-								"../../src/ModelLoading/model_loading.fs");
-		gShadowShader = Shader("../../src/ModelLoading/shadow_loading.vs",
-								"../../src/ModelLoading/shadow_loading.fs");
-		//加载SHADER
-		gSkyboxShader = Shader("../../src/Render/SkyBox.vs",
-			"../../src/Render/SkyBox.fs");
 
-		gClockShader = Shader("../../src/Render/Clock.vs",
-			"../../src/Render/Clock.fs");
+	//最初的shader
+	gModelShader = Shader("../../src/ModelLoading/model_loading.vs",
+		"../../src/ModelLoading/model_loading.fs");
+	gShadowShader = Shader("../../src/ModelLoading/shadow_loading.vs",
+		"../../src/ModelLoading/shadow_loading.fs");
+	//加载SHADER
+	gSkyboxShader = Shader("../../src/Render/SkyBox.vs", "../../src/Render/SkyBox.fs");
+		gClockMainShader = Shader("../../src/Render/ClockMain.vs", "../../src/Render/ClockMain.fs");
 
-		gClockMainShader = Shader("../../src/Render/ClockMain.vs",
-			"../../src/Render/ClockMain.fs");
+		gDashboardShader = Shader("../../src/Render/Dashboard.vs", "../../src/Render/Dashboard.fs");
 
-		gDashboardShader = Shader("../../src/Render/Dashboard.vs",
-			"../../src/Render/Dashboard.fs");
+		gTaskBarShader = Shader("../../src/Render/TaskBar.vs", "../../src/Render/TaskBar.fs");
 
-		gTaskBarShader = Shader("../../src/Render/TaskBar.vs",
-			"../../src/Render/TaskBar.fs");
+		gSelectShader = Shader("../../src/Render/Select.vs", "../../src/Render/Select.fs");
 
-		gSelectShader = Shader("../../src/Render/Select.vs",
-			"../../src/Render/Select.fs");
-
-		gBoxShader = Shader("../../src/Render/Box.vs",
-			"../../src/Render/Box.fs");
+		gBoxShader = Shader("../../src/Render/Box.vs", "../../src/Render/Box.fs");
 
 
 		////使用带光照的shader
 		//gModelShader = Shader("../../src/Light/light.vs", "../../src/Light/light.fs");
 
-		//----------Render Model----------
-		//SetupSkybox();
+		gClockShader = Shader("../../src/Render/Clock.vs", "../../src/Render/Clock.fs");
 
+		////使用带光照的shader
+		//gModelShader = Shader("../../src/Light/light.vs", "../../src/Light/light.fs");
 		SetupClockMain();
 		SetupClock();
 		SetupDashboard();
 		SetupSelect();
 		
 
-		//这个idle函数意为空闲函数，将在事件队列的最后（即完成鼠标键盘事件响应，准备下一个渲染帧，渲染当前帧）进行，具有最低的优先级
-		glutIdleFunc(idleCallback);
+	//----------Render Model----------
+	//SetupSkybox();
 
 		clockTrans = glm::translate(clockTrans, glm::vec3(0.8f, 0.83f, 0.0f));
 		clockMainTrans = glm::translate(clockMainTrans, glm::vec3(0.5934f, -0.7316f, 0.0f));
@@ -2138,33 +2268,66 @@ namespace
 
 		glutDisplayFunc(renderCallback);
 
-		initImGUI();
-		
+		//----------Model Anim-----------------------------
+		gModelAnimShader = Shader("../../src/Bone/ModelAnim.vs",
+			"../../src/ModelLoading/model_loading.fs");
+		string modelAnimPath("../../assets/objects/Models/Standard_Walk_skin.fbx");
+		string modelAnimIdlePath("../../assets/objects/Models/Neutral_Idle_skin.fbx");
+		string modelAnimJumpPath("../../assets/objects/Models/jump_skin.fbx");
+		gModelAnim = new ModelAnimation(modelAnimPath);
+		gAnimation = new Animation(modelAnimPath, gModelAnim);
+		gAnimator = new Animator(gAnimation);
 
+		gAnimationIdle = new Animation(modelAnimIdlePath, gModelAnim);
+		gAnimatorIdle = new Animator(gAnimationIdle);
+		gAnimatorIdle->UpdateAnimation(deltaTime);
+
+		gAnimatonJump = new Animation(modelAnimJumpPath, gModelAnim);
+		gAnimatorJump = new Animator(gAnimatonJump);
+		gModelAnimShader.use();
+		//shininess发光值，发光值越高，反射能力越强，散射越少，高光点越小
+		gModelAnimShader.SetFloat("material.shininess", gOthersShininess);
+		gBoneTransform = gAnimatorIdle->GetFinalBoneMatrices();
+		for (int i = 0; i < gBoneTransform.size(); i++)
+		{
+			string name = "finalBonesMatrices[" + std::to_string(i) + "]";
+			gModelAnimShader.SetMatrix4fv(name.c_str(), gBoneTransform[i]);
+		}
+		glUseProgram(0);
+		//----------Model Anim-----------------------------
+	
+
+		//这个idle函数意为空闲函数，将在事件队列的最后（即完成鼠标键盘事件响应，准备下一个渲染帧，渲染当前帧）进行，具有最低的优先级
+		glutIdleFunc(idleCallback);
+		//注册好回调函数后
+		glutDisplayFunc(renderCallback);
+
+		initImGUI();
+	
 		//键盘事件回调函数
 		//glutKeyboardFunc(keyboardCallback);
 
-		glutSetCursor(GLUT_CURSOR_NONE);
+	glutSetCursor(GLUT_CURSOR_NONE);
 
-		//glutMouseFunc(mouseCallback);
+	//glutMouseFunc(mouseCallback);
 
-		//glutMotionFunc(motionCallback);
+	//glutMotionFunc(motionCallback);
 
-		//glutPassiveMotionFunc(motionCallback);
-	
-		//motionCallback(0,0);
+	//glutPassiveMotionFunc(motionCallback);
 
-		atexit(exitCallback);
+	//motionCallback(0,0);
 
-		initPhysics(true);
+	atexit(exitCallback);
 
-		//记录游戏第一帧时间
+	initPhysics(true);
 
-		QueryPerformanceCounter((LARGE_INTEGER*)&gTime);
-		QueryPerformanceFrequency((LARGE_INTEGER*)&freq);
-		gLastTime = gTime;
-		firstCount = gTime;
+	//记录游戏第一帧时间
 
-		glutMainLoop();
-	}
+	QueryPerformanceCounter((LARGE_INTEGER*)&gTime);
+	QueryPerformanceFrequency((LARGE_INTEGER*)&freq);
+	gLastTime = gTime;
+	firstCount = gTime;
+
+	glutMainLoop();
+}
 #endif
