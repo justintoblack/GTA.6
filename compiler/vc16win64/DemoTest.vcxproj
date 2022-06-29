@@ -54,6 +54,10 @@
     <ClCompile Include="Dependencies\imgui\imgui_widgets.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\src\Bone\Animation.h" />
+    <ClInclude Include="..\..\src\Bone\Animator.h" />
+    <ClInclude Include="..\..\src\Bone\Bone.h" />
+    <ClInclude Include="..\..\src\Bone\ModelAnimation.h" />
     <ClInclude Include="..\..\src\DemoTest\CarGameObject.h" />
     <ClInclude Include="..\..\src\DemoTest\DemoTestRender.h" />
     <ClInclude Include="..\..\src\DemoTest\GameObject.h" />
@@ -88,6 +92,7 @@
     <ClInclude Include="Dependencies\imgui\imstb_truetype.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\src\Bone\ModelAnim.vs" />
     <None Include="..\..\src\Light\light.fs" />
     <None Include="..\..\src\Light\light.vs" />
     <None Include="..\..\src\ModelLoading\model_loading.fs" />

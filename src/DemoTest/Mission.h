@@ -10,6 +10,7 @@
 
 extern PxPhysics* gPhysics;
 extern PxScene* gScene ;
+extern bool missionFinish, missionSuccess;
 
 enum MissionType
 {
@@ -22,7 +23,7 @@ enum MissionType
 class Mission
 {
 public:
-	Mission(PxVec3 StartPos, PxVec3 EndPos,std::string Description,int _ID, MissionType _Type);
+	Mission(PxVec3 StartPos, PxVec3 EndPos,std::string Description,int _ID, MissionType _Type,double _reward);
 	~Mission();
 	void StartMission();
 	void FinishMission();
@@ -34,13 +35,15 @@ public:
 	bool IsActive = false;
 	bool ChangeLock = false;
 	bool TimerLock = false;
+	bool IsTracing = false;
 	std::string MissionDescription;
 	int ID;
 	PxRigidDynamic* StartTrigger = NULL;
 	PxRigidDynamic* EndTrigger = NULL;
 	double Timer = 0;
-	double TimeLimit = 15;
+	double TimeLimit = 60;
 	MissionType Type;
+	double reward=0;
 
 	
 };
