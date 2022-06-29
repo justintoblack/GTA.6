@@ -657,12 +657,7 @@ void setupDefaultWindow(const char *name)
 
 	int mainHandle = glutCreateWindow(name);
 	glutSetWindow(mainHandle);
-	//glutFullScreen();
-
-	//glutCreateWindow(name);
-	//glutFullScreen();
-
-
+	glutFullScreen();
 
 	//‰÷»æ¥∞ø⁄≥ﬂ¥Á∫ÕŒª÷√
 	glutReshapeFunc(changeSize);
