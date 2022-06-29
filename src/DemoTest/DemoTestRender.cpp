@@ -99,9 +99,9 @@ glm::vec3			gLightDir;
 glm::vec3			gLightAmbient = glm::vec3(gLightAmbientBasis);
 glm::vec3			gLightDiffuse = glm::vec3(gLightDiffuseBasis);
 glm::vec3			gLightSpecular = glm::vec3(gLightSpecularBasis);
-glm::vec3			gSpotLightAmbient = glm::vec3(0.2f, 0.2f, 0.2f);
-glm::vec3			gSpotLightDiffuse = glm::vec3(0.3f, 0.3f, 0.3f);
-glm::vec3			gSpotLightSpecular = glm::vec3(0.5f, 0.5f, 0.5f);
+glm::vec3			gSpotLightAmbient = glm::vec3(0.7f, 0.7f, 0.7f);
+glm::vec3			gSpotLightDiffuse = glm::vec3(0.5f, 0.5f, 0.5f);
+glm::vec3			gSpotLightSpecular = glm::vec3(0.8f, 0.8f, 0.8f);
 
 
 glm::mat4			clockTrans = glm::mat4(1.0f);
@@ -112,9 +112,13 @@ glm::mat4			selectTrans = glm::mat4(1.0f);
 //glm::mat4			boxTrans = glm::mat4(1.0f);
 
 
-float				gSpotLightCutOff = 25.0f;
+float				gSpotLightCutOff = 28.0f;
+float				gSpotLightOuterCutOff = 35.0f;
 float				gVehicleShininess = 64.0f;
 float				gOthersShininess = 512.0f;
+float				gAttenuationConstant = 1.0f;
+float				gAttenuationLinear = 0.09;
+float				gAttenuationQuadratic = 0.032;
 extern	bool		vehicleUseSpotLight;
 Shader				gModelAnimShader;
 ModelAnimation*		gModelAnim;
@@ -1412,6 +1416,7 @@ namespace
 			gModelShader.SetVector3f("spotLight.position", vehicleLight.x, vehicleLight.y, vehicleLight.z);
 			gModelShader.SetVector3f("spotLight.direction", vehicleForward.x, vehicleForward.y - 0.3f, vehicleForward.z);
 			gModelShader.SetFloat("spotLight.cutOff", glm::cos(glm::radians(gSpotLightCutOff)));
+			gModelShader.SetFloat("spotLight.outerCutOff", glm::cos(glm::radians(gSpotLightOuterCutOff)));
 			gModelShader.SetVector3f("spotLight.ambient", gSpotLightAmbient);
 			gModelShader.SetVector3f("spotLight.diffuse", gSpotLightDiffuse);
 			gModelShader.SetVector3f("spotLight.specular", gSpotLightSpecular);
@@ -1456,6 +1461,7 @@ namespace
 			gModelAnimShader.SetVector3f("spotLight.position", vehicleLight.x, vehicleLight.y, vehicleLight.z);
 			gModelAnimShader.SetVector3f("spotLight.direction", vehicleForward.x, vehicleForward.y - 0.3f, vehicleForward.z);
 			gModelAnimShader.SetFloat("spotLight.cutOff", glm::cos(glm::radians(gSpotLightCutOff)));
+			gModelAnimShader.SetFloat("spotLight.outerCutOff", glm::cos(glm::radians(gSpotLightOuterCutOff)));
 			gModelAnimShader.SetVector3f("spotLight.ambient", gSpotLightAmbient);
 			gModelAnimShader.SetVector3f("spotLight.diffuse", gSpotLightDiffuse);
 			gModelAnimShader.SetVector3f("spotLight.specular", gSpotLightSpecular);
@@ -1736,9 +1742,9 @@ namespace
 			gLightSpecular = glm::vec3(gLightSpecularBasis + 0.4 * glm::sin(omega * currentTime));
 		}
 		else {
-			gLightAmbient = glm::vec3(gLightAmbientBasis - 0.2f * abs(glm::sin(omega * currentTime)));
+			gLightAmbient = glm::vec3(gLightAmbientBasis - 0.25f * abs(glm::sin(omega * currentTime)));
 			gLightDiffuse = glm::vec3(gLightDiffuseBasis - 0.2f * abs(glm::sin(omega * currentTime)));
-			gLightSpecular = glm::vec3(gLightSpecularBasis - 0.2 * abs(glm::sin(omega * currentTime)));
+			gLightSpecular = glm::vec3(gLightSpecularBasis - 0.4 * abs(glm::sin(omega * currentTime)));
 		}
 	}
 
@@ -2028,7 +2034,6 @@ namespace
 
 		RenderCarObject(carObject);
 		RenderMissionObject();
-
 		//渲染场景物体
 		for (int i = 0; i < theCreator.SceneGameObject.size(); i++)
 		{
