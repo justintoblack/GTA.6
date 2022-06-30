@@ -11,6 +11,7 @@
 extern PxPhysics* gPhysics;
 extern PxScene* gScene ;
 extern bool missionFinish, missionSuccess;
+extern double totalMoney;
 
 enum MissionType
 {

@@ -198,8 +198,9 @@ bool isGrounded;
 bool isAiming; 
 bool isJumping; 
 bool startJumping;
+bool isRunning;
 bool hasVehicleToDrive = false;
-
+double totalMoney = 0;
 
 ///跳跃
 void Jump()
@@ -258,6 +259,7 @@ void GetOutVehicle()
 //冲刺
 void Sprint(bool isSprint)
 {
+	isRunning = isSprint;
 	if (isSprint)
 	{
 		curSpeed = sprintSpeed;

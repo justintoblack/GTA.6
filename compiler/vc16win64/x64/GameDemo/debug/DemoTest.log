@@ -1,12 +1,45 @@
-﻿  DemoTestRender.cpp
-D:\Homework\实训\PhysX-Tutorial-master\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\ModelLoading\mesh.h(111,1): warning C4267: “参数”: 从“size_t”转换到“GLsizei”，可能丢失数据
-D:\Homework\实训\PhysX-Tutorial-master\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\Utils\Mathf.cpp(1,1): warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
-D:\Homework\实训\PhysX-Tutorial-master\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\DemoTest\GameObject.h(1,1): warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
-D:\Homework\实训\PhysX-Tutorial-master\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\DemoTest\GameObject.h(64,3): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-D:\Homework\实训\PhysX-Tutorial-master\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\DemoTest\GameObject.h(80,3): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-D:\Homework\实训\PhysX-Tutorial-master\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\DemoTest\GameObject.h(370,1): warning C4267: “参数”: 从“size_t”转换到“int”，可能丢失数据
-D:\Homework\实训\PhysX-Tutorial-master\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\Bone\ModelAnimation.h(231,43): warning C4018: “<”: 有符号/无符号不匹配
-  DemoTest.vcxproj -> D:\Homework\实训\PhysX-Tutorial-master\PhysX-Tutorial-master\PhysX_3.4\bin\vc16win64\DemoTestDEBUG.exe
+<<<<<<< HEAD
+﻿  DemoTest.cpp
+D:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\DemoTest\DemoTest.cpp(1,1): warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+D:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\ModelLoading\mesh.h(111,1): warning C4267: “参数”: 从“size_t”转换到“GLsizei”，可能丢失数据
+D:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\DemoTest\GameObject.h(1,1): warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+D:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\DemoTest\GameObject.h(64,3): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\DemoTest\GameObject.h(80,3): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\DemoTest\GameObject.h(370,1): warning C4267: “参数”: 从“size_t”转换到“int”，可能丢失数据
+D:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\DemoTest\DemoTest.cpp(1145,1): warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+  DemoTestRender.cpp
+D:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\ModelLoading\mesh.h(111,1): warning C4267: “参数”: 从“size_t”转换到“GLsizei”，可能丢失数据
+D:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\Utils\Mathf.cpp(1,1): warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+D:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\DemoTest\GameObject.h(1,1): warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+D:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\DemoTest\GameObject.h(64,3): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\DemoTest\GameObject.h(80,3): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\DemoTest\GameObject.h(370,1): warning C4267: “参数”: 从“size_t”转换到“int”，可能丢失数据
+D:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\Bone\ModelAnimation.h(231,43): warning C4018: “<”: 有符号/无符号不匹配
+  正在生成代码...
+LINK : warning LNK4098: 默认库“LIBCMT”与其他库的使用冲突；请使用 /NODEFAULTLIB:library
+LINK : warning LNK4286: 符号“__glewBindBuffer”(在“glew32s.lib(glew.obj)”中定义)已由“TheCreator.obj”导入
+LINK : warning LNK4286: 符号“__glewBufferData”(在“glew32s.lib(glew.obj)”中定义)已由“TheCreator.obj”导入
+LINK : warning LNK4286: 符号“__glewGenBuffers”(在“glew32s.lib(glew.obj)”中定义)已由“TheCreator.obj”导入
+LINK : warning LNK4286: 符号“__glewEnableVertexAttribArray”(在“glew32s.lib(glew.obj)”中定义)已由“TheCreator.obj”导入
+LINK : warning LNK4286: 符号“__glewVertexAttribPointer”(在“glew32s.lib(glew.obj)”中定义)已由“TheCreator.obj”导入
+LINK : warning LNK4286: 符号“__glewVertexAttribIPointer”(在“glew32s.lib(glew.obj)”中定义)已由“TheCreator.obj”导入
+LINK : warning LNK4286: 符号“__glewGenerateMipmap”(在“glew32s.lib(glew.obj)”中定义)已由“TheCreator.obj”导入
+LINK : warning LNK4286: 符号“__glewBindVertexArray”(在“glew32s.lib(glew.obj)”中定义)已由“TheCreator.obj”导入
+LINK : warning LNK4286: 符号“__glewGenVertexArrays”(在“glew32s.lib(glew.obj)”中定义)已由“TheCreator.obj”导入
+glew32s.lib(glew.obj) : warning LNK4099: 未找到 PDB“vc120.pdb”(使用“glew32s.lib(glew.obj)”或在“D:\GameClass\PhysX-Tutorial-master\PhysX_3.4\bin\vc16win64\vc120.pdb”中寻找)；正在链接对象，如同没有调试信息一样
+  DemoTest.vcxproj -> D:\GameClass\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\compiler\vc16win64\./../../../bin/vc16win64\DemoTestDEBUG.exe
+=======
+﻿  TheCreator.cpp
+D:\PhysX\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\GameDemo\TheCreator.cpp(1,1): warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+D:\PhysX\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\DemoTest\GameObject.h(1,1): warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+D:\PhysX\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\ModelLoading\mesh.h(111,1): warning C4267: “参数”: 从“size_t”转换到“GLsizei”，可能丢失数据
+D:\PhysX\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\DemoTest\GameObject.h(64,3): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D:\PhysX\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\DemoTest\GameObject.h(80,3): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D:\PhysX\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\DemoTest\GameObject.h(370,1): warning C4267: “参数”: 从“size_t”转换到“int”，可能丢失数据
+D:\PhysX\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\GameDemo\TheCreator.cpp(90,34): warning C4267: “=”: 从“size_t”转换到“int”，可能丢失数据
+D:\PhysX\PhysX-Tutorial-master\PhysX_3.4\SCUT2022_Nayeon\src\GameDemo\TheCreator.cpp(250,20): warning C4018: “<”: 有符号/无符号不匹配
+  DemoTest.vcxproj -> D:\PhysX\PhysX-Tutorial-master\PhysX_3.4\bin\vc16win64\DemoTestDEBUG.exe
+>>>>>>> 1bb2133b8fc249cbf5d0c3e5b2ea67feaa56a49e
   复制了 0 个文件
   复制了 0 个文件
   复制了 0 个文件

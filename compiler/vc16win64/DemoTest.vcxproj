@@ -65,7 +65,7 @@
     <ClInclude Include="..\..\src\DemoTest\MissionManager.h" />
     <ClInclude Include="..\..\src\DemoTest\MisssionManager.h" />
     <ClInclude Include="..\..\src\DemoTest\MonoBehaviour.h" />
-    <ClInclude Include="..\..\src\DemoTest\Zombie.h" />
+    <ClInclude Include="..\..\src\DemoTest\CarNPC.h" />
     <ClInclude Include="..\..\src\GameDemo\JsonData.h" />
     <ClInclude Include="..\..\src\GameDemo\TheCreator.h" />
     <ClInclude Include="..\..\src\InputSystem\ActionMap.h" />
@@ -239,6 +239,7 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)..\..\third_party\includes;$(SolutionDir)..\..\compiler\vc16win64\Dependencies\imgui</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <PreprocessorDefinitions>IMGUI_DISABLE_OBSOLETE_KEYIO;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(SolutionDir)..\..\third_party\libs</AdditionalLibraryDirectories>

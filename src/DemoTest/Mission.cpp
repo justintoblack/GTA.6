@@ -55,7 +55,7 @@ Mission::~Mission()
 		missionFinish = true;
 		missionSuccess = true;
 		IsTracing = false;
-
+		totalMoney+=reward;
 	}
 
 }

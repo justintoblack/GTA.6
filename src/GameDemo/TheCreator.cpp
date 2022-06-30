@@ -30,6 +30,10 @@ PxTransform polesPos[] =
 	PxTransform(PxVec3(-133.3,3.1,27),q3),PxTransform(PxVec3(-133.3,3.1,47),q3),PxTransform(PxVec3(-133.3,3.1,67),q3),
 };
 
+//CarNPC
+vector<PxTransform> track_00;
+vector<PxTransform> track_01;
+
 //可行使
 void makeObjectDrivable(PxShape*& shape)
 {
@@ -95,14 +99,6 @@ void TheCreator::Init(PxPhysics* physics, PxScene* gScene)
 	 //初始化场景
 	 string scenePath = "../../assets/Scene/Scene.Data";
 	 FileToString(scenePath);
-
-	 //创建MonoBehaviour物体
-	 Zombie *testZombie = new Zombie();
-	 SpecialGameObject.push_back(testZombie);
-	 for (int i = 0; i < SpecialGameObject.size(); i++)
-	 {
-		 SpecialGameObject[i]->Awake();
-	 }
 
 }
 
@@ -243,7 +239,7 @@ void TheCreator::CreateStreetPole(PxTransform pos)
 	ModelComponent* model = new ModelComponent(gameObject);
 	model->SetModel(Street_Pole);
 	gameObject->SetTransform(pos);
-	SceneGameObject.push_back(*gameObject);
+	SpecialGameObject.push_back(gameObject);
 }
 
 void TheCreator::CreatePoles(PxVec3 pos, PxVec3 dir, float separate, PxU32 num, PxMaterial* gMaterial, float halfXZ, float halfHeight, float density, float force, float torque, Model& Createmodel)
@@ -263,6 +259,55 @@ void TheCreator::CreateGameObject()
 	for (int i = 0; i < 45; i++)
 	{
 		CreateStreetPole(polesPos[i]);
+	}
+
+	track_00.push_back(PxTransform(-2.4, 0, -10));
+	track_00.push_back(PxTransform(-2.4, 0, 5));
+	track_00.push_back(PxTransform(-2.4, 0, 20));
+	track_00.push_back(PxTransform(-2.4, 0, 35));
+	track_00.push_back(PxTransform(-2.4, 0, 50));
+	track_00.push_back(PxTransform(-2.4, 0, 67.2));
+	track_00.push_back(PxTransform(PxVec3(-1.4, 0, 71.5), PxQuat(Mathf::DegToRad(45), PxVec3(0, 1, 0))));//45
+	track_00.push_back(PxTransform(PxVec3(5.2, 0, 72.5),PxQuat(Mathf::DegToRad(90),PxVec3(0,1,0))));	//90
+	track_00.push_back(PxTransform(PxVec3(20.2, 0, 72.5),PxQuat(Mathf::DegToRad(90),PxVec3(0,1,0))));	//90
+	track_00.push_back(PxTransform(PxVec3(35.2, 0, 72.5),PxQuat(Mathf::DegToRad(90),PxVec3(0,1,0))));	//90
+	track_00.push_back(PxTransform(PxVec3(50.2, 0, 72.5),PxQuat(Mathf::DegToRad(90),PxVec3(0,1,0))));	//90
+	track_00.push_back(PxTransform(PxVec3(63.7, 0, 72.5), PxQuat(Mathf::DegToRad(90), PxVec3(0, 1, 0))));
+	track_00.push_back(PxTransform(PxVec3(65.6, 0, 74.5), PxQuat(Mathf::DegToRad(42.8), PxVec3(0, 1, 0))));//42.8
+	track_00.push_back(PxTransform(PxVec3(69.4, 0, 77.1), PxQuat(Mathf::DegToRad(42.8), PxVec3(0, 1, 0))));//42.8
+	//track_00.push_back(PxTransform(PxVec3(70.6, 0.9, 77.4), PxQuat(Mathf::DegToRad(90), PxVec3(0, 1, 0))));//90
+	track_00.push_back(PxTransform(PxVec3(99.8, 0, 77.4), PxQuat(Mathf::DegToRad(90), PxVec3(0, 1, 0))));//90
+	track_00.push_back(PxTransform(PxVec3(101.6, 0, 76.5), PxQuat(Mathf::DegToRad(135), PxVec3(0, 1, 0))));//135
+	track_00.push_back(PxTransform(PxVec3( 102.6, 0, 72.8), PxQuat(Mathf::DegToRad(180), PxVec3(0, 1, 0))));//180
+	track_00.push_back(PxTransform(PxVec3( 102.6, 0, 60.8), PxQuat(Mathf::DegToRad(180), PxVec3(0, 1, 0))));//180
+	track_00.push_back(PxTransform(PxVec3( 102.6, 0, 45.8), PxQuat(Mathf::DegToRad(180), PxVec3(0, 1, 0))));//180
+	track_00.push_back(PxTransform(PxVec3( 102.6, 0, 30.8), PxQuat(Mathf::DegToRad(180), PxVec3(0, 1, 0))));//180
+	track_00.push_back(PxTransform(PxVec3( 102.6, 0, 15.8), PxQuat(Mathf::DegToRad(180), PxVec3(0, 1, 0))));//180
+	track_00.push_back(PxTransform(PxVec3( 102.6, 0, 0.8), PxQuat(Mathf::DegToRad(180), PxVec3(0, 1, 0))));//180
+	track_00.push_back(PxTransform(PxVec3( 102.6, 0, -15.8), PxQuat(Mathf::DegToRad(180), PxVec3(0, 1, 0))));//180
+	track_00.push_back(PxTransform(PxVec3( 102.6, 0, -19.5), PxQuat(Mathf::DegToRad(180), PxVec3(0, 1, 0))));//180
+	track_00.push_back(PxTransform(PxVec3(101.6, 0, -21.6), PxQuat(Mathf::DegToRad(225), PxVec3(0, 1, 0))));//225
+	track_00.push_back(PxTransform(PxVec3( 98.4, 0, -22.3), PxQuat(Mathf::DegToRad(270), PxVec3(0, 1, 0))));//270
+	track_00.push_back(PxTransform(PxVec3( 85.4, 0, -22.3), PxQuat(Mathf::DegToRad(270), PxVec3(0, 1, 0))));//270
+	track_00.push_back(PxTransform(PxVec3( 70.4, 0, -22.3), PxQuat(Mathf::DegToRad(270), PxVec3(0, 1, 0))));//270
+	track_00.push_back(PxTransform(PxVec3( 55.4, 0, -22.3), PxQuat(Mathf::DegToRad(270), PxVec3(0, 1, 0))));//270
+	track_00.push_back(PxTransform(PxVec3( 40.4, 0, -22.3), PxQuat(Mathf::DegToRad(270), PxVec3(0, 1, 0))));//270
+	track_00.push_back(PxTransform(PxVec3( 25.4, 0, -22.3), PxQuat(Mathf::DegToRad(270), PxVec3(0, 1, 0))));//270
+	track_00.push_back(PxTransform(PxVec3( 10.4, 0, -22.3), PxQuat(Mathf::DegToRad(270), PxVec3(0, 1, 0))));//270
+	track_00.push_back(PxTransform(PxVec3(0.3, 0, -22.3), PxQuat(Mathf::DegToRad(270), PxVec3(0, 1, 0))));//270
+	track_00.push_back(PxTransform(PxVec3(-1.4, 0, -21.1), PxQuat(Mathf::DegToRad(315), PxVec3(0, 1, 0))));//315
+	track_00.push_back(PxTransform( PxVec3(-2.3, 0, -11.9),PxQuat(Mathf::DegToRad(360),PxVec3(0,1,0))));//0
+
+	//创建MonoBehaviour物体
+	CarNPC* testCar = new CarNPC(Models[41],track_00[0],track_00,1,PxVec3(0,0.9,0),PxVec3(0.9,0.9,2.4));
+	CarNPC* testCar2 = new CarNPC(Models[42],track_00[4],track_00,5,PxVec3(0,0.9,0),PxVec3(0.9, 0.9, 2.4));
+	CarNPC* testCar4 = new CarNPC(Models[44],track_00[12],track_00,13, PxVec3(0, 1.1, 0), PxVec3(0.9, 1.0, 2.5));
+	SpecialGameObject.push_back(testCar);
+	SpecialGameObject.push_back(testCar2);
+	SpecialGameObject.push_back(testCar4);
+	for (int i = 0; i < SpecialGameObject.size(); i++)
+	{
+	    SpecialGameObject[i]->Awake();
 	}
 }
 
