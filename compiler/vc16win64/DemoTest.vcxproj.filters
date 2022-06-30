@@ -60,6 +60,10 @@
     <ClInclude Include="..\..\src\DemoTest\MissionManager.h" />
     <ClInclude Include="..\..\src\DemoTest\MonoBehaviour.h" />
     <ClInclude Include="..\..\src\DemoTest\CarNPC.h" />
+    <ClInclude Include="..\..\src\Bone\Animation.h" />
+    <ClInclude Include="..\..\src\Bone\Animator.h" />
+    <ClInclude Include="..\..\src\Bone\Bone.h" />
+    <ClInclude Include="..\..\src\Bone\ModelAnimation.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\src\Light\light.fs" />
@@ -70,5 +74,12 @@
     <None Include="..\..\src\ModelLoading\shadow_loading.vs" />
     <None Include="..\..\src\Render\SkyBox.fs" />
     <None Include="..\..\src\Render\SkyBox.vs" />
+    <None Include="..\..\src\Bone\ModelAnim.vs" />
+    <None Include="..\..\src\Render\Clock.fs" />
+    <None Include="..\..\src\Render\Clock.vs" />
+    <None Include="..\..\src\Render\ClockMain.fs" />
+    <None Include="..\..\src\Render\ClockMain.vs" />
+    <None Include="..\..\src\Render\Dashboard.fs" />
+    <None Include="..\..\src\Render\Dashboard.vs" />
   </ItemGroup>
 </Project>
