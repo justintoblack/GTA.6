@@ -9,7 +9,7 @@
 #include "../SnippetVehicleCommon/SnippetVehicleFilterShader.h"
 #include "../SnippetVehicleCommon/SnippetVehicleSceneQuery.h"
 #include "../DemoTest/GameObject.h"
-#include"../DemoTest/Zombie.h"
+#include"../DemoTest/CarNPC.h"
 #include <list>
 #include<io.h>
 

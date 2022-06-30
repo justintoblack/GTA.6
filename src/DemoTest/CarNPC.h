@@ -1,0 +1,68 @@
+#pragma once
+#ifndef _CARNPC_H
+#define _CARNPC_H
+#include "GameObject.h"
+
+extern float deltaTime;
+
+class CarNPC:public GameObject
+{
+private:
+	int idx;
+	float moveSpeed=7.5;
+	float rotateFactor=2.5;
+	vector<PxTransform> TargetPoints;
+	PxVec3 offset;
+public:
+	CarNPC(Model& model,PxTransform pos,vector<PxTransform>& points,
+		int idx,PxVec3 off,PxVec3 boxSize)
+	{
+		this->SetName("carTest");
+		ModelComponent* newModel = new ModelComponent(this);
+		RigidBody* rig = new RigidBody(this, false);
+		BoxCollider* box = new BoxCollider(this);
+		box->Size = boxSize;
+		box->SetShape();
+		newModel->SetModel(model);
+		this->SetTransform(PxTransform(pos.p+off,pos.q));
+		TargetPoints = points;
+		this->idx = idx;
+		offset = off;
+	}
+	void Awake()
+	{
+		cout << "i was born!" << endl;
+	}
+	void Update() 
+	{
+		Move();
+	}
+	void Move()
+	{
+		//this->SetTransform(PxTransform(transform.p + PxVec3(0, 0, 1)*moveSpeed*deltaTime));
+		PxVec3 dir = TargetPoints[idx].p-transform.p+offset;
+		if (dir.magnitudeSquared()<0.5f)
+		{
+			idx++;
+			if (idx >= TargetPoints.size())
+			{
+				idx = 0;
+			}
+			//if (TargetPoints[idx].q.getAngle() < 0.1f)
+			//{
+			//	this->SetTransform(PxTransform(transform.p, PxQuat(PxIdentity)));
+			//}
+			dir = TargetPoints[idx].p - transform.p+offset;
+		}
+
+		dir = dir.getNormalized() * moveSpeed * deltaTime;
+		glm::quat qq=glm::quatLookAt(Mathf::P3ToV3(-dir), glm::vec3(0, 1, 0));
+		qq= glm::slerp(Mathf::Toquat(transform.q), qq,rotateFactor*deltaTime);
+		PxQuat q = Mathf::ToPxQ(qq);
+		//q = Mathf::Slerp(transform.q, q, rotateFactor*deltaTime);
+		this->SetTransform(PxTransform(transform.p + dir,q));
+	}
+
+};
+
+#endif // !_CARNPC_H

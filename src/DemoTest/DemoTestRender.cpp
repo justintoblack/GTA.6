@@ -99,9 +99,9 @@ glm::vec3			gLightDir;
 glm::vec3			gLightAmbient = glm::vec3(gLightAmbientBasis);
 glm::vec3			gLightDiffuse = glm::vec3(gLightDiffuseBasis);
 glm::vec3			gLightSpecular = glm::vec3(gLightSpecularBasis);
-glm::vec3			gSpotLightAmbient = glm::vec3(0.2f, 0.2f, 0.2f);
-glm::vec3			gSpotLightDiffuse = glm::vec3(0.3f, 0.3f, 0.3f);
-glm::vec3			gSpotLightSpecular = glm::vec3(0.5f, 0.5f, 0.5f);
+glm::vec3			gSpotLightAmbient = glm::vec3(0.7f, 0.7f, 0.7f);
+glm::vec3			gSpotLightDiffuse = glm::vec3(0.5f, 0.5f, 0.5f);
+glm::vec3			gSpotLightSpecular = glm::vec3(0.8f, 0.8f, 0.8f);
 
 
 glm::mat4			clockTrans = glm::mat4(1.0f);
@@ -112,21 +112,28 @@ glm::mat4			selectTrans = glm::mat4(1.0f);
 //glm::mat4			boxTrans = glm::mat4(1.0f);
 
 
-float				gSpotLightCutOff = 25.0f;
+float				gSpotLightCutOff = 28.0f;
+float				gSpotLightOuterCutOff = 35.0f;
 float				gVehicleShininess = 64.0f;
 float				gOthersShininess = 512.0f;
+float				gAttenuationConstant = 1.0f;
+float				gAttenuationLinear = 0.09;
+float				gAttenuationQuadratic = 0.032;
 extern	bool		vehicleUseSpotLight;
 Shader				gModelAnimShader;
 ModelAnimation*		gModelAnim;
 Animation*			gAnimation;
 Animation*			gAnimationIdle;
+Animation*			gAnimatonJump;
 Animator*			gAnimator;
 Animator*			gAnimatorIdle;
+Animator*			gAnimatorJump;
 vector<glm::mat4>	gBoneTransform;
 extern PxVec3* CameraFollowTarget;
 extern PxVec3 currentTraceTarge;
 extern  bool		isDriving;
-
+extern  bool		isJumping;
+extern  bool		startJumping;
 //时钟顶点位置
 float gClockVertices[] = {
 	// positions          // colors           // texture coords
@@ -1412,6 +1419,7 @@ namespace
 			gModelShader.SetVector3f("spotLight.position", vehicleLight.x, vehicleLight.y, vehicleLight.z);
 			gModelShader.SetVector3f("spotLight.direction", vehicleForward.x, vehicleForward.y - 0.3f, vehicleForward.z);
 			gModelShader.SetFloat("spotLight.cutOff", glm::cos(glm::radians(gSpotLightCutOff)));
+			gModelShader.SetFloat("spotLight.outerCutOff", glm::cos(glm::radians(gSpotLightOuterCutOff)));
 			gModelShader.SetVector3f("spotLight.ambient", gSpotLightAmbient);
 			gModelShader.SetVector3f("spotLight.diffuse", gSpotLightDiffuse);
 			gModelShader.SetVector3f("spotLight.specular", gSpotLightSpecular);
@@ -1456,6 +1464,7 @@ namespace
 			gModelAnimShader.SetVector3f("spotLight.position", vehicleLight.x, vehicleLight.y, vehicleLight.z);
 			gModelAnimShader.SetVector3f("spotLight.direction", vehicleForward.x, vehicleForward.y - 0.3f, vehicleForward.z);
 			gModelAnimShader.SetFloat("spotLight.cutOff", glm::cos(glm::radians(gSpotLightCutOff)));
+			gModelAnimShader.SetFloat("spotLight.outerCutOff", glm::cos(glm::radians(gSpotLightOuterCutOff)));
 			gModelAnimShader.SetVector3f("spotLight.ambient", gSpotLightAmbient);
 			gModelAnimShader.SetVector3f("spotLight.diffuse", gSpotLightDiffuse);
 			gModelAnimShader.SetVector3f("spotLight.specular", gSpotLightSpecular);
@@ -1736,9 +1745,9 @@ namespace
 			gLightSpecular = glm::vec3(gLightSpecularBasis + 0.4 * glm::sin(omega * currentTime));
 		}
 		else {
-			gLightAmbient = glm::vec3(gLightAmbientBasis - 0.2f * abs(glm::sin(omega * currentTime)));
+			gLightAmbient = glm::vec3(gLightAmbientBasis - 0.25f * abs(glm::sin(omega * currentTime)));
 			gLightDiffuse = glm::vec3(gLightDiffuseBasis - 0.2f * abs(glm::sin(omega * currentTime)));
-			gLightSpecular = glm::vec3(gLightSpecularBasis - 0.2 * abs(glm::sin(omega * currentTime)));
+			gLightSpecular = glm::vec3(gLightSpecularBasis - 0.4 * abs(glm::sin(omega * currentTime)));
 		}
 	}
 
@@ -2028,7 +2037,6 @@ namespace
 
 		RenderCarObject(carObject);
 		RenderMissionObject();
-
 		//渲染场景物体
 		for (int i = 0; i < theCreator.SceneGameObject.size(); i++)
 		{
@@ -2050,10 +2058,22 @@ namespace
 		float rotateSpeed = 5;
 		//表示正在移动
 		PxExtendedVec3 haha = m_player->getFootPosition();
+		
 		if (!moveDir.isZero())
 		{
 			glm::vec3 targetDir = glm::vec3(moveDir.x, 0, moveDir.z);
 			forwardDir = glm::normalize( Mathf::Slerp(forwardDir, targetDir, deltaTime * rotateSpeed));
+			
+		}
+		if (isJumping) {
+			if (startJumping) {
+				gAnimatorJump->setCurrentTick(15.0f);
+				startJumping = false;
+			}
+			gAnimatorJump->UpdateAnimation(deltaTime);
+			gBoneTransform = gAnimatorJump->GetFinalBoneMatrices();
+		}
+		else if (!moveDir.isZero()) {
 			gAnimator->UpdateAnimation(deltaTime);
 			gBoneTransform = gAnimator->GetFinalBoneMatrices();
 		}
@@ -2138,7 +2158,6 @@ void renderLoop()
 
 	sCamera = new Snippets::Camera(PxVec3(50.0f, 50.0f, 50.0f), PxVec3(-0.6f, -0.2f, -0.7f));
 	sCamera->SetConfig(2.5f, 2.25f, 3.0f, PxVec3(0, 0.5f, 0));
-
 
 
 
@@ -2253,6 +2272,7 @@ void renderLoop()
 			"../../src/ModelLoading/model_loading.fs");
 		string modelAnimPath("../../assets/objects/Models/Standard_Walk_skin.fbx");
 		string modelAnimIdlePath("../../assets/objects/Models/Neutral_Idle_skin.fbx");
+		string modelAnimJumpPath("../../assets/objects/Models/jump_skin.fbx");
 		gModelAnim = new ModelAnimation(modelAnimPath);
 		gAnimation = new Animation(modelAnimPath, gModelAnim);
 		gAnimator = new Animator(gAnimation);
@@ -2260,6 +2280,9 @@ void renderLoop()
 		gAnimationIdle = new Animation(modelAnimIdlePath, gModelAnim);
 		gAnimatorIdle = new Animator(gAnimationIdle);
 		gAnimatorIdle->UpdateAnimation(deltaTime);
+
+		gAnimatonJump = new Animation(modelAnimJumpPath, gModelAnim);
+		gAnimatorJump = new Animator(gAnimatonJump);
 		gModelAnimShader.use();
 		//shininess发光值，发光值越高，反射能力越强，散射越少，高光点越小
 		gModelAnimShader.SetFloat("material.shininess", gOthersShininess);

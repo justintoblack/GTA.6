@@ -25,6 +25,11 @@ glm::quat Mathf::Toquat(PxQuat q)
 	return glm::quat(q.w,q.x,q.y,q.z);
 }
 
+PxQuat Mathf::ToPxQ(glm::quat q)
+{
+	return PxQuat(q.x,q.y,q.z,q.w);
+}
+
 PxVec3 Mathf::QuatToEuler(PxQuat q)
 {
 	PxVec3 euler;

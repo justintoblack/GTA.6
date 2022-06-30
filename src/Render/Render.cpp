@@ -659,6 +659,10 @@ void setupDefaultWindow(const char *name)
 	glutSetWindow(mainHandle);
 	glutFullScreen();
 
+	//glutCreateWindow(name);
+	//glutFullScreen();
+
+
 	//‰÷»æ¥∞ø⁄≥ﬂ¥Á∫ÕŒª÷√
 	glutReshapeFunc(changeSize);
 	delete[] namestr;
