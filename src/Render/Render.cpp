@@ -45,14 +45,14 @@
 
 using namespace physx;
 
-
+extern int currentSelect;
 extern	TheCreator theCreator;
 extern Snippets::Camera* sCamera;
 extern MissionManager missionManager;
 //==================================================================ImGUI state
 bool main_window = false;  //之所以不设置为静态全局变量，是因为在DemoTestRender.cpp中会使用到这个变量
 bool show_another_window = false;
-bool show_calendar_window = false;
+bool show_calendar_window = true;
 bool inspector_window = false;
 bool isSimulation = true;
 static bool show_demo_window = false;
@@ -62,15 +62,16 @@ bool show_countdown_window = false;
 
 //ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 physx::PxVec3 clear_color = physx::PxVec3(0.45f, 0.55f, 0.60f);
-bool backgroundMusic = false;
-bool soundEffect = false;
-float volume0;
-float volume1;
+bool backgroundMusic = true;
+bool soundEffect = true;
+float volume0 = 0.3f;
+float volume1 = 0.4f;
 float timeSpeed = 1.0f;
 float gameObjectPosition[3] = { 0.10f, 0.20f, 0.30f };
 bool scenario = true;
 bool scenarioChange = true;
 extern glm::vec3 gLightDir;
+extern bool isSelected;
 
 //==================================================================ImGUI state
 
@@ -426,18 +427,26 @@ void my_display_code()
 	static bool no_bring_to_front = false;
 	static bool unsaved_document = false;
 
-	ImGuiWindowFlags window_flags_1 = 0; // ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoBackground;
+	ImGuiWindowFlags window_flags_1 = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoBackground;
 
-	if (show_calendar_window)
+
+	if (isSelected)
 	{
+		int timer = missionManager.MissionList[currentSelect]->TimeLimit -missionManager.MissionList[currentSelect]->Timer;
+		int timeH = timer/60;
+		int timeM = timer%60;
+		char text_str[10];
+		sprintf(text_str, "%d:%d", timeH, timeM);
+
+		const ImVec2 text_pos = ImVec2(150, 110);
+		const ImVec2 p0 = ImVec2(0, 0);
+		const ImVec2 p1 = ImVec2(1920, 1080);
+		ImVec4 clip_rect(p0.x, p0.y, p1.x, p1.y);
 		ImGui::Begin("Calendar", &show_calendar_window, window_flags_1);
 
-		static int clicked = 0;
-		if (ImGui::Button("Accept the Mission"))
-			clicked++;
-		ImGui::SameLine();
-		if (ImGui::Button("Abandon the Mission"))
-			clicked++;
+		ImGui::GetForegroundDrawList()->AddText(ImGui::GetFont(), 38.0f, text_pos, ImColor(255, 255, 255, 255), text_str, NULL, 0.0f, &clip_rect);
+
+
 		ImGui::End();
 	}
 

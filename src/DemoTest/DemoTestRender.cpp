@@ -1706,7 +1706,7 @@ namespace
 	void playBackgroundMusic(float timeSpeed, int calendarHour, int calendarMinute, bool backgroundMusic, float volume0)
 	{
 
-		if (backgroundMusic == true)
+		if (backgroundMusic == true && isInBegin == false && isSelected == false)
 		{
 			if (engineState == false) {
 				sndDay->setIsPaused(false);

@@ -3241,6 +3241,7 @@ static void ShowDemoWindowLayout()
             const char* text_str = "Line 1 hello\nLine 2 clip me!";
             const ImVec2 text_pos = ImVec2(p0.x + offset.x, p0.y + offset.y);
             ImDrawList* draw_list = ImGui::GetWindowDrawList();
+            
             switch (n)
             {
             case 0:
