@@ -125,15 +125,19 @@ ModelAnimation*		gModelAnim;
 Animation*			gAnimation;
 Animation*			gAnimationIdle;
 Animation*			gAnimatonJump;
+Animation*			gAnimationRun;
 Animator*			gAnimator;
 Animator*			gAnimatorIdle;
 Animator*			gAnimatorJump;
+Animator*			gAnimatorRun;
+Animator*			gCurrentAnimator = nullptr;
 vector<glm::mat4>	gBoneTransform;
 extern PxVec3* CameraFollowTarget;
 extern PxVec3 currentTraceTarge;
 extern  bool		isDriving;
 extern  bool		isJumping;
 extern  bool		startJumping;
+extern  bool		isRunning;
 //时钟顶点位置
 float gClockVertices[] = {
 	// positions          // colors           // texture coords
@@ -2074,8 +2078,16 @@ namespace
 			gBoneTransform = gAnimatorJump->GetFinalBoneMatrices();
 		}
 		else if (!moveDir.isZero()) {
-			gAnimator->UpdateAnimation(deltaTime);
-			gBoneTransform = gAnimator->GetFinalBoneMatrices();
+			if (isRunning)
+			{
+				gAnimatorRun->UpdateAnimation(deltaTime);
+				gBoneTransform = gAnimatorRun->GetFinalBoneMatrices();
+			}
+			else //walk
+			{
+				gAnimator->UpdateAnimation(deltaTime);
+				gBoneTransform = gAnimator->GetFinalBoneMatrices();
+			}
 		}
 		else {
 			gAnimatorIdle->UpdateAnimation(deltaTime);
@@ -2273,6 +2285,7 @@ void renderLoop()
 		string modelAnimPath("../../assets/objects/Models/Standard_Walk_skin.fbx");
 		string modelAnimIdlePath("../../assets/objects/Models/Neutral_Idle_skin.fbx");
 		string modelAnimJumpPath("../../assets/objects/Models/jump_skin.fbx");
+		string modelAnimRunPath("../../assets/objects/Models/Running_skin.fbx");
 		gModelAnim = new ModelAnimation(modelAnimPath);
 		gAnimation = new Animation(modelAnimPath, gModelAnim);
 		gAnimator = new Animator(gAnimation);
@@ -2283,6 +2296,10 @@ void renderLoop()
 
 		gAnimatonJump = new Animation(modelAnimJumpPath, gModelAnim);
 		gAnimatorJump = new Animator(gAnimatonJump);
+
+		gAnimationRun = new Animation(modelAnimRunPath, gModelAnim);
+		gAnimatorRun = new Animator(gAnimationRun);
+
 		gModelAnimShader.use();
 		//shininess发光值，发光值越高，反射能力越强，散射越少，高光点越小
 		gModelAnimShader.SetFloat("material.shininess", gOthersShininess);
