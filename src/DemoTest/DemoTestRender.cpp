@@ -230,16 +230,18 @@ unsigned int gBoxIndices[] = {
 
 const char* gTaskBarFaces[2] = {
 	"../../assets/Textures/taskBarFull.png",
-	"../../assets/Textures/mission.png"
+	"../../assets/Textures/missionDisplay.png"
 };
 
-const char* gBoxFaces[6] = {
-	"../../assets/Textures/missionBox1.png",
-	"../../assets/Textures/missionBox2.png",
-	"../../assets/Textures/missionBox3.png",
-	"../../assets/Textures/missionBox4.png",
+const char* gBoxFaces[8] = {
+	"../../assets/Textures/missionDisplay1.png",
+	"../../assets/Textures/missionDisplay2.png",
+	"../../assets/Textures/missionDisplay3.png",
+	"../../assets/Textures/missionDisplay4.png",
 	"../../assets/Textures/quitGame.png",
-	"../../assets/Textures/enterGame.png"
+	"../../assets/Textures/enterGame.png",
+	"../../assets/Textures/success.png",
+	"../../assets/Textures/failed.png"
 };
 
 //天空盒的纹理图片
@@ -276,7 +278,7 @@ unsigned char* gClockMainData;
 unsigned char* gDashboardData;
 unsigned char* gTaskBarData[2];
 unsigned char* gSelectData;
-unsigned char* gBoxData[6];
+unsigned char* gBoxData[8];
 
 
 //天空盒六个方向
@@ -451,9 +453,13 @@ bool enterMusic = false;
 bool beginMusic = false;
 bool InBeginMusic = false;
 bool missionMusic = false;
+bool winMusic = false;
+bool failedMusic = false;
 
 bool missionFinish = false;
 bool missionSuccess = false;
+
+
 int currentSelect = 5;
 bool isInConfirm = false; //在任务详情界面
 bool isSelected = false;  //已接受任务时被置为true，没接受任务或者任务结束的那一帧被置为false
@@ -461,8 +467,12 @@ bool isInQuit = false;	  //在退出游戏界面
 bool isInBegin = true;    //在游戏欢迎界面
 bool isEndBegin = false;  //只会在退出欢迎界面的那一帧被置为true，该信号量会用于执行一次SwitchMode，但外界将无法读取到这个信号量被置为true的那一帧
 bool gotoSwitchMode = true;  //该信号量只会出现一次跳转，为true只发生在RenderCallback的第一次循环，即第一帧，用于执行一次SwitchMode，之后就一直是false
-bool haveSetupBox = false;
+bool haveSetupBox = false;	 //该信号量用于保证游戏欢迎界面只会被SetupBox一次，并且将负责与退出游戏的SetupBox进行协调
 bool compareIsSelected = true; //用于追踪上一帧的IsSelect的值，仅当在任务栏状态切换的那一帧，isSelect != compareIsSelect，且这个状态只出现在两个函数体之间
+bool isInEnd = false;     //表示是否在结算界面，一旦接收到missionFinish=true，就会将该值置为true，然后持续三秒时间，三秒时间过后，该值被置为false，missionFinish被置为false，
+						  //同时isSelected被置为false，代表此时不在接受任务的状态
+float timeCount = 0.0f;
+bool haveSetupBoxInEnd = false;
 
 
 float currentAngle = 0.0f;
@@ -1074,6 +1084,33 @@ namespace
 			}
 			//stbi_image_free(gBoxData[0]);         绝对不要去释放掉这些data内存，否则下一次使用时会因找不到数据而报错
 		}
+		else if (isInEnd == true) {
+			if (missionSuccess == true) {
+				if (gBoxData[6]) {
+					cout << "gBoxData is ready!!!" << endl;
+					glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, gBoxWidth, gBoxHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, gBoxData[6]);
+					glGenerateMipmap(GL_TEXTURE_2D);
+
+				}
+				else
+				{
+					std::cout << "Failed to load texture" << std::endl;
+				}
+			}
+			else
+			{
+				if (gBoxData[7]) {
+					cout << "gBoxData is ready!!!" << endl;
+					glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, gBoxWidth, gBoxHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, gBoxData[7]);
+					glGenerateMipmap(GL_TEXTURE_2D);
+
+				}
+				else
+				{
+					std::cout << "Failed to load texture" << std::endl;
+				}
+			}
+		}
 		else
 		{
 
@@ -1563,12 +1600,16 @@ namespace
 	char pathBegin[] = "../../assets/audio/beginMusic.wav";
 	char pathInBegin[] = "../../assets/audio/begining.wav";
 	char pathMission[] = "../../assets/audio/mission.wav";
+	char pathWin[] = "../../assets/audio/win.wav";
+	char pathFailed[] = "../../assets/audio/failed.wav";
 	ISoundSource* sourceChoose = BackgroundMusicEngine->addSoundSourceFromFile(pathChoose, ESM_AUTO_DETECT, true);
 	ISoundSource* sourceHit = BackgroundMusicEngine->addSoundSourceFromFile(pathHit, ESM_AUTO_DETECT, true);
 	ISoundSource* sourceEnter = BackgroundMusicEngine->addSoundSourceFromFile(pathEnter, ESM_AUTO_DETECT, true);
 	ISoundSource* sourceBegin = BackgroundMusicEngine->addSoundSourceFromFile(pathBegin, ESM_AUTO_DETECT, true);
 	ISoundSource* sourceInBegin = BackgroundMusicEngine->addSoundSourceFromFile(pathInBegin, ESM_AUTO_DETECT, true);
 	ISoundSource* sourceMission = BackgroundMusicEngine->addSoundSourceFromFile(pathMission, ESM_AUTO_DETECT, true);
+	ISoundSource* sourceWin = BackgroundMusicEngine->addSoundSourceFromFile(pathWin, ESM_AUTO_DETECT, true);
+	ISoundSource* sourceFailed = BackgroundMusicEngine->addSoundSourceFromFile(pathFailed, ESM_AUTO_DETECT, true);
 	ISound* sndMission = BackgroundMusicEngine->play2D(sourceMission, true, true, false, false);
 	ISound* sndInBegin = BackgroundMusicEngine->play2D(sourceInBegin, true, true, false, false);
 
@@ -1614,7 +1655,7 @@ namespace
 		if (InBeginMusic == true && isInBegin == false) {
 			cout << "ready to stop InBegin music!!!" << endl;
 			sndInBegin->setIsPaused(true);
-			sndInBegin->drop();
+			//sndInBegin->drop();
 			InBeginMusic = false;
 		}
 	}
@@ -1637,8 +1678,24 @@ namespace
 		if ((soundEffect == false && missionMusic == true)|| (isSelected != compareIsSelected && isSelected == false && missionMusic == true)) {
 			cout << "ready to play Mission music!!!" << endl;
 			sndMission->setIsPaused(true);
-			sndMission->drop();
+			//sndMission->drop();
 			missionMusic = false;
+		}
+	}
+	void playWinMusic()
+	{
+		if ((winMusic == false) && (timeCount > 1.0f) && (missionSuccess == true)) {
+			cout << "begin to play WinMusic!!!===============" << endl;
+			BackgroundMusicEngine->play2D(sourceWin, false, false, false, false);
+			winMusic = true;
+		}
+	}
+	void playFailedMusic()
+	{
+		if ((failedMusic) == false && (timeCount > 1.0f) && (missionSuccess == false)) {
+			cout << "begin to play FailedMusic!!!===============" << endl;
+			BackgroundMusicEngine->play2D(sourceFailed, false, false, false, false);
+			failedMusic = true;
 		}
 	}
 
@@ -1901,6 +1958,8 @@ namespace
 		playEnterMusic(enterMusic, soundEffect);
 		playBeginMusic(beginMusic, soundEffect);
 		playInBeginMusic(gotoSwitchMode, InBeginMusic, isInBegin);
+		playWinMusic();
+		playFailedMusic();
 		
 		
 		//Imgui中需要加入渲染回调的函数
@@ -1918,6 +1977,24 @@ namespace
 		Snippets::startRender(sCamera->getEye(), sCamera->getDir(), 0.1f, 1000.0f);
 
 		RenderSkybox();
+
+		if (missionFinish == true) {
+			isInEnd = true;
+			cout << "isInEnd===========================" << isInEnd << endl;
+			timeCount += deltaTime;
+			cout << "timeCount" << timeCount << endl;
+			isSelected = false;
+		}
+		if (timeCount >= 5.0f) {
+			cout << "timeCount >= 3.0" << endl;
+			isInEnd = false;
+			haveSetupBoxInEnd = false;
+			failedMusic = false;
+			winMusic = false;
+			cout << "isInEnd===========================" << isInEnd << endl;
+			missionFinish = false;
+			timeCount = 0.0f;
+		}
 
 		if (escKey == true && isInConfirm == false) {
 			isInQuit = true;
@@ -1948,6 +2025,8 @@ namespace
 			cout << "isInQuit" << isInQuit << endl;
 		}
 
+		
+
 		if (isInConfirm == true || isInQuit == true || isInBegin == true) {               //现在正处在确认界面中
 			//cout << "ready to RenderBox" << endl;
 			RenderBox();
@@ -1956,6 +2035,22 @@ namespace
 
 		if (!isInBegin) {
 
+			cout << "missionFinish" << missionFinish << endl;
+			cout << "missionSuccess" << missionSuccess << endl;
+
+			if (isInEnd == true && haveSetupBoxInEnd == false) {
+				glDeleteVertexArrays(1, &gBoxVAO);
+				glDeleteBuffers(1, &gBoxVBO);
+				glDeleteBuffers(1, &gBoxEBO);
+				cout << "Begin to SetupBox in End!!! " << endl;
+				SetupBox();
+				haveSetupBoxInEnd = true;
+			}
+			if (isInEnd == true) {
+				cout << "ready to RenderBox of InEnd" << endl;
+				RenderBox();
+				cout << "RenderBox is working in End!!!" << endl;
+			}
 
 			if (midKey == true && isInConfirm == false && isSelected == false) {   //在没有进入确认界面的状态下按下了“5”
 				glDeleteVertexArrays(1, &gBoxVAO);
@@ -2001,7 +2096,7 @@ namespace
 			}
 			playMissionMusic(isSelected, compareIsSelected, soundEffect, missionMusic);
 
-			if (compareIsSelected != isSelected) {          //还没进入到正式任务界面
+			if (compareIsSelected != isSelected && isInEnd == false) {          //还没进入到正式任务界面
 				glDeleteVertexArrays(1, &gTaskBarVAO);
 				glDeleteBuffers(1, &gTaskBarVBO);
 				glDeleteBuffers(1, &gTaskBarEBO);
@@ -2009,7 +2104,7 @@ namespace
 				compareIsSelected = isSelected;
 			}
 
-			if (isSelected == false)
+			if (isSelected == false && isInEnd == false)
 			{
 				RenderSelect();
 			}
@@ -2193,7 +2288,7 @@ void renderLoop()
 		
 		gSelectData = stbi_load("../../assets/Textures/select.png", &gSelectWidth, &gSelectHeight, &gSelectNrChannels, STBI_rgb_alpha);
 
-		for (int i = 0; i < 6; i++) {
+		for (int i = 0; i < 8; i++) {
 			gBoxData[i] = stbi_load(gBoxFaces[i], &gBoxWidth, &gBoxHeight, &gBoxNrChannels, STBI_rgb_alpha);
 		}
 
