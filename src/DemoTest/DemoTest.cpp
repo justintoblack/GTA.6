@@ -197,7 +197,7 @@ float sprintSpeed = 7.0f;
 bool isGrounded;
 bool isAiming; 
 bool hasVehicleToDrive = false;
-
+double totalMoney = 0;
 
 
 ///跳跃
